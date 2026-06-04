@@ -2,9 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import QuoteForm from "@/components/QuoteForm";
 import Reveal from "@/components/Reveal";
+import Gallery from "@/components/Gallery";
 import JsonLd from "@/components/JsonLd";
 import { services, stats, testimonials, cities, site } from "@/lib/site";
 import { faqs } from "@/lib/faq";
+import { posts } from "@/lib/posts";
 
 const gallery = [
   "/images/kitchen.jpg", "/images/home-exterior.jpg", "/images/bathroom.jpg",
@@ -28,6 +30,8 @@ export default function Home() {
           <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority className="object-cover kenburns" />
         </div>
         <div className="absolute inset-0 hero-overlay" />
+        <div className="blob bg-green w-72 h-72 -top-12 -left-10 spin-slow" />
+        <div className="blob bg-cyan w-80 h-80 -bottom-16 right-0" />
         <div className="relative container-x py-20 md:py-28 grid lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
           <div className="text-white reveal">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm backdrop-blur">
@@ -56,7 +60,7 @@ export default function Home() {
       </section>
 
       {/* TRUST STRIP */}
-      <section className="shimmer-bar text-white">
+      <section className="bg-animated text-white">
         <div className="container-x grid grid-cols-2 md:grid-cols-4 gap-4 py-5 text-center text-sm font-bold">
           <div>🛡️ Licensed & Insured</div><div>🏗️ 15+ Years Experience</div>
           <div>💬 Free, Fast Estimates</div><div>📍 30+ Towns Served</div>
@@ -78,7 +82,7 @@ export default function Home() {
       </section>
 
       {/* SERVICES */}
-      <section className="py-20 bg-sand">
+      <section className="py-20 bg-tint-blue">
         <div className="container-x">
           <Reveal>
             <div className="text-center max-w-2xl mx-auto">
@@ -126,7 +130,7 @@ export default function Home() {
       </section>
 
       {/* WHY US */}
-      <section className="py-20">
+      <section className="py-20 bg-tint-green">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal>
             <div className="relative h-[440px] rounded-3xl overflow-hidden shadow-card">
@@ -171,22 +175,16 @@ export default function Home() {
               <p className="mt-3 text-white/70 text-lg">Real homes, real transformations — from kitchens to full exteriors.</p>
             </div>
           </Reveal>
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-3 gap-4">
-            {gallery.map((g, i) => (
-              <Reveal key={g} delay={(i % 3) * 80}>
-                <div className={`group relative overflow-hidden rounded-2xl ${i === 0 ? "md:row-span-2 h-64 md:h-full" : "h-56"}`}>
-                  <Image src={g} alt="Project photo" fill className="object-cover zoomimg" />
-                  <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/30 transition" />
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal>
+            <div className="mt-12"><Gallery images={gallery} /></div>
+            <p className="mt-4 text-center text-white/60 text-sm">🔍 Click any photo to view it larger</p>
+          </Reveal>
           <div className="mt-10 text-center"><a href={site.instagram} target="_blank" rel="noopener" className="btn btn-white">See more on Instagram →</a></div>
         </div>
       </section>
 
       {/* PROCESS */}
-      <section className="py-20">
+      <section className="py-20 bg-tint-cyan">
         <div className="container-x">
           <Reveal><div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow">Simple process</span>
@@ -235,7 +233,7 @@ export default function Home() {
       </section>
 
       {/* FAQ / AEO */}
-      <section className="py-20 bg-sand">
+      <section className="py-20 bg-tint-green">
         <div className="container-x grid lg:grid-cols-[.8fr_1.2fr] gap-12 items-start">
           <Reveal>
             <div className="lg:sticky lg:top-28">
@@ -276,6 +274,40 @@ export default function Home() {
               ))}
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* BLOG */}
+      <section className="py-20 bg-tint-blue">
+        <div className="container-x">
+          <Reveal>
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <span className="eyebrow">Tips &amp; ideas</span>
+                <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">From the blog</h2>
+                <p className="mt-2 text-ink/65 text-lg">Practical advice for homeowners thinking about a project.</p>
+              </div>
+              <Link href="/blog" className="btn btn-navy">View all posts →</Link>
+            </div>
+          </Reveal>
+          <div className="mt-10 grid md:grid-cols-3 gap-7">
+            {posts.slice(0, 3).map((p, i) => (
+              <Reveal key={p.slug} delay={i * 90}>
+                <Link href={`/blog/${p.slug}`} className="group card overflow-hidden pop block h-full">
+                  <div className="relative h-48 overflow-hidden">
+                    <Image src={p.image} alt={p.title} fill className="object-cover zoomimg" />
+                    <span className="absolute top-3 left-3 bg-grad-green text-white text-xs font-bold px-3 py-1 rounded-full">{p.category}</span>
+                  </div>
+                  <div className="p-5">
+                    <span className="text-xs text-blue font-semibold uppercase tracking-wider">{p.date} · {p.read}</span>
+                    <h3 className="font-bold text-lg text-navy mt-1.5 leading-snug">{p.title}</h3>
+                    <p className="text-sm text-ink/65 mt-2 line-clamp-2">{p.excerpt}</p>
+                    <span className="mt-3 inline-block text-sm font-bold text-blue group-hover:gap-2 transition">Read more →</span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -6,18 +6,18 @@ import { site, nav, cities, services } from "@/lib/site";
 
 export function TopBar() {
   return (
-    <div className="bg-navy text-white text-[13px]">
-      <div className="container-x flex h-9 items-center justify-between">
+    <div className="bg-animated text-white text-[13px]">
+      <div className="container-x flex h-10 items-center justify-between">
         <div className="flex items-center gap-4">
-          <a href={site.phoneHref} className="flex items-center gap-1.5 hover:text-cyan transition">
-            <span>📞</span><span className="font-semibold">{site.phone}</span>
+          <a href={site.phoneHref} className="flex items-center gap-1.5 hover:text-cyan transition font-semibold">
+            <span>📞</span><span>{site.phone}</span>
           </a>
           <a href={site.emailHref} className="hidden sm:flex items-center gap-1.5 hover:text-cyan transition">
             <span>✉️</span><span>{site.email}</span>
           </a>
         </div>
         <div className="flex items-center gap-4">
-          <span className="hidden md:inline text-white/70">{site.hours}</span>
+          <span className="hidden md:inline-flex items-center gap-1.5 bg-white/15 rounded-full px-3 py-0.5">⭐ 5.0 Rated · Licensed & Insured</span>
           <a href={site.facebook} target="_blank" rel="noopener" aria-label="Facebook" className="hover:text-cyan transition">Facebook</a>
           <a href={site.instagram} target="_blank" rel="noopener" aria-label="Instagram" className="hover:text-cyan transition">Instagram</a>
         </div>
@@ -37,15 +37,15 @@ export function SiteHeader() {
   }, []);
   return (
     <header className={`sticky top-0 z-50 transition ${solid ? "bg-white shadow-[0_6px_24px_-14px_rgba(20,20,43,.4)]" : "bg-white/95 backdrop-blur"}`}>
-      <div className="container-x flex h-[88px] items-center justify-between gap-4">
+      <div className="container-x flex h-[96px] md:h-[104px] items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2 shrink-0" aria-label={site.name}>
-          <Image src="/logo.png" alt={site.name} width={230} height={76} className="h-16 md:h-[68px] w-auto" priority />
+          <Image src="/logo.png" alt={site.name} width={300} height={100} className="h-[74px] md:h-[86px] w-auto" priority />
         </Link>
         <nav className="hidden lg:flex items-center gap-8 font-semibold text-[15px] text-ink/80">
           {nav.map((n) =>
             n.label === "Services" ? (
               <div key={n.href} className="relative group/svc">
-                <Link href={n.href} className="link-underline hover:text-navy transition flex items-center gap-1">
+                <Link href={n.href} className="navpill font-semibold flex items-center gap-1">
                   {n.label}<span className="text-[10px] mt-0.5">▼</span>
                 </Link>
                 <div className="absolute left-1/2 -translate-x-1/2 top-full pt-4 opacity-0 invisible translate-y-1 group-hover/svc:opacity-100 group-hover/svc:visible group-hover/svc:translate-y-0 transition-all duration-200">
@@ -61,13 +61,15 @@ export function SiteHeader() {
                 </div>
               </div>
             ) : (
-              <Link key={n.href} href={n.href} className="link-underline hover:text-navy transition">{n.label}</Link>
+              <Link key={n.href} href={n.href} className="navpill font-semibold">{n.label}</Link>
             )
           )}
         </nav>
         <div className="hidden lg:flex items-center gap-3">
-          <a href={site.phoneHref} className="font-bold text-navy">{site.phone}</a>
-          <Link href="/contact" className="btn btn-green text-sm">Free Estimate</Link>
+          <a href={site.phoneHref} className="flex items-center gap-2 font-bold text-navy hover:text-blue transition">
+            <span className="w-9 h-9 rounded-full bg-grad-green text-white grid place-items-center text-sm">📞</span>{site.phone}
+          </a>
+          <Link href="/contact" className="btn btn-grad text-sm">Free Estimate →</Link>
         </div>
         <button onClick={() => setOpen(!open)} className="lg:hidden p-2 text-navy" aria-label="Menu">
           <div className="space-y-1.5">
@@ -77,6 +79,7 @@ export function SiteHeader() {
           </div>
         </button>
       </div>
+      <div className="h-[3px] bg-grad-sunset" />
       {open && (
         <div className="lg:hidden border-t border-sand bg-white">
           <div className="container-x py-4 flex flex-col gap-1">
@@ -127,13 +130,19 @@ export function SiteFooter() {
     <footer className="bg-navy text-white/80 pt-16 pb-28 md:pb-12">
       <div className="container-x grid gap-10 md:grid-cols-4">
         <div className="md:col-span-1">
-          <div className="bg-white rounded-xl p-3 inline-block">
+          <Link href="/" aria-label="Back to home" className="bg-white rounded-xl p-3 inline-block hover:opacity-90 transition">
             <Image src="/logo.png" alt={site.name} width={210} height={70} className="h-16 w-auto" />
-          </div>
+          </Link>
           <p className="mt-4 text-sm leading-relaxed">Licensed home builder & remodeler serving Central Massachusetts since {site.founded}. From foundation to final finish.</p>
-          <div className="mt-4 flex gap-3 text-sm">
-            <a href={site.facebook} target="_blank" rel="noopener" className="hover:text-cyan">Facebook</a>
-            <a href={site.instagram} target="_blank" rel="noopener" className="hover:text-cyan">Instagram</a>
+          <div className="mt-5 flex gap-3">
+            <a href={site.facebook} target="_blank" rel="noopener" aria-label="Facebook"
+              className="w-11 h-11 rounded-full bg-white/10 hover:bg-blue grid place-items-center transition hover:-translate-y-1">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"/></svg>
+            </a>
+            <a href={site.instagram} target="_blank" rel="noopener" aria-label="Instagram"
+              className="w-11 h-11 rounded-full bg-white/10 hover:bg-grad-green grid place-items-center transition hover:-translate-y-1">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-white"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16Zm0 1.62c-3.15 0-3.5.01-4.74.07-1.14.05-1.76.24-2.17.4-.55.21-.94.47-1.35.88-.41.41-.67.8-.88 1.35-.16.41-.35 1.03-.4 2.17-.06 1.24-.07 1.59-.07 4.74s.01 3.5.07 4.74c.05 1.14.24 1.76.4 2.17.21.55.47.94.88 1.35.41.41.8.67 1.35.88.41.16 1.03.35 2.17.4 1.24.06 1.59.07 4.74.07s3.5-.01 4.74-.07c1.14-.05 1.76-.24 2.17-.4.55-.21.94-.47 1.35-.88.41-.41.67-.8.88-1.35.16-.41.35-1.03.4-2.17.06-1.24.07-1.59.07-4.74s-.01-3.5-.07-4.74c-.05-1.14-.24-1.76-.4-2.17a3.6 3.6 0 0 0-.88-1.35 3.6 3.6 0 0 0-1.35-.88c-.41-.16-1.03-.35-2.17-.4-1.24-.06-1.59-.07-4.74-.07Zm0 2.76a5.46 5.46 0 1 1 0 10.92 5.46 5.46 0 0 1 0-10.92Zm0 9a3.54 3.54 0 1 0 0-7.08 3.54 3.54 0 0 0 0 7.08Zm6.95-9.22a1.28 1.28 0 1 1-2.55 0 1.28 1.28 0 0 1 2.55 0Z"/></svg>
+            </a>
           </div>
         </div>
         <div>
