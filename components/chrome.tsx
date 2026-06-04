@@ -37,14 +37,33 @@ export function SiteHeader() {
   }, []);
   return (
     <header className={`sticky top-0 z-50 transition ${solid ? "bg-white shadow-[0_6px_24px_-14px_rgba(20,20,43,.4)]" : "bg-white/95 backdrop-blur"}`}>
-      <div className="container-x flex h-[68px] items-center justify-between gap-4">
+      <div className="container-x flex h-[88px] items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2 shrink-0" aria-label={site.name}>
-          <Image src="/logo.png" alt={site.name} width={170} height={56} className="h-11 w-auto" priority />
+          <Image src="/logo.png" alt={site.name} width={230} height={76} className="h-16 md:h-[68px] w-auto" priority />
         </Link>
         <nav className="hidden lg:flex items-center gap-8 font-semibold text-[15px] text-ink/80">
-          {nav.map((n) => (
-            <Link key={n.href} href={n.href} className="link-underline hover:text-navy transition">{n.label}</Link>
-          ))}
+          {nav.map((n) =>
+            n.label === "Services" ? (
+              <div key={n.href} className="relative group/svc">
+                <Link href={n.href} className="link-underline hover:text-navy transition flex items-center gap-1">
+                  {n.label}<span className="text-[10px] mt-0.5">▼</span>
+                </Link>
+                <div className="absolute left-1/2 -translate-x-1/2 top-full pt-4 opacity-0 invisible translate-y-1 group-hover/svc:opacity-100 group-hover/svc:visible group-hover/svc:translate-y-0 transition-all duration-200">
+                  <div className="w-72 card p-2 shadow-card">
+                    {services.map((s) => (
+                      <Link key={s.slug} href={`/services/${s.slug}`}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-sand text-[14px] text-ink/80 hover:text-navy">
+                        <span className="text-base">{s.icon}</span>{s.short}
+                      </Link>
+                    ))}
+                    <Link href="/services" className="block text-center mt-1 px-3 py-2 rounded-lg bg-sand text-blue font-bold text-sm">View all services →</Link>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Link key={n.href} href={n.href} className="link-underline hover:text-navy transition">{n.label}</Link>
+            )
+          )}
         </nav>
         <div className="hidden lg:flex items-center gap-3">
           <a href={site.phoneHref} className="font-bold text-navy">{site.phone}</a>
@@ -61,11 +80,24 @@ export function SiteHeader() {
       {open && (
         <div className="lg:hidden border-t border-sand bg-white">
           <div className="container-x py-4 flex flex-col gap-1">
-            {nav.map((n) => (
-              <Link key={n.href} href={n.href} onClick={() => setOpen(false)}
-                className="py-2.5 font-semibold text-ink/80 border-b border-sand">{n.label}</Link>
-            ))}
-            <Link href="/contact" onClick={() => setOpen(false)} className="btn btn-green mt-3">Get a Free Estimate</Link>
+            {nav.map((n) =>
+              n.label === "Services" ? (
+                <div key={n.href} className="border-b border-sand py-1">
+                  <Link href={n.href} onClick={() => setOpen(false)} className="block py-2 font-semibold text-navy">Services</Link>
+                  <div className="grid grid-cols-2 gap-x-3 pb-2">
+                    {services.map((s) => (
+                      <Link key={s.slug} href={`/services/${s.slug}`} onClick={() => setOpen(false)}
+                        className="py-1.5 text-sm text-ink/70 flex items-center gap-1.5"><span>{s.icon}</span>{s.name}</Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <Link key={n.href} href={n.href} onClick={() => setOpen(false)}
+                  className="py-2.5 font-semibold text-ink/80 border-b border-sand">{n.label}</Link>
+              )
+            )}
+            <a href={site.phoneHref} className="btn btn-navy mt-3">📞 {site.phone}</a>
+            <Link href="/contact" onClick={() => setOpen(false)} className="btn btn-green mt-2">Get a Free Estimate</Link>
           </div>
         </div>
       )}
@@ -96,7 +128,7 @@ export function SiteFooter() {
       <div className="container-x grid gap-10 md:grid-cols-4">
         <div className="md:col-span-1">
           <div className="bg-white rounded-xl p-3 inline-block">
-            <Image src="/logo.png" alt={site.name} width={170} height={56} className="h-11 w-auto" />
+            <Image src="/logo.png" alt={site.name} width={210} height={70} className="h-16 w-auto" />
           </div>
           <p className="mt-4 text-sm leading-relaxed">Licensed home builder & remodeler serving Central Massachusetts since {site.founded}. From foundation to final finish.</p>
           <div className="mt-4 flex gap-3 text-sm">
