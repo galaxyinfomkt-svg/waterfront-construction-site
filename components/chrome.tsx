@@ -38,7 +38,7 @@ export function SiteHeader() {
   return (
     <header className={`sticky top-0 z-50 transition ${solid ? "bg-white shadow-[0_6px_24px_-14px_rgba(20,20,43,.4)]" : "bg-white/95 backdrop-blur"}`}>
       <div className="container-x flex h-[96px] md:h-[104px] items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 shrink-0" aria-label={site.name}>
+        <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 shrink-0" aria-label={`${site.name} — back to top`}>
           <Image src="/logo.png" alt={site.name} width={300} height={100} className="h-[74px] md:h-[86px] w-auto" priority />
         </Link>
         <nav className="hidden lg:flex items-center gap-8 font-semibold text-[15px] text-ink/80">
@@ -130,7 +130,7 @@ export function SiteFooter() {
     <footer className="bg-navy text-white/80 pt-16 pb-28 md:pb-12">
       <div className="container-x grid gap-10 md:grid-cols-4">
         <div className="md:col-span-1">
-          <Link href="/" aria-label="Back to home" className="bg-white rounded-xl p-3 inline-block hover:opacity-90 transition">
+          <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Back to home top" className="bg-white rounded-xl p-3 inline-block hover:opacity-90 transition">
             <Image src="/logo.png" alt={site.name} width={210} height={70} className="h-16 w-auto" />
           </Link>
           <p className="mt-4 text-sm leading-relaxed">Licensed home builder & remodeler serving Central Massachusetts since {site.founded}. From foundation to final finish.</p>
