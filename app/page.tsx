@@ -109,7 +109,10 @@ export default function Home() {
               </Reveal>
             ))}
           </div>
-          <div className="mt-10 text-center"><Link href="/services" className="btn btn-navy text-base">View all services →</Link></div>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <Link href="/contact" className="btn btn-green text-base">Get a Free Estimate</Link>
+            <Link href="/services" className="btn btn-navy text-base">View all services →</Link>
+          </div>
         </div>
       </section>
 
