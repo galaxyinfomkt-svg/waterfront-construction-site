@@ -2,21 +2,37 @@ import Image from "next/image";
 import Link from "next/link";
 import QuoteForm from "@/components/QuoteForm";
 import Reveal from "@/components/Reveal";
-import Gallery from "@/components/Gallery";
+import Counter from "@/components/Counter";
+import FilterGallery, { type GalleryItem } from "@/components/FilterGallery";
 import JsonLd from "@/components/JsonLd";
-import { services, stats, testimonials, cities, site } from "@/lib/site";
+import { services, testimonials, cities, site } from "@/lib/site";
 import { faqs } from "@/lib/faq";
-import { posts } from "@/lib/posts";
 
-const gallery = [
-  "/images/kitchen.jpg", "/images/home-exterior.jpg", "/images/bathroom.jpg",
-  "/images/deck.jpg", "/images/remodel.jpg", "/images/siding.jpg",
+const galleryItems: GalleryItem[] = [
+  { src: "/images/kitchen.jpg", cat: "Kitchens", label: "Custom kitchen remodel" },
+  { src: "/images/remodel.jpg", cat: "Kitchens", label: "Open-concept renovation" },
+  { src: "/images/bathroom.jpg", cat: "Bathrooms", label: "Spa-style bathroom" },
+  { src: "/images/home-exterior.jpg", cat: "Siding", label: "Full exterior siding" },
+  { src: "/images/siding.jpg", cat: "Siding", label: "Fiber-cement install" },
+  { src: "/images/windows.jpg", cat: "Siding", label: "Windows & trim" },
+  { src: "/images/deck.jpg", cat: "Decks", label: "Composite deck build" },
+  { src: "/images/addition.jpg", cat: "Additions", label: "Second-story addition" },
+  { src: "/images/painting.jpg", cat: "Painting", label: "Exterior repaint" },
+  { src: "/images/kitchen.jpg", cat: "Bathrooms", label: "Tile & vanity" },
+];
+
+const tableRows = [
+  ["Kitchen Remodeling", "3–6 weeks", "Cabinets, counters, backsplash, lighting, flooring"],
+  ["Bathroom Remodeling", "2–3 weeks", "Tile, shower, vanity, fixtures, waterproofing"],
+  ["Siding", "1–2 weeks", "Tear-off, house wrap, siding, trim, soffit & fascia"],
+  ["Decks", "1–2 weeks", "Design, permits, framing, decking, railings, stairs"],
+  ["Home Additions", "2–4 months", "Design, foundation, framing, roof, full finish"],
+  ["Painting", "2–5 days", "Prep, prime, premium interior/exterior finish"],
 ];
 
 export default function Home() {
   const faqLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
+    "@context": "https://schema.org", "@type": "FAQPage",
     mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
   };
 
@@ -26,29 +42,28 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority className="object-cover kenburns" />
-        </div>
+        <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
-        <div className="blob bg-green w-72 h-72 -top-12 -left-10 spin-slow" />
-        <div className="blob bg-cyan w-80 h-80 -bottom-16 right-0" />
-        <div className="relative container-x py-20 md:py-28 grid lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
+        <div className="blob bg-cyan w-80 h-80 top-10 -right-10 spin-slow" />
+        <div className="relative container-x py-16 md:py-24 grid lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
           <div className="text-white reveal">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm backdrop-blur">
-              <span className="text-cyan">★★★★★</span><span className="text-white/90">Trusted in MetroWest since {site.founded}</span>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm backdrop-blur"><span className="text-cyan">★★★★★</span>5.0 Rating</span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-green/20 border border-green/40 px-4 py-1.5 text-sm backdrop-blur">🛡️ Licensed &amp; Insured</span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm backdrop-blur">📍 Since {site.founded}</span>
             </div>
-            <h1 className="mt-5 text-4xl md:text-6xl lg:text-[68px] font-extrabold leading-[1.02]">
+            <h1 className="mt-5 text-4xl md:text-6xl lg:text-[66px] font-extrabold leading-[1.02]">
               Renovations that add real value to the home you <span className="text-grad">already love</span>
             </h1>
             <p className="mt-5 text-lg md:text-xl text-white/85 max-w-xl">
-              Kitchens, baths, additions, siding & full remodels for homeowners across Northborough and Greater Worcester — licensed, insured, finished to the last detail.
+              Kitchens, baths, additions, siding &amp; full remodels for homeowners across Northborough and Greater Worcester — built right, from foundation to the last detail.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link href="/contact" className="btn btn-green text-base">Get a Free Estimate →</Link>
               <a href={site.phoneHref} className="btn btn-outline text-base">📞 {site.phone}</a>
             </div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/85 font-medium">
-              <span>✓ Licensed & insured</span><span>✓ Foundation to finish</span><span>✓ Owner-led & on schedule</span>
+            <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/85 font-medium">
+              <span>✓ Free estimates</span><span>✓ On time, on budget</span><span>✓ Owner-led projects</span>
             </div>
           </div>
           <div className="card p-6 md:p-7 reveal-2 border-t-4 border-t-green">
@@ -59,157 +74,238 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TRUST STRIP */}
-      <section className="bg-animated text-white">
-        <div className="container-x grid grid-cols-2 md:grid-cols-4 gap-4 py-5 text-center text-sm font-bold">
-          <div>🛡️ Licensed & Insured</div><div>🏗️ 15+ Years Experience</div>
-          <div>💬 Free, Fast Estimates</div><div>📍 30+ Towns Served</div>
-        </div>
-      </section>
-
-      {/* STATS */}
+      {/* STATS COUNTERS */}
       <section className="bg-navy text-white">
         <div className="container-x grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
-          {stats.map((s, i) => (
-            <Reveal key={s.label} delay={i * 80}>
+          {[
+            { e: 15, s: "+", l: "Years of experience" },
+            { e: 500, s: "+", l: "Projects completed" },
+            { e: 5, s: ".0★", l: "Average rating", d: 0 },
+            { e: 30, s: "+", l: "Towns served" },
+          ].map((c, i) => (
+            <Reveal key={c.l} delay={i * 70}>
               <div className="py-9 text-center">
-                <div className="text-4xl md:text-5xl font-extrabold text-cyan">{s.value}</div>
-                <div className="text-xs md:text-sm text-white/70 mt-1">{s.label}</div>
+                <div className="text-4xl md:text-5xl font-extrabold text-cyan"><Counter end={c.e} suffix={c.s} decimals={c.d ?? 0} /></div>
+                <div className="text-xs md:text-sm text-white/70 mt-1">{c.l}</div>
               </div>
             </Reveal>
           ))}
         </div>
       </section>
 
-      {/* SERVICES */}
+      {/* TRUSTED ON */}
+      <section className="bg-white border-b border-sand">
+        <div className="container-x py-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-navy/70 font-semibold text-sm">
+          <span className="text-ink/45">Trusted &amp; verified on:</span>
+          <span className="inline-flex items-center gap-1.5">🔵 Google <span className="text-cyan">★★★★★</span></span>
+          <a href={site.facebook} target="_blank" rel="noopener" className="hover:text-blue">👍 Facebook</a>
+          <a href={site.instagram} target="_blank" rel="noopener" className="hover:text-blue">📸 Instagram</a>
+          <span>🏗️ BuildZoom</span>
+          <span>✅ MA Licensed Contractor</span>
+        </div>
+      </section>
+
+      {/* ABOUT + OWNER */}
       <section className="py-20 bg-tint-blue">
+        <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
+          <Reveal>
+            <div className="relative">
+              <div className="relative h-[460px] rounded-3xl overflow-hidden shadow-card">
+                <Image src="/images/about.jpg" alt="Waterfront Construction owner on site" fill className="object-cover" />
+              </div>
+              <div className="absolute -bottom-5 -right-3 md:right-6 bg-white rounded-2xl p-4 shadow-card flex items-center gap-3">
+                <span className="w-12 h-12 rounded-full bg-grad-green text-white grid place-items-center text-xl">👷</span>
+                <div><div className="font-extrabold text-navy leading-tight">Ernando Nunes</div><div className="text-sm text-ink/60">Owner · Trusted Contractor</div></div>
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={120}>
+            <div>
+              <span className="eyebrow">About Waterfront Construction</span>
+              <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">A local builder you can actually trust</h2>
+              <p className="mt-4 text-ink/75 text-lg">Founded in {site.founded} and led by owner Ernando Nunes — with over {site.experience} years of hands-on construction experience — Waterfront Construction builds and renovates homes across Central Massachusetts, from the foundation to the final finish.</p>
+              <p className="mt-3 text-ink/70">We treat your home like our own: clear communication, honest pricing, and a finish we&apos;re proud to put our name on. The owner is personally involved in every project — no call centers, no runaround.</p>
+              <div className="mt-7 grid grid-cols-3 gap-4">
+                {[["100%", "Licensed & insured"], ["1-on-1", "Owner-led"], ["30+", "Towns served"]].map(([n, l]) => (
+                  <div key={l} className="bg-white rounded-xl p-4 text-center shadow-soft">
+                    <div className="text-2xl font-extrabold text-blue">{n}</div><div className="text-xs text-ink/60 mt-1">{l}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-7 flex gap-3"><Link href="/about" className="btn btn-navy">More about us →</Link><Link href="/contact" className="btn btn-green">Free estimate</Link></div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* SERVICES */}
+      <section className="py-20">
         <div className="container-x">
           <Reveal>
             <div className="text-center max-w-2xl mx-auto">
               <span className="eyebrow">What we do</span>
-              <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Full-service remodeling & construction</h2>
+              <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Full-service remodeling &amp; construction</h2>
               <p className="mt-3 text-ink/65 text-lg">One trusted local team for every project — interior to exterior, small repairs to full additions.</p>
             </div>
           </Reveal>
           <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.slice(0, 9).map((s, i) => (
-              <Reveal key={s.slug} delay={(i % 3) * 90}>
-                <Link href={`/services/${s.slug}`} className="group card overflow-hidden hover:-translate-y-2 hover:shadow-card transition block h-full">
+              <Reveal key={s.slug} delay={(i % 3) * 80}>
+                <div className="group card overflow-hidden pop h-full flex flex-col">
                   <div className="relative h-48 overflow-hidden">
                     <Image src={s.image} alt={s.short} fill className="object-cover zoomimg" />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/10 to-transparent" />
                     <span className="absolute top-3 left-3 text-2xl bg-white/95 rounded-xl w-11 h-11 grid place-items-center shadow">{s.icon}</span>
                     <h3 className="absolute bottom-3 left-4 right-4 font-bold text-xl text-white">{s.name}</h3>
                   </div>
-                  <div className="p-5">
+                  <div className="p-5 flex flex-col flex-1">
                     <p className="text-sm text-ink/65 line-clamp-2">{s.blurb}</p>
-                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-bold text-blue group-hover:gap-2 transition-all">Learn more →</span>
+                    <div className="mt-4 flex gap-2 pt-2">
+                      <Link href={`/services/${s.slug}`} className="btn btn-navy text-xs px-4 py-2.5 flex-1">Learn more</Link>
+                      <Link href="/contact" className="btn btn-grad text-xs px-4 py-2.5 flex-1">Free quote</Link>
+                    </div>
                   </div>
-                </Link>
+                </div>
               </Reveal>
             ))}
           </div>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Link href="/contact" className="btn btn-green text-base">Get a Free Estimate</Link>
-            <Link href="/services" className="btn btn-navy text-base">View all services →</Link>
-          </div>
+          <div className="mt-10 text-center"><Link href="/services" className="btn btn-navy text-base">View all services →</Link></div>
         </div>
       </section>
 
-      {/* CTA BAND 1 */}
-      <section className="relative overflow-hidden">
-        <Image src="/images/cta.jpg" alt="" fill className="object-cover" />
-        <div className="absolute inset-0 bg-brand-grad" style={{ opacity: 0.93 }} />
-        <div className="relative container-x py-14 flex flex-col md:flex-row items-center justify-between gap-6 text-white text-center md:text-left">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-extrabold">Planning a project? Let&apos;s talk.</h2>
-            <p className="text-white/85 mt-1">Free, no-obligation estimate — reply within one business day.</p>
+      {/* WHY CHOOSE US — 6 cards */}
+      <section className="py-20 bg-navy text-white relative overflow-hidden">
+        <div className="blob bg-blue w-96 h-96 -top-20 -left-20" />
+        <div className="container-x relative">
+          <Reveal><div className="text-center max-w-2xl mx-auto">
+            <span className="eyebrow text-cyan">Why choose Waterfront</span>
+            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold">Six reasons homeowners trust us</h2>
+          </div></Reveal>
+          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              ["🛡️", "Licensed & insured", "Full MA licensing and insurance — your home and project are protected."],
+              ["⭐", "5-star reputation", "Homeowners across MetroWest rave about our quality and communication."],
+              ["🧱", "Premium materials", "We build with quality products that hold up to New England weather."],
+              ["⏱️", "On time, on budget", "A clear schedule and honest, itemized pricing — no surprises."],
+              ["✨", "Craftsmanship first", "We sweat the details most contractors skip. The finish shows it."],
+              ["📞", "Responsive service", "Real people who answer the phone and show up when we say we will."],
+            ].map(([icon, t, d], i) => (
+              <Reveal key={t} delay={(i % 3) * 80}>
+                <div className="bg-white/10 border border-white/15 rounded-2xl p-6 backdrop-blur h-full hover:bg-white/15 transition">
+                  <span className="w-12 h-12 rounded-xl bg-grad-green grid place-items-center text-xl">{icon}</span>
+                  <h3 className="font-bold text-lg mt-3">{t}</h3>
+                  <p className="text-sm text-white/75 mt-1.5">{d}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
-          <div className="flex flex-wrap gap-3 justify-center">
-            <Link href="/contact" className="btn btn-white text-base">Get a Free Estimate</Link>
-            <a href={site.phoneHref} className="btn btn-green text-base bob">📞 {site.phone}</a>
-          </div>
+          <div className="mt-10 text-center"><Link href="/contact" className="btn btn-green text-base">Get a Free Estimate</Link></div>
         </div>
       </section>
 
-      {/* WHY US */}
+      {/* SPECIALTY DEEP-DIVE 1 */}
+      <section className="py-20">
+        <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
+          <Reveal><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
+            <Image src="/images/kitchen.jpg" alt="Kitchen and bath remodeling" fill className="object-cover zoomimg" />
+          </div></Reveal>
+          <Reveal delay={120}><div>
+            <span className="eyebrow">Kitchens &amp; bathrooms</span>
+            <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">The rooms that sell your home — done right</h2>
+            <p className="mt-4 text-ink/70 text-lg">Kitchens and baths are where homeowners get the biggest payback and the most daily joy. We manage the whole project — design, cabinets, tile, counters, plumbing and electrical — so it&apos;s seamless and stress-free.</p>
+            <ul className="mt-5 grid sm:grid-cols-2 gap-2.5">
+              {["Custom cabinets & islands", "Tile & walk-in showers", "Counters & backsplash", "Lighting & layout design"].map((f) => (
+                <li key={f} className="flex items-center gap-2 text-navy font-medium"><span className="text-green">✓</span>{f}</li>
+              ))}
+            </ul>
+            <div className="mt-6 flex gap-3"><Link href="/services/kitchen-remodeling" className="btn btn-navy">Kitchen remodeling →</Link><Link href="/services/bathroom-remodeling" className="btn btn-grad">Bathrooms →</Link></div>
+          </div></Reveal>
+        </div>
+      </section>
+
+      {/* SPECIALTY DEEP-DIVE 2 (reversed) */}
       <section className="py-20 bg-tint-green">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
-          <Reveal>
-            <div className="relative h-[440px] rounded-3xl overflow-hidden shadow-card">
-              <Image src="/images/remodel.jpg" alt="Quality craftsmanship" fill className="object-cover" />
-              <div className="absolute bottom-5 left-5 right-5 bg-white/95 rounded-2xl p-4 flex items-center gap-3 shadow">
-                <span className="text-3xl">👷</span>
-                <div><div className="font-extrabold text-navy">Owner on every job</div><div className="text-sm text-ink/60">Ernando Nunes · {site.experience}+ years</div></div>
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={120}>
-            <div>
-              <span className="eyebrow">Why Waterfront</span>
-              <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Built better, the way it should be</h2>
-              <p className="mt-4 text-ink/70 text-lg">You get craftsmanship, clear communication, and a finish that lasts — because the owner manages every project personally.</p>
-              <div className="mt-7 grid sm:grid-cols-2 gap-4">
-                {[
-                  ["🛡️", "Licensed & insured", "Full MA licensing — your home is protected.", "bg-blue/10 text-blue"],
-                  ["⏱️", "On time, on budget", "Clear timelines, honest pricing, no surprises.", "bg-green/10 text-green"],
-                  ["⭐", "Finish-obsessed", "We sweat the details most contractors skip.", "bg-cyan/15 text-blue"],
-                  ["🤝", "Local & accountable", "Real people, real references in your town.", "bg-navy/10 text-navy"],
-                ].map(([icon, t, d, chip]) => (
-                  <div key={t as string} className="flex gap-3">
-                    <span className={`shrink-0 w-11 h-11 rounded-xl grid place-items-center text-xl ${chip}`}>{icon}</span>
-                    <div><h3 className="font-bold text-navy">{t}</h3><p className="text-sm text-ink/65 mt-0.5">{d}</p></div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-8 flex gap-3"><Link href="/about" className="btn btn-navy">About us →</Link><Link href="/contact" className="btn btn-green">Free estimate</Link></div>
-            </div>
-          </Reveal>
+          <Reveal delay={120} className="lg:order-2"><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
+            <Image src="/images/home-exterior.jpg" alt="Siding and home additions" fill className="object-cover zoomimg" />
+          </div></Reveal>
+          <Reveal className="lg:order-1"><div>
+            <span className="eyebrow">Exteriors &amp; additions</span>
+            <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">More space, more curb appeal, more value</h2>
+            <p className="mt-4 text-ink/70 text-lg">From fresh siding and energy-efficient windows to decks and full home additions, we transform the outside of your home and add the room your family needs — all matched seamlessly to your existing house.</p>
+            <ul className="mt-5 grid sm:grid-cols-2 gap-2.5">
+              {["Siding & exterior trim", "Windows & doors", "Custom decks", "Room & second-story additions"].map((f) => (
+                <li key={f} className="flex items-center gap-2 text-navy font-medium"><span className="text-green">✓</span>{f}</li>
+              ))}
+            </ul>
+            <div className="mt-6 flex gap-3"><Link href="/services/siding" className="btn btn-navy">Siding →</Link><Link href="/services/home-additions" className="btn btn-grad">Additions →</Link></div>
+          </div></Reveal>
         </div>
       </section>
 
-      {/* GALLERY */}
-      <section className="py-20 bg-navy text-white">
+      {/* FILTER GALLERY */}
+      <section className="py-20">
         <div className="container-x">
-          <Reveal>
-            <div className="text-center max-w-2xl mx-auto">
-              <span className="eyebrow text-cyan">Our work</span>
-              <h2 className="mt-3 text-3xl md:text-5xl font-extrabold">Recent projects across MetroWest</h2>
-              <p className="mt-3 text-white/70 text-lg">Real homes, real transformations — from kitchens to full exteriors.</p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="mt-12"><Gallery images={gallery} /></div>
-            <p className="mt-4 text-center text-white/60 text-sm">🔍 Click any photo to view it larger</p>
-          </Reveal>
-          <div className="mt-10 text-center"><a href={site.instagram} target="_blank" rel="noopener" className="btn btn-white">See more on Instagram →</a></div>
+          <Reveal><div className="text-center max-w-2xl mx-auto">
+            <span className="eyebrow">Our work</span>
+            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Recent projects across MetroWest</h2>
+            <p className="mt-3 text-ink/65 text-lg">Filter by project type — click any photo to view it larger.</p>
+          </div></Reveal>
+          <Reveal><div className="mt-10"><FilterGallery items={galleryItems} categories={["Kitchens", "Bathrooms", "Siding", "Decks", "Additions", "Painting"]} /></div></Reveal>
+          <div className="mt-10 text-center"><a href={site.instagram} target="_blank" rel="noopener" className="btn btn-navy">See more on Instagram →</a></div>
         </div>
       </section>
 
-      {/* PROCESS */}
-      <section className="py-20 bg-tint-cyan">
+      {/* HOW IT WORKS */}
+      <section className="py-20 bg-tint-blue">
         <div className="container-x">
           <Reveal><div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow">Simple process</span>
-            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">From first call to final walkthrough</h2>
+            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">How your project works</h2>
           </div></Reveal>
           <div className="mt-12 grid md:grid-cols-4 gap-6">
             {[
-              ["01", "Free estimate", "We visit, listen, and give you a clear, honest quote.", "from-blue to-blue-500"],
-              ["02", "Design & plan", "We lock scope, materials, timeline and permits.", "from-cyan to-blue"],
-              ["03", "We build", "Clean, on-schedule work with one point of contact.", "from-green to-green-600"],
-              ["04", "Walkthrough", "We don't finish until you're 100% happy.", "from-navy to-navy-700"],
-            ].map(([n, t, d, grad], i) => (
-              <Reveal key={n} delay={i * 90}>
+              ["01", "Free estimate", "We visit, listen, and give you a clear, honest quote."],
+              ["02", "Plan & design", "We lock scope, materials, timeline and permits."],
+              ["03", "We build", "Clean, on-schedule work with one point of contact."],
+              ["04", "Walkthrough", "We don't finish until you're 100% happy."],
+            ].map(([n, t, d], i) => (
+              <Reveal key={n} delay={i * 80}>
                 <div className="relative card p-6 h-full overflow-hidden">
-                  <div className={`absolute -top-6 -right-4 text-7xl font-extrabold bg-gradient-to-br ${grad} bg-clip-text text-transparent opacity-20`}>{n}</div>
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${grad} text-white grid place-items-center font-extrabold`}>{n}</div>
+                  <div className="absolute -top-5 -right-3 text-7xl font-extrabold text-grad opacity-20">{n}</div>
+                  <div className="w-12 h-12 rounded-xl bg-grad-sunset text-white grid place-items-center font-extrabold">{n}</div>
                   <h3 className="font-bold text-navy text-lg mt-3">{t}</h3>
                   <p className="text-sm text-ink/65 mt-1.5">{d}</p>
                 </div>
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* SERVICES TABLE */}
+      <section className="py-20">
+        <div className="container-x">
+          <Reveal><div className="text-center max-w-2xl mx-auto">
+            <span className="eyebrow">At a glance</span>
+            <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Services, timelines &amp; what&apos;s included</h2>
+          </div></Reveal>
+          <Reveal><div className="mt-10 overflow-hidden rounded-2xl border border-sand shadow-soft">
+            <table className="w-full text-left">
+              <thead><tr className="bg-navy text-white text-sm">
+                <th className="p-4 font-bold">Service</th><th className="p-4 font-bold">Typical timeline</th><th className="p-4 font-bold hidden sm:table-cell">What&apos;s included</th>
+              </tr></thead>
+              <tbody>
+                {tableRows.map((r, i) => (
+                  <tr key={r[0]} className={i % 2 ? "bg-sand/40" : "bg-white"}>
+                    <td className="p-4 font-bold text-navy">{r[0]}</td>
+                    <td className="p-4 text-blue font-semibold whitespace-nowrap">{r[1]}</td>
+                    <td className="p-4 text-ink/65 text-sm hidden sm:table-cell">{r[2]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div></Reveal>
         </div>
       </section>
 
@@ -224,22 +320,25 @@ export default function Home() {
             {testimonials.map((t, i) => (
               <Reveal key={t.name} delay={i * 100}>
                 <div className="bg-white/10 border border-white/15 rounded-2xl p-6 backdrop-blur h-full">
-                  <div className="text-cyan text-xl">★★★★★</div>
-                  <p className="mt-3 text-white/90 text-[15px] leading-relaxed">&ldquo;{t.text}&rdquo;</p>
-                  <div className="mt-4 font-bold">{t.name}</div>
-                  <div className="text-sm text-white/65">{t.town}</div>
+                  <div className="text-5xl leading-none text-cyan/50 font-serif">&ldquo;</div>
+                  <p className="-mt-3 text-white/90 text-[15px] leading-relaxed">{t.text}</p>
+                  <div className="mt-4 flex items-center gap-3 pt-4 border-t border-white/15">
+                    <span className="w-10 h-10 rounded-full bg-white/20 grid place-items-center font-bold">{t.name[0]}</span>
+                    <div><div className="font-bold">{t.name}</div><div className="text-sm text-white/65">{t.town}</div></div>
+                  </div>
                 </div>
               </Reveal>
             ))}
           </div>
+          <div className="mt-10 text-center"><Link href="/reviews" className="btn btn-white text-base">Read all reviews →</Link></div>
         </div>
       </section>
 
       {/* FAQ / AEO */}
-      <section className="py-20 bg-tint-green">
+      <section className="py-20 bg-tint-blue">
         <div className="container-x grid lg:grid-cols-[.8fr_1.2fr] gap-12 items-start">
           <Reveal>
-            <div className="lg:sticky lg:top-28">
+            <div className="lg:sticky lg:top-32">
               <span className="eyebrow">Good to know</span>
               <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Frequently asked questions</h2>
               <p className="mt-3 text-ink/65">Still have a question? We&apos;re happy to help.</p>
@@ -250,7 +349,7 @@ export default function Home() {
             </div>
           </Reveal>
           <Reveal delay={120}>
-            <div className="divide-y divide-sand">
+            <div>
               {faqs.map((f) => (
                 <details key={f.q} className="group bg-white rounded-xl mb-3 p-5 shadow-[0_6px_20px_-14px_rgba(20,20,43,.4)] open:shadow-card">
                   <summary className="flex justify-between items-center cursor-pointer font-bold text-navy text-lg list-none">
@@ -269,7 +368,7 @@ export default function Home() {
         <div className="container-x text-center">
           <Reveal>
             <span className="eyebrow">Proudly local</span>
-            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Serving Northborough & 30 miles around</h2>
+            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Serving Northborough &amp; 30 miles around</h2>
             <p className="mt-3 text-ink/65 max-w-2xl mx-auto text-lg">Based in Northborough, we build across MetroWest and Worcester County.</p>
             <div className="mt-8 flex flex-wrap justify-center gap-2.5 max-w-4xl mx-auto">
               {cities.map((c) => (
@@ -280,45 +379,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BLOG */}
-      <section className="py-20 bg-tint-blue">
-        <div className="container-x">
-          <Reveal>
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <span className="eyebrow">Tips &amp; ideas</span>
-                <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">From the blog</h2>
-                <p className="mt-2 text-ink/65 text-lg">Practical advice for homeowners thinking about a project.</p>
-              </div>
-              <Link href="/blog" className="btn btn-navy">View all posts →</Link>
-            </div>
-          </Reveal>
-          <div className="mt-10 grid md:grid-cols-3 gap-7">
-            {posts.slice(0, 3).map((p, i) => (
-              <Reveal key={p.slug} delay={i * 90}>
-                <Link href={`/blog/${p.slug}`} className="group card overflow-hidden pop block h-full">
-                  <div className="relative h-48 overflow-hidden">
-                    <Image src={p.image} alt={p.title} fill className="object-cover zoomimg" />
-                    <span className="absolute top-3 left-3 bg-grad-green text-white text-xs font-bold px-3 py-1 rounded-full">{p.category}</span>
-                  </div>
-                  <div className="p-5">
-                    <span className="text-xs text-blue font-semibold uppercase tracking-wider">{p.date} · {p.read}</span>
-                    <h3 className="font-bold text-lg text-navy mt-1.5 leading-snug">{p.title}</h3>
-                    <p className="text-sm text-ink/65 mt-2 line-clamp-2">{p.excerpt}</p>
-                    <span className="mt-3 inline-block text-sm font-bold text-blue group-hover:gap-2 transition">Read more →</span>
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* FINAL CTA */}
       <section className="relative overflow-hidden bg-navy">
-        <Image src="/images/home-exterior.jpg" alt="" fill className="object-cover opacity-25" />
+        <Image src="/images/cta.jpg" alt="" fill className="object-cover opacity-25" />
         <div className="relative container-x py-20 text-center text-white">
-          <h2 className="text-3xl md:text-5xl font-extrabold">Ready to start your project?</h2>
+          <h2 className="text-3xl md:text-6xl font-extrabold">Let&apos;s build something great</h2>
           <p className="mt-4 text-white/85 text-lg max-w-xl mx-auto">Get a free, no-obligation estimate today. We reply within one business day.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/contact" className="btn btn-green text-base">Get My Free Estimate</Link>
