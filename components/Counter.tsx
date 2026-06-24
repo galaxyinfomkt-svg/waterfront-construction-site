@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 export default function Counter({ end, prefix = "", suffix = "", decimals = 0, duration = 1600 }:
   { end: number; prefix?: string; suffix?: string; decimals?: number; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [val, setVal] = useState(0);
+  // SSR / no-JS renders the final value; JS animates from 0 once in view.
+  const [val, setVal] = useState(end);
   const done = useRef(false);
 
   useEffect(() => {

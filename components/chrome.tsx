@@ -71,7 +71,7 @@ export function SiteHeader() {
           </a>
           <Link href="/contact" className="btn btn-grad text-sm">Free Estimate →</Link>
         </div>
-        <button onClick={() => setOpen(!open)} className="lg:hidden p-2 text-navy" aria-label="Menu">
+        <button type="button" onClick={() => setOpen(!open)} className="lg:hidden p-2.5 -mr-2 text-navy" aria-label="Open menu">
           <div className="space-y-1.5">
             <span className={`block h-0.5 w-6 bg-navy transition ${open ? "translate-y-2 rotate-45" : ""}`} />
             <span className={`block h-0.5 w-6 bg-navy transition ${open ? "opacity-0" : ""}`} />
@@ -146,7 +146,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div>
-          <h4 className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Services</h4>
+          <h3 className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Services</h3>
           <ul className="space-y-1.5 text-sm">
             {services.slice(0, 7).map((s) => (
               <li key={s.slug}><Link href={`/services/${s.slug}`} className="hover:text-cyan">{s.name}</Link></li>
@@ -155,7 +155,7 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h4 className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Contact</h4>
+          <h3 className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Contact</h3>
           <ul className="space-y-2 text-sm">
             <li><a href={site.phoneHref} className="hover:text-cyan font-semibold">{site.phone}</a></li>
             <li><a href={site.emailHref} className="hover:text-cyan break-all">{site.email}</a></li>
@@ -164,11 +164,11 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h4 className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Service Area (30 mi)</h4>
+          <h3 className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Service Area (30 mi)</h3>
           <p className="text-[13px] leading-relaxed">{cities.join(" · ")} & surrounding MetroWest / Worcester County.</p>
         </div>
       </div>
-      <div className="container-x mt-10 pt-6 border-t border-white/15 text-xs text-white/55 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
+      <div className="container-x mt-10 pt-6 border-t border-white/15 text-xs text-white/75 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
         <span>© {new Date().getFullYear()} {site.name}. All rights reserved.</span>
         <span>MA Home Improvement Contractor · Licensed &amp; Insured</span>
         <span>Website by <a href="https://galaxyinfo.us" target="_blank" rel="noopener" className="font-semibold text-cyan hover:text-white transition">galaxyinfo.us</a></span>

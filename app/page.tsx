@@ -46,7 +46,7 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority className="object-cover kenburns" />
+        <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority sizes="100vw" className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="blob bg-cyan w-80 h-80 top-10 -right-10 spin-slow" />
         <div className="relative container-x py-16 md:py-24 grid lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
@@ -90,7 +90,7 @@ export default function Home() {
             <Reveal key={c.l} delay={i * 70}>
               <div className="py-9 text-center">
                 <div className="text-4xl md:text-5xl font-extrabold text-cyan"><Counter end={c.e} suffix={c.s} decimals={c.d ?? 0} /></div>
-                <div className="text-xs md:text-sm text-white/70 mt-1">{c.l}</div>
+                <div className="text-xs md:text-sm text-white/85 mt-1">{c.l}</div>
               </div>
             </Reveal>
           ))}
@@ -165,8 +165,8 @@ export default function Home() {
                   <div className="p-5 flex flex-col flex-1">
                     <p className="text-sm text-ink/65 line-clamp-2">{s.blurb}</p>
                     <div className="mt-4 flex gap-2 pt-2">
-                      <Link href={`/services/${s.slug}`} className="btn btn-navy text-xs px-4 py-2.5 flex-1">Learn more</Link>
-                      <Link href="/contact" className="btn btn-grad text-xs px-4 py-2.5 flex-1">Free quote</Link>
+                      <Link href={`/services/${s.slug}`} className="btn btn-navy text-sm px-4 py-3 flex-1">Learn more</Link>
+                      <Link href="/contact" className="btn btn-grad text-sm px-4 py-3 flex-1">Free quote</Link>
                     </div>
                   </div>
                 </div>
@@ -328,7 +328,7 @@ export default function Home() {
                   <p className="-mt-3 text-white/90 text-[15px] leading-relaxed">{t.text}</p>
                   <div className="mt-4 flex items-center gap-3 pt-4 border-t border-white/15">
                     <span className="w-10 h-10 rounded-full bg-white/20 grid place-items-center font-bold">{t.name[0]}</span>
-                    <div><div className="font-bold">{t.name}</div><div className="text-sm text-white/65">{t.town}</div></div>
+                    <div><div className="font-bold">{t.name}</div><div className="text-sm text-white/80">{t.town}</div></div>
                   </div>
                 </div>
               </Reveal>

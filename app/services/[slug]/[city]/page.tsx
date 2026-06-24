@@ -5,7 +5,7 @@ import QuoteForm from "@/components/QuoteForm";
 import Gallery from "@/components/Gallery";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
-import { services, allCities, citySlug, galleryImages, site } from "@/lib/site";
+import { services, allCities, cities, citySlug, galleryImages, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
 
@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: `Looking for ${s.name.toLowerCase()} in ${cityName}, MA? Waterfront Construction is a licensed, insured contractor serving ${cityName} from our Northborough base. ★ 5.0 rated · Free estimates — call ${site.phone}.`,
     path: `/services/${s.slug}/${city}`,
     image: s.image,
+    noindex: !cities.includes(cityName),
   });
 }
 

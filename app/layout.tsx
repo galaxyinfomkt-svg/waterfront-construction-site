@@ -37,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${sora.variable}`}>
       <body>
+        <noscript><style>{`.r-up{opacity:1!important;transform:none!important}`}</style></noscript>
         <JsonLd data={graph([businessSchema, websiteSchema])} />
         <TopBar />
         <SiteHeader />

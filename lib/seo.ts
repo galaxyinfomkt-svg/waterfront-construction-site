@@ -4,13 +4,14 @@ export const SITE_URL = "https://waterfront-site.vercel.app";
 export const OG_IMAGE = `${SITE_URL}/images/hero.jpg`;
 export const GEO = { lat: 42.3195, lng: -71.6412 }; // Northborough, MA
 
-type MetaArgs = { title: string; description: string; path: string; image?: string; absoluteTitle?: boolean };
+type MetaArgs = { title: string; description: string; path: string; image?: string; absoluteTitle?: boolean; noindex?: boolean };
 
-export function pageMeta({ title, description, path, image = OG_IMAGE, absoluteTitle = false }: MetaArgs): Metadata {
+export function pageMeta({ title, description, path, image = OG_IMAGE, absoluteTitle = false, noindex = false }: MetaArgs): Metadata {
   const url = `${SITE_URL}${path}`;
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
+    ...(noindex ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical: url },
     openGraph: {
       title: absoluteTitle ? title : `${title} | Waterfront Construction Inc`,

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { services, allCities, citySlug } from "@/lib/site";
+import { services, cities, citySlug } from "@/lib/site";
 import { posts } from "@/lib/posts";
 
 const base = "https://waterfront-site.vercel.app";
@@ -17,8 +17,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
+  // Only indexable target cities in the sitemap (secondary cities are noindex)
   const cityPages: MetadataRoute.Sitemap = services.flatMap((s) =>
-    allCities.map((c) => ({
+    cities.map((c) => ({
       url: `${base}/services/${s.slug}/${citySlug(c)}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,

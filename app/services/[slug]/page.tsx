@@ -214,10 +214,10 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
               <p className="mt-3 text-ink/65">Based in Northborough, we provide {s.name.toLowerCase()} to 100+ towns nearby. Find yours:</p>
             </div>
           </Reveal>
-          <div className="mt-8 flex flex-wrap gap-2 justify-center max-w-5xl mx-auto">
+          <div className="mt-8 flex flex-wrap gap-2.5 justify-center max-w-5xl mx-auto">
             {allCities.map((c) => (
               <Link key={c} href={`/services/${s.slug}/${citySlug(c)}`}
-                className="px-3 py-1.5 rounded-full bg-sand text-[13px] font-semibold text-navy hover:bg-grad-green hover:text-white transition">
+                className="px-4 py-2 rounded-full bg-sand text-sm font-semibold text-navy hover:bg-grad-green hover:text-white transition">
                 {c}
               </Link>
             ))}
