@@ -119,7 +119,7 @@ export function FloatingCTA() {
       {/* Mobile bottom bar */}
       <div className="md:hidden fixed bottom-0 inset-x-0 z-50 grid grid-cols-2 gap-px bg-white/10">
         <a href={site.phoneHref} className="py-4 text-center font-bold text-white bg-navy">📞 Call Now</a>
-        <Link href="/contact" className="py-3.5 text-center font-bold text-white bg-green">Free Estimate</Link>
+        <Link href="/contact" className="py-4 text-center font-bold text-white bg-[#1f7a3a]">Free Estimate</Link>
       </div>
     </>
   );
