@@ -37,9 +37,10 @@ a { color: inherit; }
 .hero-overlay { background:linear-gradient(110deg,rgba(18,16,48,.93) 0%,rgba(24,33,90,.8) 40%,rgba(31,92,146,.5) 100%); }
 
 .btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; font-weight:700;
-  border-radius:9999px; padding:.85rem 1.5rem; transition:.2s ease; line-height:1; white-space:nowrap; cursor:pointer; }
-.btn-green { background:var(--color-green); color:#fff; box-shadow:0 10px 24px -8px rgba(55,162,78,.6); }
-.btn-green:hover { background:var(--color-green-600); transform:translateY(-2px); }
+  border-radius:9999px; padding:.85rem 1.5rem; min-height:48px; transition:.2s ease; line-height:1; white-space:nowrap; cursor:pointer; }
+/* darker brand green so white button text passes WCAG AA contrast */
+.btn-green { background:#1f7a3a; color:#fff; box-shadow:0 10px 24px -8px rgba(31,122,58,.55); }
+.btn-green:hover { background:#19682f; transform:translateY(-2px); }
 .btn-white { background:#fff; color:var(--color-navy); }
 .btn-white:hover { transform:translateY(-2px); box-shadow:var(--shadow-soft); }
 .btn-outline { border:2px solid rgba(255,255,255,.7); color:#fff; }
@@ -61,9 +62,14 @@ a { color: inherit; }
 .reveal-2 { animation:fadeup .7s cubic-bezier(.2,.7,.2,1) .15s both; }
 .no-scrollbar::-webkit-scrollbar{ display:none; }
 
-/* Scroll reveal */
-.r-up { opacity:0; transform:translateY(30px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1); }
-.r-up.is-in { opacity:1; transform:none; }
+/* Scroll reveal — CSS-only (no JS). Visible by default; animates on scroll where supported. */
+.r-up { opacity:1; transform:none; }
+@keyframes revealup { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:none; } }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .r-up { animation: revealup .8s linear both; animation-timeline: view(); animation-range: entry 0% cover 32%; }
+  }
+}
 
 /* Hero ken-burns */
 @keyframes kenburns { from{ transform:scale(1.08) } to{ transform:scale(1.18) } }

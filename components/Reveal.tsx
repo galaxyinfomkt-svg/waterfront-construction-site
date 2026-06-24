@@ -1,22 +1,6 @@
-"use client";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
-export default function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) { setInView(true); io.disconnect(); } }),
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  return (
-    <div ref={ref} className={`r-up ${inView ? "is-in" : ""} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
-      {children}
-    </div>
-  );
+// CSS-only scroll reveal (see .r-up in globals.css). No client JS — keeps hydration light.
+export default function Reveal({ children, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
+  return <div className={`r-up ${className}`}>{children}</div>;
 }

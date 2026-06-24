@@ -100,7 +100,7 @@ export default function Home() {
       {/* TRUSTED ON */}
       <section className="bg-white border-b border-sand">
         <div className="container-x py-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-navy/70 font-semibold text-sm">
-          <span className="text-ink/45">Trusted &amp; verified on:</span>
+          <span className="text-ink/65">Trusted &amp; verified on:</span>
           <span className="inline-flex items-center gap-1.5">🔵 Google <span className="text-cyan">★★★★★</span></span>
           <a href={site.facebook} target="_blank" rel="noopener" className="hover:text-blue">👍 Facebook</a>
           <a href={site.instagram} target="_blank" rel="noopener" className="hover:text-blue">📸 Instagram</a>
