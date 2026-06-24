@@ -16,7 +16,7 @@ export default function BlogPage() {
         <div className="container-x py-16 md:py-20">
           <span className="eyebrow text-cyan">Tips & ideas</span>
           <h1 className="mt-3 text-4xl md:text-5xl font-extrabold">The Waterfront blog</h1>
-          <p className="mt-4 text-white/85 text-lg max-w-2xl">Practical advice for homeowners — remodeling ideas, project planning, and how to protect and grow your home's value.</p>
+          <p className="mt-4 text-white/85 text-lg max-w-2xl">Practical advice for homeowners — remodeling ideas, project planning, and how to protect and grow your home&apos;s value.</p>
         </div>
       </section>
       <section className="py-16">

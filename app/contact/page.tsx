@@ -13,9 +13,9 @@ export default function ContactPage() {
     <>
       <section className="bg-brand-grad text-white">
         <div className="container-x py-16 md:py-20">
-          <span className="eyebrow text-cyan">Let's talk</span>
+          <span className="eyebrow text-cyan">Let&apos;s talk</span>
           <h1 className="mt-3 text-4xl md:text-5xl font-extrabold">Get your free estimate</h1>
-          <p className="mt-4 text-white/85 text-lg max-w-2xl">Tell us about your project and we'll get back to you within one business day. No pressure, no obligation.</p>
+          <p className="mt-4 text-white/85 text-lg max-w-2xl">Tell us about your project and we&apos;ll get back to you within one business day. No pressure, no obligation.</p>
         </div>
       </section>
 
@@ -23,7 +23,7 @@ export default function ContactPage() {
         <div className="container-x grid lg:grid-cols-[.9fr_1.1fr] gap-12">
           <div>
             <h2 className="text-2xl font-extrabold text-navy">Talk to a real person</h2>
-            <p className="text-ink/65 mt-2">Owner-led service — call, email, or send the form and you'll hear back fast.</p>
+            <p className="text-ink/65 mt-2">Owner-led service — call, email, or send the form and you&apos;ll hear back fast.</p>
             <div className="mt-8 space-y-4">
               <a href={site.phoneHref} className="flex items-center gap-4 card p-5 hover:-translate-y-1 transition">
                 <span className="text-2xl bg-sand rounded-xl w-12 h-12 grid place-items-center">📞</span>
