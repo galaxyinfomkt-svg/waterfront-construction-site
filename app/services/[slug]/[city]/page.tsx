@@ -6,6 +6,8 @@ import Gallery from "@/components/Gallery";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
 import { services, allCities, citySlug, galleryImages, site } from "@/lib/site";
+import { pageMeta } from "@/lib/seo";
+import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
 
 export function generateStaticParams() {
   const params: { slug: string; city: string }[] = [];
@@ -23,10 +25,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug, city } = await params;
   const { s, cityName } = resolve(slug, city);
   if (!s || !cityName) return {};
-  return {
-    title: `${s.short} in ${cityName}, MA | Waterfront Construction Inc`,
-    description: `Looking for ${s.name.toLowerCase()} in ${cityName}, MA? Waterfront Construction is a licensed, insured contractor serving ${cityName} from our Northborough base. Free estimates — call ${site.phone}.`,
-  };
+  return pageMeta({
+    title: `${s.short} in ${cityName}, MA`,
+    description: `Looking for ${s.name.toLowerCase()} in ${cityName}, MA? Waterfront Construction is a licensed, insured contractor serving ${cityName} from our Northborough base. ★ 5.0 rated · Free estimates — call ${site.phone}.`,
+    path: `/services/${s.slug}/${city}`,
+    image: s.image,
+  });
 }
 
 export default async function ServiceCityPage({ params }: { params: Promise<{ slug: string; city: string }> }) {
@@ -41,11 +45,15 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
     { q: `Do you provide ${s.name.toLowerCase()} in ${cityName}, MA?`, a: `Yes — ${cityName} is right in our service area. We're based in Northborough and regularly serve ${cityName} homeowners with professional ${s.name.toLowerCase()}. Call ${site.phone} for a free estimate.` },
     ...s.faqs.slice(0, 2),
   ];
-  const faqLd = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) };
+  const ld = graph([
+    breadcrumb([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: s.name, path: `/services/${s.slug}` }, { name: cityName, path: `/services/${s.slug}/${city}` }]),
+    serviceSchema(s, cityName),
+    faqSchema(faqs),
+  ]);
 
   return (
     <>
-      <JsonLd data={faqLd} />
+      <JsonLd data={ld} />
 
       {/* HERO */}
       <section className="relative overflow-hidden">

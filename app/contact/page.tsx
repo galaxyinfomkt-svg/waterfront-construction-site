@@ -1,7 +1,12 @@
 import QuoteForm from "@/components/QuoteForm";
 import { site, cities } from "@/lib/site";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = { title: "Contact | Free Estimate | Waterfront Construction Inc", description: "Request a free remodeling estimate in Northborough, MA & MetroWest. Call (508) 816-2726." };
+export const metadata = pageMeta({
+  title: "Contact Us — Free Estimate in Northborough, MA",
+  description: "Request a free, no-obligation remodeling & construction estimate in Northborough & MetroWest, MA. Call (508) 816-2726 — we reply within one business day.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

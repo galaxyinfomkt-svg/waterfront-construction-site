@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = { title: "Reviews | Waterfront Construction Inc", description: "See what homeowners across MetroWest say about Waterfront Construction." };
+export const metadata = pageMeta({
+  title: "Reviews — 5.0★ Rated Contractor in Northborough, MA",
+  description: "See why homeowners across Northborough & MetroWest rate Waterfront Construction 5 stars for kitchens, baths, siding, decks & additions. Read reviews & get a free estimate.",
+  path: "/reviews",
+});
 
 const reviews = [
   { name: "Karen M.", town: "Shrewsbury, MA", date: "May 2026", text: "Ernando's crew remodeled our kitchen and a bathroom. Clean, on schedule, and the finish work is flawless. We get compliments constantly." },

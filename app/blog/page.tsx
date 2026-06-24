@@ -1,8 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { posts } from "@/lib/posts";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = { title: "Blog | Home Remodeling Tips | Waterfront Construction", description: "Remodeling tips, project ideas and homeowner guides from a licensed MetroWest contractor." };
+export const metadata = pageMeta({
+  title: "Home Remodeling Tips & Project Ideas",
+  description: "Expert remodeling tips, project ideas and homeowner guides from a licensed Northborough & MetroWest contractor — kitchens, baths, siding, additions and more.",
+  path: "/blog",
+});
 
 export default function BlogPage() {
   return (

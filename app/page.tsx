@@ -7,6 +7,15 @@ import FilterGallery, { type GalleryItem } from "@/components/FilterGallery";
 import JsonLd from "@/components/JsonLd";
 import { services, testimonials, cities, site } from "@/lib/site";
 import { faqs } from "@/lib/faq";
+import { pageMeta } from "@/lib/seo";
+import { graph, faqSchema } from "@/lib/schema";
+
+export const metadata = pageMeta({
+  title: "Remodeling & Construction Contractor in Northborough, MA | Waterfront Construction",
+  description: "Top-rated home remodeling & construction in Northborough & MetroWest, MA. Kitchens, baths, siding, additions, decks & full remodels. ★ 5.0 rated · Licensed & insured · Free estimates.",
+  path: "/",
+  absoluteTitle: true,
+});
 
 const galleryItems: GalleryItem[] = [
   { src: "/images/kitchen.jpg", cat: "Kitchens", label: "Custom kitchen remodel" },
@@ -31,14 +40,9 @@ const tableRows = [
 ];
 
 export default function Home() {
-  const faqLd = {
-    "@context": "https://schema.org", "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-  };
-
   return (
     <>
-      <JsonLd data={faqLd} />
+      <JsonLd data={graph([faqSchema(faqs)])} />
 
       {/* HERO */}
       <section className="relative overflow-hidden">

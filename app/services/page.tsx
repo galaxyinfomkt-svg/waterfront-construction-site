@@ -1,8 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { services, site } from "@/lib/site";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = { title: "Services | Waterfront Construction Inc", description: "Remodeling & construction services in Northborough, MA — kitchens, baths, siding, additions, decks, painting and more." };
+export const metadata = pageMeta({
+  title: "Remodeling & Construction Services in Northborough, MA",
+  description: "Full-service remodeling & construction in Northborough & MetroWest, MA — kitchens, baths, siding, windows, decks, additions, painting & repairs. Licensed, insured, free estimates.",
+  path: "/services",
+});
 
 function PageHero({ title, sub }: { title: string; sub: string }) {
   return (

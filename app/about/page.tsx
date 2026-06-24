@@ -3,8 +3,13 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import Counter from "@/components/Counter";
 import { site, cities } from "@/lib/site";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata = { title: "About Us | Waterfront Construction Inc — Northborough, MA", description: "Owner-led home remodeling and construction in Northborough, MA since 2017. Meet Ernando Nunes and the Waterfront Construction team." };
+export const metadata = pageMeta({
+  title: "About Us — Owner-Led Builder in Northborough, MA",
+  description: "Owner-led home remodeling & construction in Northborough, MA since 2017. Meet Ernando Nunes — 15+ years of experience, licensed, insured, serving 100+ MetroWest towns.",
+  path: "/about",
+});
 
 const values = [
   ["🤝", "Honesty first", "Clear scope, itemized pricing, and straight answers — before, during, and after the job."],

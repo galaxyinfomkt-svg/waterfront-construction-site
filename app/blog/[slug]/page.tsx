@@ -3,6 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { posts } from "@/lib/posts";
 import { site } from "@/lib/site";
+import JsonLd from "@/components/JsonLd";
+import { pageMeta } from "@/lib/seo";
+import { graph, breadcrumb, articleSchema } from "@/lib/schema";
 
 export function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
@@ -12,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const p = posts.find((x) => x.slug === slug);
   if (!p) return {};
-  return { title: `${p.title} | Waterfront Construction`, description: p.excerpt };
+  return pageMeta({ title: p.title, description: p.excerpt, path: `/blog/${p.slug}`, image: `https://waterfront-site.vercel.app${p.image}` });
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -20,9 +23,14 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const p = posts.find((x) => x.slug === slug);
   if (!p) notFound();
   const related = posts.filter((x) => x.slug !== slug).slice(0, 2);
+  const ld = graph([
+    breadcrumb([{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }, { name: p.title, path: `/blog/${p.slug}` }]),
+    articleSchema(p),
+  ]);
 
   return (
     <>
+      <JsonLd data={ld} />
       {/* HERO */}
       <section className="relative">
         <Image src={p.image} alt={p.title} fill priority className="object-cover" />

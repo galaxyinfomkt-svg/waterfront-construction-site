@@ -6,6 +6,8 @@ import Gallery from "@/components/Gallery";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
 import { services, galleryImages, allCities, citySlug, site } from "@/lib/site";
+import { pageMeta } from "@/lib/seo";
+import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -15,7 +17,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const s = services.find((x) => x.slug === slug);
   if (!s) return {};
-  return { title: `${s.short} in Northborough, MA | Waterfront Construction`, description: s.blurb };
+  return pageMeta({
+    title: `${s.short} in Northborough & MetroWest, MA`,
+    description: `${s.blurb} Licensed & insured · serving Northborough, Worcester & 100+ MA towns. ★ 5.0 rated. Free estimates — call ${site.phone}.`,
+    path: `/services/${s.slug}`,
+    image: s.image,
+  });
 }
 
 export default async function ServiceDetail({ params }: { params: Promise<{ slug: string }> }) {
@@ -24,14 +31,15 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
   if (!s) notFound();
   const others = services.filter((x) => x.slug !== slug).slice(0, 3);
   const gallery = [s.image, ...galleryImages.filter((g) => g !== s.image)].slice(0, 6);
-  const faqLd = {
-    "@context": "https://schema.org", "@type": "FAQPage",
-    mainEntity: s.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-  };
+  const ld = graph([
+    breadcrumb([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: s.name, path: `/services/${s.slug}` }]),
+    serviceSchema(s),
+    faqSchema(s.faqs),
+  ]);
 
   return (
     <>
-      <JsonLd data={faqLd} />
+      <JsonLd data={ld} />
 
       {/* HERO */}
       <section className="relative overflow-hidden">
