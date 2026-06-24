@@ -168,9 +168,10 @@ export function SiteFooter() {
           <p className="text-[13px] leading-relaxed">{cities.join(" · ")} & surrounding MetroWest / Worcester County.</p>
         </div>
       </div>
-      <div className="container-x mt-10 pt-6 border-t border-white/15 text-xs text-white/55 flex flex-col sm:flex-row justify-between gap-2">
+      <div className="container-x mt-10 pt-6 border-t border-white/15 text-xs text-white/55 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
         <span>© {new Date().getFullYear()} {site.name}. All rights reserved.</span>
-        <span>MA Home Improvement Contractor · Licensed & Insured</span>
+        <span>MA Home Improvement Contractor · Licensed &amp; Insured</span>
+        <span>Website by <a href="https://galaxyinfo.us" target="_blank" rel="noopener" className="font-semibold text-cyan hover:text-white transition">galaxyinfo.us</a></span>
       </div>
     </footer>
   );
