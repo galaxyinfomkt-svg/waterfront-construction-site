@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: "Remodeling & Construction Contractor in Northborough, MA | Waterfront Construction",
-    template: "%s | Waterfront Construction Inc",
+    template: "%s | Waterfront Construction",
   },
   description:
     "Licensed, insured home remodeling & construction in Northborough, MA & MetroWest. Kitchens, baths, siding, additions, decks & more. ★ 5.0 rated. Free estimates — call (508) 816-2726.",

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const SITE_URL = "https://waterfront-site.vercel.app";
-export const OG_IMAGE = `${SITE_URL}/images/hero.jpg`;
+export const OG_IMAGE = `${SITE_URL}/og.jpg`;
 export const GEO = { lat: 42.3195, lng: -71.6412 }; // Northborough, MA
 
 type MetaArgs = { title: string; description: string; path: string; image?: string; absoluteTitle?: boolean; noindex?: boolean };

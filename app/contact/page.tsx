@@ -59,8 +59,8 @@ export default function ContactPage() {
             <iframe
               title="Waterfront Construction service area — Northborough, MA"
               src="https://www.google.com/maps?q=Northborough,+MA+01532&output=embed"
-              width="100%" height="380" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
-              style={{ border: 0 }} />
+              loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+              className="block w-full h-[380px] border-0" />
           </div>
         </div>
       </section>

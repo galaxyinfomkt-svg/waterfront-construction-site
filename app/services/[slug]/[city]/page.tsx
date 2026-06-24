@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { s, cityName } = resolve(slug, city);
   if (!s || !cityName) return {};
   return pageMeta({
-    title: `${s.short} in ${cityName}, MA`,
+    title: `${s.name} in ${cityName}, MA`,
     description: `Looking for ${s.name.toLowerCase()} in ${cityName}, MA? Waterfront Construction is a licensed, insured contractor serving ${cityName} from our Northborough base. ★ 5.0 rated · Free estimates — call ${site.phone}.`,
     path: `/services/${s.slug}/${city}`,
     image: s.image,
@@ -41,6 +41,13 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
 
   const nearby = allCities.filter((c) => c !== cityName).slice(0, 14);
   const gallery = [s.image, ...galleryImages.filter((g) => g !== s.image)].slice(0, 6);
+
+  const introVariants = [
+    `Looking for reliable ${s.name.toLowerCase()} in ${cityName}, Massachusetts? Waterfront Construction has served ${cityName} and the surrounding MetroWest and Worcester County area since ${site.founded}. Based right in nearby Northborough, we're a licensed, insured local team — not an out-of-town outfit — so ${cityName} homeowners get fast response, honest pricing, and craftsmanship that lasts.`,
+    `Need ${s.name.toLowerCase()} in ${cityName}, MA? As a Northborough-based, licensed and insured contractor, Waterfront Construction brings ${site.experience}+ years of hands-on experience to ${cityName} homes. From the first estimate to the final walkthrough you work directly with the owner — clear communication, fair pricing, and a finish built to last New England winters.`,
+    `Waterfront Construction is a trusted ${s.name.toLowerCase()} contractor serving ${cityName}, Massachusetts and the wider Worcester County and MetroWest region. Working from our Northborough base, we're fully licensed, insured and owner-led — known for treating every ${cityName} home like our own: on time, on budget, and done right the first time.`,
+  ];
+  const intro = introVariants[Array.from(cityName).reduce((a, c) => a + c.charCodeAt(0), 0) % introVariants.length];
 
   const faqs = [
     { q: `Do you provide ${s.name.toLowerCase()} in ${cityName}, MA?`, a: `Yes — ${cityName} is right in our service area. We're based in Northborough and regularly serve ${cityName} homeowners with professional ${s.name.toLowerCase()}. Call ${site.phone} for a free estimate.` },
@@ -90,9 +97,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
             <Reveal>
               <span className="eyebrow">{s.name} · {cityName}, MA</span>
               <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Your local {s.name.toLowerCase()} contractor in {cityName}</h2>
-              <p className="mt-4 text-ink/75 text-lg leading-relaxed">
-                Looking for reliable {s.name.toLowerCase()} in {cityName}, Massachusetts? Waterfront Construction has been serving {cityName} and the surrounding MetroWest and Worcester County area since {site.founded}. Based right in nearby Northborough, we&apos;re a licensed, insured local team — not an out-of-town outfit — so {cityName} homeowners get fast response, honest pricing, and craftsmanship that lasts.
-              </p>
+              <p className="mt-4 text-ink/75 text-lg leading-relaxed">{intro}</p>
               {s.long.map((p, i) => <p key={i} className="mt-4 text-ink/70 text-[17px] leading-relaxed">{p}</p>)}
 
               <h3 className="mt-10 text-2xl font-extrabold text-navy">What&apos;s included</h3>

@@ -52,7 +52,7 @@ export default function Home() {
         <div className="relative container-x py-16 md:py-24 grid lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
           <div className="text-white reveal">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm backdrop-blur"><span className="text-cyan">★★★★★</span>5.0 Rating</span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm backdrop-blur">💬 Free Estimates</span>
               <span className="inline-flex items-center gap-2 rounded-full bg-green/20 border border-green/40 px-4 py-1.5 text-sm backdrop-blur">🛡️ Licensed &amp; Insured</span>
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm backdrop-blur">📍 Since {site.founded}</span>
             </div>
@@ -84,12 +84,12 @@ export default function Home() {
           {[
             { e: 15, s: "+", l: "Years of experience" },
             { e: 500, s: "+", l: "Projects completed" },
-            { e: 5, s: ".0★", l: "Average rating", d: 0 },
+            { e: 100, s: "%", l: "Licensed & insured" },
             { e: 30, s: "+", l: "Towns served" },
           ].map((c, i) => (
             <Reveal key={c.l} delay={i * 70}>
               <div className="py-9 text-center">
-                <div className="text-4xl md:text-5xl font-extrabold text-cyan"><Counter end={c.e} suffix={c.s} decimals={c.d ?? 0} /></div>
+                <div className="text-4xl md:text-5xl font-extrabold text-cyan"><Counter end={c.e} suffix={c.s} decimals={0} /></div>
                 <div className="text-xs md:text-sm text-white/85 mt-1">{c.l}</div>
               </div>
             </Reveal>
@@ -100,12 +100,11 @@ export default function Home() {
       {/* TRUSTED ON */}
       <section className="bg-white border-b border-sand">
         <div className="container-x py-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-navy/70 font-semibold text-sm">
-          <span className="text-ink/65">Trusted &amp; verified on:</span>
-          <span className="inline-flex items-center gap-1.5">🔵 Google <span className="text-cyan">★★★★★</span></span>
+          <span className="text-ink/65">Find us on:</span>
           <a href={site.facebook} target="_blank" rel="noopener" className="hover:text-blue">👍 Facebook</a>
           <a href={site.instagram} target="_blank" rel="noopener" className="hover:text-blue">📸 Instagram</a>
           <span>🏗️ BuildZoom</span>
-          <span>✅ MA Licensed Contractor</span>
+          <span>✅ MA Licensed &amp; Insured</span>
         </div>
       </section>
 

@@ -3,8 +3,8 @@ import { site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
-  title: "Reviews — 5.0★ Rated Contractor in Northborough, MA",
-  description: "See why homeowners across Northborough & MetroWest rate Waterfront Construction 5 stars for kitchens, baths, siding, decks & additions. Read reviews & get a free estimate.",
+  title: "Testimonials — What Homeowners Say in Northborough, MA",
+  description: "Hear from homeowners across Northborough & MetroWest about Waterfront Construction — kitchens, baths, siding, decks & additions. Get your free estimate today.",
   path: "/reviews",
 });
 
@@ -23,16 +23,10 @@ export default function ReviewsPage() {
       <section className="bg-brand-grad text-white">
         <div className="container-x py-16 md:py-20 text-center">
           <span className="eyebrow text-cyan">Homeowners love us</span>
-          <h1 className="mt-3 text-4xl md:text-6xl font-extrabold">Reviews &amp; testimonials</h1>
-          <div className="mt-6 inline-flex items-center gap-4 bg-white/10 border border-white/20 rounded-2xl px-6 py-4 backdrop-blur">
-            <div className="text-5xl font-extrabold text-cyan">5.0</div>
-            <div className="text-left">
-              <div className="text-yellow-300 text-xl">★★★★★</div>
-              <div className="text-sm text-white/80">Based on verified homeowner reviews</div>
-            </div>
-          </div>
-          <div className="mt-6">
-            <a href="https://www.google.com/search?q=Waterfront+Construction+Inc+Northborough+MA+reviews" target="_blank" rel="noopener" className="btn btn-white">Read more on Google →</a>
+          <h1 className="mt-3 text-4xl md:text-6xl font-extrabold">What homeowners say</h1>
+          <p className="mt-4 text-white/85 text-lg max-w-2xl mx-auto">Real feedback from our remodeling &amp; construction clients across MetroWest &amp; Worcester County.</p>
+          <div className="mt-7">
+            <a href="/contact" className="btn btn-white">Get a Free Estimate →</a>
           </div>
         </div>
       </section>
