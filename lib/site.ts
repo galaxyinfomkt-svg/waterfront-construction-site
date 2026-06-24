@@ -185,6 +185,26 @@ export const cities = [
   "Ashland", "Sudbury", "Wayland", "Auburn", "Millbury", "Leicester", "Paxton", "Stow",
 ];
 
+// ~100 towns within/around 30 miles of Northborough — used for per-service local landing pages
+export const allCities = [
+  "Northborough", "Marlborough", "Westborough", "Shrewsbury", "Worcester", "Southborough",
+  "Hopkinton", "Framingham", "Natick", "Hudson", "Grafton", "Holden", "Boylston", "West Boylston",
+  "Berlin", "Bolton", "Clinton", "Sterling", "Northbridge", "Upton", "Hopedale", "Milford",
+  "Ashland", "Sudbury", "Wayland", "Auburn", "Millbury", "Leicester", "Paxton", "Stow",
+  "Maynard", "Acton", "Concord", "Sherborn", "Holliston", "Medway", "Bellingham", "Mendon",
+  "Uxbridge", "Sutton", "Oxford", "Charlton", "Spencer", "Rutland", "Princeton", "Lancaster",
+  "Harvard", "Littleton", "Boxborough", "Lunenburg", "Leominster", "Fitchburg", "Westminster",
+  "Hubbardston", "Barre", "Oakham", "Brookfield", "East Brookfield", "West Brookfield",
+  "North Brookfield", "Warren", "Ware", "Sturbridge", "Southbridge", "Dudley", "Webster",
+  "Douglas", "Blackstone", "Millville", "Franklin", "Norfolk", "Wrentham", "Walpole", "Medfield",
+  "Dover", "Wellesley", "Weston", "Lincoln", "Carlisle", "Westford", "Chelmsford", "Billerica",
+  "Bedford", "Burlington", "Waltham", "Watertown", "Newton", "Needham", "Dedham", "Westwood",
+  "Whitinsville", "Cherry Valley", "Jefferson", "Rochdale", "Fiskdale", "Baldwinville",
+  "Templeton", "Phillipston", "Devens", "Still River",
+];
+
+export const citySlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
 export const stats = [
   { value: "15+", label: "Years of experience" },
   { value: "30+", label: "Towns served" },

@@ -5,7 +5,7 @@ import QuoteForm from "@/components/QuoteForm";
 import Gallery from "@/components/Gallery";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
-import { services, galleryImages, site } from "@/lib/site";
+import { services, galleryImages, allCities, citySlug, site } from "@/lib/site";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -192,6 +192,27 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Link href="/contact" className="btn btn-green text-base">Get a Free Estimate</Link>
             <a href={site.phoneHref} className="btn btn-white text-base">📞 {site.phone}</a>
+          </div>
+        </div>
+      </section>
+
+      {/* AREAS WE SERVE */}
+      <section className="py-16">
+        <div className="container-x">
+          <Reveal>
+            <div className="text-center max-w-2xl mx-auto">
+              <span className="eyebrow">Areas we serve</span>
+              <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">{s.name} across MetroWest &amp; Worcester County</h2>
+              <p className="mt-3 text-ink/65">Based in Northborough, we provide {s.name.toLowerCase()} to 100+ towns nearby. Find yours:</p>
+            </div>
+          </Reveal>
+          <div className="mt-8 flex flex-wrap gap-2 justify-center max-w-5xl mx-auto">
+            {allCities.map((c) => (
+              <Link key={c} href={`/services/${s.slug}/${citySlug(c)}`}
+                className="px-3 py-1.5 rounded-full bg-sand text-[13px] font-semibold text-navy hover:bg-grad-green hover:text-white transition">
+                {c}
+              </Link>
+            ))}
           </div>
         </div>
       </section>
