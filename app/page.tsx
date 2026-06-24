@@ -198,7 +198,7 @@ export default function Home() {
                 <div className="bg-white/10 border border-white/15 rounded-2xl p-6 backdrop-blur h-full hover:bg-white/15 transition">
                   <span className="w-12 h-12 rounded-xl bg-grad-green grid place-items-center text-xl">{icon}</span>
                   <h3 className="font-bold text-lg mt-3">{t}</h3>
-                  <p className="text-sm text-white/75 mt-1.5">{d}</p>
+                  <p className="text-sm text-white/90 mt-1.5">{d}</p>
                 </div>
               </Reveal>
             ))}
