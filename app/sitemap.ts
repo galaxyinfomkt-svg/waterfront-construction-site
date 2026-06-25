@@ -5,7 +5,7 @@ import { posts } from "@/lib/posts";
 const base = "https://waterfront-site.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticPages: MetadataRoute.Sitemap = ["", "/services", "/about", "/reviews", "/blog", "/contact"].map((p) => ({
+  const staticPages: MetadataRoute.Sitemap = ["", "/services", "/gallery", "/service-areas", "/financing", "/about", "/reviews", "/blog", "/contact", "/privacy"].map((p) => ({
     url: `${base}${p}`,
     changeFrequency: "weekly",
     priority: p === "" ? 1 : 0.7,
