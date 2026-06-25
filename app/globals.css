@@ -26,7 +26,7 @@
 
 * { -webkit-font-smoothing: antialiased; }
 html { scroll-behavior: smooth; }
-body { background:#fff; color: var(--color-ink); font-family: var(--font-sans); overflow-x:hidden; }
+body { background:#f4f7fc; color: var(--color-ink); font-family: var(--font-sans); overflow-x:hidden; }
 h1,h2,h3,h4 { font-family: var(--font-display); letter-spacing:-0.02em; line-height:1.06; }
 
 .container-x { width:100%; max-width:1200px; margin-inline:auto; padding-inline:1.25rem; }
@@ -48,7 +48,8 @@ h1,h2,h3,h4 { font-family: var(--font-display); letter-spacing:-0.02em; line-hei
 .btn-navy:hover { background:var(--color-navy-700); transform:translateY(-2px); }
 
 .card { background:#fff; border:1px solid #eef1f6; border-radius:1rem; box-shadow:var(--shadow-soft); }
-.eyebrow { display:inline-flex; align-items:center; gap:.45rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; font-size:.72rem; color:var(--color-blue); }
+.eyebrow { display:inline-flex; align-items:center; gap:.6rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; font-size:.74rem; color:var(--color-blue); }
+.eyebrow::before { content:""; width:28px; height:3px; border-radius:3px; background:linear-gradient(90deg,#57a9d0,#37a24e); }
 
 .link-underline { position:relative; }
 .link-underline::after { content:""; position:absolute; left:0; bottom:-3px; height:2px; width:0; background:var(--color-cyan); transition:.25s; }
@@ -133,3 +134,44 @@ h1,h2,h3,h4 { font-family: var(--font-display); letter-spacing:-0.02em; line-hei
 
 @keyframes spin-slow { to { transform:rotate(360deg) } }
 .spin-slow { animation:spin-slow 26s linear infinite; }
+
+/* ===== Premium / differentiated visual system (logo palette) ===== */
+/* Dark mesh-gradient background with brand glows */
+.mesh { background-color:#191740; background-image:
+  radial-gradient(45% 60% at 12% 8%, rgba(31,92,146,.60), transparent 60%),
+  radial-gradient(40% 55% at 88% 14%, rgba(87,169,208,.40), transparent 62%),
+  radial-gradient(55% 60% at 82% 92%, rgba(55,162,78,.34), transparent 60%),
+  radial-gradient(45% 55% at 8% 95%, rgba(36,33,90,.85), transparent 60%); }
+/* Subtle dot patterns */
+.dots { background-image:radial-gradient(rgba(31,92,146,.10) 1.1px, transparent 1.1px); background-size:22px 22px; }
+.dots-light { background-image:radial-gradient(rgba(255,255,255,.07) 1.1px, transparent 1.1px); background-size:22px 22px; }
+/* Faint diagonal grid */
+.gridlines { background-image:linear-gradient(rgba(31,92,146,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(31,92,146,.06) 1px,transparent 1px); background-size:40px 40px; }
+
+/* Glassmorphism (on dark) */
+.glass { background:rgba(255,255,255,.07); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,.14); }
+.glass:hover { background:rgba(255,255,255,.11); }
+
+/* Animated gradient border card */
+.gborder { position:relative; isolation:isolate; }
+.gborder::before { content:""; position:absolute; inset:0; border-radius:inherit; padding:1.6px;
+  background:linear-gradient(135deg,#57a9d0,#37a24e 45%,#1f5c92); opacity:0; transition:opacity .35s;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
+.gborder:hover::before { opacity:1; }
+
+/* Glows */
+.glow-cyan { box-shadow:0 30px 90px -34px rgba(87,169,208,.65); }
+.glow-green { box-shadow:0 30px 90px -34px rgba(55,162,78,.55); }
+.glow-soft { box-shadow:0 40px 90px -40px rgba(20,20,43,.5); }
+.ring-accent { box-shadow:0 0 0 1px rgba(31,92,146,.10), var(--shadow-soft); }
+
+/* Section divider — soft top fade */
+.fade-top { -webkit-mask-image:linear-gradient(#000 92%, transparent); mask-image:linear-gradient(#000 92%, transparent); }
+
+/* Big watermark numeral for sections */
+.wm { font-family:var(--font-display); font-weight:800; line-height:.8; color:transparent;
+  -webkit-text-stroke:1.5px rgba(31,92,146,.12); }
+
+/* Upgraded heading underline accent */
+.head-accent { position:relative; display:inline-block; }
+.head-accent::after { content:""; position:absolute; left:0; bottom:-.35rem; height:5px; width:64px; border-radius:5px; background:linear-gradient(90deg,#1f5c92,#37a24e); }

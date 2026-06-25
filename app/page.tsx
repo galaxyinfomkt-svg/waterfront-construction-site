@@ -80,7 +80,7 @@ export default function Home() {
       </section>
 
       {/* STATS COUNTERS */}
-      <section className="bg-navy text-white">
+      <section className="mesh text-white">
         <div className="container-x grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
           {[
             { e: 15, s: "+", l: "Years of experience" },
@@ -110,7 +110,7 @@ export default function Home() {
       </section>
 
       {/* ABOUT + OWNER */}
-      <section className="py-20 bg-tint-blue">
+      <section className="py-20 bg-tint-blue gridlines">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal>
             <div className="relative">
@@ -143,7 +143,7 @@ export default function Home() {
       </section>
 
       {/* SERVICES */}
-      <section className="py-20">
+      <section className="py-20 dots">
         <div className="container-x">
           <Reveal>
             <div className="text-center max-w-2xl mx-auto">
@@ -155,7 +155,7 @@ export default function Home() {
           <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.slice(0, 9).map((s, i) => (
               <Reveal key={s.slug} delay={(i % 3) * 80}>
-                <div className="group card overflow-hidden pop h-full flex flex-col">
+                <div className="group card gborder overflow-hidden pop h-full flex flex-col">
                   <div className="relative h-48 overflow-hidden">
                     <Image src={s.image} alt={s.short} fill className="object-cover zoomimg" />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/10 to-transparent" />
@@ -178,8 +178,8 @@ export default function Home() {
       </section>
 
       {/* WHY CHOOSE US — 6 cards */}
-      <section className="py-20 bg-navy text-white relative overflow-hidden">
-        <div className="blob bg-blue w-96 h-96 -top-20 -left-20" />
+      <section className="py-20 mesh dots-light text-white relative overflow-hidden">
+        <div className="blob bg-cyan w-96 h-96 -top-20 -left-20" />
         <div className="container-x relative">
           <Reveal><div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow text-cyan">Why choose Waterfront</span>
@@ -195,7 +195,7 @@ export default function Home() {
               ["📞", "Responsive service", "Real people who answer the phone and show up when we say we will."],
             ].map(([icon, t, d], i) => (
               <Reveal key={t} delay={(i % 3) * 80}>
-                <div className="bg-white/10 border border-white/15 rounded-2xl p-6 backdrop-blur h-full hover:bg-white/15 transition">
+                <div className="glass rounded-2xl p-6 h-full transition hover:-translate-y-1">
                   <span className="w-12 h-12 rounded-xl bg-grad-green grid place-items-center text-xl">{icon}</span>
                   <h3 className="font-bold text-lg mt-3">{t}</h3>
                   <p className="text-sm text-white/90 mt-1.5">{d}</p>
@@ -208,7 +208,7 @@ export default function Home() {
       </section>
 
       {/* SPECIALTY DEEP-DIVE 1 */}
-      <section className="py-20">
+      <section className="py-20 dots">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
             <Image src="/images/kitchen.jpg" alt="Kitchen and bath remodeling" fill className="object-cover zoomimg" />
@@ -248,7 +248,7 @@ export default function Home() {
       </section>
 
       {/* FILTER GALLERY */}
-      <section className="py-20">
+      <section className="py-20 dots">
         <div className="container-x">
           <Reveal><div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow">Our work</span>
@@ -261,7 +261,7 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="py-20 bg-tint-blue">
+      <section className="py-20 bg-tint-blue gridlines">
         <div className="container-x">
           <Reveal><div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow">Simple process</span>
@@ -288,7 +288,7 @@ export default function Home() {
       </section>
 
       {/* SERVICES TABLE */}
-      <section className="py-20">
+      <section className="py-20 dots">
         <div className="container-x">
           <Reveal><div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow">At a glance</span>
@@ -314,7 +314,7 @@ export default function Home() {
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="py-20 bg-brand-grad text-white">
+      <section className="py-20 mesh dots-light text-white">
         <div className="container-x">
           <Reveal><div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow text-cyan">Homeowners love us</span>
@@ -323,7 +323,7 @@ export default function Home() {
           <div className="mt-12 grid md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
               <Reveal key={t.name} delay={i * 100}>
-                <div className="bg-white/10 border border-white/15 rounded-2xl p-6 backdrop-blur h-full">
+                <div className="glass rounded-2xl p-6 h-full">
                   <div className="text-5xl leading-none text-cyan/50 font-serif">&ldquo;</div>
                   <p className="-mt-3 text-white/90 text-[15px] leading-relaxed">{t.text}</p>
                   <div className="mt-4 flex items-center gap-3 pt-4 border-t border-white/15">
@@ -339,7 +339,7 @@ export default function Home() {
       </section>
 
       {/* FAQ / AEO */}
-      <section className="py-20 bg-tint-blue">
+      <section className="py-20 bg-tint-blue gridlines">
         <div className="container-x grid lg:grid-cols-[.8fr_1.2fr] gap-12 items-start">
           <Reveal>
             <div className="lg:sticky lg:top-32">
@@ -368,7 +368,7 @@ export default function Home() {
       </section>
 
       {/* SERVICE AREA */}
-      <section className="py-20">
+      <section className="py-20 dots">
         <div className="container-x text-center">
           <Reveal>
             <span className="eyebrow">Proudly local</span>
@@ -384,8 +384,8 @@ export default function Home() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="relative overflow-hidden bg-navy">
-        <Image src="/images/cta.jpg" alt="" fill className="object-cover opacity-25" />
+      <section className="relative overflow-hidden mesh">
+        <Image src="/images/cta.jpg" alt="" fill className="object-cover opacity-20" />
         <div className="relative container-x py-20 text-center text-white">
           <h2 className="text-3xl md:text-6xl font-extrabold">Let&apos;s build something great</h2>
           <p className="mt-4 text-white/85 text-lg max-w-xl mx-auto">Get a free, no-obligation estimate today. We reply within one business day.</p>
