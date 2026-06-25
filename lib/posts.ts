@@ -6,6 +6,41 @@ export type Post = {
 
 export const posts: Post[] = [
   {
+    slug: "kitchen-remodel-cost-massachusetts",
+    title: "How Much Does a Kitchen Remodel Cost in Massachusetts? (2026 Guide)",
+    excerpt: "A clear breakdown of kitchen remodeling costs in MetroWest MA — by scope, materials, and what really drives the price.",
+    image: "/images/kitchen.jpg",
+    date: "June 20, 2026",
+    read: "6 min read",
+    category: "Cost Guide",
+    lead: "“What will my kitchen remodel cost?” is the first question every homeowner asks — and the honest answer is: it depends. Here is a transparent, no-hype breakdown of what kitchen remodels actually cost in MetroWest Massachusetts, and what moves the number up or down.",
+    sections: [
+      { h: "Typical kitchen remodel cost ranges in MA", p: [
+        "Costs vary with the size of your kitchen, the materials you choose, and how much you change the layout. As a general guide for Central Massachusetts homes:",
+      ], ul: [
+        "Minor refresh (paint, cabinet refacing, new counters & hardware): roughly $15,000–$25,000",
+        "Mid-range remodel (new cabinets, countertops, backsplash, flooring, lighting): roughly $25,000–$45,000",
+        "Major / high-end remodel (layout changes, island, custom cabinetry, premium finishes): roughly $45,000–$60,000+",
+      ]},
+      { h: "What drives the price", p: [
+        "A few choices have an outsized effect on your final number. Knowing them up front helps you build a kitchen you love without surprises.",
+      ], ul: [
+        "Cabinets — usually the single biggest line item (stock vs. semi-custom vs. custom)",
+        "Countertops — laminate, quartz, and natural stone span a wide price range",
+        "Layout changes — moving plumbing, gas, or walls adds labor and trades",
+        "Appliances — entry-level to professional-grade is a big swing",
+        "Hidden conditions — older homes can hide outdated wiring or plumbing behind the walls",
+      ]},
+      { quote: "The smartest budget isn’t the lowest one — it’s the one with no surprises. That starts with a detailed, itemized estimate." },
+      { h: "How to get the most value", p: [
+        "You don't have to spend the most to get a kitchen you love. Keeping the existing layout, refacing solid cabinets, and choosing durable mid-range materials often delivers the biggest visual change per dollar. A good contractor will show you where to invest and where to save.",
+      ]},
+      { h: "Get a real number for your kitchen", p: [
+        "Ranges are useful, but the only accurate figure is one based on your actual kitchen. Waterfront Construction provides free, detailed, itemized estimates for homeowners across Northborough and MetroWest — with honest options for every budget. Call (508) 816-2726 to get started.",
+      ]},
+    ],
+  },
+  {
     slug: "5-remodels-that-add-the-most-home-value",
     title: "5 Remodels That Add the Most Value to Your Home",
     excerpt: "Thinking about renovating? These projects give Massachusetts homeowners the best return on investment.",

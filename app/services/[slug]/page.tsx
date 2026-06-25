@@ -8,6 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import { services, galleryImages, allCities, citySlug, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
+import { commonFaqs } from "@/lib/faq";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -31,10 +32,11 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
   if (!s) notFound();
   const others = services.filter((x) => x.slug !== slug).slice(0, 3);
   const gallery = [s.image, ...galleryImages.filter((g) => g !== s.image)].slice(0, 6);
+  const allFaqs = [...s.faqs, ...commonFaqs(s.name)];
   const ld = graph([
     breadcrumb([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: s.name, path: `/services/${s.slug}` }]),
     serviceSchema(s),
-    faqSchema(s.faqs),
+    faqSchema(allFaqs),
   ]);
 
   return (
@@ -178,7 +180,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
           </Reveal>
           <Reveal delay={100}>
             <div>
-              {s.faqs.map((f) => (
+              {allFaqs.map((f) => (
                 <details key={f.q} className="group bg-white rounded-xl mb-3 p-5 shadow-[0_6px_20px_-14px_rgba(20,20,43,.4)] open:shadow-card">
                   <summary className="flex justify-between items-center cursor-pointer font-bold text-navy text-lg list-none">
                     {f.q}<span className="ml-4 text-blue text-2xl group-open:rotate-45 transition shrink-0">+</span>

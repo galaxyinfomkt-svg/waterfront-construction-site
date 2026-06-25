@@ -55,6 +55,7 @@ export default function Home() {
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm backdrop-blur">💬 Free Estimates</span>
               <span className="inline-flex items-center gap-2 rounded-full bg-green/20 border border-green/40 px-4 py-1.5 text-sm backdrop-blur">🛡️ Licensed &amp; Insured</span>
               <span className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm backdrop-blur">📍 Since {site.founded}</span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-cyan/20 border border-cyan/40 px-4 py-1.5 text-sm backdrop-blur">🏆 BuildZoom Score 94</span>
             </div>
             <h1 className="mt-5 text-4xl md:text-6xl lg:text-[66px] font-extrabold leading-[1.02]">
               Renovations that add real value to the home you <span className="text-grad">already love</span>
@@ -103,7 +104,7 @@ export default function Home() {
           <span className="text-ink/65">Find us on:</span>
           <a href={site.facebook} target="_blank" rel="noopener" className="hover:text-blue">👍 Facebook</a>
           <a href={site.instagram} target="_blank" rel="noopener" className="hover:text-blue">📸 Instagram</a>
-          <span>🏗️ BuildZoom</span>
+          <span>🏗️ BuildZoom Score 94 <span className="text-ink/45">(Top 24% in MA)</span></span>
           <span>✅ MA Licensed &amp; Insured</span>
         </div>
       </section>

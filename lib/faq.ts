@@ -1,5 +1,19 @@
 export type Faq = { q: string; a: string };
 
+// Shared, AEO-optimized FAQs tailored per service (combined with each service's specific FAQs → 10+ per page)
+export function commonFaqs(service: string): Faq[] {
+  const s = service.toLowerCase();
+  return [
+    { q: `Is Waterfront Construction licensed and insured?`, a: `Yes. Waterfront Construction is a licensed Massachusetts Home Improvement Contractor and fully insured, so your home and your ${s} project are protected from start to finish.` },
+    { q: `Do you offer free estimates for ${s}?`, a: `Always. Estimates are free and no-obligation. Call (508) 816-2726 or request one online and we'll respond within one business day.` },
+    { q: `How much does ${s} cost in Massachusetts?`, a: `Cost depends on the size, materials and scope of your project. After a quick visit we provide a detailed, itemized estimate with honest options for every budget — no surprises or pressure.` },
+    { q: `How long does a ${s} project take?`, a: `Timelines vary by project size. We give you a clear schedule before we start, work hard to stay on it, and keep you updated at every stage.` },
+    { q: `What towns do you serve?`, a: `We're based in Northborough, MA and serve 30+ towns within about 30 miles across MetroWest and Worcester County — including Marlborough, Westborough, Shrewsbury, Worcester, Framingham, Natick and Hudson.` },
+    { q: `Do you handle permits and inspections?`, a: `Yes. As your licensed contractor we pull the required permits and coordinate inspections, so you don't have to deal with the paperwork.` },
+    { q: `Do you stand behind your work?`, a: `We do. We don't consider a ${s} job finished until you're completely satisfied, and we're available if anything needs attention after the project is complete.` },
+  ];
+}
+
 export const faqs: Faq[] = [
   {
     q: "What areas does Waterfront Construction serve?",
