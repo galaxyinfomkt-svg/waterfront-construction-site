@@ -5,7 +5,10 @@ import Link from "next/link";
 export default function CookieConsent() {
   const [show, setShow] = useState(false);
   useEffect(() => {
-    try { if (!localStorage.getItem("wf-cookie")) setShow(true); } catch { /* ignore */ }
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (!localStorage.getItem("wf-cookie")) setShow(true);
+    } catch { /* ignore */ }
   }, []);
   const choose = (v: "accepted" | "declined") => {
     try { localStorage.setItem("wf-cookie", v); } catch { /* ignore */ }
