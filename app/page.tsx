@@ -31,11 +31,11 @@ const galleryItems: GalleryItem[] = [
 ];
 
 const tableRows = [
-  ["Kitchen Remodeling", "3–6 weeks", "Cabinets, counters, backsplash, lighting, flooring"],
-  ["Bathroom Remodeling", "2–3 weeks", "Tile, shower, vanity, fixtures, waterproofing"],
+  ["Kitchen & Bathroom Remodeling", "2–6 weeks", "Cabinets, tile, counters, fixtures, waterproofing"],
+  ["Additions & Remodeling", "2–4 months", "Design, foundation, framing, roof, full finish"],
   ["Siding", "1–2 weeks", "Tear-off, house wrap, siding, trim, soffit & fascia"],
+  ["Windows & Doors", "1–3 days", "Energy-efficient windows, entry & patio doors, trim"],
   ["Decks", "1–2 weeks", "Design, permits, framing, decking, railings, stairs"],
-  ["Home Additions", "2–4 months", "Design, foundation, framing, roof, full finish"],
   ["Painting", "2–5 days", "Prep, prime, premium interior/exterior finish"],
 ];
 
@@ -222,7 +222,7 @@ export default function Home() {
                 <li key={f} className="flex items-center gap-2 text-navy font-medium"><span className="text-green">✓</span>{f}</li>
               ))}
             </ul>
-            <div className="mt-6 flex gap-3"><Link href="/services/kitchen-remodeling" className="btn btn-navy">Kitchen remodeling →</Link><Link href="/services/bathroom-remodeling" className="btn btn-grad">Bathrooms →</Link></div>
+            <div className="mt-6 flex gap-3"><Link href="/services/kitchen-bathroom-remodeling" className="btn btn-navy">Kitchen & bathrooms →</Link><Link href="/contact" className="btn btn-grad">Free estimate →</Link></div>
           </div></Reveal>
         </div>
       </section>
@@ -242,7 +242,7 @@ export default function Home() {
                 <li key={f} className="flex items-center gap-2 text-navy font-medium"><span className="text-green">✓</span>{f}</li>
               ))}
             </ul>
-            <div className="mt-6 flex gap-3"><Link href="/services/siding" className="btn btn-navy">Siding →</Link><Link href="/services/home-additions" className="btn btn-grad">Additions →</Link></div>
+            <div className="mt-6 flex gap-3"><Link href="/services/siding" className="btn btn-navy">Siding →</Link><Link href="/services/home-additions-remodeling" className="btn btn-grad">Additions →</Link></div>
           </div></Reveal>
         </div>
       </section>

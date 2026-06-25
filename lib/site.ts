@@ -59,31 +59,17 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "kitchen-remodeling", name: "Kitchen Remodeling", short: "Custom Kitchen Remodeling", icon: "🍽️", image: "/images/kitchen.jpg",
-    blurb: "From refreshed cabinets to full gut renovations — a kitchen built around how your family actually lives.",
-    features: ["Custom cabinets & islands", "Countertops & backsplash", "Lighting & layout design", "Flooring, plumbing & electrical", "Full project management", "On-time, on-budget delivery"],
+    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling", icon: "🍽️", image: "/images/kitchen.jpg",
+    blurb: "The two rooms that sell your home and you use every day — beautiful kitchens and spa-like bathrooms, managed start to finish.",
+    features: ["Custom cabinets & islands", "Tile & walk-in showers", "Countertops & backsplash", "Vanities, fixtures & lighting", "Plumbing, electrical & waterproofing", "Full project management"],
     long: [
-      "The kitchen is the heart of the home — and the room buyers care about most. Whether you want a fresh, modern look or a full layout change with an island and better flow, a well-designed kitchen makes everyday life better and adds real value at resale.",
-      "We manage your entire kitchen remodel under one roof: cabinets, countertops, backsplash, lighting, flooring, and the plumbing and electrical behind the walls. One accountable team, one clear timeline, and a finish you'll love to cook in.",
+      "Kitchens and bathrooms are where homeowners get the biggest return and the most daily enjoyment. Whether you want a fresh, modern kitchen with an island or a spa-like bathroom with a custom tile shower, we design and build it around how your family actually lives — and add real value at resale.",
+      "We manage the entire project under one roof: cabinets, countertops, tile, vanities, fixtures and lighting, plus the plumbing, electrical and waterproofing behind the walls. One accountable team, one clear timeline, and a finish built to last.",
     ],
     faqs: [
-      { q: "How much does a kitchen remodel cost?", a: "It depends on size, materials, and how much you change the layout. After a quick visit we give you a detailed, itemized estimate with honest options for every budget." },
-      { q: "How long does a kitchen remodel take?", a: "A typical kitchen takes about 3–6 weeks once materials are in. We give you a clear schedule up front and work hard to stay on it." },
+      { q: "How much does a kitchen or bathroom remodel cost in Massachusetts?", a: "It depends on size, materials, and how much you change the layout. After a quick visit we give you a detailed, itemized estimate with honest options for every budget." },
+      { q: "How long does a kitchen or bathroom remodel take?", a: "Bathrooms typically take 2–3 weeks and kitchens about 3–6 weeks once materials are in. We give you a clear schedule up front and work hard to stay on it." },
       { q: "Can I stay in my home during the remodel?", a: "In most cases, yes. We set up containment, keep the site clean, and plan the work to minimize disruption to your daily routine." },
-    ],
-  },
-  {
-    slug: "bathroom-remodeling", name: "Bathroom Remodeling", short: "Bathroom Remodeling", icon: "🛁", image: "/images/bathroom.jpg",
-    blurb: "Spa-like bathrooms with quality tile, modern fixtures, and waterproofing done right — built to add lasting value.",
-    features: ["Custom tile & walk-in showers", "Vanities & fixtures", "Waterproofing & plumbing", "Heated floors & lighting", "Accessible & curbless options", "Clean, protected job sites"],
-    long: [
-      "A dated bathroom is one of the first things buyers notice — and one of the upgrades you'll enjoy most every single day. From a clean refresh to a full gut renovation with a custom tile shower, we build bathrooms that feel like a spa and are waterproofed to last.",
-      "We handle tile, vanities, fixtures, lighting, and the critical waterproofing and plumbing behind the scenes. Done right the first time, your new bathroom stays beautiful and leak-free for years.",
-    ],
-    faqs: [
-      { q: "How long does a bathroom remodel take?", a: "Most bathrooms are completed in about 2–3 weeks depending on scope and tile work. We give you a firm timeline before starting." },
-      { q: "Do you build walk-in and curbless showers?", a: "Yes. We build custom tile showers, walk-in and curbless designs, and accessible upgrades — all properly waterproofed for a leak-free result." },
-      { q: "What if you find hidden water damage?", a: "If we find rot or water damage during demolition, we'll show you and address it the right way so your new bathroom is built on a solid, dry foundation." },
     ],
   },
   {
@@ -101,17 +87,17 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "home-additions", name: "Home Additions", short: "Home Additions & Expansions", icon: "📐", image: "/images/addition.jpg",
-    blurb: "Need more room? We design and build additions — from sunrooms to second stories — that blend seamlessly with your home.",
-    features: ["Room & second-story additions", "In-law suites & sunrooms", "Foundation to final finish", "Design-build process", "Roofline & siding matching", "Permits & engineering handled"],
+    slug: "home-additions-remodeling", name: "Additions & Remodeling", short: "Home Additions & Remodeling", icon: "📐", image: "/images/addition.jpg",
+    blurb: "Need more room or a whole-home refresh? From additions and second stories to full renovations — foundation to final finish, one trusted team.",
+    features: ["Room & second-story additions", "In-law suites & sunrooms", "Whole-home renovations", "Basement finishing", "Foundation to final finish", "Design-build process"],
     long: [
-      "When you love your neighborhood but you're running out of room, an addition is almost always smarter than moving — no realtor fees, no moving trucks, just a home that finally fits your family. From a sunroom or in-law suite to a full second story, we design and build additions that look like they were always there.",
-      "As a design-build team, we manage everything from foundation and framing to the final finish — matching your roofline, siding, and interior so the new space blends seamlessly with the old. One team, one plan, from blueprint to move-in.",
+      "When you love your neighborhood but need more space — or you want your whole home to feel new again — Waterfront Construction builds additions and full remodels that fit your life. From a sunroom or second story to an open-concept renovation, we design and build it to blend seamlessly with your home.",
+      "As a design-build team we manage everything from foundation and framing to the final finish, coordinating every trade so you have a single point of contact and zero finger-pointing — on time, on budget, and matched to your existing home.",
     ],
     faqs: [
-      { q: "How long does a home addition take?", a: "Additions are larger projects and typically run 2–4 months depending on size and complexity. We give you a detailed schedule and keep you informed at every stage." },
-      { q: "Do you handle design and permits?", a: "Yes. We're a design-build contractor, so we handle the design, engineering, permits, and construction — a single point of contact for the whole project." },
-      { q: "Will the addition match my existing home?", a: "That's our specialty. We carefully match rooflines, siding, windows, and interior finishes so the addition looks original, not bolted-on." },
+      { q: "How long does a home addition or full remodel take?", a: "Larger projects typically run 2–4 months depending on size and complexity. We provide a detailed schedule and keep you informed at every stage." },
+      { q: "Do you handle design and permits?", a: "Yes. We're a design-build contractor, so we handle design, engineering, permits, and construction — a single point of contact for the whole project." },
+      { q: "Will the new space match my existing home?", a: "That's our specialty. We match rooflines, siding, windows, and interior finishes so additions look original and remodels feel cohesive." },
     ],
   },
   {
@@ -126,48 +112,6 @@ export const services: Service[] = [
       { q: "Do you do both interior and exterior painting?", a: "Yes — interior rooms, trim, cabinets, and full exteriors. We use premium paints suited to New England weather for long-lasting results." },
       { q: "How long will the paint last?", a: "With proper prep and quality paint, interiors stay fresh for many years and a good exterior job typically lasts 7–10 years or more depending on exposure." },
       { q: "Can you help me choose colors?", a: "Absolutely. We offer color consultation to help you pick shades that suit your home, your light, and your style." },
-    ],
-  },
-  {
-    slug: "home-remodeling", name: "Home Remodeling", short: "Full Home Remodeling", icon: "🛠️", image: "/images/remodel.jpg",
-    blurb: "Whole-home renovations from foundation to final finish — one trusted team managing every trade and every detail.",
-    features: ["Whole-home renovations", "Basement finishing", "Open-concept conversions", "All trades coordinated", "Single point of contact", "Clear schedule & budget"],
-    long: [
-      "Sometimes a single room isn't enough — you want your whole home to feel new again. A whole-home remodel lets you rethink your layout, open up cramped spaces, and bring every room up to a consistent, modern standard, all managed by one trusted team.",
-      "We handle whole-home renovations from foundation to final finish — coordinating every trade, every material, and every detail so you have a single point of contact and zero finger-pointing. The result is a home that works the way you live.",
-    ],
-    faqs: [
-      { q: "Can you remodel my whole home at once?", a: "Yes. We coordinate all trades and phases so a full renovation runs smoothly, and we can sequence the work so you can stay in your home when possible." },
-      { q: "Do you finish basements too?", a: "We do — finished basements add valuable living space for family rooms, home offices, gyms, or in-law suites." },
-      { q: "How do you keep a big project on track?", a: "With one accountable team, a clear written scope and schedule, and constant communication. You always know what's happening and what's next." },
-    ],
-  },
-  {
-    slug: "trim-and-carpentry", name: "Trim & Carpentry", short: "Trim & Finish Carpentry", icon: "📏", image: "/images/home-exterior.jpg",
-    blurb: "Custom trim, molding, and finish carpentry that gives every room a polished, high-end look.",
-    features: ["Crown & baseboard molding", "Wainscoting & coffered ceilings", "Custom built-ins & mantels", "Doors & casings", "Tight joints, clean lines", "Match or upgrade existing trim"],
-    long: [
-      "The details are what separate an ordinary room from a finished, high-end space. Custom trim, crown molding, wainscoting, and built-ins add character, warmth, and value that buyers and guests notice immediately.",
-      "Our finish carpenters craft and install crown and baseboard molding, custom built-ins, doors, casings, and architectural details — all with the tight joints and clean lines that mark true craftsmanship.",
-    ],
-    faqs: [
-      { q: "What kind of trim work do you do?", a: "Crown molding, baseboards, wainscoting, coffered ceilings, custom built-ins, mantels, doors, and casings — anything that adds a polished, finished look." },
-      { q: "Can custom built-ins really add value?", a: "Yes. Quality built-ins add storage, character, and a custom feel that makes a home stand out and feel more expensive." },
-      { q: "Do you match existing molding?", a: "We do. We can match your home's existing profiles or help you upgrade to a new, cohesive trim package throughout." },
-    ],
-  },
-  {
-    slug: "repairs", name: "Repairs", short: "Small & Large Repairs", icon: "🔧", image: "/images/cta.jpg",
-    blurb: "From quick fixes to major repairs after storm or wear — reliable, licensed help you can count on.",
-    features: ["Carpentry & structural repair", "Water & rot repair", "Storm & damage repair", "Door, window & trim fixes", "Honest, upfront pricing", "No job too small"],
-    long: [
-      "Not every project is a full remodel — sometimes you just need something fixed right by someone you can trust. From storm damage and water-rotted boards to that list of nagging repairs you've been putting off, we handle the jobs other contractors won't return calls for.",
-      "As a licensed, insured contractor, we tackle carpentry, structural fixes, water and rot repair, and storm damage with honest, upfront pricing. No job is too small to do correctly.",
-    ],
-    faqs: [
-      { q: "Do you take on small repair jobs?", a: "Yes. We handle both small and large repairs — and we treat the small ones with the same care and professionalism as a full remodel." },
-      { q: "Can you help with storm or water damage?", a: "Absolutely. We repair water and rot damage, storm damage, and structural issues, and we can work with your insurance documentation when needed." },
-      { q: "Do you give estimates for repairs?", a: "Yes — repair estimates are free and upfront, so you know the cost before any work begins." },
     ],
   },
 ];
