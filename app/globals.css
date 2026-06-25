@@ -103,9 +103,9 @@ h1,h2,h3,h4 { font-family: var(--font-display); letter-spacing:-0.02em; line-hei
 .prose blockquote { border-left:4px solid var(--color-cyan); background:var(--color-sand); padding:1rem 1.25rem; border-radius:0 .6rem .6rem 0; font-size:1.15rem; color:var(--color-navy); font-weight:500; margin:1.6rem 0; }
 
 /* Color variety — strictly within the logo palette (navy / blue / cyan / green) */
-.bg-tint-blue { background:#eef4fb; }
-.bg-tint-cyan { background:#ecf6fb; }
-.bg-tint-green { background:#edf7f1; }
+.bg-tint-blue { background:#e1eafb; }
+.bg-tint-cyan { background:#e2f1f9; }
+.bg-tint-green { background:#dff0e7; }
 .bg-grad-green { background:linear-gradient(135deg,#37a24e 0%,#57a9d0 100%); }
 .bg-grad-sunset { background:linear-gradient(120deg,#24215a 0%,#1f5c92 42%,#57a9d0 72%,#37a24e 100%); }
 .text-grad-green { background:linear-gradient(90deg,#37a24e,#57a9d0); -webkit-background-clip:text; background-clip:text; color:transparent; }

@@ -210,7 +210,7 @@ export default function Home() {
       </section>
 
       {/* SPECIALTY DEEP-DIVE 1 */}
-      <section className="py-20 dots">
+      <section className="py-20 bg-sand">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
             <Image src="/images/kitchen.jpg" alt="Kitchen and bath remodeling" fill className="object-cover zoomimg" />
@@ -250,15 +250,15 @@ export default function Home() {
       </section>
 
       {/* FILTER GALLERY */}
-      <section className="py-20 dots">
+      <section className="py-24 mesh dots-light text-white slant-top">
         <div className="container-x">
           <Reveal><div className="text-center max-w-2xl mx-auto">
-            <span className="eyebrow">Our work</span>
-            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Recent projects across MetroWest</h2>
-            <p className="mt-3 text-ink/65 text-lg">Filter by project type — click any photo to view it larger.</p>
+            <span className="eyebrow text-cyan">Our work</span>
+            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold">Recent projects across MetroWest</h2>
+            <p className="mt-3 text-white/75 text-lg">Filter by project type — click any photo to view it larger.</p>
           </div></Reveal>
           <Reveal><div className="mt-10"><FilterGallery items={galleryItems} categories={["Kitchens", "Bathrooms", "Siding", "Decks", "Additions", "Painting"]} /></div></Reveal>
-          <div className="mt-10 text-center"><a href={site.instagram} target="_blank" rel="noopener" className="btn btn-navy">See more on Instagram →</a></div>
+          <div className="mt-10 text-center"><a href={site.instagram} target="_blank" rel="noopener" className="btn btn-white">See more on Instagram →</a></div>
         </div>
       </section>
 
@@ -290,7 +290,7 @@ export default function Home() {
       </section>
 
       {/* SERVICES TABLE */}
-      <section className="py-20 dots">
+      <section className="py-20 bg-sand">
         <div className="container-x">
           <Reveal><div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow">At a glance</span>
@@ -341,7 +341,7 @@ export default function Home() {
       </section>
 
       {/* FAQ / AEO */}
-      <section className="py-20 bg-tint-blue gridlines">
+      <section className="py-20 bg-tint-green">
         <div className="container-x grid lg:grid-cols-[.8fr_1.2fr] gap-12 items-start">
           <Reveal>
             <div className="lg:sticky lg:top-32">
