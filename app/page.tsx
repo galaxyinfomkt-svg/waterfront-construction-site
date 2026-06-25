@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import QuoteForm from "@/components/QuoteForm";
+import LeadForm from "@/components/LeadForm";
 import Reveal from "@/components/Reveal";
 import Counter from "@/components/Counter";
 import FilterGallery, { type GalleryItem } from "@/components/FilterGallery";
@@ -48,7 +48,9 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority sizes="100vw" className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
+        <div className="absolute inset-0 dots-light opacity-50" />
         <div className="blob bg-cyan w-80 h-80 top-10 -right-10 spin-slow" />
+        <div className="blob bg-green w-72 h-72 -bottom-16 left-1/3" />
         <div className="relative container-x py-16 md:py-24 grid lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
           <div className="text-white reveal">
             <div className="flex flex-wrap items-center gap-2.5">
@@ -74,7 +76,7 @@ export default function Home() {
           <div className="card p-6 md:p-7 reveal-2 border-t-4 border-t-green">
             <h2 className="text-xl font-bold text-navy">Get your free estimate</h2>
             <p className="text-sm text-ink/60 mt-1 mb-4">Tell us about your project — we reply within 1 business day.</p>
-            <QuoteForm />
+            <LeadForm height={500} />
           </div>
         </div>
       </section>
@@ -178,7 +180,7 @@ export default function Home() {
       </section>
 
       {/* WHY CHOOSE US — 6 cards */}
-      <section className="py-20 mesh dots-light text-white relative overflow-hidden">
+      <section className="py-24 mesh dots-light text-white relative overflow-hidden slant-both">
         <div className="blob bg-cyan w-96 h-96 -top-20 -left-20" />
         <div className="container-x relative">
           <Reveal><div className="text-center max-w-2xl mx-auto">
@@ -314,7 +316,7 @@ export default function Home() {
       </section>
 
       {/* TESTIMONIALS */}
-      <section className="py-20 mesh dots-light text-white">
+      <section className="py-24 mesh dots-light text-white slant-top">
         <div className="container-x">
           <Reveal><div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow text-cyan">Homeowners love us</span>

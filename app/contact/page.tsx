@@ -1,4 +1,4 @@
-import QuoteForm from "@/components/QuoteForm";
+import LeadForm from "@/components/LeadForm";
 import { site, cities } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 
@@ -48,7 +48,7 @@ export default function ContactPage() {
           <div className="card p-6 md:p-8">
             <h2 className="text-xl font-bold text-navy">Request a free estimate</h2>
             <p className="text-sm text-ink/60 mt-1 mb-5">We reply within 1 business day.</p>
-            <QuoteForm />
+            <LeadForm height={560} />
           </div>
         </div>
       </section>

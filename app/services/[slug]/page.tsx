@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import QuoteForm from "@/components/QuoteForm";
+import LeadForm from "@/components/LeadForm";
 import Gallery from "@/components/Gallery";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
@@ -93,7 +93,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
             <div className="card p-6 sticky top-32 border-t-4 border-t-green">
               <h3 className="text-lg font-bold text-navy">Free {s.name} estimate</h3>
               <p className="text-sm text-ink/60 mt-1 mb-4">Tell us about your project — we reply within 1 business day.</p>
-              <QuoteForm />
+              <LeadForm height={560} />
             </div>
           </aside>
         </div>

@@ -175,3 +175,8 @@ h1,h2,h3,h4 { font-family: var(--font-display); letter-spacing:-0.02em; line-hei
 /* Upgraded heading underline accent */
 .head-accent { position:relative; display:inline-block; }
 .head-accent::after { content:""; position:absolute; left:0; bottom:-.35rem; height:5px; width:64px; border-radius:5px; background:linear-gradient(90deg,#1f5c92,#37a24e); }
+
+/* Modern diagonal section cuts (safe — content has py padding) */
+.slant-top { clip-path: polygon(0 32px, 100% 0, 100% 100%, 0 100%); }
+.slant-both { clip-path: polygon(0 32px, 100% 0, 100% calc(100% - 32px), 0 100%); }
+@media (max-width:640px){ .slant-top{ clip-path:polygon(0 16px,100% 0,100% 100%,0 100%);} .slant-both{ clip-path:polygon(0 16px,100% 0,100% calc(100% - 16px),0 100%);} }
