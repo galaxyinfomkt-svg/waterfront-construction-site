@@ -3,6 +3,8 @@ import FilterGallery, { type GalleryItem } from "@/components/FilterGallery";
 import Reveal from "@/components/Reveal";
 import { site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
+import { graph, breadcrumb } from "@/lib/schema";
 
 export const metadata = pageMeta({
   title: "Project Gallery — Remodeling & Construction in MetroWest, MA",
@@ -32,6 +34,7 @@ const items: GalleryItem[] = [
 export default function GalleryPage() {
   return (
     <>
+      <JsonLd data={graph([breadcrumb([{ name: "Home", path: "/" }, { name: "Gallery", path: "/gallery" }])])} />
       <section className="mesh text-white">
         <div className="container-x py-16 md:py-20 text-center">
           <span className="eyebrow text-cyan">Our work</span>

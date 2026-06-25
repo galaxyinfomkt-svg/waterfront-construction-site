@@ -12,6 +12,7 @@ export default function CookieConsent() {
   }, []);
   const choose = (v: "accepted" | "declined") => {
     try { localStorage.setItem("wf-cookie", v); } catch { /* ignore */ }
+    if (v === "accepted") window.dispatchEvent(new Event("wf-consent"));
     setShow(false);
   };
   if (!show) return null;

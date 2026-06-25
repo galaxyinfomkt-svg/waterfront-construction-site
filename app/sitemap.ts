@@ -5,7 +5,7 @@ import { posts } from "@/lib/posts";
 const base = "https://waterfront-site.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticPages: MetadataRoute.Sitemap = ["", "/services", "/gallery", "/service-areas", "/financing", "/about", "/reviews", "/blog", "/contact", "/privacy"].map((p) => ({
+  const staticPages: MetadataRoute.Sitemap = ["", "/services", "/gallery", "/service-areas", "/financing", "/about", "/reviews", "/blog", "/contact", "/privacy", "/terms"].map((p) => ({
     url: `${base}${p}`,
     changeFrequency: "weekly",
     priority: p === "" ? 1 : 0.7,
@@ -15,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${base}/services/${s.slug}`,
     changeFrequency: "weekly",
     priority: 0.8,
+    images: [`${base}${s.image}`],
   }));
 
   // Only indexable target cities in the sitemap (secondary cities are noindex)
@@ -23,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${base}/services/${s.slug}/${citySlug(c)}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,
+      images: [`${base}${s.image}`],
     }))
   );
 
@@ -30,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${base}/blog/${p.slug}`,
     changeFrequency: "monthly",
     priority: 0.6,
+    images: [`${base}${p.image}`],
   }));
 
   return [...staticPages, ...servicePages, ...cityPages, ...blogPages];

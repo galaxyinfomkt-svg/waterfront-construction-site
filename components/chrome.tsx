@@ -174,6 +174,7 @@ export function SiteFooter() {
         <Link href="/service-areas" className="hover:text-cyan">Service Areas</Link>
         <Link href="/blog" className="hover:text-cyan">Blog</Link>
         <Link href="/privacy" className="hover:text-cyan">Privacy Policy</Link>
+        <Link href="/terms" className="hover:text-cyan">Terms</Link>
       </div>
       <div className="container-x mt-6 pt-6 border-t border-white/15 text-xs text-white/75 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
         <span>© {new Date().getFullYear()} {site.name}. All rights reserved.</span>

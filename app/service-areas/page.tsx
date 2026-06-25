@@ -2,6 +2,8 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { cities, citySlug, services, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
+import { graph, breadcrumb } from "@/lib/schema";
 
 export const metadata = pageMeta({
   title: "Service Areas — Northborough & MetroWest, MA",
@@ -14,6 +16,7 @@ const flagship = "kitchen-bathroom-remodeling";
 export default function ServiceAreasPage() {
   return (
     <>
+      <JsonLd data={graph([breadcrumb([{ name: "Home", path: "/" }, { name: "Service Areas", path: "/service-areas" }])])} />
       <section className="mesh text-white">
         <div className="container-x py-16 md:py-20 text-center">
           <span className="eyebrow text-cyan">Proudly local</span>

@@ -2,6 +2,8 @@ import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
+import { graph, breadcrumb } from "@/lib/schema";
 
 export const metadata = pageMeta({
   title: "Financing — Flexible Payment Options for Your Remodel",
@@ -18,6 +20,7 @@ const steps = [
 export default function FinancingPage() {
   return (
     <>
+      <JsonLd data={graph([breadcrumb([{ name: "Home", path: "/" }, { name: "Financing", path: "/financing" }])])} />
       <section className="mesh text-white">
         <div className="container-x py-16 md:py-24">
           <span className="eyebrow text-cyan">Affordable for every budget</span>
