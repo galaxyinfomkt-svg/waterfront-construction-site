@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { cities, citySlug, services, site } from "@/lib/site";
+import { cities, citySlug, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 import { graph, breadcrumb } from "@/lib/schema";

@@ -46,8 +46,27 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
     `Looking for reliable ${s.name.toLowerCase()} in ${cityName}, Massachusetts? Waterfront Construction has served ${cityName} and the surrounding MetroWest and Worcester County area since ${site.founded}. Based right in nearby Northborough, we're a licensed, insured local team — not an out-of-town outfit — so ${cityName} homeowners get fast response, honest pricing, and craftsmanship that lasts.`,
     `Need ${s.name.toLowerCase()} in ${cityName}, MA? As a Northborough-based, licensed and insured contractor, Waterfront Construction brings ${site.experience}+ years of hands-on experience to ${cityName} homes. From the first estimate to the final walkthrough you work directly with the owner — clear communication, fair pricing, and a finish built to last New England winters.`,
     `Waterfront Construction is a trusted ${s.name.toLowerCase()} contractor serving ${cityName}, Massachusetts and the wider Worcester County and MetroWest region. Working from our Northborough base, we're fully licensed, insured and owner-led — known for treating every ${cityName} home like our own: on time, on budget, and done right the first time.`,
+    `If you're planning ${s.name.toLowerCase()} in ${cityName}, MA, you want a contractor who shows up, communicates, and delivers. That's exactly what Waterfront Construction has built its reputation on across MetroWest since ${site.founded} — owner-led work, fair and itemized pricing, and a finished result that holds up to New England's seasons.`,
+    `Waterfront Construction provides professional ${s.name.toLowerCase()} for homeowners throughout ${cityName} and nearby Massachusetts towns. From our base in Northborough we keep response times short and standards high — fully licensed and insured, owner-supervised on every job, and committed to leaving your ${cityName} home better than we found it.`,
   ];
-  const intro = introVariants[Array.from(cityName).reduce((a, c) => a + c.charCodeAt(0), 0) % introVariants.length];
+  const localContextVariants = [
+    `Homes around ${cityName} range from classic New England colonials and capes to newer construction, and each one calls for a slightly different approach. We tailor every ${s.name.toLowerCase()} project to the age, style and condition of your home — never a one-size-fits-all template — so the finished work looks like it was always meant to be there.`,
+    `New England weather is hard on homes, and ${cityName} is no exception — freeze-thaw cycles, heavy snow and humid summers all take a toll. We approach ${s.name.toLowerCase()} with materials and methods chosen to stand up to it, so your investment keeps looking good and performing well season after season.`,
+    `Because we're based nearby in Northborough, getting to ${cityName} is quick for us — which means faster estimates, easier site visits and a team that's genuinely responsive when you have a question. You're working with a local contractor who answers the phone, not a distant call center.`,
+    `Every ${cityName} project starts with listening. We walk the space with you, understand how you actually live in your home, and give you straight answers about what's possible, what it will cost and how long it will take — before any work begins.`,
+    `We treat your ${cityName} home the way we'd want our own treated: clean job sites, clear daily communication, and respect for your time and property. When the ${s.name.toLowerCase()} project wraps, the only thing we leave behind is work you'll be proud to show off.`,
+  ];
+  const commitmentVariants = [
+    `From permits and materials to the final finish and clean-up, you work directly with the owner from start to finish — one accountable point of contact for your whole ${s.name.toLowerCase()} project in ${cityName}.`,
+    `No surprises and no runaround: you get an itemized estimate up front, a realistic schedule, and honest updates if anything changes. That's how we've earned repeat business and referrals across ${cityName} and the wider region.`,
+    `Whether it's a single room or a whole-home project, we bring the same care, licensing and insurance to every ${cityName} job — and we don't consider it done until you're completely happy with the result.`,
+    `Ready when you are: reach out for a free, no-obligation estimate and we'll walk you through exactly how we'd approach your ${cityName} ${s.name.toLowerCase()} project — clear pricing, a realistic timeline, and answers to every question.`,
+  ];
+  const hSum = (str: string) => Array.from(str).reduce((a, c) => a + c.charCodeAt(0), 0);
+  const hWeighted = (str: string) => Array.from(str).reduce((a, c, i) => a + c.charCodeAt(0) * (i + 1), 0);
+  const intro = introVariants[hSum(cityName) % introVariants.length];
+  const localContext = localContextVariants[hWeighted(cityName + s.slug) % localContextVariants.length];
+  const commitment = commitmentVariants[hWeighted(s.slug + cityName) % commitmentVariants.length];
 
   const faqs = [
     { q: `Do you provide ${s.name.toLowerCase()} in ${cityName}, MA?`, a: `Yes — ${cityName} is right in our service area. We're based in Northborough and regularly serve ${cityName} homeowners with professional ${s.name.toLowerCase()}. Call ${site.phone} for a free estimate.` },
@@ -99,7 +118,9 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
               <span className="eyebrow">{s.name} · {cityName}, MA</span>
               <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Your local {s.name.toLowerCase()} contractor in {cityName}</h2>
               <p className="mt-4 text-ink/75 text-lg leading-relaxed">{intro}</p>
+              <p className="mt-4 text-ink/70 text-[17px] leading-relaxed">{localContext}</p>
               {s.long.map((p, i) => <p key={i} className="mt-4 text-ink/70 text-[17px] leading-relaxed">{p}</p>)}
+              <p className="mt-4 text-ink/70 text-[17px] leading-relaxed">{commitment}</p>
 
               <h3 className="mt-10 text-2xl font-extrabold text-navy">What&apos;s included</h3>
               <ul className="mt-4 grid sm:grid-cols-2 gap-3">
