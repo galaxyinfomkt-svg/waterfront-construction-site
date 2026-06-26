@@ -39,9 +39,9 @@ export function SiteHeader() {
     <header className={`sticky top-0 z-50 transition ${solid ? "bg-white shadow-[0_6px_24px_-14px_rgba(20,20,43,.4)]" : "bg-white/95 backdrop-blur"}`}>
       <div className="container-x flex h-[96px] md:h-[104px] items-center justify-between gap-4">
         <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 shrink-0" aria-label={`${site.name} — back to top`}>
-          <Image src="/logo.png" alt={site.name} width={300} height={100} className="h-[74px] md:h-[86px] w-auto" priority />
+          <Image src="/logo.png" alt={site.name} width={300} height={100} className="h-16 md:h-[78px] lg:h-[54px] xl:h-[72px] w-auto" priority />
         </Link>
-        <nav className="hidden lg:flex items-center gap-8 font-semibold text-[15px] text-ink/80">
+        <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 font-semibold text-[14px] xl:text-[15px] text-ink/80">
           {nav.map((n) =>
             n.label === "Services" ? (
               <div key={n.href} className="relative group/svc">
@@ -65,11 +65,11 @@ export function SiteHeader() {
             )
           )}
         </nav>
-        <div className="hidden lg:flex items-center gap-3">
-          <a href={site.phoneHref} className="flex items-center gap-2 font-bold text-navy hover:text-blue transition">
+        <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <a href={site.phoneHref} className="hidden xl:flex items-center gap-2 font-bold text-navy hover:text-blue transition whitespace-nowrap">
             <span className="w-9 h-9 rounded-full bg-grad-green text-white grid place-items-center text-sm">📞</span>{site.phone}
           </a>
-          <Link href="/contact" className="btn btn-grad text-sm">Free Estimate →</Link>
+          <Link href="/contact" className="btn btn-grad text-sm whitespace-nowrap">Free Estimate</Link>
         </div>
         <button type="button" onClick={() => setOpen(!open)} className="lg:hidden p-2.5 -mr-2 text-navy" aria-label="Open menu">
           <div className="space-y-1.5">
