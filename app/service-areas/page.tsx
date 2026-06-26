@@ -4,6 +4,7 @@ import { cities, citySlug, services, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 import { graph, breadcrumb } from "@/lib/schema";
+import LocationsExplorer from "@/components/LocationsExplorer";
 
 export const metadata = pageMeta({
   title: "Service Areas — Northborough & MetroWest, MA",
@@ -45,16 +46,15 @@ export default function ServiceAreasPage() {
       </section>
 
       <section className="py-16 bg-sand">
-        <div className="container-x text-center">
+        <div className="container-x">
           <Reveal>
-            <span className="eyebrow justify-center">What we build</span>
-            <h2 className="mt-3 text-2xl md:text-3xl font-extrabold text-navy">Services in every town</h2>
-            <div className="mt-6 flex flex-wrap justify-center gap-2.5">
-              {services.map((s) => (
-                <Link key={s.slug} href={`/services/${s.slug}`} className="px-4 py-2 rounded-full bg-white border border-sand text-sm font-semibold text-navy hover:bg-grad-green hover:text-white transition">{s.name}</Link>
-              ))}
+            <div className="text-center max-w-2xl mx-auto">
+              <span className="eyebrow justify-center">Find your page</span>
+              <h2 className="mt-3 text-2xl md:text-4xl font-extrabold text-navy">Every service in every town</h2>
+              <p className="mt-3 text-ink/65">Click a service to see all the towns we serve it in — and jump straight to your local page.</p>
             </div>
-            <div className="mt-8 flex flex-wrap justify-center gap-3"><Link href="/contact" className="btn btn-green">Get a Free Estimate</Link><a href={site.phoneHref} className="btn btn-navy">📞 {site.phone}</a></div>
+            <div className="mt-10"><LocationsExplorer /></div>
+            <div className="mt-10 flex flex-wrap justify-center gap-3"><Link href="/contact" className="btn btn-green">Get a Free Estimate</Link><a href={site.phoneHref} className="btn btn-navy">📞 {site.phone}</a></div>
           </Reveal>
         </div>
       </section>
