@@ -51,7 +51,7 @@ export default function AboutPage() {
               <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">A builder who treats your home like his own</h2>
               <p className="mt-4 text-ink/75 text-lg">Waterfront Construction was founded in {site.founded} by Ernando Nunes, who brings over {site.experience} years of hands-on construction experience to every project. What started as a one-man commitment to doing things right has grown into a trusted local team serving homeowners across MetroWest and Worcester County.</p>
               <p className="mt-3 text-ink/70">We build and renovate residential and commercial spaces from the foundation to the final finish — kitchens, baths, additions, siding, decks, and full remodels. Because the owner is personally involved in every job, you get craftsmanship, accountability, and communication you can count on.</p>
-              <div className="mt-7 flex gap-3"><Link href="/services" className="btn btn-navy">Our services →</Link><Link href="/reviews" className="btn btn-grad">Read reviews</Link></div>
+              <div className="mt-7 flex flex-wrap gap-3"><Link href="/services" className="btn btn-navy">Our services →</Link><Link href="/reviews" className="btn btn-grad">Read reviews</Link></div>
             </div>
           </Reveal>
         </div>

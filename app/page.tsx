@@ -138,7 +138,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <div className="mt-7 flex gap-3"><Link href="/about" className="btn btn-navy">More about us →</Link><Link href="/contact" className="btn btn-green">Free estimate</Link></div>
+              <div className="mt-7 flex flex-wrap gap-3"><Link href="/about" className="btn btn-navy">More about us →</Link><Link href="/contact" className="btn btn-green">Free estimate</Link></div>
             </div>
           </Reveal>
         </div>
@@ -224,7 +224,7 @@ export default function Home() {
                 <li key={f} className="flex items-center gap-2 text-navy font-medium"><span className="text-green">✓</span>{f}</li>
               ))}
             </ul>
-            <div className="mt-6 flex gap-3"><Link href="/services/kitchen-bathroom-remodeling" className="btn btn-navy">Kitchen & bathrooms →</Link><Link href="/contact" className="btn btn-grad">Free estimate →</Link></div>
+            <div className="mt-6 flex flex-wrap gap-3"><Link href="/services/kitchen-bathroom-remodeling" className="btn btn-navy">Kitchen & bathrooms →</Link><Link href="/contact" className="btn btn-grad">Free estimate →</Link></div>
           </div></Reveal>
         </div>
       </section>
@@ -244,7 +244,7 @@ export default function Home() {
                 <li key={f} className="flex items-center gap-2 text-navy font-medium"><span className="text-green">✓</span>{f}</li>
               ))}
             </ul>
-            <div className="mt-6 flex gap-3"><Link href="/services/siding" className="btn btn-navy">Siding →</Link><Link href="/services/home-additions-remodeling" className="btn btn-grad">Additions →</Link></div>
+            <div className="mt-6 flex flex-wrap gap-3"><Link href="/services/siding" className="btn btn-navy">Siding →</Link><Link href="/services/home-additions-remodeling" className="btn btn-grad">Additions →</Link></div>
           </div></Reveal>
         </div>
       </section>
