@@ -17,7 +17,7 @@ export function TopBar() {
           </a>
         </div>
         <div className="flex items-center gap-4">
-          <span className="hidden md:inline-flex items-center gap-1.5 bg-white/15 rounded-full px-3 py-0.5">⭐ 5.0 Rated · Licensed & Insured</span>
+          <span className="hidden md:inline-flex items-center gap-1.5 bg-white/15 rounded-full px-3 py-0.5">🛡️ Licensed &amp; Insured · Free Estimates</span>
           <a href={site.facebook} target="_blank" rel="noopener" aria-label="Facebook" className="hover:text-cyan transition">Facebook</a>
           <a href={site.instagram} target="_blank" rel="noopener" aria-label="Instagram" className="hover:text-cyan transition">Instagram</a>
         </div>
