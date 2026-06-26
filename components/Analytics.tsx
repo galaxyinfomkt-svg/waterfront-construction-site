@@ -1,27 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Script from "next/script";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID;
 
 export default function Analytics() {
-  const [consent, setConsent] = useState(false);
-
-  // Load analytics only after the visitor accepts cookies (GDPR/LGPD-friendly).
-  useEffect(() => {
-    const check = () => {
-      try {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setConsent(localStorage.getItem("wf-cookie") === "accepted");
-      } catch { /* ignore */ }
-    };
-    check();
-    window.addEventListener("wf-consent", check);
-    return () => window.removeEventListener("wf-consent", check);
-  }, []);
-
-  // Conversion tracking — fires only when gtag is present (i.e. after consent).
+  // Conversion tracking — fires only when gtag is present (i.e. when GA is configured).
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       const el = e.target as HTMLElement | null;
@@ -38,7 +23,6 @@ export default function Analytics() {
     return () => document.removeEventListener("click", onClick);
   }, []);
 
-  if (!consent) return null;
   return (
     <>
       {GA_ID && (

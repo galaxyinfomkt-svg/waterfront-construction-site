@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google";
 import "./globals.css";
 import { TopBar, SiteHeader, SiteFooter, FloatingCTA } from "@/components/chrome";
-import CookieConsent from "@/components/CookieConsent";
 import JsonLd from "@/components/JsonLd";
 import { graph, businessSchema, websiteSchema } from "@/lib/schema";
 import { SITE_URL, GEO } from "@/lib/seo";
@@ -48,7 +47,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main>{children}</main>
         <SiteFooter />
         <FloatingCTA />
-        <CookieConsent />
         <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="lazyOnload" />
         <Analytics />
       </body>
