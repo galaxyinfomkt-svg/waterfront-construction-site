@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
       rules.push({ source: `/services/${from}`, destination: "/services", permanent: true });
       rules.push({ source: `/services/${from}/:city`, destination: "/services", permanent: true });
     }
+    // Financing page removed — owner does not offer financing.
+    rules.push({ source: "/financing", destination: "/contact", permanent: true });
     return rules;
   },
 };

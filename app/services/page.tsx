@@ -4,8 +4,8 @@ import { services, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
-  title: "Remodeling & Construction Services in Northborough, MA",
-  description: "Full-service remodeling & construction in Northborough & MetroWest, MA — kitchens, baths, siding, windows, decks, additions, painting & repairs. Licensed, insured, free estimates.",
+  title: "Remodeling Services in Northborough, MA",
+  description: "Remodeling & construction in Northborough & MetroWest, MA — kitchens, baths, siding, decks, additions & more. Licensed, insured, free estimates.",
   path: "/services",
 });
 

@@ -170,7 +170,6 @@ export function SiteFooter() {
       </div>
       <div className="container-x mt-10 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
         <Link href="/gallery" className="hover:text-cyan">Gallery</Link>
-        <Link href="/financing" className="hover:text-cyan">Financing</Link>
         <Link href="/service-areas" className="hover:text-cyan">Service Areas</Link>
         <Link href="/blog" className="hover:text-cyan">Blog</Link>
         <Link href="/privacy" className="hover:text-cyan">Privacy Policy</Link>

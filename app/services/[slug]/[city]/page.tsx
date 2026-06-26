@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!s || !cityName) return {};
   return pageMeta({
     title: `${s.name} in ${cityName}, MA`,
-    description: `Looking for ${s.name.toLowerCase()} in ${cityName}, MA? Waterfront Construction is a licensed, insured contractor serving ${cityName} from our Northborough base. Free estimates — call ${site.phone}.`,
+    description: `${s.name} in ${cityName}, MA from Waterfront Construction — a licensed, insured, Northborough-based contractor. Free estimates — call ${site.phone}.`,
     path: `/services/${s.slug}/${city}`,
     image: s.image,
     noindex: !cities.includes(cityName),
