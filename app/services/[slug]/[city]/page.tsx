@@ -5,7 +5,7 @@ import LeadForm from "@/components/LeadForm";
 import Gallery from "@/components/Gallery";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
-import { services, allCities, cities, citySlug, galleryImages, site } from "@/lib/site";
+import { services, allCities, citySlug, galleryImages, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
 import { commonFaqs } from "@/lib/faq";
@@ -31,7 +31,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: `${s.name} in ${cityName}, MA from Waterfront Construction — a licensed, insured, Northborough-based contractor. Free estimates — call ${site.phone}.`,
     path: `/services/${s.slug}/${city}`,
     image: s.image,
-    noindex: !cities.includes(cityName),
   });
 }
 

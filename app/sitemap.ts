@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { services, cities, citySlug } from "@/lib/site";
+import { services, allCities, citySlug } from "@/lib/site";
 import { posts } from "@/lib/posts";
 
 const base = "https://waterfrontconstructionma.com";
@@ -18,9 +18,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     images: [`${base}${s.image}`],
   }));
 
-  // Only indexable target cities in the sitemap (secondary cities are noindex)
+  // All city pages are indexable and included in the sitemap
   const cityPages: MetadataRoute.Sitemap = services.flatMap((s) =>
-    cities.map((c) => ({
+    allCities.map((c) => ({
       url: `${base}/services/${s.slug}/${citySlug(c)}`,
       changeFrequency: "monthly" as const,
       priority: 0.6,

@@ -7,7 +7,7 @@ import JsonLd from "@/components/JsonLd";
 import { graph, breadcrumb } from "@/lib/schema";
 
 export const metadata = pageMeta({
-  title: "Project Gallery — Remodeling & Construction in MetroWest, MA",
+  title: "Project Gallery — Northborough & MetroWest, MA",
   description: "Browse recent kitchen, bathroom, siding, deck, addition and painting projects by Waterfront Construction across Northborough & MetroWest, MA.",
   path: "/gallery",
 });
