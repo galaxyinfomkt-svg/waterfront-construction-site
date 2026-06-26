@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const p = posts.find((x) => x.slug === slug);
   if (!p) return {};
-  return pageMeta({ title: p.title, description: p.excerpt, path: `/blog/${p.slug}`, image: `https://waterfront-site.vercel.app${p.image}` });
+  return pageMeta({ title: p.title, description: p.excerpt, path: `/blog/${p.slug}`, image: `https://waterfrontconstructionma.com${p.image}` });
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {

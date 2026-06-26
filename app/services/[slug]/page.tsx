@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!s) return {};
   return pageMeta({
     title: `${s.short} in Northborough & MetroWest, MA`,
-    description: `${s.blurb} Licensed & insured · serving Northborough, Worcester & 100+ MA towns. ★ 5.0 rated. Free estimates — call ${site.phone}.`,
+    description: `${s.blurb} Licensed & insured · serving Northborough, Worcester & 100+ MA towns. Free estimates — call ${site.phone}.`,
     path: `/services/${s.slug}`,
     image: s.image,
   });

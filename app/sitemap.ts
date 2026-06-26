@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { services, cities, citySlug } from "@/lib/site";
 import { posts } from "@/lib/posts";
 
-const base = "https://waterfront-site.vercel.app";
+const base = "https://waterfrontconstructionma.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = ["", "/services", "/gallery", "/service-areas", "/financing", "/about", "/reviews", "/blog", "/contact", "/privacy", "/terms"].map((p) => ({

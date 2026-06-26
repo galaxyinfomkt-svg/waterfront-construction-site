@@ -12,7 +12,7 @@ import { graph, faqSchema } from "@/lib/schema";
 
 export const metadata = pageMeta({
   title: "Remodeling & Construction Contractor in Northborough, MA | Waterfront Construction",
-  description: "Top-rated home remodeling & construction in Northborough & MetroWest, MA. Kitchens, baths, siding, additions, decks & full remodels. ★ 5.0 rated · Licensed & insured · Free estimates.",
+  description: "Top-rated home remodeling & construction in Northborough & MetroWest, MA. Kitchens, baths, siding, additions, decks & full remodels. Licensed & insured · Free estimates.",
   path: "/",
   absoluteTitle: true,
 });

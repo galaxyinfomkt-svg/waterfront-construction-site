@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s | Waterfront Construction",
   },
   description:
-    "Licensed, insured home remodeling & construction in Northborough, MA & MetroWest. Kitchens, baths, siding, additions, decks & more. ★ 5.0 rated. Free estimates — call (508) 816-2726.",
+    "Licensed, insured home remodeling & construction in Northborough, MA & MetroWest. Kitchens, baths, siding, additions, decks & more. Free estimates — call (508) 816-2726.",
   applicationName: "Waterfront Construction Inc",
   keywords: ["remodeling contractor Northborough MA", "home remodeling MetroWest", "kitchen remodeling Worcester County", "siding contractor MA", "deck builder Massachusetts", "home additions"],
   authors: [{ name: "Waterfront Construction Inc" }],
@@ -49,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteFooter />
         <FloatingCTA />
         <CookieConsent />
-        <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
+        <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="lazyOnload" />
         <Analytics />
       </body>
     </html>
