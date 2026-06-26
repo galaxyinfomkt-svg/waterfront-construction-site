@@ -47,3 +47,5 @@ next-env.d.ts
 audit_*.json
 a.json
 rev_*.json
+h.json
+x.json
