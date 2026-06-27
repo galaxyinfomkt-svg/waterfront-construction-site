@@ -111,11 +111,12 @@ export function SiteHeader() {
 export function FloatingCTA() {
   return (
     <>
-      {/* Desktop floating call */}
-      <a href={site.phoneHref}
-        className="hidden md:flex fixed bottom-6 right-6 z-50 btn btn-green pulse text-base shadow-lg px-7 py-4">
-        📞 Call {site.phone}
-      </a>
+      {/* Desktop floating call — wrapper controls visibility so .btn's display can't override `hidden` */}
+      <div className="hidden md:block fixed bottom-6 right-6 z-50">
+        <a href={site.phoneHref} className="btn btn-green pulse text-base shadow-lg px-7 py-4">
+          📞 Call {site.phone}
+        </a>
+      </div>
       {/* Mobile bottom bar */}
       <div className="md:hidden fixed bottom-0 inset-x-0 z-50 grid grid-cols-2 gap-px bg-white/10">
         <a href={site.phoneHref} className="py-4 text-center font-bold text-white bg-navy">📞 Call Now</a>
