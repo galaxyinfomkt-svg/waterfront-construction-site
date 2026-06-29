@@ -23,7 +23,7 @@ export default function AboutPage() {
     <>
       {/* HERO */}
       <section className="relative overflow-hidden bg-navy">
-        <Image src="/images/about.jpg" alt="" fill quality={68} className="object-cover opacity-30" />
+        <Image src="/images/about.jpg" alt="" fill quality={60} className="object-cover opacity-30" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="relative container-x py-20 md:py-24 text-white">
           <div className="flex items-center gap-2 text-sm text-white/70"><Link href="/" className="hover:text-cyan">Home</Link><span>›</span><span className="text-white">About</span></div>
@@ -38,7 +38,7 @@ export default function AboutPage() {
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal>
             <div className="relative">
-              <div className="relative h-[470px] rounded-3xl overflow-hidden shadow-card"><Image src="/images/about.jpg" alt="Ernando Nunes, owner" fill quality={68} className="object-cover" /></div>
+              <div className="relative h-[470px] rounded-3xl overflow-hidden shadow-card"><Image src="/images/about.jpg" alt="Ernando Nunes, owner" fill quality={60} className="object-cover" /></div>
               <div className="absolute -bottom-5 left-5 bg-white rounded-2xl p-4 shadow-card flex items-center gap-3">
                 <span className="w-12 h-12 rounded-full bg-grad-green text-white grid place-items-center text-xl">👷</span>
                 <div><div className="font-extrabold text-navy leading-tight">Ernando Nunes</div><div className="text-sm text-ink/60">Owner &amp; Lead Builder</div></div>

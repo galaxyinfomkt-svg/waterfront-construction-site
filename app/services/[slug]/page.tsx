@@ -234,7 +234,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
           <div className="grid sm:grid-cols-3 gap-6">
             {others.map((o) => (
               <Link key={o.slug} href={`/services/${o.slug}`} className="group card overflow-hidden pop block">
-                <div className="relative h-36"><Image src={o.image} alt={o.short} fill quality={68} className="object-cover zoomimg" /></div>
+                <div className="relative h-36"><Image src={o.image} alt={o.short} fill quality={60} className="object-cover zoomimg" /></div>
                 <div className="p-4"><h3 className="font-bold text-navy">{o.name}</h3><span className="text-sm text-blue font-semibold">Learn more →</span></div>
               </Link>
             ))}

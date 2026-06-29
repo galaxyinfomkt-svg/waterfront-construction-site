@@ -117,7 +117,7 @@ export default function Home() {
           <Reveal>
             <div className="relative">
               <div className="relative h-[460px] rounded-3xl overflow-hidden shadow-card">
-                <Image src="/images/about.jpg" alt="Waterfront Construction owner on site" fill quality={68} className="object-cover" />
+                <Image src="/images/about.jpg" alt="Waterfront Construction owner on site" fill quality={60} className="object-cover" />
               </div>
               <div className="absolute -bottom-5 -right-3 md:right-6 bg-white rounded-2xl p-4 shadow-card flex items-center gap-3">
                 <span className="w-12 h-12 rounded-full bg-grad-green text-white grid place-items-center text-xl">👷</span>
@@ -159,7 +159,7 @@ export default function Home() {
               <Reveal key={s.slug} delay={(i % 3) * 80}>
                 <div className="group card gborder overflow-hidden pop h-full flex flex-col">
                   <div className="relative h-48 overflow-hidden">
-                    <Image src={s.image} alt={s.short} fill quality={68} className="object-cover zoomimg" />
+                    <Image src={s.image} alt={s.short} fill quality={60} className="object-cover zoomimg" />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/10 to-transparent" />
                     <span className="absolute top-3 left-3 text-2xl bg-white/95 rounded-xl w-11 h-11 grid place-items-center shadow">{s.icon}</span>
                     <h3 className="absolute bottom-3 left-4 right-4 font-bold text-xl text-white">{s.name}</h3>
@@ -213,7 +213,7 @@ export default function Home() {
       <section className="py-20 bg-sand">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
-            <Image src="/images/kitchen.jpg" alt="Kitchen and bath remodeling" fill quality={68} className="object-cover zoomimg" />
+            <Image src="/images/kitchen.jpg" alt="Kitchen and bath remodeling" fill quality={60} className="object-cover zoomimg" />
           </div></Reveal>
           <Reveal delay={120}><div>
             <span className="eyebrow">Kitchens &amp; bathrooms</span>
@@ -233,7 +233,7 @@ export default function Home() {
       <section className="py-20 bg-tint-green">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal delay={120} className="lg:order-2"><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
-            <Image src="/images/home-exterior.jpg" alt="Siding and home additions" fill quality={68} className="object-cover zoomimg" />
+            <Image src="/images/home-exterior.jpg" alt="Siding and home additions" fill quality={60} className="object-cover zoomimg" />
           </div></Reveal>
           <Reveal className="lg:order-1"><div>
             <span className="eyebrow">Exteriors &amp; additions</span>

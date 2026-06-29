@@ -23,7 +23,7 @@ export default function BlogPage() {
         <div className="container-x grid md:grid-cols-3 gap-7">
           {posts.map((p) => (
             <Link key={p.slug} href={`/blog/${p.slug}`} className="group card overflow-hidden hover:-translate-y-1.5 transition">
-              <div className="relative h-48"><Image src={p.image} alt={p.title} fill quality={68} className="object-cover group-hover:scale-105 transition duration-500" /></div>
+              <div className="relative h-48"><Image src={p.image} alt={p.title} fill quality={60} className="object-cover group-hover:scale-105 transition duration-500" /></div>
               <div className="p-5">
                 <span className="text-xs text-blue font-semibold uppercase tracking-wider">{p.date}</span>
                 <h2 className="font-bold text-lg text-navy mt-1.5 leading-snug">{p.title}</h2>
