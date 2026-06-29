@@ -167,7 +167,7 @@ export default function Home() {
                   <div className="p-5 flex flex-col flex-1">
                     <p className="text-sm text-ink/65 line-clamp-2">{s.blurb}</p>
                     <div className="mt-4 flex gap-2 pt-2">
-                      <Link href={`/services/${s.slug}`} aria-label={`Learn more about ${s.name}`} className="btn btn-navy text-sm px-4 py-3 flex-1">Learn more</Link>
+                      <Link href={`/services/${s.slug}`} aria-label={`Learn more about ${s.name}`} className="btn btn-navy text-sm px-4 py-3 flex-1">View details</Link>
                       <Link href="/contact" aria-label={`Get a free ${s.name} quote`} className="btn btn-grad text-sm px-4 py-3 flex-1">Free quote</Link>
                     </div>
                   </div>
