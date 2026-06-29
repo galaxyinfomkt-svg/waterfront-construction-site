@@ -85,7 +85,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src={s.image} alt={`${s.short} in ${cityName}, MA`} fill priority quality={68} className="object-cover kenburns" />
+        <Image src={s.image} alt={`${s.short} in ${cityName}, MA`} fill priority quality={55} className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="blob bg-cyan w-72 h-72 -top-12 -right-10 spin-slow" />
         <div className="relative container-x py-20 md:py-24 text-white">
@@ -198,7 +198,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
 
       {/* CTA */}
       <section className="relative overflow-hidden bg-navy">
-        <Image src={s.image} alt="" fill quality={68} className="object-cover opacity-25" />
+        <Image src={s.image} alt="" fill quality={55} className="object-cover opacity-25" />
         <div className="relative container-x py-16 text-center text-white">
           <h2 className="text-3xl md:text-4xl font-extrabold">Need {s.name.toLowerCase()} in {cityName}, MA?</h2>
           <p className="mt-3 text-white/85 max-w-xl mx-auto">Get a free, no-obligation estimate today. We reply within one business day.</p>

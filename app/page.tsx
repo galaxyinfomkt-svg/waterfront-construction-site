@@ -46,7 +46,7 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority quality={68} sizes="100vw" className="object-cover kenburns" />
+        <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority quality={55} sizes="100vw" className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="absolute inset-0 dots-light opacity-50" />
         <div className="blob bg-cyan w-80 h-80 top-10 -right-10 spin-slow" />
@@ -387,7 +387,7 @@ export default function Home() {
 
       {/* FINAL CTA */}
       <section className="relative overflow-hidden mesh">
-        <Image src="/images/cta.jpg" alt="" fill quality={68} className="object-cover opacity-20" />
+        <Image src="/images/cta.jpg" alt="" fill quality={55} className="object-cover opacity-20" />
         <div className="relative container-x py-20 text-center text-white">
           <h2 className="text-3xl md:text-6xl font-extrabold">Let&apos;s build something great</h2>
           <p className="mt-4 text-white/85 text-lg max-w-xl mx-auto">Get a free, no-obligation estimate today. We reply within one business day.</p>
