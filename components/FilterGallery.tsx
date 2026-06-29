@@ -34,7 +34,7 @@ export default function FilterGallery({ items, categories }: { items: GalleryIte
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filtered.map((it, i) => (
           <button key={it.src + i} onClick={() => setActive(i)} className="group relative h-56 overflow-hidden rounded-2xl cursor-pointer">
-            <Image src={it.src} alt={it.label} fill className="object-cover zoomimg" />
+            <Image src={it.src} alt={it.label} fill quality={68} className="object-cover zoomimg" />
             <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/10 to-transparent" />
             <div className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition">
               <span className="w-12 h-12 rounded-full bg-white/90 text-navy grid place-items-center text-xl shadow-lg">🔍</span>
@@ -53,7 +53,7 @@ export default function FilterGallery({ items, categories }: { items: GalleryIte
           <button onClick={(e) => { e.stopPropagation(); move(-1); }} aria-label="Previous" className="absolute left-3 md:left-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white text-5xl">‹</button>
           <button onClick={(e) => { e.stopPropagation(); move(1); }} aria-label="Next" className="absolute right-3 md:right-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white text-5xl">›</button>
           <div className="relative w-full max-w-5xl aspect-[4/3]" onClick={(e) => e.stopPropagation()}>
-            <Image src={filtered[active].src} alt={filtered[active].label} fill className="object-contain rounded-xl" sizes="100vw" />
+            <Image src={filtered[active].src} alt={filtered[active].label} fill quality={68} className="object-contain rounded-xl" sizes="100vw" />
           </div>
           <div className="absolute bottom-5 text-white/80 text-sm font-medium">{filtered[active].label} — {active + 1}/{filtered.length}</div>
         </div>

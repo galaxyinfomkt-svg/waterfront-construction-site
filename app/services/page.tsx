@@ -29,7 +29,7 @@ export default function ServicesPage() {
           {services.map((s) => (
             <Link key={s.slug} href={`/services/${s.slug}`} className="group card overflow-hidden hover:-translate-y-1.5 transition">
               <div className="relative h-44">
-                <Image src={s.image} alt={s.short} fill className="object-cover group-hover:scale-105 transition duration-500" />
+                <Image src={s.image} alt={s.short} fill quality={68} className="object-cover group-hover:scale-105 transition duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent" />
                 <span className="absolute top-3 left-3 text-2xl bg-white/90 rounded-lg w-10 h-10 grid place-items-center">{s.icon}</span>
               </div>

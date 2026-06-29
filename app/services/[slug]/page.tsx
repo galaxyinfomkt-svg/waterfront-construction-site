@@ -45,7 +45,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src={s.image} alt={s.short} fill priority className="object-cover kenburns" />
+        <Image src={s.image} alt={s.short} fill priority quality={68} className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="blob bg-green w-72 h-72 -top-12 -left-10 spin-slow" />
         <div className="relative container-x py-20 md:py-24 text-white">
@@ -195,7 +195,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
 
       {/* CTA */}
       <section className="relative overflow-hidden bg-navy">
-        <Image src={s.image} alt="" fill className="object-cover opacity-25" />
+        <Image src={s.image} alt="" fill quality={68} className="object-cover opacity-25" />
         <div className="relative container-x py-16 text-center text-white">
           <h2 className="text-3xl md:text-4xl font-extrabold">Ready for your {s.name.toLowerCase()} project?</h2>
           <p className="mt-3 text-white/85 max-w-xl mx-auto">Get a free, no-obligation estimate today. We reply within one business day.</p>
@@ -234,7 +234,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
           <div className="grid sm:grid-cols-3 gap-6">
             {others.map((o) => (
               <Link key={o.slug} href={`/services/${o.slug}`} className="group card overflow-hidden pop block">
-                <div className="relative h-36"><Image src={o.image} alt={o.short} fill className="object-cover zoomimg" /></div>
+                <div className="relative h-36"><Image src={o.image} alt={o.short} fill quality={68} className="object-cover zoomimg" /></div>
                 <div className="p-4"><h3 className="font-bold text-navy">{o.name}</h3><span className="text-sm text-blue font-semibold">Learn more →</span></div>
               </Link>
             ))}

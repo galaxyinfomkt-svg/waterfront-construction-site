@@ -46,7 +46,7 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority sizes="100vw" className="object-cover kenburns" />
+        <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority quality={68} sizes="100vw" className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="absolute inset-0 dots-light opacity-50" />
         <div className="blob bg-cyan w-80 h-80 top-10 -right-10 spin-slow" />
@@ -117,7 +117,7 @@ export default function Home() {
           <Reveal>
             <div className="relative">
               <div className="relative h-[460px] rounded-3xl overflow-hidden shadow-card">
-                <Image src="/images/about.jpg" alt="Waterfront Construction owner on site" fill className="object-cover" />
+                <Image src="/images/about.jpg" alt="Waterfront Construction owner on site" fill quality={68} className="object-cover" />
               </div>
               <div className="absolute -bottom-5 -right-3 md:right-6 bg-white rounded-2xl p-4 shadow-card flex items-center gap-3">
                 <span className="w-12 h-12 rounded-full bg-grad-green text-white grid place-items-center text-xl">👷</span>
@@ -159,7 +159,7 @@ export default function Home() {
               <Reveal key={s.slug} delay={(i % 3) * 80}>
                 <div className="group card gborder overflow-hidden pop h-full flex flex-col">
                   <div className="relative h-48 overflow-hidden">
-                    <Image src={s.image} alt={s.short} fill className="object-cover zoomimg" />
+                    <Image src={s.image} alt={s.short} fill quality={68} className="object-cover zoomimg" />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/10 to-transparent" />
                     <span className="absolute top-3 left-3 text-2xl bg-white/95 rounded-xl w-11 h-11 grid place-items-center shadow">{s.icon}</span>
                     <h3 className="absolute bottom-3 left-4 right-4 font-bold text-xl text-white">{s.name}</h3>
@@ -213,7 +213,7 @@ export default function Home() {
       <section className="py-20 bg-sand">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
-            <Image src="/images/kitchen.jpg" alt="Kitchen and bath remodeling" fill className="object-cover zoomimg" />
+            <Image src="/images/kitchen.jpg" alt="Kitchen and bath remodeling" fill quality={68} className="object-cover zoomimg" />
           </div></Reveal>
           <Reveal delay={120}><div>
             <span className="eyebrow">Kitchens &amp; bathrooms</span>
@@ -233,7 +233,7 @@ export default function Home() {
       <section className="py-20 bg-tint-green">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal delay={120} className="lg:order-2"><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
-            <Image src="/images/home-exterior.jpg" alt="Siding and home additions" fill className="object-cover zoomimg" />
+            <Image src="/images/home-exterior.jpg" alt="Siding and home additions" fill quality={68} className="object-cover zoomimg" />
           </div></Reveal>
           <Reveal className="lg:order-1"><div>
             <span className="eyebrow">Exteriors &amp; additions</span>
@@ -387,7 +387,7 @@ export default function Home() {
 
       {/* FINAL CTA */}
       <section className="relative overflow-hidden mesh">
-        <Image src="/images/cta.jpg" alt="" fill className="object-cover opacity-20" />
+        <Image src="/images/cta.jpg" alt="" fill quality={68} className="object-cover opacity-20" />
         <div className="relative container-x py-20 text-center text-white">
           <h2 className="text-3xl md:text-6xl font-extrabold">Let&apos;s build something great</h2>
           <p className="mt-4 text-white/85 text-lg max-w-xl mx-auto">Get a free, no-obligation estimate today. We reply within one business day.</p>

@@ -29,7 +29,7 @@ export default function Gallery({ images }: { images: string[] }) {
             aria-label="View project photo"
             className={`group relative overflow-hidden rounded-2xl cursor-pointer ${i === 0 ? "md:row-span-2 h-64 md:h-full" : "h-56"}`}
           >
-            <Image src={g} alt={`Project photo ${i + 1}`} fill className="object-cover zoomimg" />
+            <Image src={g} alt={`Project photo ${i + 1}`} fill quality={68} className="object-cover zoomimg" />
             <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/45 transition grid place-items-center">
               <span className="opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition w-12 h-12 rounded-full bg-white/90 text-navy grid place-items-center text-xl shadow-lg">🔍</span>
             </div>
@@ -43,7 +43,7 @@ export default function Gallery({ images }: { images: string[] }) {
           <button onClick={(e) => { e.stopPropagation(); move(-1); }} aria-label="Previous" className="absolute left-3 md:left-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white text-5xl">‹</button>
           <button onClick={(e) => { e.stopPropagation(); move(1); }} aria-label="Next" className="absolute right-3 md:right-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white text-5xl">›</button>
           <div className="relative w-full max-w-5xl aspect-[4/3]" onClick={(e) => e.stopPropagation()}>
-            <Image src={images[active]} alt={`Project photo ${active + 1}`} fill className="object-contain rounded-xl" sizes="100vw" />
+            <Image src={images[active]} alt={`Project photo ${active + 1}`} fill quality={68} className="object-contain rounded-xl" sizes="100vw" />
           </div>
           <div className="absolute bottom-5 text-white/70 text-sm">{active + 1} / {images.length}</div>
         </div>
