@@ -20,8 +20,8 @@ export default function LeadForm({ height = 540 }: { height?: number }) {
     const events: (keyof WindowEventMap)[] = ["pointerdown", "touchstart", "keydown", "scroll"];
     events.forEach((e) => window.addEventListener(e, trigger, { once: true, passive: true }));
 
-    // …or after ~3s for passive visitors — keeps the form out of the initial load window.
-    const t = window.setTimeout(trigger, 3000);
+    // …or after ~4s for passive visitors — keeps the form out of the initial load window.
+    const t = window.setTimeout(trigger, 4000);
 
     return () => {
       events.forEach((e) => window.removeEventListener(e, trigger));
