@@ -2,8 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 
 // Real lead-capture form (LeadConnector / GoHighLevel) — submissions go to the CRM.
-// Lazy-mounted: the heavy third-party iframe loads only when it scrolls near the
-// viewport, or once the browser is idle, so it never blocks initial page load (LCP).
+// The heavy third-party iframe (reCAPTCHA, pixels, ~1.5 MB) loads only AFTER the page
+// has painted: on the visitor's first interaction, when it scrolls near, or once idle —
+// so it never blocks the initial render / LCP. Users can also click to load it instantly.
 export default function LeadForm({ height = 540 }: { height?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [load, setLoad] = useState(false);
@@ -11,19 +12,38 @@ export default function LeadForm({ height = 540 }: { height?: number }) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const trigger = () => setLoad(true);
+    let done = false;
+    const trigger = () => {
+      if (done) return;
+      done = true;
+      setLoad(true);
+    };
 
-    const io = new IntersectionObserver(
-      (entries) => { if (entries.some((e) => e.isIntersecting)) { trigger(); io.disconnect(); } },
-      { rootMargin: "400px" }
-    );
-    io.observe(el);
+    // 1) Load on the visitor's first interaction — keeps the critical render path clean.
+    const events: (keyof WindowEventMap)[] = ["pointerdown", "touchstart", "keydown", "scroll"];
+    events.forEach((e) => window.addEventListener(e, trigger, { once: true, passive: true }));
 
-    // Fallback so above-the-fold forms still appear without scrolling.
+    // 2) After the page has painted/settled, set up viewport + idle loading as a fallback.
     const w = window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
-    const idle = w.requestIdleCallback ? w.requestIdleCallback(trigger, { timeout: 2500 }) : window.setTimeout(trigger, 1800);
+    let io: IntersectionObserver | null = null;
+    let t = 0;
+    const start = () => {
+      io = new IntersectionObserver(
+        (entries) => { if (entries.some((en) => en.isIntersecting)) trigger(); },
+        { rootMargin: "300px" }
+      );
+      io.observe(el);
+      if (w.requestIdleCallback) w.requestIdleCallback(trigger, { timeout: 2500 });
+      else t = window.setTimeout(trigger, 2000);
+    };
+    if (document.readyState === "complete") t = window.setTimeout(start, 1400);
+    else window.addEventListener("load", () => { t = window.setTimeout(start, 1400); }, { once: true });
 
-    return () => { io.disconnect(); if (typeof idle === "number") clearTimeout(idle); };
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, trigger));
+      if (io) io.disconnect();
+      if (t) clearTimeout(t);
+    };
   }, []);
 
   return (
@@ -46,9 +66,15 @@ export default function LeadForm({ height = 540 }: { height?: number }) {
           data-form-id="FOO7PLSeOm8T3qpx0pE9"
         />
       ) : (
-        <div className="grid place-items-center rounded-lg bg-white border border-sand" style={{ height }} aria-hidden="true">
-          <span className="text-ink/40 text-sm">Loading estimate form…</span>
-        </div>
+        <button
+          type="button"
+          onClick={() => setLoad(true)}
+          className="grid w-full place-items-center rounded-lg bg-white border border-sand text-ink/50 text-sm hover:text-blue transition"
+          style={{ height }}
+          aria-label="Load the free estimate form"
+        >
+          Loading estimate form…
+        </button>
       )}
     </div>
   );
