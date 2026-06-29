@@ -52,11 +52,18 @@ export default function LeadForm({ height = 540 }: { height?: number }) {
         <button
           type="button"
           onClick={() => setLoad(true)}
-          className="grid w-full place-items-center rounded-lg bg-white border border-sand text-ink/50 text-sm hover:text-blue transition"
-          style={{ height }}
-          aria-label="Load the free estimate form"
+          className="flex w-full flex-col gap-3 rounded-lg bg-white border border-sand p-4 text-left hover:border-blue transition"
+          style={{ minHeight: height }}
+          aria-label="Start the free estimate form"
         >
-          Loading estimate form…
+          <span className="h-2.5 w-2/5 rounded bg-sand" />
+          <span className="h-10 rounded-lg bg-sand/60" />
+          <span className="h-10 rounded-lg bg-sand/60" />
+          <span className="h-10 rounded-lg bg-sand/60" />
+          <span className="h-16 rounded-lg bg-sand/60" />
+          <span className="mt-auto grid h-12 place-items-center rounded-lg bg-grad-green font-bold text-white">
+            Start your free estimate →
+          </span>
         </button>
       )}
     </div>
