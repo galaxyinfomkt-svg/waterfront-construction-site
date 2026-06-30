@@ -8,7 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import { services, allCities, citySlug, galleryImages, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
-import { commonFaqs } from "@/lib/faq";
+import { commonFaqs, dedupeFaqs } from "@/lib/faq";
 
 export function generateStaticParams() {
   const params: { slug: string; city: string }[] = [];
@@ -68,11 +68,11 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
   const localContext = localContextVariants[hWeighted(cityName + s.slug) % localContextVariants.length];
   const commitment = commitmentVariants[hWeighted(s.slug + cityName) % commitmentVariants.length];
 
-  const faqs = [
+  const faqs = dedupeFaqs([
     { q: `Do you provide ${s.name.toLowerCase()} in ${cityName}, MA?`, a: `Yes — ${cityName} is right in our service area. We're based in Northborough and regularly serve ${cityName} homeowners with professional ${s.name.toLowerCase()}. Call ${site.phone} for a free estimate.` },
     ...s.faqs.slice(0, 2),
     ...commonFaqs(s.name).slice(0, 5),
-  ];
+  ]);
   const ld = graph([
     breadcrumb([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: s.name, path: `/services/${s.slug}` }, { name: cityName, path: `/services/${s.slug}/${city}` }]),
     serviceSchema(s, cityName),

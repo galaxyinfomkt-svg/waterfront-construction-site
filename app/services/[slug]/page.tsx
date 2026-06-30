@@ -8,7 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import { services, galleryImages, allCities, citySlug, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
-import { commonFaqs } from "@/lib/faq";
+import { commonFaqs, dedupeFaqs } from "@/lib/faq";
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -32,7 +32,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
   if (!s) notFound();
   const others = services.filter((x) => x.slug !== slug).slice(0, 3);
   const gallery = [s.image, ...galleryImages.filter((g) => g !== s.image)].slice(0, 6);
-  const allFaqs = [...s.faqs, ...commonFaqs(s.name)];
+  const allFaqs = dedupeFaqs([...s.faqs, ...commonFaqs(s.name)]);
   const ld = graph([
     breadcrumb([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: s.name, path: `/services/${s.slug}` }]),
     serviceSchema(s),

@@ -1,5 +1,27 @@
 export type Faq = { q: string; a: string };
 
+// Remove near-duplicate questions that ask the same thing (e.g. "how much does X cost"
+// appearing in both the service-specific and the shared FAQ sets). Keeps the first
+// occurrence of each intent, so more specific service FAQs win over generic ones.
+export function dedupeFaqs(list: Faq[]): Faq[] {
+  const seen = new Set<string>();
+  return list.filter((f) => {
+    const q = f.q.toLowerCase();
+    let key = q;
+    if (/cost|price|how much/.test(q)) key = "cost";
+    else if (/how long|take|timeline|how soon/.test(q)) key = "duration";
+    else if (/licens|insur/.test(q)) key = "licensed";
+    else if (/estimate|quote/.test(q)) key = "estimate";
+    else if (/permit|inspection/.test(q)) key = "permit";
+    else if (/town|area|serve|do you (provide|do)/.test(q)) key = "area";
+    else if (/stand behind|warranty|guarantee|satisf/.test(q)) key = "warranty";
+    else if (/stay in|live in|during the/.test(q)) key = "stay";
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 // Shared, AEO-optimized FAQs tailored per service (combined with each service's specific FAQs → 10+ per page)
 export function commonFaqs(service: string): Faq[] {
   const s = service.toLowerCase();
