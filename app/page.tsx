@@ -8,7 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import { services, testimonials, cities, site } from "@/lib/site";
 import { faqs } from "@/lib/faq";
 import { pageMeta } from "@/lib/seo";
-import { graph, faqSchema } from "@/lib/schema";
+import { graph, faqSchema, howToSchema } from "@/lib/schema";
 
 export const metadata = pageMeta({
   title: "Remodeling & Construction in Northborough, MA | Waterfront Construction",
@@ -42,7 +42,7 @@ const tableRows = [
 export default function Home() {
   return (
     <>
-      <JsonLd data={graph([faqSchema(faqs)])} />
+      <JsonLd data={graph([faqSchema(faqs), howToSchema()])} />
 
       {/* HERO */}
       <section className="relative overflow-hidden">

@@ -1,6 +1,7 @@
 import { SITE_URL, GEO } from "./seo";
 import { site, services } from "./site";
 import type { Service, Faq } from "./site";
+import type { Post } from "./posts";
 
 export const BUSINESS_ID = `${SITE_URL}/#business`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
@@ -22,7 +23,17 @@ export const businessSchema = {
   priceRange: "$$",
   foundingDate: "2017",
   slogan: "From the foundation to the final finish.",
-  founder: { "@type": "Person", name: "Ernando Nunes" },
+  description:
+    "Waterfront Construction Inc is a licensed, insured, owner-led home remodeling and general contractor based in Northborough, MA, serving MetroWest and Worcester County since 2017 — kitchens, bathrooms, additions, siding, windows, decks and full remodels.",
+  founder: {
+    "@type": "Person",
+    name: "Ernando Nunes",
+    jobTitle: "Owner & Lead Builder",
+    description: `${site.experience}+ years of hands-on residential construction experience.`,
+  },
+  hasMap: "https://www.google.com/maps/search/?api=1&query=Waterfront+Construction+Inc+Northborough+MA",
+  paymentAccepted: "Cash, Check, Credit Card",
+  currenciesAccepted: "USD",
   address: { "@type": "PostalAddress", streetAddress: "44 Bearfoot Road", addressLocality: "Northborough", addressRegion: "MA", postalCode: "01532", addressCountry: "US" },
   geo: { "@type": "GeoCoordinates", latitude: GEO.lat, longitude: GEO.lng },
   areaServed: { "@type": "GeoCircle", geoMidpoint: { "@type": "GeoCoordinates", latitude: GEO.lat, longitude: GEO.lng }, geoRadius: "48000" },
@@ -65,9 +76,11 @@ export function faqSchema(faqs: Faq[]) {
   return { "@type": "FAQPage", mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) };
 }
 
-export function articleSchema(p: { title: string; excerpt: string; image: string; date: string; slug: string }) {
+export function articleSchema(p: Post) {
   let iso = p.date;
   try { iso = new Date(p.date).toISOString(); } catch { /* keep */ }
+  const wordCount = [p.lead, ...p.sections.flatMap((s) => [...(s.p || []), ...(s.ul || []), s.quote || ""])]
+    .join(" ").trim().split(/\s+/).filter(Boolean).length;
   return {
     "@type": "BlogPosting",
     headline: p.title,
@@ -75,8 +88,35 @@ export function articleSchema(p: { title: string; excerpt: string; image: string
     image: `${SITE_URL}${p.image}`,
     datePublished: iso,
     dateModified: iso,
-    author: { "@type": "Organization", name: site.name, url: SITE_URL },
+    inLanguage: "en-US",
+    wordCount,
+    articleSection: p.category,
+    keywords: ["home remodeling", "Northborough MA", "MetroWest contractor", p.category],
+    // E-E-A-T: named, experienced practitioner as author
+    author: {
+      "@type": "Person",
+      name: "Ernando Nunes",
+      jobTitle: "Owner & Lead Builder, Waterfront Construction Inc",
+      worksFor: { "@id": BUSINESS_ID },
+      knowsAbout: ["home remodeling", "kitchen & bathroom remodeling", "general contracting", "siding", "home additions", "decks"],
+    },
     publisher: { "@id": BUSINESS_ID },
     mainEntityOfPage: `${SITE_URL}/blog/${p.slug}`,
+  };
+}
+
+// AEO: process steps eligible for HowTo rich results & AI step extraction.
+export function howToSchema() {
+  const steps: [string, string][] = [
+    ["Free estimate", "We visit, listen, and give you a clear, honest, itemized quote — no obligation."],
+    ["Plan & materials", "We lock the scope, materials, timeline, and permits before any work begins."],
+    ["We build", "Clean, on-schedule construction with one accountable point of contact."],
+    ["Final walkthrough", "We don't consider the job done until you're 100% happy with the result."],
+  ];
+  return {
+    "@type": "HowTo",
+    name: "How a remodeling project works with Waterfront Construction",
+    description: "The 4-step process Waterfront Construction follows on every Northborough & MetroWest remodeling project.",
+    step: steps.map(([name, text], i) => ({ "@type": "HowToStep", position: i + 1, name, text })),
   };
 }
