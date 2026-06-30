@@ -7,6 +7,7 @@ import { graph, businessSchema, websiteSchema } from "@/lib/schema";
 import { SITE_URL, GEO } from "@/lib/seo";
 import Script from "next/script";
 import Analytics from "@/components/Analytics";
+import ChatWidget from "@/components/ChatWidget";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap", weight: ["600", "700", "800"] });
@@ -49,6 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <FloatingCTA />
         <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="lazyOnload" />
         <Analytics />
+        <ChatWidget />
       </body>
     </html>
   );
