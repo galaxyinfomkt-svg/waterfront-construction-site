@@ -21,7 +21,7 @@ export default function BlogPage() {
       </section>
       <section className="py-16">
         <div className="container-x grid md:grid-cols-3 gap-7">
-          {posts.map((p) => (
+          {[...posts].sort((a, b) => +new Date(b.date) - +new Date(a.date)).map((p) => (
             <Link key={p.slug} href={`/blog/${p.slug}`} className="group card overflow-hidden hover:-translate-y-1.5 transition">
               <div className="relative h-48"><Image src={p.image} alt={p.title} fill quality={60} className="object-cover group-hover:scale-105 transition duration-500" /></div>
               <div className="p-5">

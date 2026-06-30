@@ -22,7 +22,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const p = posts.find((x) => x.slug === slug);
   if (!p) notFound();
-  const related = posts.filter((x) => x.slug !== slug).slice(0, 2);
+  const others = posts.filter((x) => x.slug !== slug);
+  const related = [
+    ...others.filter((x) => x.category === p.category),
+    ...others.filter((x) => x.category !== p.category),
+  ].slice(0, 3);
   const ld = graph([
     breadcrumb([{ name: "Home", path: "/" }, { name: "Blog", path: "/blog" }, { name: p.title, path: `/blog/${p.slug}` }]),
     articleSchema(p),
