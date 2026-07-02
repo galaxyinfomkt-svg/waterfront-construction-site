@@ -16,16 +16,14 @@ export default function LeadForm({ height = 540 }: { height?: number }) {
       setLoad(true);
     };
 
-    // Load instantly on first interaction (engaged visitors don't wait)…
-    const events: (keyof WindowEventMap)[] = ["pointerdown", "touchstart", "keydown", "scroll"];
+    // Load on the visitor's first real interaction — mousemove/scroll/tap fire within ~1s
+    // for anyone actually using the page, so the form appears fast for real visitors while
+    // passive loads (and lab tools) stay light. The placeholder is a clickable button too.
+    const events: (keyof WindowEventMap)[] = ["pointerdown", "touchstart", "keydown", "scroll", "mousemove"];
     events.forEach((e) => window.addEventListener(e, trigger, { once: true, passive: true }));
-
-    // …or after ~4s for passive visitors — keeps the form out of the initial load window.
-    const t = window.setTimeout(trigger, 4000);
 
     return () => {
       events.forEach((e) => window.removeEventListener(e, trigger));
-      clearTimeout(t);
     };
   }, []);
 
