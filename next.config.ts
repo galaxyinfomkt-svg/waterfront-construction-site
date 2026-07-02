@@ -26,6 +26,8 @@ const nextConfig: NextConfig = {
     }
     // Financing page removed — owner does not offer financing.
     rules.push({ source: "/financing", destination: "/contact", permanent: true });
+    // Project renamed to its actual address.
+    rules.push({ source: "/projects/home-addition-lynnfield-ma", destination: "/projects/home-addition-52-crest-road-lynnfield-ma", permanent: true });
     return rules;
   },
 };

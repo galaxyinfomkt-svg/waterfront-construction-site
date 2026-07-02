@@ -13,8 +13,8 @@ export type Project = {
 };
 
 const HA = (n: number) => `/images/projects/home-addition-highland-ave-lynnfield-ma-${String(n).padStart(2, "0")}.webp`;
-const LY = (n: number) => `/images/projects/home-addition-lynnfield-ma-${String(n).padStart(2, "0")}.webp`;
-const LYV = (n: number) => `/videos/home-addition-lynnfield-ma-${String(n).padStart(2, "0")}.mp4`;
+const CR = (n: number) => `/images/projects/home-addition-52-crest-road-lynnfield-ma-${String(n).padStart(2, "0")}.webp`;
+const CRV = (n: number) => `/videos/home-addition-52-crest-road-lynnfield-ma-${String(n).padStart(2, "0")}.mp4`;
 
 export const projects: Project[] = [
   {
@@ -33,19 +33,19 @@ export const projects: Project[] = [
     videos: [],
   },
   {
-    slug: "home-addition-lynnfield-ma",
-    title: "Home Addition — Lynnfield, MA",
-    shortTitle: "Lynnfield Addition",
+    slug: "home-addition-52-crest-road-lynnfield-ma",
+    title: "Home Addition — 52 Crest Road, Lynnfield, MA",
+    shortTitle: "52 Crest Road Addition",
     location: "Lynnfield, MA",
     category: "Home Addition",
-    blurb: "A video walkthrough of a home addition in Lynnfield — from framing through weather-tight exterior.",
+    blurb: "A video walkthrough of a home addition at 52 Crest Road, Lynnfield — from framing through weather-tight exterior.",
     body: [
-      "A second home addition in Lynnfield, captured on video as the project came together. The clips walk through the addition from structural framing to a fully weather-tight exterior with new sheathing and house wrap.",
+      "This home addition at 52 Crest Road in Lynnfield is captured on video as the project came together. The clips walk through the addition from structural framing to a fully weather-tight exterior with new sheathing and house wrap.",
       "Like every Waterfront Construction project, this one was owner-supervised from the first estimate to the final walkthrough — clean job site, clear communication, and craftsmanship built to last.",
     ],
-    cover: LY(3),
+    cover: CR(3),
     photos: [],
-    videos: [1, 2, 3, 4, 6].map((n) => ({ src: LYV(n), poster: LY(n) })),
+    videos: [1, 2, 3, 4, 6].map((n) => ({ src: CRV(n), poster: CR(n) })),
   },
 ];
 
