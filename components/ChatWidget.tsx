@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 
-// LeadConnector chat widget — deferred so the heavy third-party script never blocks
-// the initial render. Loads on the visitor's first interaction, or ~4s after load.
+// LeadConnector chat widget — the heavy third-party script (~170 KB) loads ONLY on the
+// visitor's first real interaction (scroll / tap / click / key). Passive page loads stay
+// light and fast; the chat bubble appears the moment someone engages.
 export default function ChatWidget() {
   const [load, setLoad] = useState(false);
 
@@ -13,12 +14,10 @@ export default function ChatWidget() {
       done = true;
       setLoad(true);
     };
-    const events: (keyof WindowEventMap)[] = ["pointerdown", "touchstart", "keydown", "scroll"];
+    const events: (keyof WindowEventMap)[] = ["pointerdown", "touchstart", "keydown", "scroll", "mousemove"];
     events.forEach((e) => window.addEventListener(e, trigger, { once: true, passive: true }));
-    const t = window.setTimeout(trigger, 4000);
     return () => {
       events.forEach((e) => window.removeEventListener(e, trigger));
-      clearTimeout(t);
     };
   }, []);
 
