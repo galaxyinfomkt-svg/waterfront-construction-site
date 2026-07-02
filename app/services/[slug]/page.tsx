@@ -110,7 +110,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
             </div>
           </Reveal>
           <Reveal>
-            <div className="mt-10"><Gallery images={gallery} /></div>
+            <div className="mt-10"><Gallery images={gallery} alt={`${s.name} project by Waterfront Construction`} /></div>
             <p className="mt-4 text-center text-white/60 text-sm">🔍 Click any photo to view it larger</p>
           </Reveal>
         </div>

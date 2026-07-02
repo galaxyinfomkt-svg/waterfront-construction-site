@@ -147,7 +147,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
             <span className="eyebrow text-cyan">Our work</span>
             <h2 className="mt-3 text-3xl md:text-4xl font-extrabold">Recent {s.name.toLowerCase()} projects near {cityName}</h2>
           </div></Reveal>
-          <Reveal><div className="mt-10"><Gallery images={gallery} /></div><p className="mt-4 text-center text-white/60 text-sm">🔍 Click any photo to view it larger</p></Reveal>
+          <Reveal><div className="mt-10"><Gallery images={gallery} alt={`${s.name} in ${cityName}, MA by Waterfront Construction`} /></div><p className="mt-4 text-center text-white/60 text-sm">🔍 Click any photo to view it larger</p></Reveal>
         </div>
       </section>
 

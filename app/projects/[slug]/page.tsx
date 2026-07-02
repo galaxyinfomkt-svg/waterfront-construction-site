@@ -99,11 +99,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               p.stages.map((st) => (
                 <Reveal key={st.label}>
                   <h3 className="mt-10 mb-5 text-center text-sm font-bold text-cyan uppercase tracking-[0.2em]">{st.label}</h3>
-                  <Gallery images={st.photos} />
+                  <Gallery images={st.photos} alt={`${p.category} in ${p.location} — ${st.label}`} />
                 </Reveal>
               ))
             ) : (
-              <Reveal><div className="mt-10"><Gallery images={p.photos} /></div></Reveal>
+              <Reveal><div className="mt-10"><Gallery images={p.photos} alt={`${p.category} in ${p.location} by Waterfront Construction`} /></div></Reveal>
             )}
           </div>
         </section>
