@@ -46,7 +46,7 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src="/images/projects/home-addition-highland-ave-lynnfield-ma-12.webp" alt="Home addition project by Waterfront Construction in Lynnfield, MA" fill priority quality={62} sizes="100vw" className="object-cover kenburns" />
+        <Image src="/images/projects/kitchen-remodel-mansfield-ma-01.webp" alt="Finished kitchen remodel by Waterfront Construction in Mansfield, MA" fill priority quality={64} sizes="100vw" className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="absolute inset-0 dots-light opacity-50" />
         <div className="blob bg-cyan w-80 h-80 top-10 -right-10 spin-slow" />
@@ -229,23 +229,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SPECIALTY DEEP-DIVE 2 (reversed) */}
+      {/* BEFORE & AFTER */}
       <section className="py-20 bg-tint-green">
-        <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
-          <Reveal delay={120} className="lg:order-2"><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
-            <Image src="/images/projects/home-addition-highland-ave-lynnfield-ma-16.webp" alt="Home addition project in Lynnfield, MA by Waterfront Construction" fill quality={62} className="object-cover zoomimg" />
-          </div></Reveal>
-          <Reveal className="lg:order-1"><div>
-            <span className="eyebrow">Exteriors &amp; additions</span>
-            <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">More space, more curb appeal, more value</h2>
-            <p className="mt-4 text-ink/70 text-lg">From fresh siding and energy-efficient windows to decks and full home additions, we transform the outside of your home and add the room your family needs — all matched seamlessly to your existing house.</p>
-            <ul className="mt-5 grid sm:grid-cols-2 gap-2.5">
-              {["Siding & exterior trim", "Windows & doors", "Custom decks", "Room & second-story additions"].map((f) => (
-                <li key={f} className="flex items-center gap-2 text-navy font-medium"><span className="text-green">✓</span>{f}</li>
-              ))}
-            </ul>
-            <div className="mt-6 flex flex-wrap gap-3"><Link href="/services/siding" className="btn btn-navy">Siding →</Link><Link href="/services/home-additions-remodeling" className="btn btn-grad">Additions →</Link></div>
-          </div></Reveal>
+        <div className="container-x">
+          <Reveal>
+            <div className="text-center max-w-2xl mx-auto">
+              <span className="eyebrow justify-center">See the transformation</span>
+              <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Real projects — before &amp; after</h2>
+              <p className="mt-3 text-ink/65">Real homes we&apos;ve transformed across Greater Boston, MetroWest &amp; Southern NH.</p>
+            </div>
+          </Reveal>
+          <div className="mt-10 grid md:grid-cols-2 gap-8">
+            {[
+              { before: "/images/projects/home-addition-needham-ma-before-01.webp", after: "/images/projects/home-addition-needham-ma-07.webp", title: "Home Addition", loc: "Needham, MA", href: "/projects/home-addition-129-falcon-st-needham-ma" },
+              { before: "/images/projects/deck-salem-nh-before-01.webp", after: "/images/projects/deck-salem-nh-05.webp", title: "Pool Deck", loc: "Salem, NH", href: "/projects/pool-deck-salem-nh" },
+            ].map((ba) => (
+              <Reveal key={ba.title}>
+                <Link href={ba.href} className="group card overflow-hidden pop block">
+                  <div className="grid grid-cols-2 gap-0.5">
+                    <div className="relative h-56 sm:h-64">
+                      <Image src={ba.before} alt={`${ba.title} in ${ba.loc} — before`} fill className="object-cover" sizes="(max-width:768px) 50vw, 25vw" />
+                      <span className="absolute top-3 left-3 rounded-full bg-navy/85 text-white text-xs font-bold px-3 py-1">Before</span>
+                    </div>
+                    <div className="relative h-56 sm:h-64">
+                      <Image src={ba.after} alt={`${ba.title} in ${ba.loc} — after`} fill className="object-cover zoomimg" sizes="(max-width:768px) 50vw, 25vw" />
+                      <span className="absolute top-3 left-3 rounded-full bg-grad-green text-white text-xs font-bold px-3 py-1">After</span>
+                    </div>
+                  </div>
+                  <div className="p-5 flex items-center justify-between gap-3">
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-blue">📍 {ba.loc}</span>
+                      <h3 className="font-extrabold text-navy text-lg leading-tight">{ba.title}</h3>
+                    </div>
+                    <span className="text-blue font-bold shrink-0">View project →</span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-8 text-center"><Link href="/gallery" className="btn btn-navy">See all projects →</Link></div>
         </div>
       </section>
 
