@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!p) return {};
   return pageMeta({
     title: `${p.category} in ${p.location} — Project`,
-    description: `${p.blurb} See real photos and video from Waterfront Construction, a licensed, insured contractor serving ${p.location} and MetroWest.`,
+    description: `${p.category} in ${p.location} by Waterfront Construction — see real project photos${p.videos.length ? " and video" : ""}. Licensed, insured, free estimates.`,
     path: `/projects/${p.slug}`,
     image: p.cover,
   });
