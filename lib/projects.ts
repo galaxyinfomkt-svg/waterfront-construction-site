@@ -47,6 +47,21 @@ export const projects: Project[] = [
     photos: [],
     videos: [1, 2, 3, 4, 6].map((n) => ({ src: CRV(n), poster: CR(n) })),
   },
+  {
+    slug: "exterior-remodel-siding-deck",
+    title: "Exterior Remodel — New Siding & Deck",
+    shortTitle: "Siding & Deck Remodel",
+    location: "Massachusetts",
+    category: "Exterior Remodel",
+    blurb: "A completed exterior transformation — fresh siding and a rebuilt deck — by Waterfront Construction.",
+    body: [
+      "A finished exterior remodel featuring new siding and a rebuilt deck. Fresh siding protects the home and instantly lifts its curb appeal, while a solid new deck adds usable outdoor living space for the New England seasons.",
+      "Like every Waterfront Construction job, this one was owner-supervised from start to finish — quality materials, clean work, and a finish built to last.",
+    ],
+    cover: "/images/projects/exterior-remodel-siding-deck-ma-01.webp",
+    photos: [],
+    videos: [{ src: "/videos/exterior-remodel-siding-deck-ma-01.mp4", poster: "/images/projects/exterior-remodel-siding-deck-ma-01.webp" }],
+  },
 ];
 
 export function getProject(slug: string) {

@@ -55,7 +55,7 @@ export default function GalleryPage() {
               <p className="mt-3 text-ink/65">Open a full photo &amp; video album from a recent Waterfront Construction job.</p>
             </div>
           </Reveal>
-          <div className="mt-10 grid sm:grid-cols-2 gap-7">
+          <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
             {projects.map((p) => (
               <Reveal key={p.slug}>
                 <Link href={`/projects/${p.slug}`} className="group card overflow-hidden pop block h-full">
