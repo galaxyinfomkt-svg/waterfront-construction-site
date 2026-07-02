@@ -26,11 +26,11 @@ const items: GalleryItem[] = [
   { src: "/images/windows.jpg", cat: "Windows & Doors", label: "Entry door & trim" },
   { src: "/images/deck.jpg", cat: "Decks", label: "Composite deck build" },
   { src: "/images/deck.jpg", cat: "Decks", label: "Outdoor living space" },
-  { src: "/images/addition.jpg", cat: "Additions", label: "Second-story addition" },
-  { src: "/images/home-exterior.jpg", cat: "Additions", label: "Home expansion" },
+  { src: "/images/projects/home-addition-highland-ave-lynnfield-ma-16.webp", cat: "Additions", label: "Second-story addition — Lynnfield, MA" },
+  { src: "/images/projects/home-addition-highland-ave-lynnfield-ma-04.webp", cat: "Additions", label: "Home addition — Lynnfield, MA" },
   { src: "/images/painting.jpg", cat: "Painting", label: "Exterior repaint" },
   { src: "/images/painting.jpg", cat: "Painting", label: "Interior & trim" },
-  { src: "/images/remodel.jpg", cat: "Additions", label: "Whole-home remodel" },
+  { src: "/images/projects/home-addition-52-crest-road-lynnfield-ma-03.webp", cat: "Additions", label: "Home addition — Crest Rd, Lynnfield" },
 ];
 
 export default function GalleryPage() {

@@ -88,7 +88,7 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "home-additions-remodeling", name: "Additions & Remodeling", short: "Home Additions & Remodeling", icon: "📐", image: "/images/addition.jpg",
+    slug: "home-additions-remodeling", name: "Additions & Remodeling", short: "Home Additions & Remodeling", icon: "📐", image: "/images/projects/home-addition-highland-ave-lynnfield-ma-04.webp",
     blurb: "Need more room or a whole-home refresh? From additions and second stories to full renovations — foundation to final finish, one trusted team.",
     features: ["Room & second-story additions", "In-law suites & sunrooms", "Whole-home renovations", "Basement finishing", "Foundation to final finish", "Design-build process"],
     long: [

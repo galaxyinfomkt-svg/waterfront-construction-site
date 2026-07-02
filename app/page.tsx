@@ -25,7 +25,7 @@ const galleryItems: GalleryItem[] = [
   { src: "/images/siding.jpg", cat: "Siding", label: "Fiber-cement install" },
   { src: "/images/windows.jpg", cat: "Siding", label: "Windows & trim" },
   { src: "/images/deck.jpg", cat: "Decks", label: "Composite deck build" },
-  { src: "/images/addition.jpg", cat: "Additions", label: "Second-story addition" },
+  { src: "/images/projects/home-addition-highland-ave-lynnfield-ma-11.webp", cat: "Additions", label: "Home addition — Lynnfield, MA" },
   { src: "/images/painting.jpg", cat: "Painting", label: "Exterior repaint" },
   { src: "/images/kitchen.jpg", cat: "Bathrooms", label: "Tile & vanity" },
 ];
@@ -46,7 +46,7 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src="/images/hero.jpg" alt="Beautifully remodeled home" fill priority quality={55} sizes="100vw" className="object-cover kenburns" />
+        <Image src="/images/projects/home-addition-highland-ave-lynnfield-ma-12.webp" alt="Home addition project by Waterfront Construction in Lynnfield, MA" fill priority quality={62} sizes="100vw" className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="absolute inset-0 dots-light opacity-50" />
         <div className="blob bg-cyan w-80 h-80 top-10 -right-10 spin-slow" />
@@ -233,7 +233,7 @@ export default function Home() {
       <section className="py-20 bg-tint-green">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal delay={120} className="lg:order-2"><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
-            <Image src="/images/home-exterior.jpg" alt="Siding and home additions" fill quality={60} className="object-cover zoomimg" />
+            <Image src="/images/projects/home-addition-highland-ave-lynnfield-ma-16.webp" alt="Home addition project in Lynnfield, MA by Waterfront Construction" fill quality={62} className="object-cover zoomimg" />
           </div></Reveal>
           <Reveal className="lg:order-1"><div>
             <span className="eyebrow">Exteriors &amp; additions</span>
