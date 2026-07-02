@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Gallery from "@/components/Gallery";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
-import { projects, getProject } from "@/lib/projects";
+import { projects, getProject, projectImages } from "@/lib/projects";
 import { site } from "@/lib/site";
 import { SITE_URL } from "@/lib/seo";
 import { pageMeta } from "@/lib/seo";
@@ -43,7 +43,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       name: p.title,
       description: p.blurb,
       url: `${SITE_URL}/projects/${p.slug}`,
-      image: [p.cover, ...p.photos].slice(0, 12).map((src) => `${SITE_URL}${src}`),
+      image: projectImages(p).slice(0, 12).map((src) => `${SITE_URL}${src}`),
       about: { "@id": BUSINESS_ID },
       locationCreated: { "@type": "Place", name: p.location },
     },
@@ -85,17 +85,26 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </section>
 
       {/* PHOTOS */}
-      {p.photos.length > 0 && (
+      {(p.photos.length > 0 || p.stages?.length) && (
         <section className="py-14 bg-navy text-white">
           <div className="container-x">
             <Reveal>
               <div className="text-center max-w-2xl mx-auto">
                 <span className="eyebrow text-cyan">Photos</span>
-                <h2 className="mt-3 text-3xl md:text-4xl font-extrabold">{p.photos.length} real photos from this project</h2>
+                <h2 className="mt-3 text-3xl md:text-4xl font-extrabold">The project in photos</h2>
                 <p className="mt-3 text-white/70">Click any photo to view it larger.</p>
               </div>
             </Reveal>
-            <Reveal><div className="mt-10"><Gallery images={p.photos} /></div></Reveal>
+            {p.stages ? (
+              p.stages.map((st) => (
+                <Reveal key={st.label}>
+                  <h3 className="mt-10 mb-5 text-center text-sm font-bold text-cyan uppercase tracking-[0.2em]">{st.label}</h3>
+                  <Gallery images={st.photos} />
+                </Reveal>
+              ))
+            ) : (
+              <Reveal><div className="mt-10"><Gallery images={p.photos} /></div></Reveal>
+            )}
           </div>
         </section>
       )}
