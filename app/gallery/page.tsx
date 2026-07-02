@@ -1,10 +1,12 @@
 import Link from "next/link";
+import Image from "next/image";
 import FilterGallery, { type GalleryItem } from "@/components/FilterGallery";
 import Reveal from "@/components/Reveal";
 import { site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 import { graph, breadcrumb } from "@/lib/schema";
+import { projects } from "@/lib/projects";
 
 export const metadata = pageMeta({
   title: "Project Gallery — Northborough & MetroWest, MA",
@@ -43,8 +45,48 @@ export default function GalleryPage() {
         </div>
       </section>
 
+      {/* REAL PROJECT ALBUMS */}
+      <section className="py-16">
+        <div className="container-x">
+          <Reveal>
+            <div className="text-center max-w-2xl mx-auto">
+              <span className="eyebrow justify-center">Featured projects</span>
+              <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Real projects, real homes</h2>
+              <p className="mt-3 text-ink/65">Open a full photo &amp; video album from a recent Waterfront Construction job.</p>
+            </div>
+          </Reveal>
+          <div className="mt-10 grid sm:grid-cols-2 gap-7">
+            {projects.map((p) => (
+              <Reveal key={p.slug}>
+                <Link href={`/projects/${p.slug}`} className="group card overflow-hidden pop block h-full">
+                  <div className="relative h-64">
+                    <Image src={p.cover} alt={p.title} fill className="object-cover zoomimg" sizes="(max-width:640px) 100vw, 50vw" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/15 to-transparent" />
+                    <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/95 text-navy text-xs font-bold px-3 py-1">📁 {p.photos.length ? `${p.photos.length} photos` : `${p.videos.length} videos`}</span>
+                    <div className="absolute bottom-4 left-5 right-5 text-white">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-cyan">📍 {p.location} · {p.category}</span>
+                      <h3 className="font-extrabold text-2xl mt-1 leading-tight">{p.shortTitle}</h3>
+                    </div>
+                  </div>
+                  <div className="p-5 flex items-center justify-between gap-3">
+                    <span className="text-sm text-ink/65">{p.blurb}</span>
+                    <span className="text-blue font-bold shrink-0">View →</span>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-16 bg-sand">
         <div className="container-x">
+          <Reveal>
+            <div className="text-center max-w-2xl mx-auto mb-8">
+              <span className="eyebrow justify-center">More of what we do</span>
+              <h2 className="mt-3 text-2xl md:text-3xl font-extrabold text-navy">Browse by project type</h2>
+            </div>
+          </Reveal>
           <Reveal><FilterGallery items={items} categories={["Kitchens", "Bathrooms", "Siding", "Windows & Doors", "Decks", "Additions", "Painting"]} /></Reveal>
           <p className="mt-6 text-center text-ink/55 text-sm">Photos are representative of our work. Ask us for references and project examples in your town.</p>
           <div className="mt-6 text-center flex flex-wrap justify-center gap-3">

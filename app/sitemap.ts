@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { services, allCities, citySlug } from "@/lib/site";
 import { posts } from "@/lib/posts";
+import { projects } from "@/lib/projects";
 
 const base = "https://waterfrontconstructionma.com";
 
@@ -35,5 +36,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     images: [`${base}${p.image}`],
   }));
 
-  return [...staticPages, ...servicePages, ...cityPages, ...blogPages];
+  const projectPages: MetadataRoute.Sitemap = projects.map((p) => ({
+    url: `${base}/projects/${p.slug}`,
+    changeFrequency: "monthly",
+    priority: 0.7,
+    images: [p.cover, ...p.photos].slice(0, 20).map((src) => `${base}${src}`),
+  }));
+
+  return [...staticPages, ...servicePages, ...cityPages, ...blogPages, ...projectPages];
 }
