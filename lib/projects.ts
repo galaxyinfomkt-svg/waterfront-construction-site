@@ -33,10 +33,10 @@ const NEEP = (n: number) => IMG("home-addition-needham-ma-progress", n);
 export const projects: Project[] = [
   {
     slug: "kitchen-remodel-mansfield-ma",
-    title: "Kitchen Remodel — Mansfield, MA",
+    title: "Kitchen Remodeling — Mansfield, MA",
     shortTitle: "Mansfield Kitchen",
     location: "Mansfield, MA",
-    category: "Kitchen Remodel",
+    category: "Kitchen Remodeling",
     blurb: "A bright, modern kitchen remodel in Mansfield with custom cabinetry and natural-stone counters.",
     body: [
       "This Mansfield kitchen was transformed with crisp white cabinetry, natural-stone countertops, a large island, and modern pendant lighting — a warm, functional space the whole family can gather in.",
@@ -48,10 +48,10 @@ export const projects: Project[] = [
   },
   {
     slug: "bathroom-remodel-dedham-ma",
-    title: "Bathroom Remodel — Dedham, MA",
+    title: "Bathroom Remodeling — Dedham, MA",
     shortTitle: "Dedham Bathroom",
     location: "Dedham, MA",
-    category: "Bathroom Remodel",
+    category: "Bathroom Remodeling",
     blurb: "A full bathroom remodel in Dedham with a custom tiled walk-in shower and frameless glass.",
     body: [
       "This Dedham bathroom was rebuilt with a custom tiled walk-in shower, frameless glass, and clean modern finishes. Behind the tile, proper waterproofing protects the home for the long run.",
