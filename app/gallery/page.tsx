@@ -58,9 +58,10 @@ export default function GalleryPage() {
           <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
             {projects.map((p) => {
               const photoCount = p.photos.length + (p.stages?.reduce((a, s) => a + s.photos.length, 0) ?? 0);
+              const vid = (n: number) => `${n} video${n === 1 ? "" : "s"}`;
               const badge = photoCount
-                ? `${photoCount} photos${p.videos.length ? ` · ${p.videos.length} videos` : ""}`
-                : `${p.videos.length} videos`;
+                ? `${photoCount} photos${p.videos.length ? ` · ${vid(p.videos.length)}` : ""}`
+                : vid(p.videos.length);
               return (
               <Reveal key={p.slug}>
                 <Link href={`/projects/${p.slug}`} className="group card overflow-hidden pop block h-full">
