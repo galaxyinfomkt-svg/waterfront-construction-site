@@ -56,13 +56,18 @@ export default function GalleryPage() {
             </div>
           </Reveal>
           <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
-            {projects.map((p) => (
+            {projects.map((p) => {
+              const photoCount = p.photos.length + (p.stages?.reduce((a, s) => a + s.photos.length, 0) ?? 0);
+              const badge = photoCount
+                ? `${photoCount} photos${p.videos.length ? ` · ${p.videos.length} videos` : ""}`
+                : `${p.videos.length} videos`;
+              return (
               <Reveal key={p.slug}>
                 <Link href={`/projects/${p.slug}`} className="group card overflow-hidden pop block h-full">
                   <div className="relative h-64">
                     <Image src={p.cover} alt={p.title} fill className="object-cover zoomimg" sizes="(max-width:640px) 100vw, 50vw" />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/15 to-transparent" />
-                    <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/95 text-navy text-xs font-bold px-3 py-1">📁 {p.photos.length ? `${p.photos.length} photos` : `${p.videos.length} videos`}</span>
+                    <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/95 text-navy text-xs font-bold px-3 py-1">📁 {badge}</span>
                     <div className="absolute bottom-4 left-5 right-5 text-white">
                       <span className="text-xs font-semibold uppercase tracking-wider text-cyan">📍 {p.location} · {p.category}</span>
                       <h3 className="font-extrabold text-2xl mt-1 leading-tight">{p.shortTitle}</h3>
@@ -74,7 +79,8 @@ export default function GalleryPage() {
                   </div>
                 </Link>
               </Reveal>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
