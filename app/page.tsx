@@ -18,16 +18,16 @@ export const metadata = pageMeta({
 });
 
 const galleryItems: GalleryItem[] = [
-  { src: "/images/kitchen.jpg", cat: "Kitchens", label: "Custom kitchen remodel" },
-  { src: "/images/remodel.jpg", cat: "Kitchens", label: "Open-concept renovation" },
-  { src: "/images/bathroom.jpg", cat: "Bathrooms", label: "Spa-style bathroom" },
+  { src: "/images/projects/kitchen-remodel-mansfield-ma-01.webp", cat: "Kitchens", label: "Custom kitchen remodel — Mansfield, MA" },
+  { src: "/images/projects/kitchen-remodel-mansfield-ma-03.webp", cat: "Kitchens", label: "Open-concept kitchen — Mansfield, MA" },
+  { src: "/images/projects/bathroom-remodel-dedham-ma-05.webp", cat: "Bathrooms", label: "Frameless glass shower — Dedham, MA" },
   { src: "/images/home-exterior.jpg", cat: "Siding", label: "Full exterior siding" },
   { src: "/images/siding.jpg", cat: "Siding", label: "Fiber-cement install" },
   { src: "/images/windows.jpg", cat: "Siding", label: "Windows & trim" },
-  { src: "/images/deck.jpg", cat: "Decks", label: "Composite deck build" },
+  { src: "/images/projects/deck-salem-nh-04.webp", cat: "Decks", label: "Pool deck — Salem, NH" },
   { src: "/images/projects/home-addition-highland-ave-lynnfield-ma-11.webp", cat: "Additions", label: "Home addition — Lynnfield, MA" },
   { src: "/images/painting.jpg", cat: "Painting", label: "Exterior repaint" },
-  { src: "/images/kitchen.jpg", cat: "Bathrooms", label: "Tile & vanity" },
+  { src: "/images/projects/bathroom-remodel-dedham-ma-02.webp", cat: "Bathrooms", label: "Custom tiled bath — Dedham, MA" },
 ];
 
 const tableRows = [
@@ -213,7 +213,7 @@ export default function Home() {
       <section className="py-20 bg-sand">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
-            <Image src="/images/kitchen.jpg" alt="Kitchen and bath remodeling" fill quality={60} className="object-cover zoomimg" />
+            <Image src="/images/projects/kitchen-remodel-mansfield-ma-01.webp" alt="Kitchen remodel in Mansfield, MA by Waterfront Construction" fill quality={62} className="object-cover zoomimg" />
           </div></Reveal>
           <Reveal delay={120}><div>
             <span className="eyebrow">Kitchens &amp; bathrooms</span>

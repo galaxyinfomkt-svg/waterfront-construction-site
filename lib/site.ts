@@ -60,7 +60,7 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling", icon: "🍽️", image: "/images/kitchen.jpg",
+    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling", icon: "🍽️", image: "/images/projects/kitchen-remodel-mansfield-ma-01.webp",
     blurb: "The two rooms that sell your home and you use every day — beautiful kitchens and spa-like bathrooms, managed start to finish.",
     features: ["Custom cabinets & islands", "Tile & walk-in showers", "Countertops & backsplash", "Vanities, fixtures & lighting", "Plumbing, electrical & waterproofing", "Full project management"],
     long: [
@@ -74,7 +74,7 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "decks", name: "Decks", short: "Deck Design & Construction", icon: "🌳", image: "/images/deck.jpg",
+    slug: "decks", name: "Decks", short: "Deck Design & Construction", icon: "🌳", image: "/images/projects/deck-salem-nh-04.webp",
     blurb: "Custom decks and outdoor living spaces in composite or wood — the perfect extension of the home you already love.",
     features: ["Composite & wood decks", "Railings, stairs & lighting", "Pergolas & outdoor living", "Permits handled for you", "Built to code & built to last", "Custom design to fit your yard"],
     long: [
