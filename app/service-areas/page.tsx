@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import { cities, citySlug, site } from "@/lib/site";
+import { cities, citySlug, cityLabel, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import JsonLd from "@/components/JsonLd";
 import { graph, breadcrumb } from "@/lib/schema";
@@ -8,7 +8,7 @@ import LocationsExplorer from "@/components/LocationsExplorer";
 
 export const metadata = pageMeta({
   title: "Service Areas — Northborough & MetroWest, MA",
-  description: "Waterfront Construction serves Northborough and 30+ towns across MetroWest and Worcester County, MA. Find remodeling & construction services in your town.",
+  description: "Waterfront Construction serves 150+ towns across Greater Boston, MetroWest, the North Shore & Southern New Hampshire. Find remodeling & construction services in your town.",
   path: "/service-areas",
 });
 
@@ -22,7 +22,7 @@ export default function ServiceAreasPage() {
         <div className="container-x py-16 md:py-20 text-center">
           <span className="eyebrow text-cyan">Proudly local</span>
           <h1 className="mt-3 text-4xl md:text-6xl font-extrabold">Service areas</h1>
-          <p className="mt-4 text-white/85 text-lg max-w-2xl mx-auto">Based in Northborough, we build and remodel across MetroWest and Worcester County — within about a 30-mile radius.</p>
+          <p className="mt-4 text-white/85 text-lg max-w-2xl mx-auto">Based in Northborough, we build and remodel across Greater Boston, MetroWest, the North Shore &amp; Southern New Hampshire.</p>
         </div>
       </section>
 
@@ -34,14 +34,14 @@ export default function ServiceAreasPage() {
           </Reveal>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {cities.map((c) => (
-              <Link key={c} href={`/services/${flagship}/${citySlug(c)}`}
+              <Link key={citySlug(c)} href={`/services/${flagship}/${citySlug(c)}`}
                 className="card gborder p-4 flex items-center justify-between hover:-translate-y-1 transition">
-                <span className="font-bold text-navy">{c}, MA</span>
+                <span className="font-bold text-navy">{cityLabel(c)}</span>
                 <span className="text-blue">→</span>
               </Link>
             ))}
           </div>
-          <p className="mt-6 text-center text-ink/55 text-sm">…and many more nearby towns across MetroWest &amp; Worcester County. Don&apos;t see yours? Just ask.</p>
+          <p className="mt-6 text-center text-ink/55 text-sm">…and many more nearby towns across Greater Boston, MetroWest, the North Shore &amp; Southern NH. Don&apos;t see yours? Just ask.</p>
         </div>
       </section>
 

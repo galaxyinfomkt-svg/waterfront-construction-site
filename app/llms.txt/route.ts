@@ -25,7 +25,7 @@ export function GET() {
 ${services.map((s) => `- [${s.name}](${SITE_URL}/services/${s.slug}): ${s.blurb}`).join("\n")}
 
 ## Service area
-Based in Northborough, MA, serving homeowners within ~30 miles across MetroWest & Worcester County, including: ${cities.slice(0, 30).join(", ")}, and more.
+Based in Northborough, MA, serving homeowners across MetroWest, Worcester County, Greater Boston, the North Shore, and Southern New Hampshire, including: ${cities.slice(0, 30).map((c) => c.n).join(", ")}, and more.
 
 ## Resources
 ${posts.map((p) => `- [${p.title}](${SITE_URL}/blog/${p.slug}): ${p.excerpt}`).join("\n")}

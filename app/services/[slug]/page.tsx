@@ -5,7 +5,7 @@ import LeadForm from "@/components/LeadForm";
 import Gallery from "@/components/Gallery";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
-import { services, galleryImages, allCities, citySlug, site } from "@/lib/site";
+import { services, galleryImages, allCities, citySlug, cityLabel, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
 import { commonFaqs, dedupeFaqs } from "@/lib/faq";
@@ -212,15 +212,15 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
           <Reveal>
             <div className="text-center max-w-2xl mx-auto">
               <span className="eyebrow">Areas we serve</span>
-              <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">{s.name} across MetroWest &amp; Worcester County</h2>
-              <p className="mt-3 text-ink/65">Based in Northborough, we provide {s.name.toLowerCase()} to 100+ towns nearby. Find yours:</p>
+              <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">{s.name} across Greater Boston, MetroWest, the North Shore &amp; Southern NH</h2>
+              <p className="mt-3 text-ink/65">Based in Northborough, we provide {s.name.toLowerCase()} to 200+ towns nearby. Find yours:</p>
             </div>
           </Reveal>
           <div className="mt-8 flex flex-wrap gap-2.5 justify-center max-w-5xl mx-auto">
             {allCities.map((c) => (
-              <Link key={c} href={`/services/${s.slug}/${citySlug(c)}`}
+              <Link key={citySlug(c)} href={`/services/${s.slug}/${citySlug(c)}`}
                 className="px-4 py-2 rounded-full bg-sand text-sm font-semibold text-navy hover:bg-grad-green hover:text-white transition">
-                {c}
+                {cityLabel(c)}
               </Link>
             ))}
           </div>

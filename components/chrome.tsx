@@ -165,8 +165,8 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h3 className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Service Area (30 mi)</h3>
-          <p className="text-[13px] leading-relaxed">{cities.join(" · ")} & surrounding MetroWest / Worcester County.</p>
+          <h3 className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Service Area</h3>
+          <p className="text-[13px] leading-relaxed">{cities.map((c) => c.n).join(" · ")} & across Greater Boston, MetroWest, the North Shore &amp; Southern NH.</p>
         </div>
       </div>
       <div className="container-x mt-10 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">

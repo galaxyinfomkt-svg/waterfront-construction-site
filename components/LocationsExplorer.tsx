@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { services, allCities, citySlug } from "@/lib/site";
+import { services, allCities, citySlug, cityLabel } from "@/lib/site";
 
 export default function LocationsExplorer() {
   const [active, setActive] = useState(services[0].slug);
@@ -32,11 +32,11 @@ export default function LocationsExplorer() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
         {allCities.map((c) => (
           <Link
-            key={c}
+            key={citySlug(c)}
             href={`/services/${s.slug}/${citySlug(c)}`}
             className="px-3.5 py-2.5 rounded-lg bg-white border border-sand text-[13.5px] font-semibold text-navy hover:bg-grad-green hover:text-white hover:border-transparent transition flex items-center justify-between gap-1"
           >
-            <span className="truncate">{c}, MA</span>
+            <span className="truncate">{cityLabel(c)}</span>
             <span className="text-blue group-hover:text-white shrink-0">→</span>
           </Link>
         ))}

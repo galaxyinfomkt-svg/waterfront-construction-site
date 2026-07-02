@@ -1,6 +1,6 @@
 import { SITE_URL, GEO } from "./seo";
-import { site, services } from "./site";
-import type { Service, Faq } from "./site";
+import { site, services, citySlug, cityLabel } from "./site";
+import type { Service, Faq, City } from "./site";
 import type { Post } from "./posts";
 
 export const BUSINESS_ID = `${SITE_URL}/#business`;
@@ -36,7 +36,7 @@ export const businessSchema = {
   currenciesAccepted: "USD",
   address: { "@type": "PostalAddress", streetAddress: "44 Bearfoot Road", addressLocality: "Northborough", addressRegion: "MA", postalCode: "01532", addressCountry: "US" },
   geo: { "@type": "GeoCoordinates", latitude: GEO.lat, longitude: GEO.lng },
-  areaServed: { "@type": "GeoCircle", geoMidpoint: { "@type": "GeoCoordinates", latitude: GEO.lat, longitude: GEO.lng }, geoRadius: "48000" },
+  areaServed: { "@type": "GeoCircle", geoMidpoint: { "@type": "GeoCoordinates", latitude: GEO.lat, longitude: GEO.lng }, geoRadius: "72000" },
   sameAs: [site.facebook, site.instagram],
   openingHoursSpecification: [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "07:00", closes: "18:00" }],
   knowsAbout: services.map((s) => s.short),
@@ -58,17 +58,18 @@ export function breadcrumb(items: { name: string; path: string }[]) {
   };
 }
 
-export function serviceSchema(s: Service, cityName?: string) {
-  const path = cityName ? `/services/${s.slug}/${cityName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}` : `/services/${s.slug}`;
+export function serviceSchema(s: Service, city?: City) {
+  const path = city ? `/services/${s.slug}/${citySlug(city)}` : `/services/${s.slug}`;
+  const label = city ? cityLabel(city) : null;
   return {
     "@type": "Service",
     "@id": `${SITE_URL}${path}#service`,
     serviceType: s.name,
-    name: cityName ? `${s.short} in ${cityName}, MA` : `${s.short} in Northborough, MA`,
+    name: label ? `${s.short} in ${label}` : `${s.short} in Northborough, MA`,
     description: s.blurb,
     url: `${SITE_URL}${path}`,
     provider: { "@id": BUSINESS_ID },
-    areaServed: cityName ? { "@type": "City", name: `${cityName}, MA` } : { "@type": "AdministrativeArea", name: "MetroWest & Worcester County, MA" },
+    areaServed: label ? { "@type": "City", name: label } : { "@type": "AdministrativeArea", name: "MetroWest, Greater Boston & Southern NH" },
   };
 }
 

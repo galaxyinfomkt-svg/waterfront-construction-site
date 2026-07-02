@@ -24,7 +24,7 @@ export default function ReviewsPage() {
         <div className="container-x py-16 md:py-20 text-center">
           <span className="eyebrow text-cyan">Homeowners love us</span>
           <h1 className="mt-3 text-4xl md:text-6xl font-extrabold">What homeowners say</h1>
-          <p className="mt-4 text-white/85 text-lg max-w-2xl mx-auto">Real feedback from our remodeling &amp; construction clients across MetroWest &amp; Worcester County.</p>
+          <p className="mt-4 text-white/85 text-lg max-w-2xl mx-auto">Real feedback from our remodeling &amp; construction clients across Greater Boston, MetroWest, the North Shore &amp; Southern NH.</p>
           <div className="mt-7">
             <a href="/contact" className="btn btn-white">Get a Free Estimate →</a>
           </div>

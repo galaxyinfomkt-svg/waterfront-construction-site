@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import Counter from "@/components/Counter";
-import { site, cities } from "@/lib/site";
+import { site, cities, citySlug, cityLabel } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta({
@@ -49,7 +49,7 @@ export default function AboutPage() {
             <div>
               <span className="eyebrow">Our story</span>
               <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">A builder who treats your home like his own</h2>
-              <p className="mt-4 text-ink/75 text-lg">Waterfront Construction was founded in {site.founded} by Ernando Nunes, who brings over {site.experience} years of hands-on construction experience to every project. What started as a one-man commitment to doing things right has grown into a trusted local team serving homeowners across MetroWest and Worcester County.</p>
+              <p className="mt-4 text-ink/75 text-lg">Waterfront Construction was founded in {site.founded} by Ernando Nunes, who brings over {site.experience} years of hands-on construction experience to every project. What started as a one-man commitment to doing things right has grown into a trusted local team serving homeowners across Greater Boston, MetroWest, the North Shore, and Southern New Hampshire.</p>
               <p className="mt-3 text-ink/70">We build and renovate residential and commercial spaces from the foundation to the final finish — kitchens, baths, additions, siding, decks, and full remodels. Because the owner is personally involved in every job, you get craftsmanship, accountability, and communication you can count on.</p>
               <div className="mt-7 flex flex-wrap gap-3"><Link href="/services" className="btn btn-navy">Our services →</Link><Link href="/reviews" className="btn btn-grad">Read reviews</Link></div>
             </div>
@@ -84,9 +84,9 @@ export default function AboutPage() {
           <Reveal>
             <span className="eyebrow">Proudly local</span>
             <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Where we work</h2>
-            <p className="mt-3 text-ink/65 max-w-2xl mx-auto">Based in Northborough, serving 30+ towns across MetroWest &amp; Worcester County.</p>
+            <p className="mt-3 text-ink/65 max-w-2xl mx-auto">Based in Northborough, serving 150+ towns across Greater Boston, MetroWest, the North Shore &amp; Southern NH.</p>
             <div className="mt-8 flex flex-wrap justify-center gap-2.5 max-w-4xl mx-auto">
-              {cities.map((c) => <span key={c} className="px-4 py-2 rounded-full bg-sand text-sm font-semibold text-navy">{c}</span>)}
+              {cities.map((c) => <span key={citySlug(c)} className="px-4 py-2 rounded-full bg-sand text-sm font-semibold text-navy">{cityLabel(c)}</span>)}
             </div>
           </Reveal>
         </div>

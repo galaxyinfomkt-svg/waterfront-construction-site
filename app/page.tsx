@@ -5,7 +5,7 @@ import Reveal from "@/components/Reveal";
 import Counter from "@/components/Counter";
 import FilterGallery, { type GalleryItem } from "@/components/FilterGallery";
 import JsonLd from "@/components/JsonLd";
-import { services, testimonials, cities, site } from "@/lib/site";
+import { services, testimonials, cities, citySlug, cityLabel, site } from "@/lib/site";
 import { faqs } from "@/lib/faq";
 import { pageMeta } from "@/lib/seo";
 import { graph, faqSchema, howToSchema } from "@/lib/schema";
@@ -396,11 +396,11 @@ export default function Home() {
         <div className="container-x text-center">
           <Reveal>
             <span className="eyebrow">Proudly local</span>
-            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Serving Northborough &amp; 30 miles around</h2>
-            <p className="mt-3 text-ink/65 max-w-2xl mx-auto text-lg">Based in Northborough, we build across MetroWest and Worcester County.</p>
+            <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Serving Greater Boston, MetroWest &amp; Southern NH</h2>
+            <p className="mt-3 text-ink/65 max-w-2xl mx-auto text-lg">Based in Northborough, we build across Greater Boston, MetroWest, the North Shore, and Southern New Hampshire.</p>
             <div className="mt-8 flex flex-wrap justify-center gap-2.5 max-w-4xl mx-auto">
               {cities.map((c) => (
-                <span key={c} className="px-4 py-2 rounded-full bg-gradient-to-r from-sand to-white border border-sand text-sm font-semibold text-navy hover:from-blue hover:to-blue-500 hover:text-white transition cursor-default">{c}</span>
+                <span key={citySlug(c)} className="px-4 py-2 rounded-full bg-gradient-to-r from-sand to-white border border-sand text-sm font-semibold text-navy hover:from-blue hover:to-blue-500 hover:text-white transition cursor-default">{cityLabel(c)}</span>
               ))}
             </div>
           </Reveal>

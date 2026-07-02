@@ -123,15 +123,10 @@ export const galleryImages = [
   "/images/windows.jpg", "/images/painting.jpg", "/images/addition.jpg",
 ];
 
-export const cities = [
-  "Northborough", "Marlborough", "Westborough", "Shrewsbury", "Worcester", "Southborough",
-  "Hopkinton", "Framingham", "Natick", "Hudson", "Grafton", "Holden", "Boylston", "West Boylston",
-  "Berlin", "Bolton", "Clinton", "Sterling", "Northbridge", "Upton", "Hopedale", "Milford",
-  "Ashland", "Sudbury", "Wayland", "Auburn", "Millbury", "Leicester", "Paxton", "Stow",
-];
+export type City = { n: string; s?: "NH" };
 
-// ~100 towns within/around 30 miles of Northborough — used for per-service local landing pages
-export const allCities = [
+// Massachusetts service-area towns (MetroWest, Worcester County, Greater Boston, North Shore & South)
+const MA_CITIES = [
   "Northborough", "Marlborough", "Westborough", "Shrewsbury", "Worcester", "Southborough",
   "Hopkinton", "Framingham", "Natick", "Hudson", "Grafton", "Holden", "Boylston", "West Boylston",
   "Berlin", "Bolton", "Clinton", "Sterling", "Northbridge", "Upton", "Hopedale", "Milford",
@@ -146,9 +141,49 @@ export const allCities = [
   "Bedford", "Burlington", "Waltham", "Watertown", "Newton", "Needham", "Dedham", "Westwood",
   "Whitinsville", "Cherry Valley", "Jefferson", "Rochdale", "Fiskdale", "Baldwinville",
   "Templeton", "Phillipston", "Devens", "Still River",
+  "Boston", "Cambridge", "Somerville", "Brookline", "Arlington", "Belmont", "Medford", "Malden",
+  "Melrose", "Everett", "Chelsea", "Revere", "Winthrop", "Quincy", "Milton", "Braintree",
+  "Weymouth", "Canton", "Randolph", "Stoughton", "Sharon", "Norwood", "Lexington", "Woburn",
+  "Winchester", "Stoneham", "Reading", "Wakefield", "Wilmington", "North Reading", "Tewksbury",
+  "Lynn", "Lynnfield", "Peabody", "Salem", "Beverly", "Danvers", "Marblehead", "Swampscott",
+  "Saugus", "Middleton", "Topsfield", "Hamilton", "Wenham", "Ipswich", "Gloucester", "Rockport",
+  "Manchester-by-the-Sea", "Nahant", "Andover", "North Andover", "Haverhill", "Methuen",
+  "Lawrence", "Amesbury", "Newburyport", "Georgetown", "Boxford",
+  "Mansfield", "Foxborough", "Norton", "Easton", "Attleboro", "North Attleborough", "Plainville",
+  "Millis", "Avon", "Holbrook", "Abington", "Rockland", "Brockton", "Raynham", "Taunton",
+  "Bridgewater", "Hanover", "Norwell", "Marshfield",
 ];
 
-export const citySlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+// Southern New Hampshire service-area towns
+const NH_CITIES = [
+  "Salem", "Nashua", "Hudson", "Pelham", "Windham", "Derry", "Londonderry", "Hampstead",
+  "Atkinson", "Plaistow", "Kingston", "Danville", "Sandown", "Chester", "Merrimack", "Amherst",
+  "Hollis", "Litchfield", "Manchester", "Bedford", "Hooksett",
+];
+
+export const allCities: City[] = [
+  ...MA_CITIES.map((n) => ({ n }) as City),
+  ...NH_CITIES.map((n) => ({ n, s: "NH" }) as City),
+];
+
+// Featured / priority markets (shown on Service Areas & About)
+const FEATURED = [
+  "Northborough", "Marlborough", "Westborough", "Shrewsbury", "Worcester", "Framingham",
+  "Natick", "Hudson", "Sudbury", "Wellesley", "Newton", "Needham", "Dedham", "Brookline",
+  "Cambridge", "Boston", "Quincy", "Milton", "Norwood", "Walpole", "Mansfield", "Foxborough",
+  "Attleboro", "Franklin", "Milford", "Lynnfield", "Peabody", "Beverly", "Danvers", "Andover",
+  "Lexington", "Burlington", "Woburn", "Reading",
+];
+const FEATURED_NH = ["Salem", "Nashua", "Derry", "Windham", "Londonderry"];
+export const cities: City[] = [
+  ...FEATURED.map((n) => ({ n }) as City),
+  ...FEATURED_NH.map((n) => ({ n, s: "NH" }) as City),
+];
+
+export const citySlug = (c: City) =>
+  c.n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + (c.s === "NH" ? "-nh" : "");
+export const cityLabel = (c: City) => `${c.n}, ${c.s ?? "MA"}`;
+export const cityStateFull = (c: City) => (c.s === "NH" ? "New Hampshire" : "Massachusetts");
 
 export const stats = [
   { value: "15+", label: "Years of experience" },

@@ -42,7 +42,7 @@ export default function ContactPage() {
                 <span><span className="block text-xs text-ink/50 font-semibold uppercase">Hours</span><span className="font-bold text-navy">{site.hours}</span></span>
               </div>
             </div>
-            <p className="mt-6 text-sm text-ink/60">Proudly serving {cities.slice(0, 8).join(", ")} & all of MetroWest.</p>
+            <p className="mt-6 text-sm text-ink/60">Proudly serving {cities.slice(0, 8).map((c) => c.n).join(", ")} & across Greater Boston, MetroWest &amp; Southern NH.</p>
           </div>
 
           <div className="card p-6 md:p-8">

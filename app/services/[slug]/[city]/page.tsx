@@ -5,7 +5,7 @@ import LeadForm from "@/components/LeadForm";
 import Gallery from "@/components/Gallery";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
-import { services, allCities, citySlug, galleryImages, site } from "@/lib/site";
+import { services, allCities, citySlug, cityLabel, cityStateFull, galleryImages, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
 import { commonFaqs, dedupeFaqs } from "@/lib/faq";
@@ -18,17 +18,19 @@ export function generateStaticParams() {
 
 function resolve(slug: string, city: string) {
   const s = services.find((x) => x.slug === slug);
-  const cityName = allCities.find((c) => citySlug(c) === city);
-  return { s, cityName };
+  const c = allCities.find((x) => citySlug(x) === city);
+  return { s, c };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; city: string }> }) {
   const { slug, city } = await params;
-  const { s, cityName } = resolve(slug, city);
-  if (!s || !cityName) return {};
+  const { s, c } = resolve(slug, city);
+  if (!s || !c) return {};
+  const cityName = c.n;
+  const st = c.s ?? "MA";
   return pageMeta({
-    title: `${s.name} in ${cityName}, MA`,
-    description: `${s.name} in ${cityName}, MA from Waterfront Construction — a licensed, insured, Northborough-based contractor. Free estimates — call ${site.phone}.`,
+    title: `${s.name} in ${cityName}, ${st}`,
+    description: `${s.name} in ${cityName}, ${st} from Waterfront Construction — a licensed, insured, Northborough-based contractor. Free estimates — call ${site.phone}.`,
     path: `/services/${s.slug}/${city}`,
     image: s.image,
   });
@@ -36,18 +38,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ServiceCityPage({ params }: { params: Promise<{ slug: string; city: string }> }) {
   const { slug, city } = await params;
-  const { s, cityName } = resolve(slug, city);
-  if (!s || !cityName) notFound();
+  const { s, c } = resolve(slug, city);
+  if (!s || !c) notFound();
+  const cityName = c.n;
+  const st = c.s ?? "MA";
+  const stFull = cityStateFull(c);
 
-  const nearby = allCities.filter((c) => c !== cityName).slice(0, 14);
+  const nearby = allCities.filter((x) => x !== c).slice(0, 14);
   const gallery = [s.image, ...galleryImages.filter((g) => g !== s.image)].slice(0, 6);
 
   const introVariants = [
-    `Looking for reliable ${s.name.toLowerCase()} in ${cityName}, Massachusetts? Waterfront Construction has served ${cityName} and the surrounding MetroWest and Worcester County area since ${site.founded}. Based right in nearby Northborough, we're a licensed, insured local team — not an out-of-town outfit — so ${cityName} homeowners get fast response, honest pricing, and craftsmanship that lasts.`,
-    `Need ${s.name.toLowerCase()} in ${cityName}, MA? As a Northborough-based, licensed and insured contractor, Waterfront Construction brings ${site.experience}+ years of hands-on experience to ${cityName} homes. From the first estimate to the final walkthrough you work directly with the owner — clear communication, fair pricing, and a finish built to last New England winters.`,
-    `Waterfront Construction is a trusted ${s.name.toLowerCase()} contractor serving ${cityName}, Massachusetts and the wider Worcester County and MetroWest region. Working from our Northborough base, we're fully licensed, insured and owner-led — known for treating every ${cityName} home like our own: on time, on budget, and done right the first time.`,
-    `If you're planning ${s.name.toLowerCase()} in ${cityName}, MA, you want a contractor who shows up, communicates, and delivers. That's exactly what Waterfront Construction has built its reputation on across MetroWest since ${site.founded} — owner-led work, fair and itemized pricing, and a finished result that holds up to New England's seasons.`,
-    `Waterfront Construction provides professional ${s.name.toLowerCase()} for homeowners throughout ${cityName} and nearby Massachusetts towns. From our base in Northborough we keep response times short and standards high — fully licensed and insured, owner-supervised on every job, and committed to leaving your ${cityName} home better than we found it.`,
+    `Looking for reliable ${s.name.toLowerCase()} in ${cityName}, ${stFull}? Waterfront Construction has served ${cityName} and the surrounding Greater Boston, MetroWest and Southern NH area since ${site.founded}. Based right in nearby Northborough, we're a licensed, insured local team — not an out-of-town outfit — so ${cityName} homeowners get fast response, honest pricing, and craftsmanship that lasts.`,
+    `Need ${s.name.toLowerCase()} in ${cityName}, ${st}? As a Northborough-based, licensed and insured contractor, Waterfront Construction brings ${site.experience}+ years of hands-on experience to ${cityName} homes. From the first estimate to the final walkthrough you work directly with the owner — clear communication, fair pricing, and a finish built to last New England winters.`,
+    `Waterfront Construction is a trusted ${s.name.toLowerCase()} contractor serving ${cityName}, ${stFull} and the wider Worcester County and MetroWest region. Working from our Northborough base, we're fully licensed, insured and owner-led — known for treating every ${cityName} home like our own: on time, on budget, and done right the first time.`,
+    `If you're planning ${s.name.toLowerCase()} in ${cityName}, ${st}, you want a contractor who shows up, communicates, and delivers. That's exactly what Waterfront Construction has built its reputation on across MetroWest since ${site.founded} — owner-led work, fair and itemized pricing, and a finished result that holds up to New England's seasons.`,
+    `Waterfront Construction provides professional ${s.name.toLowerCase()} for homeowners throughout ${cityName} and nearby towns. From our base in Northborough we keep response times short and standards high — fully licensed and insured, owner-supervised on every job, and committed to leaving your ${cityName} home better than we found it.`,
   ];
   const localContextVariants = [
     `Homes around ${cityName} range from classic New England colonials and capes to newer construction, and each one calls for a slightly different approach. We tailor every ${s.name.toLowerCase()} project to the age, style and condition of your home — never a one-size-fits-all template — so the finished work looks like it was always meant to be there.`,
@@ -69,13 +74,13 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
   const commitment = commitmentVariants[hWeighted(s.slug + cityName) % commitmentVariants.length];
 
   const faqs = dedupeFaqs([
-    { q: `Do you provide ${s.name.toLowerCase()} in ${cityName}, MA?`, a: `Yes — ${cityName} is right in our service area. We're based in Northborough and regularly serve ${cityName} homeowners with professional ${s.name.toLowerCase()}. Call ${site.phone} for a free estimate.` },
+    { q: `Do you provide ${s.name.toLowerCase()} in ${cityName}, ${st}?`, a: `Yes — ${cityName} is right in our service area. We're based in Northborough and regularly serve ${cityName} homeowners with professional ${s.name.toLowerCase()}. Call ${site.phone} for a free estimate.` },
     ...s.faqs.slice(0, 2),
     ...commonFaqs(s.name).slice(0, 5),
   ]);
   const ld = graph([
-    breadcrumb([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: s.name, path: `/services/${s.slug}` }, { name: cityName, path: `/services/${s.slug}/${city}` }]),
-    serviceSchema(s, cityName),
+    breadcrumb([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: s.name, path: `/services/${s.slug}` }, { name: cityLabel(c), path: `/services/${s.slug}/${city}` }]),
+    serviceSchema(s, c),
     faqSchema(faqs),
   ]);
 
@@ -85,7 +90,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src={s.image} alt={`${s.short} in ${cityName}, MA`} fill priority quality={55} className="object-cover kenburns" />
+        <Image src={s.image} alt={`${s.short} in ${cityName}, ${st}`} fill priority quality={55} className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="blob bg-cyan w-72 h-72 -top-12 -right-10 spin-slow" />
         <div className="relative container-x py-20 md:py-24 text-white">
@@ -97,7 +102,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
           </div>
           <div className="mt-4 flex items-center gap-3">
             <span className="text-3xl bg-white/95 rounded-2xl w-14 h-14 grid place-items-center shadow">{s.icon}</span>
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold max-w-3xl">{s.short} in {cityName}, MA</h1>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold max-w-3xl">{s.short} in {cityName}, {st}</h1>
           </div>
           <p className="mt-4 text-lg md:text-xl text-white/85 max-w-2xl">Trusted, licensed {s.name.toLowerCase()} for {cityName} homeowners — from our Northborough base. {s.blurb}</p>
           <div className="mt-6 flex flex-wrap gap-3">
@@ -115,7 +120,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
         <div className="container-x grid lg:grid-cols-[1.5fr_.9fr] gap-12">
           <div>
             <Reveal>
-              <span className="eyebrow">{s.name} · {cityName}, MA</span>
+              <span className="eyebrow">{s.name} · {cityName}, {st}</span>
               <h2 className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Your local {s.name.toLowerCase()} contractor in {cityName}</h2>
               <p className="mt-4 text-ink/75 text-lg leading-relaxed">{intro}</p>
               <p className="mt-4 text-ink/70 text-[17px] leading-relaxed">{localContext}</p>
@@ -147,7 +152,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
             <span className="eyebrow text-cyan">Our work</span>
             <h2 className="mt-3 text-3xl md:text-4xl font-extrabold">Recent {s.name.toLowerCase()} projects near {cityName}</h2>
           </div></Reveal>
-          <Reveal><div className="mt-10"><Gallery images={gallery} alt={`${s.name} in ${cityName}, MA by Waterfront Construction`} /></div><p className="mt-4 text-center text-white/60 text-sm">🔍 Click any photo to view it larger</p></Reveal>
+          <Reveal><div className="mt-10"><Gallery images={gallery} alt={`${s.name} in ${cityName}, ${st} by Waterfront Construction`} /></div><p className="mt-4 text-center text-white/60 text-sm">🔍 Click any photo to view it larger</p></Reveal>
         </div>
       </section>
 
@@ -188,8 +193,8 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
           <h2 className="text-2xl font-extrabold text-navy">{s.name} in nearby towns</h2>
           <p className="text-ink/60 mt-1 mb-5">We also provide {s.name.toLowerCase()} across the region from our Northborough base:</p>
           <div className="flex flex-wrap gap-2.5">
-            {nearby.map((c) => (
-              <Link key={c} href={`/services/${s.slug}/${citySlug(c)}`} className="px-4 py-2 rounded-full bg-sand text-sm font-semibold text-navy hover:bg-grad-green hover:text-white transition">{s.name} in {c}</Link>
+            {nearby.map((n) => (
+              <Link key={citySlug(n)} href={`/services/${s.slug}/${citySlug(n)}`} className="px-4 py-2 rounded-full bg-sand text-sm font-semibold text-navy hover:bg-grad-green hover:text-white transition">{s.name} in {n.n}</Link>
             ))}
             <Link href={`/services/${s.slug}`} className="px-4 py-2 rounded-full bg-navy text-white text-sm font-semibold">All {s.name} →</Link>
           </div>
@@ -200,7 +205,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
       <section className="relative overflow-hidden bg-navy">
         <Image src={s.image} alt="" fill quality={55} className="object-cover opacity-25" />
         <div className="relative container-x py-16 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-extrabold">Need {s.name.toLowerCase()} in {cityName}, MA?</h2>
+          <h2 className="text-3xl md:text-4xl font-extrabold">Need {s.name.toLowerCase()} in {cityName}, {st}?</h2>
           <p className="mt-3 text-white/85 max-w-xl mx-auto">Get a free, no-obligation estimate today. We reply within one business day.</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3"><Link href="/contact" className="btn btn-green text-base">Get a Free Estimate</Link><a href={site.phoneHref} className="btn btn-white text-base">📞 {site.phone}</a></div>
         </div>
