@@ -25,6 +25,7 @@ export default function Gallery({ images, alt }: { images: string[]; alt?: strin
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {images.map((g, i) => (
           <button
+            type="button"
             key={g}
             onClick={() => setActive(i)}
             aria-label={`View ${altFor(i)}`}
@@ -40,12 +41,12 @@ export default function Gallery({ images, alt }: { images: string[]; alt?: strin
 
       {active !== null && (
         <div onClick={close} className="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm grid place-items-center p-4 reveal">
-          <button onClick={close} aria-label="Close" className="absolute top-4 right-5 text-white/90 hover:text-white text-5xl leading-none">×</button>
-          <button onClick={(e) => { e.stopPropagation(); move(-1); }} aria-label="Previous" className="absolute left-3 md:left-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white text-5xl">‹</button>
-          <button onClick={(e) => { e.stopPropagation(); move(1); }} aria-label="Next" className="absolute right-3 md:right-8 top-1/2 -translate-y-1/2 text-white/80 hover:text-white text-5xl">›</button>
-          <div className="relative w-full max-w-5xl aspect-[4/3]" onClick={(e) => e.stopPropagation()}>
-            <Image src={images[active]} alt={altFor(active)} fill quality={60} className="object-contain rounded-xl" sizes="100vw" />
-          </div>
+          <button type="button" onClick={close} aria-label="Close" className="absolute top-4 right-5 z-10 text-white/90 hover:text-white text-5xl leading-none">×</button>
+          <button type="button" onClick={(e) => { e.stopPropagation(); move(-1); }} aria-label="Previous" className="absolute left-3 md:left-8 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white text-5xl">‹</button>
+          <button type="button" onClick={(e) => { e.stopPropagation(); move(1); }} aria-label="Next" className="absolute right-3 md:right-8 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white text-5xl">›</button>
+          <button type="button" onClick={close} aria-label="Close photo" className="relative w-[92vw] h-[82vh] cursor-zoom-out">
+            <Image src={images[active]} alt={altFor(active)} fill quality={72} className="object-contain rounded-xl" sizes="92vw" />
+          </button>
           <div className="absolute bottom-5 text-white/70 text-sm">{active + 1} / {images.length}</div>
         </div>
       )}

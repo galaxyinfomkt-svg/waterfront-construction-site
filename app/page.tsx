@@ -241,8 +241,8 @@ export default function Home() {
           </Reveal>
           <div className="mt-10 grid md:grid-cols-2 gap-8">
             {[
-              { before: "/images/projects/home-addition-needham-ma-before-01.webp", after: "/images/projects/home-addition-needham-ma-07.webp", title: "Home Addition", loc: "Needham, MA", href: "/projects/home-addition-129-falcon-st-needham-ma" },
-              { before: "/images/projects/deck-salem-nh-before-01.webp", after: "/images/projects/deck-salem-nh-05.webp", title: "Pool Deck", loc: "Salem, NH", href: "/projects/pool-deck-salem-nh" },
+              { before: "/images/projects/home-addition-needham-ma-before-04.webp", after: "/images/projects/home-addition-needham-ma-07.webp", title: "Home Addition", loc: "Needham, MA", href: "/projects/home-addition-129-falcon-st-needham-ma" },
+              { before: "/images/projects/deck-salem-nh-before-04.webp", after: "/images/projects/deck-salem-nh-06.webp", title: "Pool Deck", loc: "Salem, NH", href: "/projects/pool-deck-salem-nh" },
             ].map((ba) => (
               <Reveal key={ba.title}>
                 <Link href={ba.href} className="group card overflow-hidden pop block">

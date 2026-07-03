@@ -45,7 +45,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
   const stFull = cityStateFull(c);
 
   const nearby = allCities.filter((x) => x !== c).slice(0, 14);
-  const gallery = [s.image, ...galleryImages.filter((g) => g !== s.image)].slice(0, 6);
+  const gallery = (s.photos ?? [s.image, ...galleryImages.filter((g) => g !== s.image)]).slice(0, 6);
 
   const introVariants = [
     `Looking for reliable ${s.name.toLowerCase()} in ${cityName}, ${stFull}? Waterfront Construction has served ${cityName} and the surrounding communities since ${site.founded}. Based right in nearby Northborough, we're a licensed, insured local team — not an out-of-town outfit — so ${cityName} homeowners get fast response, honest pricing, and craftsmanship that lasts.`,

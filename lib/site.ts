@@ -12,6 +12,7 @@ export const site = {
   experience: 15,
   instagram: "https://www.instagram.com/waterfrontconstruction/",
   facebook: "https://www.facebook.com/Waterfrontconst/",
+  googleReview: "https://g.page/r/CTGCYqkGHrecEBM/review",
 };
 
 export const nav = [
@@ -28,11 +29,20 @@ export type Faq = { q: string; a: string };
 export type Service = {
   slug: string; name: string; short: string; blurb: string; image: string; icon: string;
   features: string[]; long: string[]; faqs: Faq[];
+  photos?: string[]; // real project photos (used for cover gallery when available)
 };
+
+const PR = "/images/projects";
+const p = (name: string, n: number) => `${PR}/${name}-${String(n).padStart(2, "0")}.webp`;
+// Real project photos per service (clean/finished shots first for covers)
+const KB_PHOTOS = [1, 2, 3, 4, 5, 6].map((n) => p("kitchen-remodel-mansfield-ma", n)).concat([5, 2, 3, 4].map((n) => p("bathroom-remodel-dedham-ma", n)));
+const DECK_PHOTOS = [4, 6, 5, 2, 1, 3].map((n) => p("deck-salem-nh", n));
+const ADD_PHOTOS = [12, 11, 4, 8, 3, 14].map((n) => p("home-addition-highland-ave-lynnfield-ma", n)).concat([p("home-addition-needham-ma", 7), p("home-addition-needham-ma", 5), p("home-addition-52-crest-road-lynnfield-ma", 3)]);
+const SIDING_PHOTOS = [`${PR}/exterior-remodel-siding-deck-ma-01.webp`, p("home-addition-highland-ave-lynnfield-ma", 12), p("home-addition-highland-ave-lynnfield-ma", 8), p("home-addition-52-crest-road-lynnfield-ma", 3), p("home-addition-needham-ma", 7)];
 
 export const services: Service[] = [
   {
-    slug: "siding", name: "Siding", short: "Siding Installation & Replacement", icon: "🏠", image: "/images/siding.jpg",
+    slug: "siding", name: "Siding", short: "Siding Installation & Replacement", icon: "🏠", image: `${PR}/exterior-remodel-siding-deck-ma-01.webp`, photos: SIDING_PHOTOS,
     blurb: "Boost curb appeal and protect your home with premium vinyl, fiber-cement, and engineered siding built for New England winters.",
     features: ["Vinyl & fiber-cement siding", "Trim, soffit & fascia work", "Weather & moisture protection", "Energy-efficient house wrap", "Color & style consultation", "Full clean-up & haul-away"],
     long: [
@@ -60,7 +70,7 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling", icon: "🍽️", image: "/images/projects/kitchen-remodel-mansfield-ma-01.webp",
+    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling", icon: "🍽️", image: "/images/projects/kitchen-remodel-mansfield-ma-01.webp", photos: KB_PHOTOS,
     blurb: "The two rooms that sell your home and you use every day — beautiful kitchens and spa-like bathrooms, managed start to finish.",
     features: ["Custom cabinets & islands", "Tile & walk-in showers", "Countertops & backsplash", "Vanities, fixtures & lighting", "Plumbing, electrical & waterproofing", "Full project management"],
     long: [
@@ -74,7 +84,7 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "decks", name: "Decks", short: "Deck Design & Construction", icon: "🌳", image: "/images/projects/deck-salem-nh-04.webp",
+    slug: "decks", name: "Decks", short: "Deck Design & Construction", icon: "🌳", image: "/images/projects/deck-salem-nh-04.webp", photos: DECK_PHOTOS,
     blurb: "Custom decks and outdoor living spaces in composite or wood — the perfect extension of the home you already love.",
     features: ["Composite & wood decks", "Railings, stairs & lighting", "Pergolas & outdoor living", "Permits handled for you", "Built to code & built to last", "Custom design to fit your yard"],
     long: [
@@ -88,7 +98,7 @@ export const services: Service[] = [
     ],
   },
   {
-    slug: "home-additions-remodeling", name: "Additions & Remodeling", short: "Home Additions & Remodeling", icon: "📐", image: "/images/projects/home-addition-highland-ave-lynnfield-ma-04.webp",
+    slug: "home-additions-remodeling", name: "Additions & Remodeling", short: "Home Additions & Remodeling", icon: "📐", image: "/images/projects/home-addition-highland-ave-lynnfield-ma-12.webp", photos: ADD_PHOTOS,
     blurb: "Need more room or a whole-home refresh? From additions and second stories to full renovations — foundation to final finish, one trusted team.",
     features: ["Room & second-story additions", "In-law suites & sunrooms", "Whole-home renovations", "Basement finishing", "Foundation to final finish", "Design-build process"],
     long: [

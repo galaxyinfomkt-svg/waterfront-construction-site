@@ -53,9 +53,10 @@ export default function ReviewsPage() {
         <div className="container-x">
           <div className="rounded-3xl bg-navy text-white p-10 md:p-14 text-center relative overflow-hidden">
             <h2 className="text-3xl md:text-4xl font-extrabold">Join our happy homeowners</h2>
-            <p className="mt-3 text-white/85 max-w-xl mx-auto">Get a free estimate and find out why MetroWest families trust Waterfront Construction.</p>
+            <p className="mt-3 text-white/85 max-w-xl mx-auto">Worked with us? Leave a quick Google review — it helps other local homeowners find us. Or get a free estimate for your project.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <Link href="/contact" className="btn btn-green text-base">Get a Free Estimate</Link>
+              <a href={site.googleReview} target="_blank" rel="noopener" className="btn btn-green text-base">⭐ Leave a Google Review</a>
+              <Link href="/contact" className="btn btn-white text-base">Get a Free Estimate</Link>
               <a href={site.phoneHref} className="btn btn-white text-base">📞 {site.phone}</a>
             </div>
           </div>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { site, nav, cities, services } from "@/lib/site";
+import { site, nav, cities, services, citySlug } from "@/lib/site";
 
 export function TopBar() {
   return (
@@ -166,7 +166,15 @@ export function SiteFooter() {
         </div>
         <div>
           <h3 className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Service Area</h3>
-          <p className="text-[13px] leading-relaxed">{cities.map((c) => c.n).join(" · ")} & across Greater Boston, MetroWest, the North Shore &amp; Southern NH.</p>
+          <p className="text-[13px] leading-relaxed">
+            {cities.map((c, i) => (
+              <span key={citySlug(c)}>
+                {i > 0 && " · "}
+                <Link href={`/services/kitchen-bathroom-remodeling/${citySlug(c)}`} className="hover:text-cyan transition">{c.n}</Link>
+              </span>
+            ))}
+            {" "}&amp; across Greater Boston, MetroWest, the North Shore &amp; Southern NH.
+          </p>
         </div>
       </div>
       <div className="container-x mt-10 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">

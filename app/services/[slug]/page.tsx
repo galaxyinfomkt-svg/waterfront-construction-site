@@ -31,7 +31,7 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
   const s = services.find((x) => x.slug === slug);
   if (!s) notFound();
   const others = services.filter((x) => x.slug !== slug).slice(0, 3);
-  const gallery = [s.image, ...galleryImages.filter((g) => g !== s.image)].slice(0, 6);
+  const gallery = (s.photos ?? [s.image, ...galleryImages.filter((g) => g !== s.image)]).slice(0, 8);
   const allFaqs = dedupeFaqs([...s.faqs, ...commonFaqs(s.name)]);
   const ld = graph([
     breadcrumb([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }, { name: s.name, path: `/services/${s.slug}` }]),
