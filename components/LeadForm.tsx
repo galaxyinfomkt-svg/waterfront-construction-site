@@ -1,69 +1,26 @@
-"use client";
-import { useEffect, useState } from "react";
-
 // Real lead-capture form (LeadConnector / GoHighLevel) — submissions go to the CRM.
-// The heavy third-party iframe (reCAPTCHA, pixels, ~1.5 MB) is deferred so it never
-// competes with the initial render: it loads instantly on the visitor's first
-// interaction (scroll/tap/click), or ~3s after load for fully passive visitors.
+// The iframe is rendered directly in the HTML so it always shows up, even before any
+// JavaScript runs or the visitor interacts. Native `loading="lazy"` still keeps
+// off-screen copies (service pages, contact page below the fold) out of the initial load.
 export default function LeadForm({ height = 540 }: { height?: number }) {
-  const [load, setLoad] = useState(false);
-
-  useEffect(() => {
-    let done = false;
-    const trigger = () => {
-      if (done) return;
-      done = true;
-      setLoad(true);
-    };
-
-    // Load on the visitor's first real interaction — mousemove/scroll/tap fire within ~1s
-    // for anyone actually using the page, so the form appears fast for real visitors while
-    // passive loads (and lab tools) stay light. The placeholder is a clickable button too.
-    const events: (keyof WindowEventMap)[] = ["pointerdown", "touchstart", "keydown", "scroll", "mousemove"];
-    events.forEach((e) => window.addEventListener(e, trigger, { once: true, passive: true }));
-
-    return () => {
-      events.forEach((e) => window.removeEventListener(e, trigger));
-    };
-  }, []);
-
   return (
-    <div style={{ minHeight: height }}>
-      {load ? (
-        <iframe
-          src="https://api.leadconnectorhq.com/widget/form/FOO7PLSeOm8T3qpx0pE9"
-          id="inline-FOO7PLSeOm8T3qpx0pE9"
-          title="Request a free estimate"
-          loading="lazy"
-          className="w-full rounded-lg border-0 bg-white"
-          style={{ height }}
-          data-layout="{'id':'INLINE'}"
-          data-trigger-type="alwaysShow"
-          data-activation-type="alwaysActivated"
-          data-deactivation-type="neverDeactivate"
-          data-form-name="Form 0"
-          data-height="473"
-          data-layout-iframe-id="inline-FOO7PLSeOm8T3qpx0pE9"
-          data-form-id="FOO7PLSeOm8T3qpx0pE9"
-        />
-      ) : (
-        <button
-          type="button"
-          onClick={() => setLoad(true)}
-          className="flex w-full flex-col gap-3 rounded-lg bg-white border border-sand p-4 text-left hover:border-blue transition"
-          style={{ minHeight: height }}
-          aria-label="Start the free estimate form"
-        >
-          <span className="h-2.5 w-2/5 rounded bg-sand" />
-          <span className="h-10 rounded-lg bg-sand/60" />
-          <span className="h-10 rounded-lg bg-sand/60" />
-          <span className="h-10 rounded-lg bg-sand/60" />
-          <span className="h-16 rounded-lg bg-sand/60" />
-          <span className="mt-auto grid h-12 place-items-center rounded-lg bg-grad-green font-bold text-white">
-            Start your free estimate →
-          </span>
-        </button>
-      )}
+    <div style={{ minHeight: height }} className="rounded-lg bg-white">
+      <iframe
+        src="https://api.leadconnectorhq.com/widget/form/FOO7PLSeOm8T3qpx0pE9"
+        id="inline-FOO7PLSeOm8T3qpx0pE9"
+        title="Request a free estimate"
+        loading="lazy"
+        className="block w-full rounded-lg border-0 bg-white"
+        style={{ height, minHeight: height }}
+        data-layout="{'id':'INLINE'}"
+        data-trigger-type="alwaysShow"
+        data-activation-type="alwaysActivated"
+        data-deactivation-type="neverDeactivate"
+        data-form-name="Form 0"
+        data-height={height}
+        data-layout-iframe-id="inline-FOO7PLSeOm8T3qpx0pE9"
+        data-form-id="FOO7PLSeOm8T3qpx0pE9"
+      />
     </div>
   );
 }
