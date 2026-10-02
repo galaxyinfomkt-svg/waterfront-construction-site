@@ -180,3 +180,9 @@ h1,h2,h3,h4 { font-family: var(--font-display); letter-spacing:-0.02em; line-hei
 .slant-top { clip-path: polygon(0 32px, 100% 0, 100% 100%, 0 100%); }
 .slant-both { clip-path: polygon(0 32px, 100% 0, 100% calc(100% - 32px), 0 100%); }
 @media (max-width:640px){ .slant-top{ clip-path:polygon(0 16px,100% 0,100% 100%,0 100%);} .slant-both{ clip-path:polygon(0 16px,100% 0,100% calc(100% - 16px),0 100%);} }
+
+/* GHL form: the embed snippet uses height:100%, which collapses to 150px until GHL's
+   form_embed.js sets the real height (or forever if that script is slow/blocked).
+   Reserve GHL's own data-height so the form is always fully visible; form_embed.js
+   can still grow it. */
+iframe[id^="inline-"][data-form-id] { min-height:473px; }
