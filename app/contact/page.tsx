@@ -45,10 +45,8 @@ export default function ContactPage() {
             <p className="mt-6 text-sm text-ink/60">Proudly serving {cities.slice(0, 8).map((c) => c.n).join(", ")} & across Greater Boston, MetroWest &amp; Southern NH.</p>
           </div>
 
-          <div className="card p-6 md:p-8">
-            <h2 className="text-xl font-bold text-navy">Request a free estimate</h2>
-            <p className="text-sm text-ink/60 mt-1 mb-5">We reply within 1 business day.</p>
-            <LeadForm height={560} />
+          <div>
+            <LeadForm />
           </div>
         </div>
       </section>

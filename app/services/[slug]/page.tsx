@@ -90,10 +90,8 @@ export default async function ServiceDetail({ params }: { params: Promise<{ slug
           </div>
 
           <aside>
-            <div className="card p-6 sticky top-32 border-t-4 border-t-green">
-              <h3 className="text-lg font-bold text-navy">Free {s.name} estimate</h3>
-              <p className="text-sm text-ink/60 mt-1 mb-4">Tell us about your project — we reply within 1 business day.</p>
-              <LeadForm height={560} />
+            <div className="sticky top-32">
+              <LeadForm />
             </div>
           </aside>
         </div>

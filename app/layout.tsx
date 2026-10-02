@@ -5,7 +5,6 @@ import { TopBar, SiteHeader, SiteFooter, FloatingCTA } from "@/components/chrome
 import JsonLd from "@/components/JsonLd";
 import { graph, businessSchema, websiteSchema } from "@/lib/schema";
 import { SITE_URL, GEO } from "@/lib/seo";
-import Script from "next/script";
 import Analytics from "@/components/Analytics";
 import ChatWidget from "@/components/ChatWidget";
 
@@ -48,7 +47,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main>{children}</main>
         <SiteFooter />
         <FloatingCTA />
-        <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="lazyOnload" />
         <Analytics />
         <ChatWidget />
       </body>

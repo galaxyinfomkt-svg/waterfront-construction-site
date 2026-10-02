@@ -73,10 +73,8 @@ export default function Home() {
               <span>✓ Free estimates</span><span>✓ On time, on budget</span><span>✓ Owner-led projects</span>
             </div>
           </div>
-          <div className="card p-6 md:p-7 reveal-2 border-t-4 border-t-green">
-            <h2 className="text-xl font-bold text-navy">Get your free estimate</h2>
-            <p className="text-sm text-ink/60 mt-1 mb-4">Tell us about your project — we reply within 1 business day.</p>
-            <LeadForm height={500} />
+          <div className="reveal-2">
+            <LeadForm />
           </div>
         </div>
       </section>

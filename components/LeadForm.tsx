@@ -1,26 +1,27 @@
-// Real lead-capture form (LeadConnector / GoHighLevel) — submissions go to the CRM.
-// The iframe is rendered directly in the HTML so it always shows up, even before any
-// JavaScript runs or the visitor interacts. Native `loading="lazy"` still keeps
-// off-screen copies (service pages, contact page below the fold) out of the initial load.
-export default function LeadForm({ height = 540 }: { height?: number }) {
+import Script from "next/script";
+
+// LeadConnector (GoHighLevel) form — the embed code exactly as GHL provides it.
+export default function LeadForm() {
   return (
-    <div style={{ minHeight: height }} className="rounded-lg bg-white">
+    <>
       <iframe
         src="https://api.leadconnectorhq.com/widget/form/FOO7PLSeOm8T3qpx0pE9"
+        style={{ width: "100%", height: "100%", border: "none", borderRadius: "3px" }}
         id="inline-FOO7PLSeOm8T3qpx0pE9"
-        title="Request a free estimate"
-        loading="lazy"
-        className="block w-full rounded-lg border-0 bg-white"
-        style={{ height, minHeight: height }}
         data-layout="{'id':'INLINE'}"
         data-trigger-type="alwaysShow"
+        data-trigger-value=""
         data-activation-type="alwaysActivated"
+        data-activation-value=""
         data-deactivation-type="neverDeactivate"
+        data-deactivation-value=""
         data-form-name="Form 0"
-        data-height={height}
+        data-height="473"
         data-layout-iframe-id="inline-FOO7PLSeOm8T3qpx0pE9"
         data-form-id="FOO7PLSeOm8T3qpx0pE9"
+        title="Form 0"
       />
-    </div>
+      <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
+    </>
   );
 }
