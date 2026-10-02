@@ -46,7 +46,7 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src="/images/projects/kitchen-remodel-mansfield-ma-01.webp" alt="Finished kitchen remodel by Waterfront Construction in Mansfield, MA" fill priority quality={64} sizes="100vw" className="object-cover kenburns" />
+        <Image src="/images/projects/kitchen-remodel-mansfield-ma-01.webp" alt="Finished kitchen remodel by Waterfront Construction in Mansfield, MA" fill preload quality={60} sizes="100vw" className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="absolute inset-0 dots-light opacity-50" />
         <div className="blob bg-cyan w-80 h-80 top-10 -right-10 spin-slow" />
@@ -115,7 +115,7 @@ export default function Home() {
           <Reveal>
             <div className="relative">
               <div className="relative h-[460px] rounded-3xl overflow-hidden shadow-card">
-                <Image src="/images/about.jpg" alt="Waterfront Construction owner on site" fill quality={60} className="object-cover" />
+                <Image src="/images/about.jpg" alt="Waterfront Construction owner on site" fill quality={60} sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
               </div>
               <div className="absolute -bottom-5 -right-3 md:right-6 bg-white rounded-2xl p-4 shadow-card flex items-center gap-3">
                 <span className="w-12 h-12 rounded-full bg-grad-green text-white grid place-items-center text-xl">👷</span>
@@ -157,7 +157,7 @@ export default function Home() {
               <Reveal key={s.slug} delay={(i % 3) * 80}>
                 <div className="group card gborder overflow-hidden pop h-full flex flex-col">
                   <div className="relative h-48 overflow-hidden">
-                    <Image src={s.image} alt={s.short} fill quality={60} className="object-cover zoomimg" />
+                    <Image src={s.image} alt={s.short} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover zoomimg" />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/10 to-transparent" />
                     <span className="absolute top-3 left-3 text-2xl bg-white/95 rounded-xl w-11 h-11 grid place-items-center shadow">{s.icon}</span>
                     <h3 className="absolute bottom-3 left-4 right-4 font-bold text-xl text-white">{s.name}</h3>
@@ -211,7 +211,7 @@ export default function Home() {
       <section className="py-20 bg-sand">
         <div className="container-x grid lg:grid-cols-2 gap-12 items-center">
           <Reveal><div className="relative h-[400px] rounded-3xl overflow-hidden shadow-card group">
-            <Image src="/images/projects/kitchen-remodel-mansfield-ma-01.webp" alt="Kitchen remodel in Mansfield, MA by Waterfront Construction" fill quality={62} className="object-cover zoomimg" />
+            <Image src="/images/projects/kitchen-remodel-mansfield-ma-01.webp" alt="Kitchen remodel in Mansfield, MA by Waterfront Construction" fill quality={60} sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover zoomimg" />
           </div></Reveal>
           <Reveal delay={120}><div>
             <span className="eyebrow">Kitchens &amp; bathrooms</span>
@@ -407,7 +407,7 @@ export default function Home() {
 
       {/* FINAL CTA */}
       <section className="relative overflow-hidden mesh">
-        <Image src="/images/cta.jpg" alt="" fill quality={55} className="object-cover opacity-20" />
+        <Image src="/images/cta.jpg" alt="" fill quality={55} sizes="100vw" className="object-cover opacity-20" />
         <div className="relative container-x py-20 text-center text-white">
           <h2 className="text-3xl md:text-6xl font-extrabold">Let&apos;s build something great</h2>
           <p className="mt-4 text-white/85 text-lg max-w-xl mx-auto">Get a free, no-obligation estimate today. We reply within one business day.</p>

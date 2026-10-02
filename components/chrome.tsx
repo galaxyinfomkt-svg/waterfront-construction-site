@@ -39,7 +39,7 @@ export function SiteHeader() {
     <header className={`sticky top-0 z-50 transition ${solid ? "bg-white shadow-[0_6px_24px_-14px_rgba(20,20,43,.4)]" : "bg-white/95 backdrop-blur"}`}>
       <div className="container-x flex h-[96px] md:h-[104px] items-center justify-between gap-4">
         <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 shrink-0" aria-label={`${site.name} — back to top`}>
-          <Image src="/logo.png" alt={site.name} width={300} height={100} sizes="120px" className="h-16 md:h-[78px] lg:h-[54px] xl:h-[72px] w-auto" priority />
+          <Image src="/logo-header.png" alt={site.name} width={497} height={349} sizes="112px" loading="eager" className="h-16 md:h-[78px] lg:h-[54px] xl:h-[72px] w-auto" />
         </Link>
         <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 font-semibold text-[14px] xl:text-[15px] text-ink/80">
           {nav.map((n) =>
@@ -132,7 +132,7 @@ export function SiteFooter() {
       <div className="container-x grid gap-10 md:grid-cols-4">
         <div className="md:col-span-1">
           <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Back to home top" className="bg-white rounded-xl p-3 inline-block hover:opacity-90 transition">
-            <Image src="/logo.png" alt={site.name} width={210} height={70} className="h-16 w-auto" />
+            <Image src="/logo-header.png" alt={site.name} width={497} height={349} sizes="96px" className="h-16 w-auto" />
           </Link>
           <p className="mt-4 text-sm leading-relaxed">Licensed home builder & remodeler serving Central Massachusetts since {site.founded}. From foundation to final finish.</p>
           <div className="mt-5 flex gap-3">

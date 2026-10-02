@@ -31,7 +31,7 @@ export default function Gallery({ images, alt }: { images: string[]; alt?: strin
             aria-label={`View ${altFor(i)}`}
             className={`group relative overflow-hidden rounded-2xl cursor-pointer ${i === 0 ? "md:row-span-2 h-64 md:h-full" : "h-56"}`}
           >
-            <Image src={g} alt={altFor(i)} fill quality={60} className="object-cover zoomimg" />
+            <Image src={g} alt={altFor(i)} fill quality={60} sizes="(max-width: 768px) 50vw, 33vw" className="object-cover zoomimg" />
             <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/45 transition grid place-items-center">
               <span className="opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition w-12 h-12 rounded-full bg-white/90 text-navy grid place-items-center text-xl shadow-lg">🔍</span>
             </div>
@@ -45,7 +45,7 @@ export default function Gallery({ images, alt }: { images: string[]; alt?: strin
           <button type="button" onClick={(e) => { e.stopPropagation(); move(-1); }} aria-label="Previous" className="absolute left-3 md:left-8 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white text-5xl">‹</button>
           <button type="button" onClick={(e) => { e.stopPropagation(); move(1); }} aria-label="Next" className="absolute right-3 md:right-8 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white text-5xl">›</button>
           <button type="button" onClick={close} aria-label="Close photo" className="relative w-[92vw] h-[82vh] cursor-zoom-out">
-            <Image src={images[active]} alt={altFor(active)} fill quality={72} className="object-contain rounded-xl" sizes="92vw" />
+            <Image src={images[active]} alt={altFor(active)} fill quality={75} className="object-contain rounded-xl" sizes="92vw" />
           </button>
           <div className="absolute bottom-5 text-white/70 text-sm">{active + 1} / {images.length}</div>
         </div>

@@ -10,6 +10,8 @@ import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, serviceSchema, faqSchema } from "@/lib/schema";
 import { commonFaqs, dedupeFaqs } from "@/lib/faq";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   const params: { slug: string; city: string }[] = [];
   for (const s of services) for (const c of allCities) params.push({ slug: s.slug, city: citySlug(c) });
@@ -90,7 +92,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src={s.image} alt={`${s.short} in ${cityName}, ${st}`} fill priority quality={55} className="object-cover kenburns" />
+        <Image src={s.image} alt={`${s.short} in ${cityName}, ${st}`} fill preload quality={55} sizes="100vw" className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="blob bg-cyan w-72 h-72 -top-12 -right-10 spin-slow" />
         <div className="relative container-x py-20 md:py-24 text-white">
@@ -201,7 +203,7 @@ export default async function ServiceCityPage({ params }: { params: Promise<{ sl
 
       {/* CTA */}
       <section className="relative overflow-hidden bg-navy">
-        <Image src={s.image} alt="" fill quality={55} className="object-cover opacity-25" />
+        <Image src={s.image} alt="" fill quality={55} sizes="100vw" className="object-cover opacity-25" />
         <div className="relative container-x py-16 text-center text-white">
           <h2 className="text-3xl md:text-4xl font-extrabold">Need {s.name.toLowerCase()} in {cityName}, {st}?</h2>
           <p className="mt-3 text-white/85 max-w-xl mx-auto">Get a free, no-obligation estimate today. We reply within one business day.</p>

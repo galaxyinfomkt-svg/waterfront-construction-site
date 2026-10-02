@@ -10,6 +10,8 @@ import { SITE_URL } from "@/lib/seo";
 import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, BUSINESS_ID } from "@/lib/schema";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
@@ -55,7 +57,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        <Image src={p.cover} alt={`${p.category} in ${p.location} by Waterfront Construction`} fill priority quality={70} sizes="100vw" className="object-cover" />
+        <Image src={p.cover} alt={`${p.category} in ${p.location} by Waterfront Construction`} fill preload quality={75} sizes="100vw" className="object-cover" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="relative container-x py-20 md:py-24 text-white">
           <div className="flex flex-wrap items-center gap-2 text-sm text-white/70">

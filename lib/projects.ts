@@ -6,6 +6,7 @@ export type Project = {
   shortTitle: string;
   location: string;
   category: string;
+  services: string[]; // service slugs this project documents (see lib/site.ts)
   blurb: string;
   body: string[];
   cover: string;
@@ -37,6 +38,7 @@ export const projects: Project[] = [
     shortTitle: "Mansfield Kitchen",
     location: "Mansfield, MA",
     category: "Kitchen Remodeling",
+    services: ["kitchen-bathroom-remodeling"],
     blurb: "A bright, modern kitchen remodel in Mansfield with custom cabinetry and natural-stone counters.",
     body: [
       "This Mansfield kitchen was transformed with crisp white cabinetry, natural-stone countertops, a large island, and modern pendant lighting — a warm, functional space the whole family can gather in.",
@@ -52,6 +54,7 @@ export const projects: Project[] = [
     shortTitle: "Dedham Bathroom",
     location: "Dedham, MA",
     category: "Bathroom Remodeling",
+    services: ["kitchen-bathroom-remodeling"],
     blurb: "A full bathroom remodel in Dedham with a custom tiled walk-in shower and frameless glass.",
     body: [
       "This Dedham bathroom was rebuilt with a custom tiled walk-in shower, frameless glass, and clean modern finishes. Behind the tile, proper waterproofing protects the home for the long run.",
@@ -67,6 +70,7 @@ export const projects: Project[] = [
     shortTitle: "Salem, NH Pool Deck",
     location: "Salem, NH",
     category: "Deck",
+    services: ["decks"],
     blurb: "A custom wood deck built around an above-ground pool in Salem, NH — before, during, and finished.",
     body: [
       "This Salem, New Hampshire project wrapped an above-ground pool with a spacious custom wood deck — turning a plain backyard pool into a real outdoor living space, shown from early framing through the finished deck and railings.",
@@ -93,6 +97,7 @@ export const projects: Project[] = [
     shortTitle: "Needham Home Addition",
     location: "Needham, MA",
     category: "Home Addition",
+    services: ["home-additions-remodeling"],
     blurb: "A major home addition in Needham — the full transformation from before, through site work, to the new build.",
     body: [
       "This Needham project on Falcon St is a full home addition, documented from start to finish — the original home, the site work and excavation, and the new addition taking shape.",
@@ -113,6 +118,7 @@ export const projects: Project[] = [
     shortTitle: "Highland Ave Addition",
     location: "Lynnfield, MA",
     category: "Home Addition",
+    services: ["home-additions-remodeling", "siding", "windows-and-doors"],
     blurb: "A full home addition and exterior transformation on a classic New England home in Lynnfield.",
     body: [
       "This Lynnfield project added real living space and completely transformed the exterior of a classic New England home. The work included new framing, a second-story and rear addition, and a rebuilt front porch — reworking the footprint so the house finally fit the family's needs.",
@@ -128,6 +134,7 @@ export const projects: Project[] = [
     shortTitle: "52 Crest Road Addition",
     location: "Lynnfield, MA",
     category: "Home Addition",
+    services: ["home-additions-remodeling"],
     blurb: "A video walkthrough of a home addition at 52 Crest Road, Lynnfield — from framing through weather-tight exterior.",
     body: [
       "This home addition at 52 Crest Road in Lynnfield is captured on video as the project came together. The clips walk through the addition from structural framing to a fully weather-tight exterior with new sheathing and house wrap.",
@@ -143,6 +150,7 @@ export const projects: Project[] = [
     shortTitle: "Siding & Deck Remodel",
     location: "Massachusetts",
     category: "Exterior Remodel",
+    services: ["siding", "decks"],
     blurb: "A completed exterior transformation — fresh siding and a rebuilt deck — by Waterfront Construction.",
     body: [
       "A finished exterior remodel featuring new siding and a rebuilt deck. Fresh siding protects the home and instantly lifts its curb appeal, while a solid new deck adds usable outdoor living space for the New England seasons.",

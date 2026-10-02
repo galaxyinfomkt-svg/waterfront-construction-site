@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { site, services } from "@/lib/site";
 
-export const metadata = { title: "Page Not Found", robots: { index: false, follow: true } };
+export const metadata = { title: "Page Not Found" };
 
 export default function NotFound() {
   return (

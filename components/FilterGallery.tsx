@@ -34,7 +34,7 @@ export default function FilterGallery({ items, categories }: { items: GalleryIte
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filtered.map((it, i) => (
           <button key={it.src + i} onClick={() => setActive(i)} className="group relative h-56 overflow-hidden rounded-2xl cursor-pointer">
-            <Image src={it.src} alt={it.label} fill quality={60} className="object-cover zoomimg" />
+            <Image src={it.src} alt={it.label} fill quality={60} sizes="(max-width: 768px) 50vw, 25vw" className="object-cover zoomimg" />
             <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/10 to-transparent" />
             <div className="absolute inset-0 grid place-items-center opacity-0 group-hover:opacity-100 transition">
               <span className="w-12 h-12 rounded-full bg-white/90 text-navy grid place-items-center text-xl shadow-lg">🔍</span>

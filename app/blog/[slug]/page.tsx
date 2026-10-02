@@ -7,6 +7,8 @@ import JsonLd from "@/components/JsonLd";
 import { pageMeta } from "@/lib/seo";
 import { graph, breadcrumb, articleSchema } from "@/lib/schema";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return posts.map((p) => ({ slug: p.slug }));
 }
@@ -37,7 +39,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       <JsonLd data={ld} />
       {/* HERO */}
       <section className="relative">
-        <Image src={p.image} alt={p.title} fill priority quality={60} className="object-cover" />
+        <Image src={p.image} alt={p.title} fill preload quality={60} sizes="100vw" className="object-cover" />
         <div className="absolute inset-0 hero-overlay" />
         <div className="relative container-x py-20 md:py-24 text-white max-w-4xl">
           <Link href="/blog" className="text-cyan text-sm font-semibold">← Back to blog</Link>
@@ -99,7 +101,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <div className="grid sm:grid-cols-2 gap-6">
             {related.map((r) => (
               <Link key={r.slug} href={`/blog/${r.slug}`} className="group card overflow-hidden hover:-translate-y-1.5 transition flex">
-                <div className="relative w-32 shrink-0"><Image src={r.image} alt={r.title} fill quality={60} className="object-cover" /></div>
+                <div className="relative w-32 shrink-0"><Image src={r.image} alt={r.title} fill quality={60} sizes="128px" className="object-cover" /></div>
                 <div className="p-4">
                   <span className="text-xs font-bold text-blue uppercase">{r.category}</span>
                   <h3 className="font-bold text-navy leading-snug mt-1">{r.title}</h3>
