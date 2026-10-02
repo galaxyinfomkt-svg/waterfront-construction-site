@@ -1,24 +1,49 @@
 import type { Metadata } from "next";
 
 export const SITE_URL = "https://waterfrontconstructionma.com";
-export const OG_IMAGE = `${SITE_URL}/og.jpg`;
-export const GEO = { lat: 42.3195, lng: -71.6412 }; // Northborough, MA
+export const SITE_NAME = "Waterfront Construction";
+export const OG_IMAGE = { url: `${SITE_URL}/og.jpg`, width: 1200, height: 630, alt: "Waterfront Construction — owner-led remodeling contractor in Northborough, MA" };
+export const GEO = { lat: 42.3195, lng: -71.6412 }; // Northborough, MA (town center)
 
-type MetaArgs = { title: string; description: string; path: string; image?: string; absoluteTitle?: boolean; noindex?: boolean };
+export type OgImage = { url: string; width: number; height: number; alt: string };
 
-export function pageMeta({ title, description, path, image = OG_IMAGE, absoluteTitle = false, noindex = false }: MetaArgs): Metadata {
-  const url = `${SITE_URL}${path}`;
+type MetaArgs = {
+  title: string;
+  description: string;
+  path: string;
+  image?: OgImage; // must carry its TRUE pixel size (use ogFor() for site images)
+  absoluteTitle?: boolean;
+  noindex?: boolean;
+  article?: { published: string; modified: string; section?: string; tags?: string[] };
+};
+
+const abs = (u: string) => (u.startsWith("http") ? u : `${SITE_URL}${u}`);
+
+export function pageMeta({ title, description, path, image = OG_IMAGE, absoluteTitle = false, noindex = false, article }: MetaArgs): Metadata {
+  const url = `${SITE_URL}${path === "/" ? "" : path}`;
+  const fullTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
+  const img = { ...image, url: abs(image.url) };
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
     ...(noindex ? { robots: { index: false, follow: true } } : {}),
     alternates: { canonical: url },
     openGraph: {
-      title: absoluteTitle ? title : `${title} | Waterfront Construction Inc`,
-      description, url, siteName: "Waterfront Construction Inc",
-      type: "website", locale: "en_US",
-      images: [{ url: image, width: 1200, height: 630, alt: "Waterfront Construction Inc" }],
+      title: fullTitle,
+      description,
+      url,
+      siteName: SITE_NAME,
+      locale: "en_US",
+      images: [img],
+      ...(article
+        ? { type: "article", publishedTime: article.published, modifiedTime: article.modified, authors: [`${SITE_URL}/about`], section: article.section, tags: article.tags }
+        : { type: "website" }),
     },
-    twitter: { card: "summary_large_image", title, description, images: [image] },
+    twitter: { card: "summary_large_image", title: fullTitle, description, images: [{ url: img.url, alt: img.alt }] },
   };
+}
+
+// Pre-cropped 1200×630 social images generated from real site photos (public/og/*.jpg).
+export function ogFor(slug: string, alt: string): OgImage {
+  return { url: `${SITE_URL}/og/${slug}.jpg`, width: 1200, height: 630, alt };
 }

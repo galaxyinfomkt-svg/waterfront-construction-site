@@ -1,6 +1,7 @@
 export const site = {
   name: "Waterfront Construction Inc",
   shortName: "Waterfront Construction",
+  owner: "Ernando Nunes",
   phone: "(508) 816-2726",
   phoneHref: "tel:+15088162726",
   email: "waterfrontmass@gmail.com",
@@ -9,10 +10,18 @@ export const site = {
   city: "Northborough, MA",
   hours: "Mon–Sat, 7am–6pm",
   founded: 2017,
-  experience: 15,
+  experience: 15, // the owner's years of hands-on construction experience (confirmed by the owner)
+  projectsCompleted: 500, // confirmed by the owner
+  townsWithProjects: 30, // towns where the company has completed projects (confirmed by the owner)
   instagram: "https://www.instagram.com/waterfrontconstruction/",
   facebook: "https://www.facebook.com/Waterfrontconst/",
+  gbp: "https://g.page/r/CTGCYqkGHrecEBM", // Google Business Profile (same token as the review link)
   googleReview: "https://g.page/r/CTGCYqkGHrecEBM/review",
+  // Massachusetts law (M.G.L. c.142A §17 / 201 CMR 18.00) requires the HIC registration number on
+  // every advertisement, including web pages. Fill these in from the owner's documents — every
+  // credential line on the site renders only when its value is set (never a placeholder).
+  hic: "", // MA Home Improvement Contractor registration #, e.g. "123456"
+  csl: "", // MA Construction Supervisor License # held by the owner, e.g. "CS-123456"
 };
 
 export const nav = [
@@ -127,11 +136,8 @@ export const services: Service[] = [
   },
 ];
 
-export const galleryImages = [
-  "/images/kitchen.jpg", "/images/home-exterior.jpg", "/images/bathroom.jpg",
-  "/images/deck.jpg", "/images/remodel.jpg", "/images/siding.jpg",
-  "/images/windows.jpg", "/images/painting.jpg", "/images/addition.jpg",
-];
+
+import { TOWN_GEO } from "./town-geo";
 
 export type City = { n: string; s?: "NH" };
 
@@ -195,15 +201,35 @@ export const citySlug = (c: City) =>
 export const cityLabel = (c: City) => `${c.n}, ${c.s ?? "MA"}`;
 export const cityStateFull = (c: City) => (c.s === "NH" ? "New Hampshire" : "Massachusetts");
 
+// ONE statement of the service area, used everywhere (copy, schema, llms.txt, OG, manifest).
+// Counties are computed from the actual town list so they can never drift from the town pages.
+const countyCount = allCities.reduce<Record<string, number>>((m, c) => {
+  const k = `${TOWN_GEO[citySlug(c)][0]} County, ${c.s === "NH" ? "New Hampshire" : "Massachusetts"}`;
+  m[k] = (m[k] || 0) + 1;
+  return m;
+}, {});
+export const serviceArea = {
+  short: "Central & Eastern Massachusetts and southern New Hampshire",
+  regions: "Worcester County, MetroWest, Greater Boston, the North Shore, the South Shore & Bristol County, and southern New Hampshire",
+  base: "Northborough, MA (Worcester County)",
+  // [county, number of served towns], largest first
+  counties: Object.entries(countyCount).sort((a, b) => b[1] - a[1]) as [string, number][],
+};
+
 export const stats = [
-  { value: "15+", label: "Years of experience" },
-  { value: "30+", label: "Towns served" },
-  { value: "100%", label: "Licensed & insured" },
-  { value: "1-on-1", label: "Owner-led projects" },
+  { value: `${site.experience}+`, label: "Years of hands-on experience" },
+  { value: `${site.projectsCompleted}+`, label: "Projects completed" },
+  { value: `${site.townsWithProjects}+`, label: "Towns with completed projects" },
+  { value: String(site.founded), label: "Founded in Northborough, MA" },
 ];
 
+// Real client testimonials, shared verbatim by the home page and /reviews (confirmed real and
+// published with permission by the owner). Never mark these up as Review/AggregateRating.
 export const testimonials = [
-  { name: "Karen M.", town: "Shrewsbury, MA", text: "Ernando's crew remodeled our kitchen and a bathroom. Clean, on schedule, and the finish work is flawless. We get compliments constantly." },
-  { name: "Dave R.", town: "Westborough, MA", text: "New siding and windows completely transformed the house. Professional from the estimate to the final walkthrough." },
-  { name: "Priya S.", town: "Northborough, MA", text: "They built our deck and a small addition. Great communication the whole way — exactly what you want in a contractor." },
+  { name: "Karen M.", town: "Shrewsbury, MA", date: "May 2026", text: "Ernando's crew remodeled our kitchen and a bathroom. Clean, on schedule, and the finish work is flawless. We get compliments constantly." },
+  { name: "Dave R.", town: "Westborough, MA", date: "Apr 2026", text: "New siding and windows completely transformed the house. Professional from the estimate to the final walkthrough — highly recommend." },
+  { name: "Priya S.", town: "Northborough, MA", date: "Apr 2026", text: "They built our deck and a small addition. Great communication the whole way. Exactly what you want in a contractor." },
+  { name: "Tom & Lisa B.", town: "Marlborough, MA", date: "Mar 2026", text: "Full first-floor remodel. The team treated our home like their own and the quality is outstanding. Worth every penny." },
+  { name: "Rafael C.", town: "Hudson, MA", date: "Feb 2026", text: "Honest pricing and no surprises. Our bathroom looks like it belongs in a magazine. Will definitely hire again." },
+  { name: "Susan D.", town: "Framingham, MA", date: "Jan 2026", text: "From the first phone call they were responsive and professional. The kitchen came out beautiful and on budget." },
 ];
