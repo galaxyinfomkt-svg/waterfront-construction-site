@@ -24,7 +24,7 @@
 .post ol.steps strong { color: #24215a; }
 
 /* The wrapper is a focusable, named region (tabindex=0; the global focus ring applies) so keyboard users can
-   scroll it if a table ever overflows. Cost tables (table.stack, more than 3 columns) become one card per row
+   scroll it if a table ever overflows. Tables with 3+ columns (table.stack) become one card per row
    below 640px, so no column is hidden off-screen on phones (verification V5.5). */
 .post .table-wrap { position: relative; margin: 1.2rem 0 1.6rem; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: .5rem; }
 .post table { width: 100%; border-collapse: collapse; font-size: 15.5px; line-height: 1.5; background: #fff; }

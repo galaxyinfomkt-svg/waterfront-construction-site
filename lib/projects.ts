@@ -137,20 +137,19 @@ export const projects: Project[] = [
     scopeHeading: "What the photos show",
     scope: [
       "Walk-in showers with large-format marble-look wall tile and frameless glass",
-      "Two neo-angle (five-sided) glass showers: one with brass fixtures beside a corner tub, one in beige stone-look tile with a built-in bench",
+      "Two neo-angle (five-sided) glass showers: one with brass fixtures beside a freestanding tub, one in beige stone-look tile with a built-in bench",
       "A tub-shower with white subway tile, a dark mosaic band and a hinged glass panel",
       "Recessed shower niches, mosaic-tile shower floors and ceiling or wall-mounted rain shower heads",
     ],
     notes: [
       "These photos come from more than one bathroom remodel. The towns are not listed, so this page does not name one.",
-      "Each photo carries our logo and phone number, added when it was first shared online.",
     ],
     stages: [{ id: "finished", label: "Finished bathrooms" }],
     photos: [
       { src: BATH(1), stage: "finished", alt: "Walk-in shower with large-format marble-look wall tile, a recessed niche, a rain shower head and frameless glass", caption: "Walk-in shower in marble-look tile with a recessed niche and frameless glass." },
       { src: BATH(2), stage: "finished", featured: "Bathrooms", alt: "Bathtub with white subway tile walls, a dark mosaic accent band, a recessed niche and a hinged glass panel", caption: "Tub-shower with white subway tile, a dark mosaic band and a hinged glass panel." },
       { src: BATH(3), stage: "finished", featured: "Bathrooms", alt: "Walk-in shower with marble-look walls, a hexagon mosaic floor, a window and a frameless glass door, beside the toilet", caption: "Walk-in shower with a hexagon mosaic floor and a frameless glass door." },
-      { src: BATH(4), stage: "finished", featured: "Bathrooms", alt: "Neo-angle frameless glass shower with brass fixtures and a ceiling rain head, next to a corner tub and a brass towel rack", caption: "Neo-angle glass shower with brass fixtures, beside a corner tub." },
+      { src: BATH(4), stage: "finished", featured: "Bathrooms", alt: "Neo-angle frameless glass shower with brass fixtures, a wall-mounted shower head and a hand shower on a slide bar, beside a freestanding tub and a brass towel warmer", caption: "Neo-angle glass shower with brass fixtures, beside a freestanding tub." },
       { src: BATH(5), stage: "finished", alt: "Neo-angle glass shower in beige stone-look tile with a built-in bench, a recessed niche and a mosaic accent band", caption: "Neo-angle shower in beige stone-look tile with a built-in bench." },
     ],
     videos: [], // the 12-second clip was a slideshow of these same photos (audit 05 PG-C3) — not shown

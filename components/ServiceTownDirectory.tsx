@@ -45,7 +45,7 @@ export default function ServiceTownDirectory({ slug, label, className = "" }: { 
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 font-bold text-navy [&::-webkit-details-marker]:hidden">
                 <span>{g.county}, {state}</span>
                 <span className="flex items-center gap-2 text-sm font-semibold text-ink/70">
-                  {g.towns.length}<span aria-hidden="true" className="text-blue text-lg transition group-open:rotate-45">+</span>
+                  {g.towns.length} {g.towns.length === 1 ? "town" : "towns"}<span aria-hidden="true" className="text-blue text-lg transition group-open:rotate-45 after:content-['+']" />
                 </span>
               </summary>
               <ul role="list" className="grid grid-cols-2 gap-x-4 px-4 pb-2 text-sm">

@@ -89,8 +89,8 @@ export default async function ServiceTownPage({ params }: Props) {
 
           {/* Estimate contract: id="estimate" + data-estimate-form on the section that wraps <LeadForm />; no scroll-mt-*
               (html scroll-padding-top already clears the sticky header, V5.2); not sticky, it sits in the hero. Compact
-              card header so the whole form fits after a "Free estimate" jump: 104px scroll-padding + ~76px card header
-              + 473px form ≤ 657px (1366×768 laptop) and ≤ 664px (390×664 phone). */}
+              card header; on viewports too short for the whole card, the "Free estimate" jump (jumpToEstimate in
+              chrome-client.tsx) lines the form's bottom up above the phone's bottom bar instead. */}
           <section id="estimate" data-estimate-form aria-labelledby="estimate-h" className="min-w-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 rounded-2xl bg-white text-ink p-4 sm:p-5 lg:p-4 shadow-card ring-1 ring-black/5">
             <h2 id="estimate-h" className="text-xl font-extrabold text-navy">{k.estimate.heading}</h2>
             <p className="mt-1 text-sm text-ink/75">

@@ -6,7 +6,7 @@ import Image from "next/image";
 import { site, nav, services, serviceArea } from "@/lib/site";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import { displayAddress } from "@/lib/address";
-import { HeaderClient, FloatingCall, EstimateLink } from "./chrome-client";
+import { HeaderClient, FloatingCall, EstimateLink, EstimateJumps } from "./chrome-client";
 import { PhoneIcon, MailIcon } from "./chrome-icons";
 
 // Registration/license numbers render only once the owner supplies them — never a placeholder.
@@ -49,6 +49,7 @@ export function FloatingCTA() {
   return (
     <>
       <FloatingCall phone={site.phone} phoneHref={site.phoneHref} />
+      <EstimateJumps />
       {/* Mobile bottom bar (hidden while the mobile menu is open, see html.menu-open in globals.css) */}
       <nav aria-label="Quick contact" className="mobile-cta-bar md:hidden fixed bottom-0 inset-x-0 z-50 grid grid-cols-2 gap-px bg-white/10 pb-[env(safe-area-inset-bottom)]">
         <a href={site.phoneHref} className="flex items-center justify-center gap-2 min-h-14 font-bold text-white bg-navy"><PhoneIcon /> Call now</a>

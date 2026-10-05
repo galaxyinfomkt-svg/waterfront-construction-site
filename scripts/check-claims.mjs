@@ -26,12 +26,15 @@ const hicSet = /hic:\s*"\d+"/.test(fs.readFileSync(path.join(REPO, "lib/site.ts"
 if (!hicSet) {
   BANNED.push(/\b(licensed (&amp;|&|and) insured|we('| a)re (fully )?licensed|is a licensed|100% licensed|fully licensed|licensed contractor)\b/i); // HTML encodes & as &amp;
   BANNED.push(/\b(is|are) registered (with|as) (the )?(a )?Massachusetts Home Improvement/i);
+  BANNED.push(/\binsured (&amp;|&|and) licensed\b/i, /\blicensed, insured\b/i, /\ba licensed (MA |Massachusetts )?(home improvement )?contractor\b/i);
 }
 
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) =>
   e.isDirectory() ? walk(path.join(d, e.name)) : /\.(html|body|rsc)$/.test(e.name) ? [path.join(d, e.name)] : []);
 let bad = 0;
-for (const f of walk(ROOT)) {
+const scanned = walk(ROOT);
+if (!scanned.some((f) => f.endsWith(".html"))) { console.error(`check-claims: no built pages found in ${ROOT}`); process.exit(1); }
+for (const f of scanned) {
   const txt = fs.readFileSync(f, "utf8");
   for (const re of BANNED) {
     const m = txt.match(re);

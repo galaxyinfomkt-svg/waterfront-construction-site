@@ -23,6 +23,26 @@ function estimateTarget(): HTMLElement | null {
   return el && !/^H[1-6]$/.test(el.tagName) ? el : null;
 }
 
+/** Scrolls so the whole estimate form is on screen. Normally the card top lands under the sticky header
+ *  (html scroll-padding-top). When the card is taller than the space left between the header and the bottom
+ *  edge or the phone's fixed call/estimate bar (short viewports such as 390×664 or a 1366×768 laptop's 657px),
+ *  the form's bottom is lined up just above that bar instead, so the submit button is never covered, while
+ *  the form's top still stays below the header. */
+function jumpToEstimate(el: HTMLElement, animate = true) {
+  const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+  const bar = document.querySelector<HTMLElement>(".mobile-cta-bar");
+  const barTop = bar && getComputedStyle(bar).display !== "none" ? bar.getBoundingClientRect().top : window.innerHeight;
+  const bottom = Math.min(window.innerHeight, barTop) - 8;
+  const card = el.getBoundingClientRect();
+  const form = (el.querySelector("iframe") ?? el).getBoundingClientRect();
+  let delta = card.top - pad;
+  if (form.bottom - delta > bottom) delta = Math.min(form.bottom - bottom, form.top - pad);
+  const smooth = animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top: window.scrollY + delta, behavior: smooth ? "smooth" : "instant" });
+  const hash = `#${el.id || "estimate"}`;
+  if (location.hash !== hash) history.replaceState(null, "", hash);
+}
+
 const isCurrent = (pathname: string, href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
 
 export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
@@ -177,15 +197,40 @@ export function EstimateLink({ className = "", children, onDone }: { className?:
         const el = estimateTarget();
         if (!el) return;
         e.preventDefault();
-        const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        el.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
-        const hash = `#${el.id || "estimate"}`;
-        if (location.hash !== hash) history.replaceState(null, "", hash);
+        jumpToEstimate(el);
       }}
     >
       {children}
     </Link>
   );
+}
+
+/** Plain in-page "#estimate" links (hero and body CTAs on home, hubs and town pages) get the same
+ *  fit-the-whole-form scroll as EstimateLink. Arriving with #estimate in the URL (e.g. /contact#estimate
+ *  from a page without a form) re-aligns once the page has laid out. Modifier-clicks are left alone. */
+export function EstimateJumps() {
+  const pathname = usePathname();
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (!(e.target instanceof Element) || !e.target.closest('a[href="#estimate"]')) return;
+      const el = estimateTarget();
+      if (!el) return;
+      e.preventDefault();
+      jumpToEstimate(el);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+  useEffect(() => {
+    if (location.hash !== "#estimate") return;
+    const t = window.setTimeout(() => {
+      const el = estimateTarget();
+      if (el) jumpToEstimate(el, false);
+    }, 80);
+    return () => window.clearTimeout(t);
+  }, [pathname]);
+  return null;
 }
 
 /** Desktop floating call button. Hidden near the top of the page and whenever an estimate form,

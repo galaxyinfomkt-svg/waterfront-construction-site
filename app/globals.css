@@ -145,12 +145,15 @@
   .svc-dir td a:hover { color: var(--color-navy); }
   @media (max-width: 767px) {
     .svc-dir thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-    .svc-dir tbody tr { display: grid; grid-template-columns: 1fr auto; padding: .35rem 0; }
+    .svc-dir table { table-layout: fixed; } /* the table box stays at its card's width; rows are grids below */
+    .svc-dir tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; padding: .35rem 0; }
     .svc-dir tbody th { padding: .5rem .75rem .1rem; }
     .svc-dir tbody td { padding: .1rem .75rem .5rem; }
     .svc-dir tbody td.dist { text-align: right; padding-top: .5rem; white-space: nowrap; }
     .svc-dir tbody td.links { grid-column: 1 / -1; }
   }
+  /* 320px phones: "about 30 mi northwest" may wrap rather than push the row past its card. */
+  @media (max-width: 359.98px) { .svc-dir tbody td.dist { white-space: normal; max-width: 9.5rem; } }
 }
 
 /* ---------- keyframes ---------- */

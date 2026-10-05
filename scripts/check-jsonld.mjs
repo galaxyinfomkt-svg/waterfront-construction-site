@@ -113,6 +113,7 @@ for (const [k, list] of Object.entries(faqSeen)) if (list.length > 1) fail("R16-
 
 const ruleNames = Object.keys(fails).sort();
 console.log(`Checked ${pages} indexable pages.`);
+if (!pages) { console.log("No indexable pages found — wrong path or missing build."); process.exit(1); }
 if (!ruleNames.length) { console.log("All JSON-LD rules pass."); process.exit(0); }
 for (const r of ruleNames) {
   const uniq = new Set(fails[r].map((x) => x.split(": ")[0]));

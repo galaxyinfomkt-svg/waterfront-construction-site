@@ -40,5 +40,6 @@ for (const s of SVC) {
 }
 for (const [t, u] of titles) if (u.length > 1) errors.push(`duplicate <title> "${t}" on ${u.join(", ")}`);
 for (const [, u] of descs) if (u.length > 1) errors.push(`duplicate meta description on ${u.length} pages, e.g. ${u[0]}`);
+if (!SVC.length) errors.push("No service×town pages found — wrong path or missing build.");
 console.log(`${errors.length} problem(s)`); for (const e of errors.slice(0, 40)) console.log(" -", e);
 process.exit(errors.length ? 1 : 0);

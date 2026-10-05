@@ -1128,7 +1128,7 @@ export const posts: Post[] = [
       },
       {
         id: "nh", h: "How do permits work in New Hampshire?", blocks: [
-          { p: "New Hampshire has no statewide contractor license. Building permits come from each town's building department under the state building code, electricians and plumbers are licensed by the state, and the federal EPA renovation rule governs lead-safe work on pre-1978 homes. Requirements and fees vary by town, so check with the local building department; for example, our [deck work in Salem, NH](/services/decks/salem-nh) goes through Salem's process." },
+          { p: "New Hampshire has no statewide contractor license. Building permits come from each town's building department under the state building code, electricians and plumbers are licensed by the state, and the federal EPA renovation rule governs lead-safe work on pre-1978 homes. Requirements and fees vary by town, so check with the town's building department." },
         ],
       },
     ],
@@ -1312,7 +1312,7 @@ export const posts: Post[] = [
       },
       {
         id: "example", h: "What did our Salem, NH pool deck involve?", blocks: [
-          { p: "The deck at the top of this guide wraps an above-ground pool in Salem, New Hampshire. The photos on the [project page](/projects/pool-deck-salem-nh) show pressure-treated joists framed around the pool, gray decking angled to follow the pool's edge, white railings and stairs. That project is in New Hampshire, where the permit comes from the town's building department; see our [deck work in Salem, NH](/services/decks/salem-nh)." },
+          { p: "The deck at the top of this guide wraps an above-ground pool in Salem, New Hampshire. The photos on the [project page](/projects/pool-deck-salem-nh) show pressure-treated joists framed around the pool, gray decking angled to follow the pool's edge, white railings and stairs. In New Hampshire, deck permits come from each town's building department; see our [deck work in Salem, NH](/services/decks/salem-nh)." },
           { p: "In Massachusetts we build decks from our base in [Northborough](/services/decks/northborough) and across our service area. A Northborough client shared this about their deck and small addition:" },
           { testimonial: "Priya S." },
           { p: "See our [deck design and construction service](/services/decks) for what we build." },

@@ -28,7 +28,8 @@ const ROLE = String(ownerNode().jobTitle);
 const LEAD = `${NAME} is the owner of ${site.name}, a home remodeling contractor based in Northborough, Massachusetts. He founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience.`;
 
 export const metadata = pageMeta({
-  title: `${NAME}, ${ROLE}`,
+  title: `${NAME}, ${ROLE} | Waterfront Construction`, // keeps the company in the title (61 chars)
+  absoluteTitle: true,
   description: `${NAME} founded ${site.name} in Northborough, MA, in ${site.founded} and has ${site.experience}+ years of hands-on construction experience.`,
   path: OWNER_PAGE,
 });

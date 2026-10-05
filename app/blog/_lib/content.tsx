@@ -107,12 +107,12 @@ export function PostBlock({ b }: { b: Block }) {
     );
   if ("table" in b) {
     const t = b.table;
-    // Tables with more than 3 columns (the cost tables) turn into one labelled card per row below 640px
-    // (blog.css `table.stack`), so the cost columns are visible without sideways scrolling (V5.5). The explicit
+    // Tables with 3 or more columns turn into one labelled card per row below 640px (blog.css `table.stack`),
+    // so every column is readable on a phone without sideways scrolling (V5.5). The explicit
     // ARIA roles keep table semantics for screen readers when CSS changes the display of table elements; the
     // per-cell labels are visual only (aria-hidden) because the column headers already name each cell.
     // The wrapper is a named, focusable region so keyboard users can scroll it if it ever overflows.
-    const stack = t.head.length > 3;
+    const stack = t.head.length >= 3;
     return (
       <div className="table-wrap" tabIndex={0} role="region" aria-label={t.caption}>
         <table className={stack ? "stack" : undefined} role="table">
