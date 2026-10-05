@@ -9,7 +9,7 @@ import { projects, type Project } from "./projects";
  *  WebPage dateModified and the visible "Page updated" line). Bump ONLY on a substantive change. */
 export const TOWN_PAGES_UPDATED = "2026-10-05T09:07:27-04:00";
 
-const BASE = { lat: 42.3182, lng: -71.6464 }; // Northborough town center (ZIP 01532 centroid)
+const BASE = { lat: 42.3195, lng: -71.6412 }; // Northborough town center (GeoNames populated place = lib/town-geo.ts)
 type LatLng = { lat: number; lng: number };
 
 const toRad = (d: number) => (d * Math.PI) / 180;

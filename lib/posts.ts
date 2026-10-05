@@ -391,7 +391,7 @@ export const posts: Post[] = [
             hrefLabel: "See the Lynnfield project",
             place: LYNNFIELD,
           } },
-          { p: "Our projects show what building out involves: the [Needham addition](/projects/home-addition-needham-ma) is documented from the original house through excavation and foundation work to framing, and the [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma) added a two-story addition beside the original house." },
+          { p: "Our projects show what building out involves: the [Needham addition](/projects/home-addition-needham-ma) is documented from the excavation to the framed porch, and the [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma) added a two-story addition beside the original house." },
         ],
       },
       {
@@ -427,7 +427,7 @@ export const posts: Post[] = [
       {
         id: "examples", h: "What additions have we built?", blocks: [
           { ul: [
-            "[Home addition in Needham, MA](/projects/home-addition-needham-ma): documented from the original house through excavation, foundation work and framing.",
+            "[Home addition in Needham, MA](/projects/home-addition-needham-ma): a front porch addition documented from the excavation to the framed porch posts and roof.",
             "[Home addition and exterior remodel in Lynnfield, MA](/projects/home-addition-exterior-lynnfield-ma): a two-story addition beside the original house, with new windows and siding and front porch work.",
             "[Home addition framing in Lynnfield, MA](/projects/home-addition-lynnfield-ma): an addition filmed in winter while its walls and roof were framed and sheathed.",
           ] },

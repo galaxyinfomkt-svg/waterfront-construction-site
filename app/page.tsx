@@ -199,7 +199,7 @@ export default function Home() {
           <ul className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               { t: "Owner-led", d: `${site.owner} founded the company in ${site.founded} and brings ${site.experience}+ years of hands-on construction experience.`, href: OWNER_PAGE, cta: `About ${site.owner}` },
-              { t: "Documented work", d: `${projects.length} case studies on this site show real jobs stage by stage, with photos from each one.`, href: "/gallery", cta: "See the projects" },
+              { t: "Documented work", d: `${projects.length} case studies on this site show real jobs with photos taken during the work.`, href: "/gallery", cta: "See the projects" },
               { t: "Client testimonials", d: "Read what clients wrote about their projects, shared with their permission, and see our public Google reviews.", href: "/reviews", cta: "Read reviews" },
               { t: "Free, itemized estimates", d: "Every estimate is free and itemized, so you can see what each part of the job costs.", href: "#estimate", cta: "Request one" },
               { t: hasHic ? "Registered in Massachusetts" : "Insured", d: hasHic ? `${credentialLine({ insured: true })}. Certificate of insurance on request.` : "We carry insurance and provide a certificate of insurance on request.", href: "/faq#registered-insured", cta: "Registration and insurance" },
@@ -313,7 +313,7 @@ export default function Home() {
           <div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow">Plan your budget</span>
             <h2 id="guides-h" className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Massachusetts cost guides</h2>
-            <p className="mt-3 text-ink/80">New England cost benchmarks, what moves the price, permits and timing — written by our owner, with sources.</p>
+            <p className="mt-3 text-ink/80">New England cost benchmarks, what moves the price, permits and timing, with sources.</p>
           </div>
           <ul role="list" className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {posts.filter((p) => p.category === "Cost guides").map((p) => (

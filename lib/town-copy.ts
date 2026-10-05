@@ -38,7 +38,7 @@ const PROJECT_COPY: Record<string, ProjectCopy> = {
     photo: `${IMG}deck-salem-nh-02.webp`, alt: "Deck with white railings built around an above-ground pool in Salem, NH",
   },
   "home-addition-needham-ma": {
-    label: "home addition with a new foundation and framing", short: "home addition",
+    label: "front porch addition (framing stage)", short: "porch addition",
     photo: `${IMG}home-addition-needham-ma-05.webp`, alt: "Front porch and addition framing on a colonial home in Needham, MA", pos: "50% 60%",
   },
   "home-addition-exterior-lynnfield-ma": {

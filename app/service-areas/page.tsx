@@ -20,7 +20,7 @@ import {
 // 07 T01). Replaces the old 39-town teaser and the client-only LocationsExplorer tabs.
 
 const H1 = "Towns we serve from Northborough, MA";
-const DESCRIPTION = `Remodeling projects in ${AREA_SENTENCE.replace(" in Massachusetts", " of Massachusetts")}, from Northborough.`;
+const DESCRIPTION = `We take remodeling projects in ${AREA_SENTENCE.replace(" in Massachusetts", " of Massachusetts")}; completed projects in ${site.townsWithProjects}+ of them.`;
 
 export const metadata = pageMeta({ title: "Towns We Serve in MA & Southern NH", description: DESCRIPTION, path: "/service-areas" });
 

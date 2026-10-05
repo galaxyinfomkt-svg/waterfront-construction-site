@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { pageMeta, SITE_URL } from "@/lib/seo";
-import { pageGraph, webPageNode, breadcrumbNode, pageUrl, BUSINESS_ID, OWNER_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
+import { pageGraph, webPageNode, breadcrumbNode, pageUrl, BUSINESS_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
 import { formatDate, sameDay } from "./_lib/content";
 
 const H1 = "Remodeling cost guides & advice for Massachusetts homeowners";
@@ -53,7 +53,7 @@ function blogGraph() {
           headline: p.title,
           datePublished: p.published,
           dateModified: p.modified,
-          author: { "@id": OWNER_ID },
+          author: { "@id": BUSINESS_ID },
         })),
       },
       breadcrumbNode(crumbs),

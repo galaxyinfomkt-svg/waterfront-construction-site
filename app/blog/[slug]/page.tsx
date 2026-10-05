@@ -10,7 +10,7 @@ import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { pageMeta, ogFor, SITE_URL } from "@/lib/seo";
-import { pageGraph, webPageNode, breadcrumbNode, imageNode, placeNode, serviceId, pageUrl, OWNER_ID, OWNER_PAGE, BUSINESS_ID, type Crumb } from "@/lib/schema";
+import { pageGraph, webPageNode, breadcrumbNode, imageNode, placeNode, serviceId, pageUrl, OWNER_PAGE, BUSINESS_ID, type Crumb } from "@/lib/schema";
 import { PostBlock, PostFigure, Rich, formatDate, plain, readTime, sameDay, wordCount } from "../_lib/content";
 
 export const dynamicParams = false;
@@ -21,7 +21,6 @@ export function generateStaticParams() {
 
 type Props = { params: Promise<{ slug: string }> };
 
-const OWNER_URL = pageUrl(OWNER_PAGE);
 const BLOG_ID = `${SITE_URL}/blog#blog`;
 const ogImage = (p: Post) => ogFor(`blog-${p.slug}`, p.photo.alt); // public/og/blog-<slug>.jpg (scripts/build-og.mjs)
 const crumbsFor = (p: Post): Crumb[] => [
@@ -43,9 +42,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   return {
     ...meta,
-    // <meta name="author"> and article:author must name the same person as the visible byline (audit B-03)
-    authors: [{ name: site.owner, url: OWNER_URL }],
-    openGraph: { ...(meta.openGraph as object), authors: [OWNER_URL] } as Metadata["openGraph"],
+    // <meta name="author"> and article:author name the same author as the visible byline: the company.
+    // (The guides are company publications; switch to the owner only once he has reviewed/approved them.)
+    authors: [{ name: site.name, url: SITE_URL }],
+    openGraph: { ...(meta.openGraph as object), authors: [SITE_URL] } as Metadata["openGraph"],
   };
 }
 
@@ -72,7 +72,7 @@ function postGraph(p: Post) {
     image: [{ "@id": photo["@id"] as string }, { "@id": og.url }],
     datePublished: p.published,
     dateModified: p.modified,
-    author: { "@id": OWNER_ID },
+    author: { "@id": BUSINESS_ID },
     publisher: { "@id": BUSINESS_ID },
     ...(about.length ? { about } : {}),
     articleSection: p.category,
@@ -129,11 +129,10 @@ export default async function PostPage({ params }: Props) {
           </p>
           <h1 className="mt-3 text-3xl md:text-5xl font-extrabold leading-tight">{p.title}</h1>
           <p className="mt-5 text-white text-[15px]">
-            By{" "}
-            <Link rel="author" href={OWNER_PAGE} className="font-semibold underline underline-offset-2 hover:text-cyan">
-              {site.owner}
+            Published by{" "}
+            <Link rel="author" href="/about" className="font-semibold underline underline-offset-2 hover:text-cyan">
+              {site.name}
             </Link>
-            , owner, {site.name}
           </p>
           <p className="mt-1 text-white text-[15px]">
             Published <time dateTime={p.published}>{formatDate(p.published)}</time>
@@ -200,15 +199,15 @@ export default async function PostPage({ params }: Props) {
                 </p>
               </section>
 
-              {/* AUTHOR BOX (audit B-03): the byline links here and to the owner's profile page */}
+              {/* PUBLISHER BOX (audit B-03): who publishes these guides; links to the company and owner pages */}
               <section aria-labelledby="author" className="author-box">
-                <h2 id="author">About the author</h2>
+                <h2 id="author">About the publisher</h2>
                 <p>
-                  <Link href={OWNER_PAGE}>{site.owner}</Link> is the owner of {site.name}, an owner-led home remodeling contractor based in Northborough, Massachusetts. He has {site.experience}+ years of hands-on construction experience and founded the company in {site.founded}.
+                  <Link href="/about">{site.name}</Link> is an owner-led home remodeling contractor based in Northborough, Massachusetts, founded in {site.founded} by <Link href={OWNER_PAGE}>{site.owner}</Link>, who has {site.experience}+ years of hands-on construction experience. Figures in this guide come from the sources listed above.
                 </p>
                 {(hasHic || hasCsl) && <p>{credentialLine({ insured: false })}</p>}
                 <p>
-                  <Link href={OWNER_PAGE}>More about Ernando →</Link>
+                  <Link href={OWNER_PAGE}>About the owner, Ernando Nunes →</Link>
                 </p>
               </section>
             </article>

@@ -77,7 +77,6 @@ const BATH = (n: number) => IMG("bathroom-remodels", n);
 const SAL = (n: number) => IMG("deck-salem-nh", n);
 const SALB = (n: number) => IMG("deck-salem-nh-before", n);
 const NEE = (n: number) => IMG("home-addition-needham-ma", n);
-const NEEB = (n: number) => IMG("home-addition-needham-ma-before", n);
 const NEEP = (n: number) => IMG("home-addition-needham-ma-progress", n);
 const HA = (n: number) => IMG("home-addition-exterior-lynnfield-ma", n);
 const CR = (n: number) => IMG("home-addition-lynnfield-ma", n);
@@ -215,7 +214,7 @@ export const projects: Project[] = [
     slug: "home-addition-needham-ma",
     title: "Front Porch Addition in Needham, MA",
     seoTitle: "Front Porch Addition in Needham, MA: Build Photos",
-    metaDescription: "5 photos of a front porch addition on a colonial in Needham, MA, from the excavation along the front of the house to the framed porch posts and roof.",
+    metaDescription: "4 photos of a front porch addition on a colonial in Needham, MA, from the excavation along the front of the house to the framed porch posts and roof.",
     shortTitle: "Needham Porch Addition",
     location: "Needham, MA",
     category: "Home addition",
@@ -235,12 +234,11 @@ export const projects: Project[] = [
     ],
     stages: [
       { id: "excavation", label: "Excavation", note: "Digging along the front of the house for the new foundation." },
-      { id: "framing", label: "Framing the porch", note: "Lumber on site, then the porch posts and roof framed on the new foundation." },
+      { id: "framing", label: "Framing the porch", note: "The porch posts and roof framed on the new foundation." },
     ],
     photos: [
       { src: NEEP(5), stage: "excavation", featured: "Additions", alt: "Mini excavator and the Waterfront Construction job sign at the front of a colonial in Needham, MA, with bricks from the front walk piled beside the dig", caption: "A mini excavator digs along the front of the house; bricks from the walk are piled beside the dig." },
       { src: NEEP(4), stage: "excavation", alt: "Worker setting orange safety fence beside the excavation and a large rock at the front of a house in Needham, MA", caption: "Orange safety fence goes up around the excavation." },
-      { src: NEEB(1), stage: "framing", alt: "Waterfront Construction van parked on the street and a lumber delivery in the driveway of a colonial in Needham, MA", caption: "The company van and a lumber delivery at the house." },
       { src: NEE(5), stage: "framing", featured: "Additions", alt: "Covered front porch framing with wood posts and roof across the front of a colonial in Needham, MA, with the right end sheathed and Tyvek along the base", caption: "Porch posts and roof framed across the front; the right end is sheathed." },
       { src: NEE(6), stage: "framing", alt: "Front porch framing on a new concrete foundation across a two-story colonial in Needham, MA, seen from the street", caption: "The framed porch from the street, on its new concrete foundation." },
     ],

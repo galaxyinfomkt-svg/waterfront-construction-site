@@ -100,7 +100,7 @@ export default function ServicesPage() {
               <li><span className="font-semibold text-navy">Owner-led.</span> The company is run by its founder, {site.owner}, who started it in {site.founded}.</li>
               <li><span className="font-semibold text-navy">Itemized estimates.</span> Every estimate is free, written and itemized for your house.</li>
               <li><span className="font-semibold text-navy">Permits and inspections.</span> We apply for the building permit and schedule inspections; plumbing, gas and electrical permits are pulled by those trades.</li>
-              <li><span className="font-semibold text-navy">Real projects.</span> Our <Link href="/gallery" className="text-blue underline underline-offset-2">project case studies</Link> show real jobs stage by stage, from the original house to the finished work.</li>
+              <li><span className="font-semibold text-navy">Real projects.</span> Our <Link href="/gallery" className="text-blue underline underline-offset-2">project case studies</Link> show real jobs with photos taken during the work, at town level only.</li>
             </ul>
           </div>
           <div className="rounded-2xl bg-tint-blue p-6">

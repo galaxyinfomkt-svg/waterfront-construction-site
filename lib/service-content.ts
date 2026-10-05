@@ -14,6 +14,7 @@ import { services, PHOTO_CAPTIONS, type Service, type Photo, type Faq } from "./
 import { posts } from "./posts";
 import { projects, type Project } from "./projects";
 import { allCities, citySlug, testimonials, type City } from "./site";
+import { hasCsl } from "./credentials";
 
 export type Source = { label: string; url: string };
 export type Table = { caption: string; head: string[]; rows: string[][]; note?: string };
@@ -79,7 +80,9 @@ export const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
 
 // ---------- shared rule text (stated as rules; never as a company credential) ----------
 const NH_NOTE = "New Hampshire has no statewide contractor license. Building permits come from each town's building department, and the federal EPA Renovation, Repair and Painting (RRP) rule governs lead-safe work on homes built before 1978.";
-const CSL_PERMIT = "The contractor's Construction Supervisor License holder applies to the town's building department; we do this for our jobs.";
+const CSL_PERMIT = hasCsl
+  ? "The contractor's Construction Supervisor License holder applies to the town's building department; we do this for our jobs."
+  : "The contractor's Construction Supervisor License holder applies to the town's building department; the written contract must say who obtains each permit.";
 const LEAD_ROW = (when: string) => ["Lead-safe renovation rules", when, "A contractor holding a Massachusetts Lead-Safe Renovation Contractor license, with a certified renovator directing the work."];
 const CONTRACT_ROW = ["Written contract", "Home improvement work over $1,000 on an owner-occupied home in Massachusetts needs a written contract, and the deposit is limited.", "The contractor, who must be registered with the state Home Improvement Contractor program."];
 
@@ -149,7 +152,7 @@ const CONTENT: ServiceContent[] = [
         "How much trim, soffit and fascia is replaced, and its level of detail",
         "Rotted sheathing or trim found after the old siding comes off",
         "Removal and disposal of the old siding, more so when there are several layers",
-        "Lead-safe containment and cleanup when painted surfaces on a pre-1978 home are disturbed",
+        "Lead-safe rules (containment and cleanup) when painted surfaces on a pre-1978 home are disturbed",
         "The material, profile and color you choose",
       ],
       guides: ["siding-replacement-cost-massachusetts"],
@@ -185,11 +188,11 @@ const CONTENT: ServiceContent[] = [
       { q: "How much does siding replacement cost in Massachusetts?", a: "Remodeling magazine's 2025 Cost vs. Value report puts the New England average at $17,590 for about 1,250 square feet of vinyl siding and $20,678 for fiber-cement siding. Wall area, stories, trim and repairs under the old siding move the price; we give an itemized estimate after a free site visit.", more: { href: "#cost", label: "Cost benchmarks and drivers" } },
       { q: "Is vinyl or fiber-cement siding better for a New England house?", a: "Both hold up well when installed correctly. Vinyl costs less and needs no paint, but it can crack on impact in deep cold. Fiber cement costs more, is heavier and resists fire and impact better, but it needs repainting over time. In the 2025 Cost vs. Value data for New England, fiber cement recouped more of its cost at resale (144.9% vs. 92.7%).", more: { href: "/blog/vinyl-vs-fiber-cement-siding", label: "Vinyl vs. fiber-cement siding guide" } },
       { q: "Should the old siding be removed or covered over?", a: "In most cases we recommend removing it. Tear-off exposes the sheathing so rotted boards can be replaced, and it allows a continuous weather barrier and new flashing; siding installed over old siding hides those problems." },
-      { q: "Do I need a permit to replace siding in Massachusetts?", a: "Usually, yes. Most Massachusetts towns require a building permit for re-siding, often a short-form permit, taken out by a Construction Supervisor License holder. We apply for it as part of the job. Homes in a local historic district may also need the commission's approval first.", more: { href: "/blog/do-you-need-a-permit-to-remodel-massachusetts", label: "Massachusetts remodeling permits guide" } },
+      { q: "Do I need a permit to replace siding in Massachusetts?", a: "Usually, yes. Most Massachusetts towns require a building permit for re-siding, often a short-form permit, taken out by a Construction Supervisor License holder; the written contract must say who obtains it. Homes in a local historic district may also need the commission's approval first.", more: { href: "/blog/do-you-need-a-permit-to-remodel-massachusetts", label: "Massachusetts remodeling permits guide" } },
       { q: "Is house wrap required behind new siding?", a: "Yes. The building code requires a water-resistive barrier behind siding, such as house wrap or a sheathing system with taped seams. It drains water that gets past the siding and protects the sheathing from rot." },
       { q: "My house was built before 1978. What changes for re-siding?", a: "Lead-safe rules apply when the work disturbs more than 20 square feet of exterior painted surface. In Massachusetts that means a contractor with a Lead-Safe Renovation Contractor license, containment, no open-flame burning or uncontrolled power sanding, and HEPA cleanup with a cleaning verification check.", more: { href: "#lead-safe", label: "Lead-safe rules for pre-1978 homes" } },
       { q: "Should I repair my siding or replace it?", a: "Repair makes sense when damage is limited to a few boards and the wall behind them is dry. Widespread cracking, warping, loose panels or soft spots in the wall behind the siding usually point to replacement.", more: { href: "/blog/signs-its-time-to-replace-your-siding", label: "Signs it is time to replace your siding" } },
-      { q: "Can new siding match an addition or the rest of the house?", a: "Yes. Matching starts with the existing profile, exposure and color; if an exact match is no longer made, re-siding a whole wall or the whole house keeps it consistent. On the Lynnfield project shown here, the original house was re-sided along with the new addition." },
+      { q: "Can new siding match an addition or the rest of the house?", a: "Yes. Matching starts with the existing profile, exposure and color; if an exact match is no longer made, re-siding a whole wall or the whole house keeps it consistent. On the Lynnfield project shown here, the addition and the main house's second floor were sided at the same time (vertical siding on the addition, lap siding on the house)." },
       { q: "Will new siding lower my energy bills?", a: "Siding by itself adds little insulation. Savings come from sealing air leaks and fixing the weather barrier during re-siding, or from choosing insulated siding or adding rigid foam under it. We can tell you whether that is worth it for your house." },
       { q: "What time of year can siding be installed in Massachusetts?", a: "Most siding can go on year-round. Caulks, sealants and paints list minimum temperatures on their labels, and vinyl is more brittle in deep cold, so very cold days can limit some steps. Material lead times often matter as much as the weather." },
     ],
@@ -551,7 +554,7 @@ const CONTENT: ServiceContent[] = [
     og: { slug: "service-home-additions-remodeling", alt: "Two-story home addition in green sheathing beside the house-wrapped main house in Lynnfield, MA" },
     intro: [
       "An addition is one of the biggest projects a homeowner can take on: a new foundation, framing that ties into the existing house, a roof that has to shed water where old and new meet, and heating, plumbing and electrical extended into new space. Most of the risk sits in the early decisions: what zoning allows on your lot, whether the existing structure can carry more, and how the new space connects to the old.",
-      "We build additions and whole-home remodels and coordinate the designer or architect and a structural engineer when the project needs stamped plans. Our Needham and Lynnfield case studies document additions from the original house and excavation through framing and sheathing.",
+      "We build additions and whole-home remodels and coordinate the designer or architect and a structural engineer when the project needs stamped plans. Our Needham and Lynnfield case studies show additions from excavation through framing and sheathing.",
     ],
     sections: [
       {
@@ -652,7 +655,7 @@ const CONTENT: ServiceContent[] = [
       { q: "Can I build an in-law apartment (ADU) in Massachusetts?", a: "Since February 2, 2025, Massachusetts law allows one accessory dwelling unit by right on a lot in a single-family zoning district, up to 900 square feet or half the main home's floor area, whichever is smaller. Towns can still apply reasonable rules, such as setbacks and design standards, and septic capacity still applies." },
       { q: "How long does a home addition take?", a: "Larger additions and whole-home remodels typically take 2–4 months of construction after design and permits. Design, engineering and any zoning relief come first and can add weeks to months." },
       { q: "Can we live at home during construction?", a: "Usually, yes. Most of the work happens outside the existing house until the new space is weather-tight, and the opening between old and new is sealed with dust barriers. Work on a kitchen or bathroom inside the house affects daily routines the most." },
-      { q: "Will the addition match my house?", a: "That is the goal of the design: matching rooflines, siding, trim and windows so the addition looks like part of the house. On the Lynnfield project, the original house and the new addition were re-sided together for a consistent exterior." },
+      { q: "Will the addition match my house?", a: "That is the goal of the design: matching rooflines, siding, trim and windows so the addition looks like part of the house. On the Lynnfield project, the addition and the main house's second floor were sided at the same time, with vertical siding on the addition and lap siding on the house." },
       { q: "Who handles permits and inspections?", a: "We apply for the building permit and schedule the building inspections. Plumbing, gas and electrical permits are pulled by those trades, and zoning or Board of Health applications are usually filed by the property owner with the design team's plans." },
     ],
     testimonials: ["Priya S.", "Tom & Lisa B."],
@@ -710,7 +713,7 @@ const CONTENT: ServiceContent[] = [
         "Height and access, including ladders or staging",
         "Amount and detail of trim, windows and doors",
         "Number of colors and sheens",
-        "Lead-safe containment and cleanup on pre-1978 homes",
+        "Lead-safe rules (containment and cleanup) on pre-1978 homes",
         "Cabinet painting, which takes more prep and drying time than walls",
       ],
       guides: ["interior-exterior-painting-cost-massachusetts"],
@@ -732,9 +735,9 @@ const CONTENT: ServiceContent[] = [
     leadSafe: { intro: "Scraping and sanding old paint is exactly the kind of work lead-safe rules were written for. On homes built before 1978:" },
     process: {
       steps: [
-        { step: "Estimate visit", detail: "We look at every surface, note repairs and lead-safe needs, and talk through colors and sheens. You get an itemized estimate." },
+        { step: "Estimate visit", detail: "We look at every surface, note repairs and the age of the paint, and talk through colors and sheens. You get an itemized estimate." },
         { step: "Color selection", detail: "We help you narrow down colors; testing samples on the wall in your own light is the most reliable way to choose." },
-        { step: "Protection", detail: "Floors, furniture, fixtures and landscaping are covered, and work areas are contained where lead-safe rules apply." },
+        { step: "Protection", detail: "Floors, furniture, fixtures and landscaping are covered before any prep or paint." },
         { step: "Prep", detail: "Washing, scraping, sanding, repairs, caulking and priming." },
         { step: "Painting", detail: "Finish coats applied within the label's temperature and recoat limits." },
         { step: "Cleanup and walkthrough", detail: "Touch-ups, cleanup and a walkthrough with you." },

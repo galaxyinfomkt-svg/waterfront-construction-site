@@ -88,7 +88,7 @@ for (const file of walk(ROOT)) {
   for (const n of all) for (const k of ["datePublished", "dateModified", "uploadDate", "dateCreated"]) if (n[k] && !ISO_TZ.test(n[k])) fail("R11-date-format", rel, `${k}=${n[k]}`);
   // R12: VideoObject required props
   for (const v of all.filter((n) => types(n).includes("VideoObject"))) for (const k of ["name", "thumbnailUrl", "uploadDate", "contentUrl", "duration"]) if (!v[k]) fail("R12-video-prop", rel, `${v.name || "?"} missing ${k}`);
-  // R13: BlogPosting author resolves to a Person with name+url
+  // R13: BlogPosting author resolves to a Person or the business (Organization) with name+url
   for (const a of all.filter((n) => types(n).includes("BlogPosting"))) {
     const au = a.author && (a.author["@id"] ? ids.get(a.author["@id"]) : a.author);
     if (!au || !au.name || !au.url) fail("R13-author", rel, "author without name/url");

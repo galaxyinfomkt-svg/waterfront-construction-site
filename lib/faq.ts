@@ -8,7 +8,7 @@
 //   policy, payment methods, languages, response time) are left out until the owner confirms them.
 // - No "licensed" self-claims until site.hic is set (licensingAnswer() handles both cases).
 import { site, services, cities, allCities, citySlug, testimonials } from "./site";
-import { licensingAnswer } from "./credentials";
+import { licensingAnswer, hasHic, hasCsl } from "./credentials";
 import { AREA_FACTS } from "./schema";
 import { townFacts, VILLAGE_OF, DEVENS } from "./towns";
 import { projects } from "./projects";
@@ -85,14 +85,16 @@ const E = {
   },
   registered: {
     id: "registered-insured",
-    q: "Is Waterfront Construction registered and insured?",
+    q: hasHic ? "Is Waterfront Construction registered and insured?" : "Are you insured, and how do I check a contractor's registration?",
     a: licensingAnswer("MA"),
     sources: [SOURCES.hic],
   },
   permits: {
     id: "permits",
     q: "Do you take care of the building permit?",
-    a: "Yes. We apply for the building permit for our work and schedule the inspections; licensed plumbers, gas fitters and electricians take out their own permits for their part of the job. In Massachusetts, a homeowner who pulls the permit for a contractor's work generally loses access to the state Guaranty Fund.",
+    a: hasCsl
+      ? "Yes. We apply for the building permit for our work and schedule the inspections; licensed plumbers, gas fitters and electricians take out their own permits for their part of the job. In Massachusetts, a homeowner who pulls the permit for a contractor's work generally loses access to the state Guaranty Fund."
+      : "Permits are part of the plan for every job we quote. In Massachusetts the building permit for structural work is applied for by a Construction Supervisor License holder, licensed plumbers, gas fitters and electricians take out their own permits, and the written contract must say who obtains each permit. A homeowner who pulls the permit for a contractor's work generally loses access to the state Guaranty Fund.",
     sources: [SOURCES.contract],
   },
   whichPermits: {

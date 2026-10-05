@@ -126,7 +126,7 @@ export function GET() {
     "",
     ...projects.flatMap(projectSection),
     "## Guides",
-    `Written by ${site.owner}. Cost figures in these guides are regional averages from the cited reports, not quotes.`,
+    `Published by ${site.name}. Cost figures in these guides are regional averages from the cited reports, not quotes.`,
     "",
     ...CATEGORIES.flatMap((cat) => posts.filter((p) => p.category === cat.name).flatMap(guideSection)),
     "## Client testimonials",
