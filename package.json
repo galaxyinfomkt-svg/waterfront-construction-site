@@ -6,7 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:schema": "node scripts/check-jsonld.mjs .next/server/app",
+    "check:towns": "node scripts/check-town-pages.mjs .next/server/app",
+    "check:claims": "node scripts/check-claims.mjs .next/server/app",
+    "check": "npm run check:schema && npm run check:towns && npm run check:claims",
+    "og": "node scripts/build-og.mjs"
   },
   "dependencies": {
     "next": "16.2.7",

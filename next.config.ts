@@ -1,3 +1,4 @@
+import { redirectRules } from "./lib/redirects";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -7,28 +8,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 2678400, // 31 days
   },
   async redirects() {
-    const merged: [string, string][] = [
-      ["kitchen-remodeling", "kitchen-bathroom-remodeling"],
-      ["bathroom-remodeling", "kitchen-bathroom-remodeling"],
-      ["home-additions", "home-additions-remodeling"],
-      ["home-remodeling", "home-additions-remodeling"],
-    ];
-    const removed = ["trim-and-carpentry", "repairs"];
-
-    const rules = [];
-    for (const [from, to] of merged) {
-      rules.push({ source: `/services/${from}`, destination: `/services/${to}`, permanent: true });
-      rules.push({ source: `/services/${from}/:city`, destination: `/services/${to}/:city`, permanent: true });
-    }
-    for (const from of removed) {
-      rules.push({ source: `/services/${from}`, destination: "/services", permanent: true });
-      rules.push({ source: `/services/${from}/:city`, destination: "/services", permanent: true });
-    }
-    // Financing page removed — owner does not offer financing.
-    rules.push({ source: "/financing", destination: "/contact", permanent: true });
-    // Project renamed to its actual address.
-    rules.push({ source: "/projects/home-addition-lynnfield-ma", destination: "/projects/home-addition-52-crest-road-lynnfield-ma", permanent: true });
-    return rules;
+    return redirectRules();
   },
 };
 

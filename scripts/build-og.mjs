@@ -8,17 +8,17 @@ fs.mkdirSync("public/og", { recursive: true });
 
 // slug → source photo (real Waterfront Construction project photos only)
 const crops = {
-  "service-siding": "public/images/projects/home-addition-highland-ave-lynnfield-ma-19.webp",
+  "service-siding": "public/images/projects/home-addition-exterior-lynnfield-ma-19.webp",
   "service-kitchen-bathroom-remodeling": "public/images/projects/kitchen-remodel-mansfield-ma-01.webp",
   "service-decks": "public/images/projects/deck-salem-nh-02.webp",
-  "service-windows-and-doors": "public/images/projects/home-addition-highland-ave-lynnfield-ma-18.webp",
-  "service-home-additions-remodeling": "public/images/projects/home-addition-highland-ave-lynnfield-ma-12.webp",
+  "service-windows-and-doors": "public/images/projects/home-addition-exterior-lynnfield-ma-18.webp",
+  "service-home-additions-remodeling": "public/images/projects/home-addition-exterior-lynnfield-ma-12.webp",
   "project-kitchen-remodel-mansfield-ma": "public/images/projects/kitchen-remodel-mansfield-ma-01.webp",
-  "project-bathroom-remodel-dedham-ma": "public/images/projects/bathroom-remodel-dedham-ma-03.webp",
+  "project-bathroom-remodels": "public/images/projects/bathroom-remodels-03.webp",
   "project-pool-deck-salem-nh": "public/images/projects/deck-salem-nh-06.webp",
-  "project-home-addition-129-falcon-st-needham-ma": "public/images/projects/home-addition-needham-ma-07.webp",
-  "project-home-addition-highland-ave-lynnfield-ma": "public/images/projects/home-addition-highland-ave-lynnfield-ma-12.webp",
-  "project-home-addition-52-crest-road-lynnfield-ma": "public/images/projects/home-addition-52-crest-road-lynnfield-ma-06.webp",
+  "project-home-addition-needham-ma": "public/images/projects/home-addition-needham-ma-07.webp",
+  "project-home-addition-exterior-lynnfield-ma": "public/images/projects/home-addition-exterior-lynnfield-ma-12.webp",
+  "project-home-addition-lynnfield-ma": "public/images/projects/home-addition-lynnfield-ma-06.webp",
   "project-exterior-remodel-siding-deck": "public/images/projects/exterior-remodel-siding-deck-ma-01.webp",
 };
 

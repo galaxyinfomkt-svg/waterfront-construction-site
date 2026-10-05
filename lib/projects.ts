@@ -20,12 +20,12 @@ const IMG = (name: string, n: number) => `/images/projects/${name}-${p2(n)}.webp
 const VID = (name: string, n: number) => `/videos/${name}-${p2(n)}.mp4`;
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
-const HA = (n: number) => IMG("home-addition-highland-ave-lynnfield-ma", n);
-const CR = (n: number) => IMG("home-addition-52-crest-road-lynnfield-ma", n);
-const CRV = (n: number) => VID("home-addition-52-crest-road-lynnfield-ma", n);
+const HA = (n: number) => IMG("home-addition-exterior-lynnfield-ma", n);
+const CR = (n: number) => IMG("home-addition-lynnfield-ma", n);
+const CRV = (n: number) => VID("home-addition-lynnfield-ma", n);
 const SAL = (n: number) => IMG("deck-salem-nh", n);
 const SALB = (n: number) => IMG("deck-salem-nh-before", n);
-const DED = (n: number) => IMG("bathroom-remodel-dedham-ma", n);
+const DED = (n: number) => IMG("bathroom-remodels", n);
 const MAN = (n: number) => IMG("kitchen-remodel-mansfield-ma", n);
 const NEE = (n: number) => IMG("home-addition-needham-ma", n);
 const NEEB = (n: number) => IMG("home-addition-needham-ma-before", n);
@@ -49,20 +49,20 @@ export const projects: Project[] = [
     videos: [],
   },
   {
-    slug: "bathroom-remodel-dedham-ma",
-    title: "Bathroom Remodeling — Dedham, MA",
-    shortTitle: "Dedham Bathroom",
-    location: "Dedham, MA",
+    slug: "bathroom-remodels",
+    title: "Bathroom Remodels — Recent Projects",
+    shortTitle: "Bathroom Remodels",
+    location: "Massachusetts",
     category: "Bathroom Remodeling",
     services: ["kitchen-bathroom-remodeling"],
-    blurb: "A full bathroom remodel in Dedham with a custom tiled walk-in shower and frameless glass.",
+    blurb: "A selection of bathroom remodels by Waterfront Construction — custom tiled walk-in showers, frameless glass and modern finishes.",
     body: [
-      "This Dedham bathroom was rebuilt with a custom tiled walk-in shower, frameless glass, and clean modern finishes. Behind the tile, proper waterproofing protects the home for the long run.",
+      "These photos come from several bathroom remodels by Waterfront Construction: custom tiled walk-in showers, frameless glass enclosures and clean, modern finishes. Behind the tile, proper waterproofing protects the home for the long run.",
       "The result is a bright, spa-like bathroom built to last — designed and managed start to finish by Waterfront Construction.",
     ],
     cover: DED(5),
     photos: range(1, 5).map(DED),
-    videos: [{ src: VID("bathroom-remodel-dedham-ma", 1), poster: DED(2) }],
+    videos: [{ src: VID("bathroom-remodels", 1), poster: DED(2) }],
   },
   {
     slug: "pool-deck-salem-nh",
@@ -92,15 +92,15 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "home-addition-129-falcon-st-needham-ma",
-    title: "Home Addition — 129 Falcon St, Needham, MA",
+    slug: "home-addition-needham-ma",
+    title: "Home Addition — Needham, MA",
     shortTitle: "Needham Home Addition",
     location: "Needham, MA",
     category: "Home Addition",
     services: ["home-additions-remodeling"],
     blurb: "A major home addition in Needham — the full transformation from before, through site work, to the new build.",
     body: [
-      "This Needham project on Falcon St is a full home addition, documented from start to finish — the original home, the site work and excavation, and the new addition taking shape.",
+      "This Needham project is a full home addition, documented from start to finish — the original home, the site work and excavation, and the new addition taking shape.",
       "New foundation, framing, and a weather-tight exterior — a significant expansion that reworks how the whole home lives, managed start to finish by Waterfront Construction.",
     ],
     cover: NEE(7),
@@ -113,9 +113,9 @@ export const projects: Project[] = [
     videos: [],
   },
   {
-    slug: "home-addition-highland-ave-lynnfield-ma",
-    title: "Home Addition — Highland Ave, Lynnfield, MA",
-    shortTitle: "Highland Ave Addition",
+    slug: "home-addition-exterior-lynnfield-ma",
+    title: "Home Addition & Exterior Remodel — Lynnfield, MA",
+    shortTitle: "Lynnfield Addition & Exterior",
     location: "Lynnfield, MA",
     category: "Home Addition",
     services: ["home-additions-remodeling", "siding", "windows-and-doors"],
@@ -129,15 +129,15 @@ export const projects: Project[] = [
     videos: [],
   },
   {
-    slug: "home-addition-52-crest-road-lynnfield-ma",
-    title: "Home Addition — 52 Crest Road, Lynnfield, MA",
-    shortTitle: "52 Crest Road Addition",
+    slug: "home-addition-lynnfield-ma",
+    title: "Home Addition Framing (Video) — Lynnfield, MA",
+    shortTitle: "Lynnfield Addition (Video)",
     location: "Lynnfield, MA",
     category: "Home Addition",
     services: ["home-additions-remodeling"],
-    blurb: "A video walkthrough of a home addition at 52 Crest Road, Lynnfield — from framing through weather-tight exterior.",
+    blurb: "A video walkthrough of a home addition in Lynnfield — from framing through a weather-tight exterior.",
     body: [
-      "This home addition at 52 Crest Road in Lynnfield is captured on video as the project came together. The clips walk through the addition from structural framing to a fully weather-tight exterior with new sheathing and house wrap.",
+      "This home addition in Lynnfield is captured on video as the project came together. The clips walk through the addition from structural framing to a fully weather-tight exterior with new sheathing and house wrap.",
       "Like every Waterfront Construction project, this one was owner-supervised from the first estimate to the final walkthrough — clean job site, clear communication, and craftsmanship built to last.",
     ],
     cover: CR(3),

@@ -20,14 +20,14 @@ export const metadata = pageMeta({
 const galleryItems: GalleryItem[] = [
   { src: "/images/projects/kitchen-remodel-mansfield-ma-01.webp", cat: "Kitchens", label: "Custom kitchen remodel — Mansfield, MA" },
   { src: "/images/projects/kitchen-remodel-mansfield-ma-03.webp", cat: "Kitchens", label: "Open-concept kitchen — Mansfield, MA" },
-  { src: "/images/projects/bathroom-remodel-dedham-ma-05.webp", cat: "Bathrooms", label: "Frameless glass shower — Dedham, MA" },
+  { src: "/images/projects/bathroom-remodels-05.webp", cat: "Bathrooms", label: "Frameless glass shower — Dedham, MA" },
   { src: "/images/home-exterior.jpg", cat: "Siding", label: "Full exterior siding" },
   { src: "/images/siding.jpg", cat: "Siding", label: "Fiber-cement install" },
   { src: "/images/windows.jpg", cat: "Siding", label: "Windows & trim" },
   { src: "/images/projects/deck-salem-nh-04.webp", cat: "Decks", label: "Pool deck — Salem, NH" },
-  { src: "/images/projects/home-addition-highland-ave-lynnfield-ma-11.webp", cat: "Additions", label: "Home addition — Lynnfield, MA" },
+  { src: "/images/projects/home-addition-exterior-lynnfield-ma-11.webp", cat: "Additions", label: "Home addition — Lynnfield, MA" },
   { src: "/images/painting.jpg", cat: "Painting", label: "Exterior repaint" },
-  { src: "/images/projects/bathroom-remodel-dedham-ma-02.webp", cat: "Bathrooms", label: "Custom tiled bath — Dedham, MA" },
+  { src: "/images/projects/bathroom-remodels-02.webp", cat: "Bathrooms", label: "Custom tiled bath — Dedham, MA" },
 ];
 
 const tableRows = [
@@ -239,7 +239,7 @@ export default function Home() {
           </Reveal>
           <div className="mt-10 grid md:grid-cols-2 gap-8">
             {[
-              { before: "/images/projects/home-addition-needham-ma-before-04.webp", after: "/images/projects/home-addition-needham-ma-07.webp", title: "Home Addition", loc: "Needham, MA", href: "/projects/home-addition-129-falcon-st-needham-ma" },
+              { before: "/images/projects/home-addition-needham-ma-before-04.webp", after: "/images/projects/home-addition-needham-ma-07.webp", title: "Home Addition", loc: "Needham, MA", href: "/projects/home-addition-needham-ma" },
               { before: "/images/projects/deck-salem-nh-before-04.webp", after: "/images/projects/deck-salem-nh-06.webp", title: "Pool Deck", loc: "Salem, NH", href: "/projects/pool-deck-salem-nh" },
             ].map((ba) => (
               <Reveal key={ba.title}>
