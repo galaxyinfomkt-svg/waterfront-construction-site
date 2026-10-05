@@ -13,7 +13,7 @@ import ServiceAreaMap from "./ServiceAreaMap";
 import OpenOnHash from "./OpenOnHash";
 import {
   countyGroups, documentedTowns, unplacedProjects, distanceBands, isDevensCity, testimonialAnchor,
-  AREA_SENTENCE, NEAREST, FARTHEST, PLACES, type CountyGroup,
+  MUNICIPALITIES, COUNTIES, NEAREST, FARTHEST, PLACES, type CountyGroup,
 } from "./areas";
 
 // /service-areas — the geographic hub (Home › Service Areas › county › town). Server-rendered: every one of
@@ -21,7 +21,7 @@ import {
 // 07 T01). Replaces the old 39-town teaser and the client-only LocationsExplorer tabs.
 
 const H1 = "Towns we serve from Northborough, MA";
-const DESCRIPTION = `We take remodeling projects in ${AREA_SENTENCE.replace(" in Massachusetts", " of Massachusetts")}; completed projects in ${site.townsWithProjects}+ of them.`;
+const DESCRIPTION = `We take remodeling projects in ${MUNICIPALITIES} cities and towns across ${COUNTIES} counties of Massachusetts and southern New Hampshire, with completed projects in ${site.townsWithProjects}+ of them.`;
 
 export const metadata = pageMeta({ title: "Towns We Serve in MA & Southern NH", description: DESCRIPTION, path: "/service-areas" });
 
