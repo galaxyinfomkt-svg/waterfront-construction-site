@@ -16,6 +16,7 @@ import {
   SERVICE_LOCAL, SERVICE_SLUGS, permitAuthority, authorityLabel, rulesParagraph, contractorRuleRow, isServiceSlug, type ServiceSlug,
 } from "./local-rules";
 import { OG_IMAGE, ogFor, type OgImage } from "./seo";
+import { getPost } from "./posts";
 import { hasHic, hasCsl } from "./credentials";
 import type { Crumb } from "./schema";
 
@@ -49,13 +50,13 @@ const PROJECT_COPY: Record<string, ProjectCopy> = {
     },
   },
   "home-addition-lynnfield-ma": {
-    label: "home addition filmed from framing to a weather-tight shell", short: "addition framing video",
+    label: "home addition filmed while it was framed and sheathed", short: "addition framing video",
     photo: `${IMG}home-addition-lynnfield-ma-03.webp`, alt: "Home addition framing and sheathing in winter in Lynnfield, MA",
   },
 };
 // Project OG crops not used on town pages: public/og/project-home-addition-needham-ma.jpg shows the
 // client's house number beside the door (owner decision: no street addresses) — re-crop before re-enabling.
-const OG_HOLD = new Set(["home-addition-needham-ma"]);
+const OG_HOLD = new Set<string>(); // all project OG crops are safe to publish
 
 function projectView(p: Project, town: City, svc?: ServiceSlug) {
   const base = PROJECT_COPY[p.slug];
@@ -99,6 +100,15 @@ export function localTestimonials(c: City, svc: ServiceSlug) {
 const W15 = placesWithin(15);
 const DATE_FMT = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/New_York" });
 export const TOWN_PAGES_UPDATED_LABEL = DATE_FMT.format(new Date(TOWN_PAGES_UPDATED));
+// Cost guides on the blog, by service (painting has none yet).
+const COST_GUIDES: Record<string, string[]> = {
+  "kitchen-bathroom-remodeling": ["kitchen-remodel-cost-massachusetts", "bathroom-remodel-cost-massachusetts"],
+  siding: ["siding-replacement-cost-massachusetts"],
+  "windows-and-doors": ["window-replacement-cost-massachusetts"],
+  decks: ["deck-cost-massachusetts"],
+  "home-additions-remodeling": ["home-addition-cost-massachusetts"],
+};
+
 const stateName = (c: City) => (isNH(c) ? "New Hampshire" : "Massachusetts");
 /** "a deck" / "an addition". */
 const an = (phrase: string) => `${/^[aeiou]/i.test(phrase) ? "an" : "a"} ${phrase}`;
@@ -142,6 +152,7 @@ export type TownCopy = {
   scopeLabel: string;
   scope: string[];
   hubLink: LinkItem;
+  guideLinks: LinkItem[]; // Massachusetts cost guides for this service (MA pages only — the guides cite MA law)
   faqHeading: string;
   faqs: Faq[];
   nearbyHeading: string;
@@ -360,6 +371,7 @@ export function townCopy(s: { slug: string; name: string }, c: City): TownCopy {
     scopeLabel: "What's included",
     scope: L.scope,
     hubLink: { href: `/services/${svc}`, label: `Costs and timelines: our ${nounShort} guide` },
+    guideLinks: nh ? [] : (COST_GUIDES[svc] ?? []).map((g) => getPost(g)).filter((p): p is NonNullable<typeof p> => Boolean(p)).map((p) => ({ href: `/blog/${p.slug}`, label: p.title })),
     faqHeading: "Questions",
     faqs,
     nearbyHeading: "Nearby places we serve",

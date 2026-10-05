@@ -32,6 +32,8 @@ export function redirectRules(): Rule[] {
   }
   // Financing page removed — owner does not offer financing.
   rules.push(r("/financing", "/contact"));
+  // There is no /projects index page; the case studies live on /gallery.
+  rules.push(r("/projects", "/gallery"));
   for (const [oldSlug, newSlug, oldMedia, newMedia] of projectRenames) {
     rules.push(r(`/projects/${oldSlug}`, `/projects/${newSlug}`));
     if (oldMedia && newMedia) {

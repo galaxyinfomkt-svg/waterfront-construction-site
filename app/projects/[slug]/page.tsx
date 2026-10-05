@@ -26,7 +26,7 @@ export function generateStaticParams() {
 }
 
 // public/og/project-home-addition-needham-ma.jpg shows the client's house number → brand card until re-cropped.
-const OG_HOLD = new Set(["home-addition-needham-ma"]);
+const OG_HOLD = new Set<string>(); // all project OG crops are safe to publish
 
 const path = (p: Project) => `/projects/${p.slug}`;
 const published = (p: Project) => PROJECT_PUBLISHED[p.slug];

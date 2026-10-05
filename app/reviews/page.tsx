@@ -23,7 +23,7 @@ const DISCLOSURE = "Shared with permission by our clients.";
 
 export const metadata = pageMeta({
   title: "Client Reviews & Testimonials",
-  description: `Testimonials from clients in ${townList}, shared with permission, plus our public Google reviews.`,
+  description: `Testimonials from clients in ${townList}, shared with permission, plus our Google reviews.`,
   path: "/reviews",
 });
 

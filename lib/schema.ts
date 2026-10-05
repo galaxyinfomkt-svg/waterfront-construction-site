@@ -3,7 +3,7 @@
 // 2026-10-01 gen-AI guidance: structured data is fact-checked like copy). Owner-supplied facts render only
 // when set — never a placeholder. Never add Review / AggregateRating / HowTo / SiteNavigationElement.
 import { SITE_URL, SITE_NAME } from "./seo";
-import { site, services, allCities, citySlug, cityLabel, type Service, type City, type Faq } from "./site";
+import { site, services, allCities, citySlug, type Service, type City, type Faq } from "./site";
 import { townFacts, VILLAGE_OF, DEVENS, projectTown } from "./towns";
 import { projects, projectImages, type Project, type ProjectVideo } from "./projects";
 import { VIDEO_FACTS, PROJECT_PUBLISHED } from "./media-facts";

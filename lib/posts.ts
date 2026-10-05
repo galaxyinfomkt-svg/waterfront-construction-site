@@ -386,7 +386,7 @@ export const posts: Post[] = [
           { figure: {
             src: `${PR}/home-addition-exterior-lynnfield-ma-12.webp`,
             alt: "Main house in white house wrap beside a two-story addition sheathed in green panels with taped seams, Lynnfield, MA",
-            caption: "A two-story addition beside the original house, at the weather-tight stage, on our Lynnfield project.",
+            caption: "A two-story addition sheathed in ZIP System panels, with house wrap on the main house, on our Lynnfield project.",
             href: "/projects/home-addition-exterior-lynnfield-ma",
             hrefLabel: "See the Lynnfield project",
             place: LYNNFIELD,
@@ -429,7 +429,7 @@ export const posts: Post[] = [
           { ul: [
             "[Home addition in Needham, MA](/projects/home-addition-needham-ma): documented from the original house through excavation, foundation work and framing.",
             "[Home addition and exterior remodel in Lynnfield, MA](/projects/home-addition-exterior-lynnfield-ma): a two-story addition beside the original house, with new windows and siding and front porch work.",
-            "[Home addition framing in Lynnfield, MA](/projects/home-addition-lynnfield-ma): an addition shown on video from framing to a weather-tight exterior.",
+            "[Home addition framing in Lynnfield, MA](/projects/home-addition-lynnfield-ma): an addition filmed in winter while its walls and roof were framed and sheathed.",
           ] },
           { p: "We build [home additions in Needham](/services/home-additions-remodeling/needham), [in Lynnfield](/services/home-additions-remodeling/lynnfield) and across our service area. A client in Northborough, where we're based, shared this about their deck and small addition:" },
           { testimonial: "Priya S." },

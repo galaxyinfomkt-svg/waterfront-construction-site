@@ -16,7 +16,7 @@ const crops = {
   "project-kitchen-remodel-mansfield-ma": "public/images/projects/kitchen-remodel-mansfield-ma-01.webp",
   "project-bathroom-remodels": "public/images/projects/bathroom-remodels-03.webp",
   "project-pool-deck-salem-nh": "public/images/projects/deck-salem-nh-06.webp",
-  "project-home-addition-needham-ma": "public/images/projects/home-addition-needham-ma-07.webp",
+  "project-home-addition-needham-ma": "public/images/projects/home-addition-needham-ma-05.webp",
   "project-home-addition-exterior-lynnfield-ma": "public/images/projects/home-addition-exterior-lynnfield-ma-12.webp",
   "project-home-addition-lynnfield-ma": "public/images/projects/home-addition-lynnfield-ma-06.webp",
   "project-exterior-remodel-siding-deck": "public/images/projects/exterior-remodel-siding-deck-ma-01.webp",

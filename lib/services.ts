@@ -56,11 +56,11 @@ const NEED = { project: "home-addition-needham-ma", place: "Needham, MA" } as co
 // Captions describe only what is visible. Photos that show a house number, a readable plate,
 // a social-media watermark or a baked-in ad overlay with contact text are not used here.
 const P = {
-  ha05: { src: HA(5), ...LYNN, stage: "progress", alt: "Two-story addition in taped green sheathing with its windows installed, seen from the driveway", caption: "The new two-story addition, sheathed and dried in" },
+  ha05: { src: HA(5), ...LYNN, stage: "progress", alt: "Two-story addition in taped green sheathing with its windows installed, seen from the driveway", caption: "The new two-story addition, sheathed, with its windows in" },
   ha07: { src: HA(7), ...LYNN, stage: "progress", alt: "Back of a two-story addition in taped green sheathing with new windows installed", caption: "Back of the addition: taped sheathing with the new windows in place" },
   ha08: { src: HA(8), ...LYNN, stage: "progress", alt: "Worker fitting a large black window over house wrap under a new porch roof, with white siding above", caption: "Window and house-wrap work under the new porch roof, with finished siding above" },
   ha11: { src: HA(11), ...LYNN, stage: "progress", alt: "Upper story of a house with new white lap siding and black windows above a new front porch frame, in snow", caption: "New white lap siding on the original house, above the new front porch frame" },
-  ha12: { src: HA(12), ...LYNN, stage: "progress", alt: "Main house in white house wrap beside a two-story addition sheathed in green panels with taped seams", caption: "Weather-tight stage: house wrap on the original house, taped sheathing on the new addition" },
+  ha12: { src: HA(12), ...LYNN, stage: "progress", alt: "Main house in white house wrap beside a two-story addition sheathed in green panels with taped seams", caption: "House wrap and new windows on the main house, ZIP System sheathing on the new addition" },
   ha13: { src: HA(13), ...LYNN, stage: "progress", alt: "Three new arched windows with factory labels still on, set into green sheathing with taped seams", caption: "New arched windows set into the addition's taped sheathing" },
   ha14: { src: HA(14), ...LYNN, stage: "progress", alt: "New wood entry door in protective plastic, with flashing membrane at the sill and a wooden form for a concrete step", caption: "Sill flashing under a new entry door, with the form for its step" },
   ha16: { src: HA(16), ...LYNN, stage: "progress", alt: "Original house in white house wrap with new second-floor dormers and a new front porch, next to a two-story addition in green sheathing", caption: "New dormers and front porch on the original house, next to the new addition" },
@@ -192,7 +192,7 @@ const raw: Omit<Service, "photos">[] = [
   {
     slug: "painting", name: "Painting", short: "Interior & Exterior Painting", icon: "🎨",
     // No real painting photos yet: this stock image is decorative only (alt="", never in galleries/OG/JSON-LD/sitemap).
-    image: "/images/painting.jpg", imageAlt: "", imageIsStock: true,
+    image: "", imageAlt: "", imageIsStock: true, // no real painting photo yet → icon tile
     blurb: "Interior and exterior painting, trim and cabinets, with thorough prep: washing, scraping, patching, caulking and priming.",
     features: ["Interior and exterior painting", "Washing, scraping, sanding and patching", "Caulking and priming bare wood", "Cabinet and trim painting", "Color selection help", "Floors, furniture and landscaping protected"],
     long: [

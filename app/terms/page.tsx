@@ -15,7 +15,7 @@ const PUBLISHED = "2026-06-25T20:22:21-03:00";
 const UPDATED = "2026-10-05T10:00:09-04:00";
 const updatedLabel = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "America/New_York" }).format(new Date(UPDATED));
 
-const DESCRIPTION = `Terms for using the ${site.name} website: site estimates are not quotes, each project has its own written agreement, and Massachusetts law applies.`;
+const DESCRIPTION = `Terms for using the ${site.name} website: web estimates are not quotes, each project has its own written agreement, and MA law applies.`;
 
 export const metadata = pageMeta({ title: "Terms of Use", description: DESCRIPTION, path: "/terms" });
 

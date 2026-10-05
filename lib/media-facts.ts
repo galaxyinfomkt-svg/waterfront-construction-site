@@ -3,13 +3,11 @@
 // confirm against Vercel's deployment list). duplicateOf: same footage re-encoded (RMSE ≈ 5%, same duration).
 export type VideoFacts = { seconds: number; w: number; h: number; published: string; duplicateOf?: string };
 export const VIDEO_FACTS: Record<string, VideoFacts> = {
-  "/videos/bathroom-remodels-01.mp4": { seconds: 12, w: 576, h: 1024, published: "2026-07-02T18:38:32-03:00" },
   "/videos/deck-salem-nh-01.mp4": { seconds: 33, w: 464, h: 832, published: "2026-07-02T18:38:32-03:00" },
   "/videos/deck-salem-nh-02.mp4": { seconds: 47, w: 464, h: 832, published: "2026-07-02T18:38:32-03:00" },
   "/videos/deck-salem-nh-03.mp4": { seconds: 15, w: 576, h: 1024, published: "2026-07-02T18:38:32-03:00" },
   "/videos/deck-salem-nh-04.mp4": { seconds: 52, w: 464, h: 832, published: "2026-07-02T18:38:32-03:00" },
   "/videos/deck-salem-nh-before-01.mp4": { seconds: 46, w: 464, h: 832, published: "2026-07-02T18:38:32-03:00" },
-  "/videos/deck-salem-nh-before-02.mp4": { seconds: 46, w: 464, h: 832, published: "2026-07-02T18:38:32-03:00", duplicateOf: "/videos/deck-salem-nh-before-01.mp4" },
   "/videos/exterior-remodel-siding-deck-ma-01.mp4": { seconds: 52, w: 464, h: 832, published: "2026-07-02T16:36:58-03:00" },
   "/videos/home-addition-lynnfield-ma-01.mp4": { seconds: 18, w: 576, h: 1024, published: "2026-07-02T16:26:06-03:00" },
   "/videos/home-addition-lynnfield-ma-02.mp4": { seconds: 20, w: 464, h: 832, published: "2026-07-02T16:26:06-03:00" },

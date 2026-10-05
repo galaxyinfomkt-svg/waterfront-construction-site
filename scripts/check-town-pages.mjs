@@ -39,6 +39,6 @@ for (const s of SVC) {
   if (distinct < pages.length) errors.push(`${s}: ${pages.length - distinct} pages identical to a sibling after swapping the town name`);
 }
 for (const [t, u] of titles) if (u.length > 1) errors.push(`duplicate <title> "${t}" on ${u.join(", ")}`);
-for (const [d, u] of descs) if (u.length > 1) errors.push(`duplicate meta description on ${u.length} pages, e.g. ${u[0]}`);
+for (const [, u] of descs) if (u.length > 1) errors.push(`duplicate meta description on ${u.length} pages, e.g. ${u[0]}`);
 console.log(`${errors.length} problem(s)`); for (const e of errors.slice(0, 40)) console.log(" -", e);
 process.exit(errors.length ? 1 : 0);

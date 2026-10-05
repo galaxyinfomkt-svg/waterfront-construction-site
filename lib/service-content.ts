@@ -551,7 +551,7 @@ const CONTENT: ServiceContent[] = [
     og: { slug: "service-home-additions-remodeling", alt: "Two-story home addition in green sheathing beside the house-wrapped main house in Lynnfield, MA" },
     intro: [
       "An addition is one of the biggest projects a homeowner can take on: a new foundation, framing that ties into the existing house, a roof that has to shed water where old and new meet, and heating, plumbing and electrical extended into new space. Most of the risk sits in the early decisions: what zoning allows on your lot, whether the existing structure can carry more, and how the new space connects to the old.",
-      "We build additions and whole-home remodels and coordinate the designer or architect and a structural engineer when the project needs stamped plans. Our Needham and Lynnfield case studies document additions from the original house through excavation, framing and the weather-tight stage.",
+      "We build additions and whole-home remodels and coordinate the designer or architect and a structural engineer when the project needs stamped plans. Our Needham and Lynnfield case studies document additions from the original house and excavation through framing and sheathing.",
     ],
     sections: [
       {
@@ -637,7 +637,7 @@ const CONTENT: ServiceContent[] = [
         { step: "Zoning relief, if needed", detail: "Can add weeks to months, depending on hearing schedules." },
         { step: "Permits", detail: "The town reviews the plans; trade permits are filed." },
         { step: "Foundation", detail: "Excavation, footings and foundation, inspected before backfill." },
-        { step: "Framing and dry-in", detail: "Walls, roof and sheathing, then windows, doors and the weather barrier make it weather-tight, the stage shown in our Lynnfield photos." },
+        { step: "Framing and dry-in", detail: "Walls, roof and sheathing go up, then windows, doors and the weather barrier close in the shell — our Lynnfield photos show the sheathing and window stage." },
         { step: "Rough-ins and inspections", detail: "Plumbing, electrical and heating, rough inspections, then the insulation inspection." },
         { step: "Finishes", detail: "Drywall, trim, flooring, cabinets, paint and exterior siding." },
         { step: "Final inspections", detail: "Trade and building final inspections, then sign-off to use the new space." },

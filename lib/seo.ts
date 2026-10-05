@@ -21,7 +21,11 @@ const abs = (u: string) => (u.startsWith("http") ? u : `${SITE_URL}${u}`);
 
 export function pageMeta({ title, description, path, image = OG_IMAGE, absoluteTitle = false, noindex = false, article }: MetaArgs): Metadata {
   const url = `${SITE_URL}${path === "/" ? "" : path}`;
-  const fullTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
+  // The brand suffix is added only when the whole title still fits ~60 chars; otherwise Google would
+  // truncate it anyway, so the page's own keywords keep the visible space.
+  const withBrand = `${title} | ${SITE_NAME}`;
+  if (!absoluteTitle && withBrand.length > 60) absoluteTitle = true;
+  const fullTitle = absoluteTitle ? title : withBrand;
   const img = { ...image, url: abs(image.url) };
   return {
     title: absoluteTitle ? { absolute: title } : title,

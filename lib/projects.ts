@@ -246,7 +246,7 @@ export const projects: Project[] = [
     ],
     videos: [],
     cover: NEE(5),
-    ogSource: NEE(7), // public/og/project-home-addition-needham-ma.jpg shows the house number → not used (see OG_HOLD in the page)
+    ogSource: NEE(5),
     updated: PROJECTS_UPDATED,
   },
 

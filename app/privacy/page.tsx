@@ -20,7 +20,7 @@ const updatedLabel = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZ
 const GA = Boolean(process.env.NEXT_PUBLIC_GA_ID);
 const CLARITY = Boolean(process.env.NEXT_PUBLIC_CLARITY_ID);
 
-const DESCRIPTION = `What ${site.name} collects through our estimate form, chat, analytics and hosting providers, how we use it, and how to ask us to access or delete it.`;
+const DESCRIPTION = `What ${site.name} collects via our estimate form, chat, analytics and hosting, how we use it, and how to ask us to access or delete it.`;
 
 export const metadata = pageMeta({ title: "Privacy Policy", description: DESCRIPTION, path: "/privacy" });
 

@@ -182,6 +182,9 @@ export default async function ServiceTownPage({ params }: Props) {
               ))}
             </ul>
             <p className="mt-4"><Link href={k.hubLink.href} className="font-semibold text-blue underline underline-offset-2 hover:text-navy">{k.hubLink.label}<Arrow /></Link></p>
+            {k.guideLinks.map((g) => (
+              <p key={g.href} className="mt-2"><Link href={g.href} className="font-semibold text-blue underline underline-offset-2 hover:text-navy">{g.label}<Arrow /></Link></p>
+            ))}
 
             {/* QUESTIONS — only ones specific to this page (same Q&As as the FAQPage node) */}
             {k.faqs.length > 0 && (

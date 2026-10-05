@@ -11,7 +11,8 @@
     "check:towns": "node scripts/check-town-pages.mjs .next/server/app",
     "check:claims": "node scripts/check-claims.mjs .next/server/app",
     "check": "npm run check:schema && npm run check:towns && npm run check:claims",
-    "og": "node scripts/build-og.mjs"
+    "og": "node scripts/build-og.mjs",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "next": "16.2.7",

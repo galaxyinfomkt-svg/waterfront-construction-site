@@ -8,6 +8,7 @@ import { PHOTO_CAPTIONS } from "@/lib/services";
 import { homeFaqs } from "@/lib/faq";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import { projects } from "@/lib/projects";
+import { posts } from "@/lib/posts";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, faqNode, BUSINESS_ID, OWNER_PAGE } from "@/lib/schema";
 import FaqList from "./faq/FaqList";
@@ -18,7 +19,7 @@ import { countyGroups, AREA_SENTENCE } from "./service-areas/areas";
 // lib/credentials.ts, testimonials verbatim without stars, no HowTo markup (01 C1–C3, H1, L2).
 
 const TITLE = "Remodeling Contractor in Northborough, MA | Waterfront Construction";
-const DESCRIPTION = `Owner-led remodeling contractor in Northborough, MA, since ${site.founded}: kitchens, baths, additions, decks, siding, windows and painting. Free estimates: ${site.phone}.`;
+const DESCRIPTION = `Owner-led remodeling contractor in Northborough, MA, since ${site.founded}: kitchens, baths, additions, decks, siding, windows, painting. Free estimates: ${site.phone}.`;
 const H1 = "Remodeling contractor in Northborough, MA";
 // Answer-first entity paragraph: who, what, where (09 AEO-H1 canonical sentences).
 const ENTITY = `${site.name} is an owner-led home remodeling contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners across ${serviceArea.short}.`;
@@ -303,6 +304,25 @@ export default function Home() {
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      {/* COST GUIDES — sourced Massachusetts cost guides (blog B-08: give the guides contextual inlinks) */}
+      <section className="py-16 md:py-20" aria-labelledby="guides-h">
+        <div className="container-x">
+          <div className="text-center max-w-2xl mx-auto">
+            <span className="eyebrow">Plan your budget</span>
+            <h2 id="guides-h" className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Massachusetts cost guides</h2>
+            <p className="mt-3 text-ink/80">New England cost benchmarks, what moves the price, permits and timing — written by our owner, with sources.</p>
+          </div>
+          <ul role="list" className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {posts.filter((p) => p.category === "Cost guides").map((p) => (
+              <li key={p.slug} className="card p-5">
+                <h3 className="font-bold text-navy leading-snug"><Link href={`/blog/${p.slug}`} className="hover:text-blue">{p.title}</Link></h3>
+                <p className="mt-2 text-sm text-ink/80 line-clamp-3">{p.excerpt}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
