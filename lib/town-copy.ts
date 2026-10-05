@@ -49,7 +49,7 @@ const PROJECT_COPY: Record<string, ProjectCopy> = {
       "windows-and-doors": { label: "home addition and exterior remodel with new windows", photo: `${IMG}home-addition-exterior-lynnfield-ma-18.webp`, alt: "Three new arched black windows and white siding on a home addition in Lynnfield, MA", pos: "50% 60%" },
     },
   },
-  "home-addition-lynnfield-ma": {
+  "home-addition-framing-lynnfield-ma": {
     label: "home addition filmed while it was framed and sheathed", short: "addition framing video",
     photo: `${IMG}home-addition-lynnfield-ma-03.webp`, alt: "Home addition framing and sheathing in winter in Lynnfield, MA",
   },

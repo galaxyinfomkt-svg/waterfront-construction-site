@@ -361,7 +361,7 @@ export const posts: Post[] = [
     },
     related: {
       services: ["home-additions-remodeling"],
-      projects: ["home-addition-needham-ma", "home-addition-exterior-lynnfield-ma", "home-addition-lynnfield-ma"],
+      projects: ["home-addition-needham-ma", "home-addition-exterior-lynnfield-ma", "home-addition-framing-lynnfield-ma"],
       posts: ["do-you-need-a-permit-to-remodel-massachusetts", "how-to-choose-a-contractor-in-massachusetts", "5-remodels-that-add-the-most-home-value", "bathroom-remodel-cost-massachusetts"],
     },
     sections: [
@@ -429,7 +429,7 @@ export const posts: Post[] = [
           { ul: [
             "[Home addition in Needham, MA](/projects/home-addition-needham-ma): a front porch addition documented from the excavation to the framed porch posts and roof.",
             "[Home addition and exterior remodel in Lynnfield, MA](/projects/home-addition-exterior-lynnfield-ma): a two-story addition beside the original house, with new windows and siding and front porch work.",
-            "[Home addition framing in Lynnfield, MA](/projects/home-addition-lynnfield-ma): an addition filmed in winter while its walls and roof were framed and sheathed.",
+            "[Home addition framing in Lynnfield, MA](/projects/home-addition-framing-lynnfield-ma): an addition filmed in winter while its walls and roof were framed and sheathed.",
           ] },
           { p: "We build [home additions in Needham](/services/home-additions-remodeling/needham), [in Lynnfield](/services/home-additions-remodeling/lynnfield) and across our service area. A client in Northborough, where we're based, shared this about their deck and small addition:" },
           { testimonial: "Priya S." },

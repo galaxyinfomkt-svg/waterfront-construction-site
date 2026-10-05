@@ -833,7 +833,7 @@ const PROJECT_CARD: Record<string, string[]> = {
   "pool-deck-salem-nh": ["/images/projects/deck-salem-nh-06.webp", "/images/projects/deck-salem-nh-02.webp"],
   "home-addition-needham-ma": ["/images/projects/home-addition-needham-ma-05.webp"],
   "home-addition-exterior-lynnfield-ma": ["/images/projects/home-addition-exterior-lynnfield-ma-16.webp", "/images/projects/home-addition-exterior-lynnfield-ma-12.webp"],
-  "home-addition-lynnfield-ma": ["/images/projects/home-addition-lynnfield-ma-06.webp"],
+  "home-addition-framing-lynnfield-ma": ["/images/projects/home-addition-lynnfield-ma-06.webp"],
   "exterior-remodel-siding-deck": ["/images/projects/exterior-remodel-siding-deck-ma-01.webp"],
 };
 // Video stills (low resolution) — described, never used as heroes.

@@ -14,7 +14,10 @@ const removed = ["trim-and-carpentry", "repairs"];
 // Case studies renamed to town level (no client street addresses) — owner decision Oct 2026.
 // [old slug, new slug, old media prefix, new media prefix]
 const projectRenames: [string, string, string | null, string | null][] = [
-  ["home-addition-52-crest-road-lynnfield-ma", "home-addition-lynnfield-ma", "home-addition-52-crest-road-lynnfield-ma", "home-addition-lynnfield-ma"],
+  ["home-addition-52-crest-road-lynnfield-ma", "home-addition-framing-lynnfield-ma", "home-addition-52-crest-road-lynnfield-ma", "home-addition-lynnfield-ma"],
+  // Old production redirected /projects/home-addition-lynnfield-ma → …52-crest-road… for 3 months; browsers may
+  // have cached that 308, so the case study lives at a slug that was never a redirect source (no loop).
+  ["home-addition-lynnfield-ma", "home-addition-framing-lynnfield-ma", null, null],
   ["home-addition-highland-ave-lynnfield-ma", "home-addition-exterior-lynnfield-ma", "home-addition-highland-ave-lynnfield-ma", "home-addition-exterior-lynnfield-ma"],
   ["home-addition-129-falcon-st-needham-ma", "home-addition-needham-ma", null, null],
   ["bathroom-remodel-dedham-ma", "bathroom-remodels", "bathroom-remodel-dedham-ma", "bathroom-remodels"],

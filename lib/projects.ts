@@ -299,7 +299,7 @@ export const projects: Project[] = [
 
   // ---------------------------------------------------------------- Lynnfield addition framing (video only)
   {
-    slug: "home-addition-lynnfield-ma",
+    slug: "home-addition-framing-lynnfield-ma",
     title: "Home Addition Framing in Lynnfield, MA: Winter Site Videos",
     seoTitle: "Home Addition Framing in Lynnfield, MA: Site Videos",
     metaDescription: "5 short site videos, filmed in winter, of a home addition in Lynnfield, MA: walls sheathed in ZIP System panels, open roof framing, then roof sheathing.",

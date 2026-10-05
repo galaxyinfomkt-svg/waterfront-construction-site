@@ -22,6 +22,6 @@ export const PROJECT_PUBLISHED: Record<string, string> = {
   "pool-deck-salem-nh": "2026-07-02T18:38:32-03:00",
   "home-addition-needham-ma": "2026-07-02T18:38:32-03:00",
   "home-addition-exterior-lynnfield-ma": "2026-07-02T16:11:57-03:00",
-  "home-addition-lynnfield-ma": "2026-07-02T16:26:06-03:00",
+  "home-addition-framing-lynnfield-ma": "2026-07-02T16:26:06-03:00",
   "exterior-remodel-siding-deck": "2026-07-02T16:36:58-03:00",
 };

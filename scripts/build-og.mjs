@@ -18,7 +18,7 @@ const crops = {
   "project-pool-deck-salem-nh": "public/images/projects/deck-salem-nh-06.webp",
   "project-home-addition-needham-ma": "public/images/projects/home-addition-needham-ma-05.webp",
   "project-home-addition-exterior-lynnfield-ma": "public/images/projects/home-addition-exterior-lynnfield-ma-12.webp",
-  "project-home-addition-lynnfield-ma": "public/images/projects/home-addition-lynnfield-ma-06.webp",
+  "project-home-addition-framing-lynnfield-ma": "public/images/projects/home-addition-lynnfield-ma-06.webp",
   "project-exterior-remodel-siding-deck": "public/images/projects/exterior-remodel-siding-deck-ma-01.webp",
 };
 
