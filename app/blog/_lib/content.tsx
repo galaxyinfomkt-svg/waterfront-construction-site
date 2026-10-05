@@ -57,14 +57,15 @@ export function wordCount(p: Post): number {
 export const readTime = (p: Post) => `${Math.max(1, Math.round(wordCount(p) / 230))} min read`;
 
 // ---------- figure: real project photo with a truthful caption ----------
-export function PostFigure({ f, eager = false }: { f: Figure; eager?: boolean }) {
+// Always lazy (next/image default): no post figure is the LCP element — the answer paragraph is (V4.4).
+export function PostFigure({ f }: { f: Figure }) {
   const d = dims(f.src);
   const portrait = d.h > d.w;
   return (
     <figure className="post-figure">
       {f.aspect ? (
         <div className="relative w-full overflow-hidden rounded-xl bg-sand" style={{ aspectRatio: f.aspect }}>
-          <Image src={f.src} alt={f.alt} fill quality={75} sizes="(min-width: 1024px) 768px, 92vw" className="object-cover object-top" loading={eager ? "eager" : "lazy"} />
+          <Image src={f.src} alt={f.alt} fill quality={75} sizes="(min-width: 1024px) 768px, 92vw" className="object-cover object-top" />
         </div>
       ) : (
         <Image
@@ -75,7 +76,6 @@ export function PostFigure({ f, eager = false }: { f: Figure; eager?: boolean })
           quality={75}
           sizes={portrait ? "(min-width: 768px) 360px, 92vw" : "(min-width: 1024px) 768px, 92vw"}
           className={`rounded-xl bg-sand ${portrait ? "mx-auto h-auto max-h-[640px] w-auto max-w-full" : "h-auto w-full"}`}
-          loading={eager ? "eager" : "lazy"}
         />
       )}
       <figcaption>
@@ -107,18 +107,32 @@ export function PostBlock({ b }: { b: Block }) {
     );
   if ("table" in b) {
     const t = b.table;
+    // Tables with more than 3 columns (the cost tables) turn into one labelled card per row below 640px
+    // (blog.css `table.stack`), so the cost columns are visible without sideways scrolling (V5.5). The explicit
+    // ARIA roles keep table semantics for screen readers when CSS changes the display of table elements; the
+    // per-cell labels are visual only (aria-hidden) because the column headers already name each cell.
+    // The wrapper is a named, focusable region so keyboard users can scroll it if it ever overflows.
+    const stack = t.head.length > 3;
     return (
-      <div className="table-wrap">
-        {t.head.length > 3 && <p className="table-hint">Scroll sideways to see the whole table.</p>}
-        <table className={t.head.length > 3 ? "wide" : undefined}>
+      <div className="table-wrap" tabIndex={0} role="region" aria-label={t.caption}>
+        <table className={stack ? "stack" : undefined} role="table">
           <caption>{t.caption}</caption>
-          <thead>
-            <tr>{t.head.map((h, i) => <th key={i} scope="col">{h}</th>)}</tr>
+          <thead role="rowgroup">
+            <tr role="row">{t.head.map((h, i) => <th key={i} scope="col" role="columnheader">{h}</th>)}</tr>
           </thead>
-          <tbody>
+          <tbody role="rowgroup">
             {t.rows.map((r, i) => (
-              <tr key={i}>
-                {r.map((c, j) => (j === 0 ? <th key={j} scope="row"><Rich text={c} /></th> : <td key={j}><Rich text={c} /></td>))}
+              <tr key={i} role="row">
+                {r.map((c, j) =>
+                  j === 0 ? (
+                    <th key={j} scope="row" role="rowheader"><Rich text={c} /></th>
+                  ) : (
+                    <td key={j} role="cell">
+                      {stack && <span className="cell-label" aria-hidden="true">{t.head[j]}</span>}
+                      <Rich text={c} />
+                    </td>
+                  ),
+                )}
               </tr>
             ))}
           </tbody>

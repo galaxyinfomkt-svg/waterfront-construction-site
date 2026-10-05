@@ -21,6 +21,13 @@ const BASE = P.find((p) => p.f.isBase)!.f;
 /** A few labels for orientation; every label is a real served place at its real position. */
 const LABELS: Record<string, "l" | "r"> = { worcester: "l", boston: "r", nashua: "r", "salem-nh": "r", mansfield: "r", rockport: "l" };
 
+// Label sizes are in viewBox units, so they shrink with the map. On phones the 640-unit map is drawn about
+// 260–330px wide (scale ~0.45), which made 10–12-unit labels 4–5px tall (V5.9). Below sm the ring and base
+// labels are scaled up (CSS font-size beats the SVG attribute) and the town labels are hidden; the county
+// directory and the dots' <title> tooltips carry the same information. A white halo keeps text readable over
+// dots and rings.
+const HALO = { stroke: "#fff", strokeLinejoin: "round", paintOrder: "stroke" } as const;
+
 export default function ServiceAreaMap({ documented, className = "" }: { documented: Set<string>; className?: string }) {
   return (
     <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="sam-t sam-d" className={`w-full h-auto text-navy ${className}`}>
@@ -32,7 +39,7 @@ export default function ServiceAreaMap({ documented, className = "" }: { documen
       {[10, 20, 30, 40, 50].map((m) => (
         <g key={m}>
           <circle cx={X(BASE.lng)} cy={Y(BASE.lat)} r={R(m)} fill="none" stroke="currentColor" strokeOpacity=".16" strokeDasharray="3 4" />
-          <text x={X(BASE.lng) + 4} y={Y(BASE.lat) - R(m) - 3} className="fill-current" fontSize="10" opacity=".7">{m} mi</text>
+          <text x={X(BASE.lng) + 4} y={Y(BASE.lat) - R(m) - 3} className="fill-current text-[18px] min-[480px]:text-[13px] sm:text-[10px]" fontSize="10" opacity=".75" strokeWidth={3} {...HALO}>{m} mi</text>
         </g>
       ))}
       {P.map(({ c, f }) => {
@@ -47,13 +54,13 @@ export default function ServiceAreaMap({ documented, className = "" }: { documen
       {P.filter(({ c }) => LABELS[citySlug(c)]).map(({ c, f }) => {
         const right = LABELS[citySlug(c)] === "r";
         return (
-          <text key={`l-${citySlug(c)}`} x={X(f.lng) + (right ? 7 : -7)} y={Y(f.lat) + 4} textAnchor={right ? "start" : "end"} fontSize="11" className="fill-current" opacity=".85">
+          <text key={`l-${citySlug(c)}`} x={X(f.lng) + (right ? 7 : -7)} y={Y(f.lat) + 4} textAnchor={right ? "start" : "end"} fontSize="11" className="fill-current hidden sm:inline" opacity=".9" strokeWidth={3} {...HALO}>
             {cityLabel(c)}
           </text>
         );
       })}
       <circle cx={X(BASE.lng)} cy={Y(BASE.lat)} r="7" fill="#24215a" stroke="#fff" strokeWidth="2" />
-      <text x={X(BASE.lng) + 10} y={Y(BASE.lat) + 4} fontSize="12" fontWeight="700" className="fill-current">Northborough (base)</text>
+      <text x={X(BASE.lng) + 10} y={Y(BASE.lat) + 5} fontSize="12" fontWeight="700" className="fill-current text-[22px] min-[480px]:text-[16px] sm:text-[12px]" strokeWidth={4} {...HALO}>Northborough (base)</text>
     </svg>
   );
 }

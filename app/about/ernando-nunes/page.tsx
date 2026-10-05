@@ -8,7 +8,7 @@ import { projects } from "@/lib/projects";
 import { posts } from "@/lib/posts";
 import { hasCsl } from "@/lib/credentials";
 import { pageMeta } from "@/lib/seo";
-import { pageGraph, webPageNode, breadcrumbNode, OWNER_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
+import { pageGraph, webPageNode, breadcrumbNode, ownerNode, OWNER_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
 import { projectCardImage } from "@/lib/service-content";
 
 // /about/ernando-nunes — the ONE owner entity page (ProfilePage, Person @id = OWNER_ID). It is the author /
@@ -22,11 +22,13 @@ const UPDATED = PUBLISHED; // bump only on a substantive edit of this profile
 const updatedLabel = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "America/New_York" }).format(new Date(UPDATED));
 
 const NAME = site.owner;
-const ROLE = "Owner & Lead Builder"; // = ownerNode().jobTitle in lib/schema.ts
+// ONE role string everywhere (V2.3): <title>, og/twitter title, the visible role line, ProfilePage.name and the
+// Person.jobTitle all come from lib/schema.ts ownerNode().jobTitle ("Owner & Lead Builder").
+const ROLE = String(ownerNode().jobTitle);
 const LEAD = `${NAME} is the owner of ${site.name}, a home remodeling contractor based in Northborough, Massachusetts. He founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience.`;
 
 export const metadata = pageMeta({
-  title: `${NAME}, Owner & Founder`,
+  title: `${NAME}, ${ROLE}`,
   description: `${NAME} founded ${site.name} in Northborough, MA, in ${site.founded} and has ${site.experience}+ years of hands-on construction experience.`,
   path: OWNER_PAGE,
 });
@@ -70,7 +72,7 @@ export default function OwnerPage() {
       </section>
 
       <section className="py-16 md:py-20" aria-labelledby="profile-h">
-        <div className="container-x grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
           <div>
             <h2 id="profile-h" className="text-3xl md:text-4xl font-extrabold text-navy">Profile</h2>
             <dl className="mt-6 grid sm:grid-cols-[max-content_1fr] gap-x-6 gap-y-2.5 rounded-2xl bg-white p-6 shadow-soft ring-1 ring-black/5 text-[15px]">
@@ -115,7 +117,7 @@ export default function OwnerPage() {
       <section className="py-16 md:py-20 bg-tint-blue" aria-labelledby="projects-h">
         <div className="container-x">
           <h2 id="projects-h" className="text-3xl md:text-4xl font-extrabold text-navy">Projects documented on this site</h2>
-          <p className="mt-3 text-ink/80 max-w-2xl">Case studies from {site.name} job sites, with photos from each one.</p>
+          <p className="mt-3 text-ink/80 max-w-2xl">{`${projects.length} case studies documented with our own photos and site videos.`}</p>
           <ul className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((p) => {
               const img = projectCardImage(p);

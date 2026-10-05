@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { PhoneIcon } from "@/components/chrome-icons";
 import { site, services, citySlug, cityLabel, type City } from "@/lib/site";
 import { townFacts, VILLAGE_OF } from "@/lib/towns";
 import { pageMeta, SITE_URL } from "@/lib/seo";
@@ -173,32 +174,33 @@ export default function ServiceAreasPage() {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-outline text-base">Call {site.phone}</a>
+            <a href={site.phoneHref} className="btn btn-outline text-base"><PhoneIcon /> Call {site.phone}</a>
           </div>
         </div>
       </section>
 
-      {/* MAP + COUNTIES AT A GLANCE */}
+      {/* MAP + COUNTIES AT A GLANCE — grid-cols-1 (minmax(0,1fr)) + min-w-0 so nothing widens the track past
+          the viewport at 320px (V5.9) */}
       <section className="py-14 md:py-16" aria-labelledby="glance-h">
-        <div className="container-x grid lg:grid-cols-[1.1fr_.9fr] gap-10 items-start">
-          <figure className="rounded-2xl bg-white p-3 shadow-soft ring-1 ring-black/5">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-10 items-start">
+          <figure className="min-w-0 rounded-2xl bg-white p-3 shadow-soft ring-1 ring-black/5">
             <ServiceAreaMap documented={new Set(proof.map((p) => citySlug(p.city)))} />
             <figcaption className="px-2 pt-2 pb-1 text-sm text-ink/75">
               Every place we serve, by its coordinates. Rings are 10 miles apart (straight line) around our Northborough base; green dots mark towns where our work is documented on this site.
             </figcaption>
           </figure>
-          <div>
+          <div className="min-w-0">
             <h2 id="glance-h" className="text-2xl md:text-3xl font-extrabold text-navy">Counties at a glance</h2>
             <div className="mt-5 rounded-2xl bg-white shadow-soft ring-1 ring-black/5 overflow-hidden">
               <table className="w-full text-left text-sm">
                 <caption className="sr-only">Counties we serve, with the number of communities and their distance from Northborough</caption>
-                <thead className="bg-sand text-navy"><tr><th scope="col" className="px-4 py-2.5">County</th><th scope="col" className="px-4 py-2.5">Communities</th><th scope="col" className="px-4 py-2.5">Miles</th></tr></thead>
+                <thead className="bg-sand text-navy"><tr><th scope="col" className="px-2 sm:px-4 py-2.5">County</th><th scope="col" className="px-2 sm:px-4 py-2.5">Communities</th><th scope="col" className="px-2 sm:px-4 py-2.5">Miles</th></tr></thead>
                 <tbody>
                   {groups.map((g) => (
                     <tr key={g.id} className="border-t border-sand">
-                      <th scope="row" className="px-4 py-2 font-semibold"><a href={`#${g.id}`} className="text-blue underline underline-offset-2 hover:text-navy">{g.county}, {g.state}</a></th>
-                      <td className="px-4 py-2 text-ink/80">{g.towns.length}</td>
-                      <td className="px-4 py-2 text-ink/80 whitespace-nowrap">{g.min === g.max ? g.min : `${g.min}–${g.max}`}</td>
+                      <th scope="row" className="px-2 sm:px-4 py-2 font-semibold"><a href={`#${g.id}`} className="text-blue underline underline-offset-2 hover:text-navy">{g.county}, {g.state}</a></th>
+                      <td className="px-2 sm:px-4 py-2 text-ink/80">{g.towns.length}</td>
+                      <td className="px-2 sm:px-4 py-2 text-ink/80 whitespace-nowrap">{g.min === g.max ? g.min : `${g.min}–${g.max}`}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -219,7 +221,7 @@ export default function ServiceAreasPage() {
         <div className="container-x">
           <h2 id="proof-h" className="text-2xl md:text-3xl font-extrabold text-navy">Where our work is documented</h2>
           <p className="mt-3 text-ink/80 max-w-3xl">Towns where this site shows a project case study or a client testimonial. We have completed projects in {site.townsWithProjects}+ towns; these are the ones documented here so far.</p>
-          <ul className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {proof.map(({ city, projects, clients }) => {
               const f = townFacts(city);
               return (
@@ -255,7 +257,7 @@ export default function ServiceAreasPage() {
           <p className="mt-3 text-ink/80 max-w-3xl">
             Pick your town for its page on any of our six services: {services.map((s) => s.short).join(", ")}. Each page lists the town&apos;s distance from Northborough and who issues building permits there.
           </p>
-          <div className="mt-8 grid gap-5">
+          <div className="mt-8 grid grid-cols-1 gap-5">
             {ma.map((g, i) => <County key={g.id} g={g} open={i === 0} />)}
           </div>
 
@@ -263,7 +265,7 @@ export default function ServiceAreasPage() {
           <p className="mt-3 text-ink/80 max-w-3xl">
             New Hampshire has no statewide contractor license; building permits come from each town&apos;s building department.
           </p>
-          <div className="mt-8 grid gap-5">
+          <div className="mt-8 grid grid-cols-1 gap-5">
             {nh.map((g) => <County key={g.id} g={g} open={false} />)}
           </div>
         </div>
@@ -271,7 +273,7 @@ export default function ServiceAreasPage() {
 
       {/* FAQ */}
       <section className="py-14 md:py-16 bg-tint-green" aria-labelledby="area-faq-h">
-        <div className="container-x grid lg:grid-cols-[.8fr_1.2fr] gap-10 items-start">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-[.8fr_1.2fr] gap-10 items-start">
           <div>
             <h2 id="area-faq-h" className="text-2xl md:text-4xl font-extrabold text-navy">Questions about our service area</h2>
             <p className="mt-3 text-ink/80">More pre-hire answers are on our <Link href="/faq" className="font-semibold text-blue underline underline-offset-2">FAQ page</Link>.</p>
@@ -287,7 +289,7 @@ export default function ServiceAreasPage() {
           <p className="mt-3 text-white/85 max-w-xl mx-auto">Estimates are free and there is no obligation.</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-white text-base">Call {site.phone}</a>
+            <a href={site.phoneHref} className="btn btn-white text-base"><PhoneIcon /> Call {site.phone}</a>
           </div>
         </div>
       </section>

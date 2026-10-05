@@ -5,6 +5,10 @@
 // - Every string must be true on ANY page that shows it, including New Hampshire town pages:
 //   no Massachusetts-only law here (keep MA permit/HIC/lead-license wording in lib/service-content.ts).
 // - No "licensed" self-claims until site.hic is set; no hype; no invented prices, brands or warranties.
+// - No first-person permit claims ("we apply for the permit", "permits handled") here: they are true only once
+//   site.csl is set, and this file cannot import lib/credentials.ts (lib/site.ts re-exports this module, so the
+//   import would be circular). Gated permit wording lives in lib/service-content.ts (weOr / CSL_PERMIT). V3.2.
+// - `features` is the SUPERSET for each service: town pages (lib/local-rules.ts scope) may only list a subset (V3.9).
 // - Photos: real Waterfront Construction job photos only, with captions that say what the photo shows and
 //   where it was taken. Stock images (public/images/*.jpg) are decorative only (imageIsStock).
 
@@ -25,7 +29,7 @@ export type Service = {
   name: string; // short label: nav, breadcrumbs ("Siding")
   short: string; // descriptive name: schema Service.name, cards ("Siding Installation & Replacement")
   blurb: string; // one plain sentence: cards, llms.txt
-  icon: string; // decorative emoji — render with aria-hidden="true"
+  icon: string; // decorative emoji (Emoji 1.0 only, so Windows 10 has the glyph; never a white glyph like 🍽️ that vanishes on a white tile) — render with aria-hidden="true". The /services pages draw SVG icons instead (app/services/_components/ServiceIcon.tsx).
   image: string; // card/cover image (real photo, except where imageIsStock)
   imageAlt: string; // true description of `image`; "" when decorative
   imageIsStock?: boolean; // true = NOT Waterfront's work: decorative only (alt=""), never in galleries, og:image, JSON-LD or sitemaps
@@ -72,7 +76,7 @@ const P = {
   man05: { src: MAN(5), ...MANS, stage: "finished", alt: "Waterfall island with a dark stone-look countertop and a white sink below a glass pendant light", caption: "Island sink and waterfall counter, with white cabinets behind" },
   bath01: { src: BATH(1), ...BATHS, stage: "finished", alt: "Walk-in shower with large marble-look wall tile, a frameless glass panel, a built-in niche and a window", caption: "Walk-in shower with marble-look tile and frameless glass" },
   bath02: { src: BATH(2), ...BATHS, stage: "finished", alt: "Bathtub with a fixed glass panel, white subway tile, a mosaic accent band and a tiled niche", caption: "Tub with a glass panel and subway tile with a mosaic accent band" },
-  bath03: { src: BATH(3), ...BATHS, stage: "finished", alt: "Walk-in shower with marble-look tile walls, a pebble-style floor and a hinged glass door, next to a toilet", caption: "Shower with marble-look walls and a pebble-style floor" },
+  bath03: { src: BATH(3), ...BATHS, stage: "finished", alt: "Walk-in shower with marble-look tile walls, a hexagon mosaic floor and a hinged glass door, next to a toilet", caption: "Shower with marble-look walls and a hexagon mosaic floor" },
   bath04: { src: BATH(4), ...BATHS, stage: "finished", alt: "Corner glass shower with brass fixtures next to a corner tub and a brass towel rail", caption: "Corner glass shower with brass fixtures beside a soaking tub" },
   sal01: { src: SAL(1), ...SALEM, stage: "progress", alt: "Corner of a deck with gray decking and a fascia board over the pressure-treated frame, beside an above-ground pool", caption: "Decking and fascia going on over the pressure-treated frame" },
   sal02: { src: SAL(2), ...SALEM, stage: "finished", alt: "Deck with gray decking, a contrasting border and white railings wrapped around an above-ground pool, on a pressure-treated frame", caption: "Gray decking and white railings wrapped around the above-ground pool" },
@@ -118,7 +122,7 @@ const raw: Omit<Service, "photos">[] = [
     updated: UPDATED,
   },
   {
-    slug: "windows-and-doors", name: "Windows & Doors", short: "Window & Door Replacement", icon: "🪟",
+    slug: "windows-and-doors", name: "Windows & Doors", short: "Window & Door Replacement", icon: "🚪",
     image: P.ha13.src, imageAlt: P.ha13.alt,
     blurb: "Replacement windows and entry and patio doors, flashed, sealed and trimmed to keep drafts and water out.",
     features: ["Replacement windows", "Entry and patio doors", "Flashing, insulation and sealing around each unit", "Interior trim and casing", "Help choosing styles, glass and colors", "Cleanup and haul-away of old units"],
@@ -136,7 +140,7 @@ const raw: Omit<Service, "photos">[] = [
     updated: UPDATED,
   },
   {
-    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling", icon: "🍽️",
+    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling", icon: "🍳",
     image: P.man01.src, imageAlt: P.man01.alt,
     blurb: "Kitchen and bathroom remodels managed start to finish: cabinets, counters, tile showers, fixtures and lighting.",
     features: ["Cabinets and islands", "Countertops and backsplashes", "Tile showers and walk-in showers", "Vanities, fixtures and lighting", "Waterproofing behind tile", "Plumbing and electrical trades scheduled and coordinated"],
@@ -156,16 +160,16 @@ const raw: Omit<Service, "photos">[] = [
   {
     slug: "decks", name: "Decks", short: "Deck Design & Construction", icon: "🌳",
     image: P.sal02.src, imageAlt: P.sal02.alt,
-    blurb: "Composite and pressure-treated wood decks, railings, stairs and pool decks, built to code with permits handled.",
-    features: ["Composite and pressure-treated wood decks", "Railings, stairs and landings", "Pool decks", "Building permit and inspections handled", "Footings, framing and hardware built to code", "Layouts designed to fit your yard"],
+    blurb: "Composite and pressure-treated wood decks, railings, stairs and pool decks, built to code from the footings up.",
+    features: ["Composite and pressure-treated wood decks", "Railings, stairs and landings", "Pool decks", "Custom design to fit your yard", "Footings, framing and hardware built to code", "Footing, framing and final inspections planned into the schedule"],
     long: [
       "A deck adds outdoor living space, and it is also a structure people stand on, often well above the ground. Footings below the frost line, a flashed and bolted ledger, rated hardware and code-compliant guards matter as much as the decking you see.",
-      "We build decks in composite and pressure-treated wood, with railings, stairs and pool decks, and we handle the building permit and inspections.",
+      "We build decks in composite and pressure-treated wood, with railings, stairs and pool decks, and plan the town's footing, framing and final inspections into the schedule.",
     ],
     timeline: TIMELINE.decks,
     faqs: [
       { q: "Composite or wood: which is better?", a: "Composite costs more up front but needs no staining or sealing, only washing. Pressure-treated wood costs less but needs regular cleaning and sealing. We help you weigh the trade-offs for your yard and budget." },
-      { q: "Do I need a permit for a deck?", a: "Usually, yes. Most towns require a building permit for a deck, especially one attached to the house, and the building department inspects the footings, the framing and the finished deck. We handle the application and the inspections." },
+      { q: "Do I need a permit for a deck?", a: "Usually, yes. Most towns require a building permit for a deck, especially one attached to the house, and the building department inspects the footings, the framing and the finished deck. The written contract should say who applies for the permit and schedules the inspections." },
       { q: "How long does it take to build a deck?", a: `${TIMELINE.decks} Permit review, inspections and weather can move the start date, and we keep you updated throughout.` },
     ],
     gallery: [P.sal02, P.sal05, P.sal06, P.sal01, P.sal03, P.salb04],
@@ -183,7 +187,7 @@ const raw: Omit<Service, "photos">[] = [
     timeline: TIMELINE.additions,
     faqs: [
       { q: "How long does a home addition or full remodel take?", a: `${TIMELINE.additions} Size and complexity set the exact schedule; we give you a detailed one and keep you informed at every stage.` },
-      { q: "Do you handle design and permits?", a: "We apply for the building permit and schedule inspections, and we coordinate the designer or architect and a structural engineer when your project needs stamped plans. Plumbing, gas and electrical permits are pulled by those trades." },
+      { q: "Who handles design and permits?", a: "We coordinate the designer or architect and a structural engineer when your project needs stamped plans. The written contract should say who applies for the building permit and schedules the inspections; plumbing, gas and electrical permits are pulled by those trades." },
       { q: "Will the new space match my existing home?", a: "That is the goal: we match rooflines, siding, windows and interior finishes so an addition looks like part of the original house and a remodel feels consistent." },
     ],
     gallery: [P.ha12, P.ha05, P.ha07, P.ha19, P.ha11, P.nee05],

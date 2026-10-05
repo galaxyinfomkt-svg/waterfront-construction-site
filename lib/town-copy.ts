@@ -9,7 +9,7 @@
 import { site, allCities, cityLabel, citySlug, serviceArea, testimonials, type City, type Faq } from "./site";
 import { projects, projectImages, type Project } from "./projects";
 import {
-  townFacts, nearestProjects, villageParent, villagesOf, twinOf, placeLabel, countyLabel, isNH, isDevens,
+  townFacts, nearestProjects, villageParent, villagesOf, twinOf, placeLabel, countyLabel, isNH, isDevens, sameCity,
   milesBetween, dirBetween, placesWithin, jobsIn, permitOffice, TOWN_PAGES_UPDATED, type ProjectNear, type Job,
 } from "./towns";
 import {
@@ -54,9 +54,6 @@ const PROJECT_COPY: Record<string, ProjectCopy> = {
     photo: `${IMG}home-addition-lynnfield-ma-03.webp`, alt: "Home addition framing and sheathing in winter in Lynnfield, MA",
   },
 };
-// Project OG crops not used on town pages: public/og/project-home-addition-needham-ma.jpg shows the
-// client's house number beside the door (owner decision: no street addresses) — re-crop before re-enabling.
-const OG_HOLD = new Set<string>(); // all project OG crops are safe to publish
 
 function projectView(p: Project, town: City, svc?: ServiceSlug) {
   const base = PROJECT_COPY[p.slug];
@@ -91,9 +88,10 @@ const TESTIMONIALS: LocalTestimonial[] = testimonials.flatMap((t) => {
   return town ? [{ name: t.name, town, date: t.date, text: t.text, services: meta.services, work: meta.work }] : [];
 });
 
-/** Testimonials for this town and service (shown only on their own town's pages). */
+/** Testimonials for this town and service (shown only on their own town's pages). Towns are compared by
+ *  slug, never by object identity (V4.8). */
 export function localTestimonials(c: City, svc: ServiceSlug) {
-  return TESTIMONIALS.filter((t) => t.town === c && t.services.includes(svc));
+  return TESTIMONIALS.filter((t) => sameCity(t.town, c) && t.services.includes(svc));
 }
 
 // ---------- helpers ----------
@@ -132,6 +130,9 @@ export type TownCopy = {
   schemaSummary: string; // the visible summary plus a non-quoted proof line (Service.description)
   quote?: { text: string; cite: string; disclosure: string; reviewsLabel: string }; // own town + own service only
   heroNote?: { text: string; href: string; label: string };
+  // The page's lead photo: a case study from THIS town. Since V5.3 the hero holds the estimate form, so the photo
+  // is shown on the first proof card (caption = that card's visible title); kept here for the WebPage
+  // primaryImageOfPage / ImageObject and app/sitemap/entries.ts (name kept for that consumer).
   heroImage?: { src: string; alt: string; pos?: string; caption: string; href: string };
   cta: { estimate: string; phone: string };
   trust: string[];
@@ -146,7 +147,7 @@ export type TownCopy = {
     reviewsLabel: string;
     reviewTowns: LinkItem[];
   };
-  estimate: { heading: string };
+  estimate: { heading: string; note: string }; // note is followed by the phone link: "Free, no obligation. Or call (508) …."
   rulesHeading: string;
   rules: string;
   scopeLabel: string;
@@ -196,7 +197,7 @@ export function townCopy(s: { slug: string; name: string }, c: City): TownCopy {
   const sameR = localTestimonials(c, svc);
   const jobs = jobsIn(c, svc); // owner's completed-job records for this service here (phase 2; empty today)
   const townJobs = jobsIn(c);
-  const otherR = TESTIMONIALS.filter((t) => t.town === c && !t.services.includes(svc));
+  const otherR = TESTIMONIALS.filter((t) => sameCity(t.town, c) && !t.services.includes(svc));
   const tier: TownCopy["tier"] = sameP.length || sameR.length || jobs.length ? "proof" : base ? "base" : f.exactMiles <= 15 ? "near" : f.exactMiles <= 35 ? "mid" : "far";
   const pv = (x: ProjectNear) => projectView(x.project, x.town, svc);
   const away = (x: { miles: number; dir: string }) => `about ${x.miles} miles ${x.dir}`;
@@ -234,7 +235,7 @@ export function townCopy(s: { slug: string; name: string }, c: City): TownCopy {
     : parent ? { text: `${T} is part of ${parent.n}.`, href: `/services/${svc}/${citySlug(parent)}`, label: `${L.link} in ${cityLabel(parent)}` }
     : undefined;
   const heroImage = sameP.length
-    ? { src: pv(sameP[0]).photo, alt: pv(sameP[0]).alt, pos: pv(sameP[0]).pos, caption: `From our case study: ${sameP[0].project.title}`, href: `/projects/${sameP[0].project.slug}` }
+    ? { src: pv(sameP[0]).photo, alt: pv(sameP[0]).alt, pos: pv(sameP[0]).pos, caption: sameP[0].project.title, href: `/projects/${sameP[0].project.slug}` }
     : undefined;
   // HIC/CSL only when the numbers are set (never a placeholder; no MA registration chip on NH pages).
   const trust = [!nh && hasHic ? `MA HIC Reg. #${site.hic}` : "", hasCsl ? `MA Construction Supervisor License ${site.csl} (${site.owner})` : "", "Insured"].filter(Boolean);
@@ -257,8 +258,8 @@ export function townCopy(s: { slug: string; name: string }, c: City): TownCopy {
     const v = pv(x);
     return { href: `/projects/${x.project.slug}`, title: x.project.title, img: v.photo, alt: v.alt, pos: v.pos, caption };
   };
-  // On same-town pages the hero already shows the first case study's photo → that card is text-only.
-  const cards: Card[] = sameP.length ? sameP.slice(0, 2).map((x, i) => (i === 0 ? { ...cardFor(x, `Case study in ${CL}`), img: undefined, alt: undefined, pos: undefined } : cardFor(x, `Case study in ${CL}`)))
+  // Same-town pages: the first card carries the lead photo (heroImage), since the hero now holds the form (V5.3).
+  const cards: Card[] = sameP.length ? sameP.slice(0, 2).map((x) => cardFor(x, `Case study in ${CL}`))
     : np ? [cardFor(np, `${np.miles} mi ${np.dir} of ${T}`)]
     : sameOther.length ? [cardFor(sameOther[0], `Case study in ${CL}; ${an(projectView(sameOther[0].project, sameOther[0].town).short)}, not ${nounShort}`)]
     : anyP ? [cardFor(anyP, `${cap(away(anyP))} of ${T}; ${an(projectView(anyP.project, anyP.town).short)}, not ${nounShort}`)]
@@ -280,13 +281,14 @@ export function townCopy(s: { slug: string; name: string }, c: City): TownCopy {
   }));
   // Towns of the consented client reviews, nearest first (not quoted here — each is quoted only on
   // its own town's pages; this line links to /reviews).
-  const reviewTowns: LinkItem[] = [...new Map(TESTIMONIALS.filter((t) => t.town !== c).map((t) => [citySlug(t.town), t.town])).values()]
+  const reviewTowns: LinkItem[] = [...new Map(TESTIMONIALS.filter((t) => !sameCity(t.town, c)).map((t) => [citySlug(t.town), t.town])).values()]
     .map((t) => ({ t, d: milesBetween(c, t) }))
     .sort((a, b) => a.d - b.d)
     .map(({ t, d }) => ({ href: "/reviews", label: cityLabel(t), meta: `${Math.max(1, Math.round(d))} mi ${dirBetween(c, t)}` }));
   const proofHeading = sameP.length ? `Our ${L.noun} work in ${TL}` : np ? `Nearest documented ${L.project} project` : "Nearest documented project";
 
-  // ----- questions (§3.5-F): only ones whose answer is specific to this page -----
+  // ----- questions (§3.5-F): only ones whose answer is specific to this place. Shown as visible text only:
+  // most are per town (the same on all 6 service pages), so they are NOT marked up as FAQPage (V4.1). -----
   const [n1, n2] = f.nearest;
   const near2 = `${cityLabel(n1.city)} (${n1.miles} mi ${n1.dir}) and ${cityLabel(n2.city)} (${n2.miles} mi ${n2.dir})`;
   const faqs: Faq[] = [];
@@ -339,7 +341,7 @@ export function townCopy(s: { slug: string; name: string }, c: City): TownCopy {
   }
 
   // og:image = the nearest service-matched case study's real 1200×630 crop (never stock); else the brand card.
-  const ogProject = [...sameP, ...forSvc.filter((x) => !x.sameTown)].find((x) => !OG_HOLD.has(x.project.slug));
+  const ogProject = [...sameP, ...forSvc.filter((x) => !x.sameTown)][0];
   const og = ogProject ? ogFor(`project-${ogProject.project.slug}`, `${ogProject.project.title} — Waterfront Construction`) : OG_IMAGE;
 
   return {
@@ -365,7 +367,7 @@ export function townCopy(s: { slug: string; name: string }, c: City): TownCopy {
     glanceHeading: `${TL} at a glance`,
     facts,
     proof: { heading: proofHeading, cards, also, caseStudiesLabel: "Case studies by distance:", caseStudies, reviewsLabel: "Client reviews by distance:", reviewTowns },
-    estimate: { heading: "Request a free estimate" },
+    estimate: { heading: "Request a free estimate", note: "Free, no obligation. Or call" },
     rulesHeading: `Permits and rules in ${TL}`,
     rules: rulesParagraph(svc, c),
     scopeLabel: "What's included",
@@ -385,31 +387,25 @@ export function townCopy(s: { slug: string; name: string }, c: City): TownCopy {
   };
 }
 
-/** Images actually shown on a town page (hero + proof cards) — for the sitemap's image entries (audit 03 M3). */
-export function townPageImages(s: { slug: string; name: string }, c: City): string[] {
-  const k = townCopy(s, c);
-  return [...new Set([k.heroImage?.src, ...k.proof.cards.map((x) => x.img)].filter((x): x is string => Boolean(x)))];
-}
-
 /** The visible text of a town page's <main>, in DOM order — must mirror app/services/[slug]/[city]/page.tsx.
- *  Used by the similarity check (scratchpad impl-city/measure.mjs); not rendered. */
+ *  Not rendered: it lets the 5-gram similarity of all 1,188 pages be measured from source without a build
+ *  (same tokenizer and town-name swap as scripts/check-town-pages.mjs, which checks the built HTML). */
 export function townPageText(k: TownCopy): string {
   const parts: string[] = [
     ...k.crumbs.map((x) => x.name),
     k.h1, k.summary,
-    ...(k.quote ? [k.quote.text, k.quote.cite, k.quote.disclosure, k.quote.reviewsLabel] : []),
     ...(k.heroNote ? [k.heroNote.text, k.heroNote.label] : []),
     k.cta.estimate, k.cta.phone, ...k.trust,
-    ...(k.heroImage ? [k.heroImage.caption] : []),
+    k.estimate.heading, k.estimate.note, k.cta.phone, // the estimate card sits in the hero (V5.3)
+    ...(k.quote ? [k.quote.text, k.quote.cite, k.quote.disclosure, k.quote.reviewsLabel] : []),
     k.glanceHeading, ...k.facts.flatMap((x) => [x.dt, x.dd]),
     k.proof.heading,
     ...k.proof.cards.flatMap((x) => [x.title, x.caption]),
     ...k.proof.also.map((x) => x.label),
     k.proof.caseStudiesLabel, ...k.proof.caseStudies.flatMap((x) => [x.label, x.meta ?? ""]),
     k.proof.reviewsLabel, ...k.proof.reviewTowns.flatMap((x) => [x.label, x.meta ?? ""]),
-    k.estimate.heading,
     k.rulesHeading, k.rules,
-    k.scopeLabel, ...k.scope, k.hubLink.label,
+    k.scopeLabel, ...k.scope, k.hubLink.label, ...k.guideLinks.map((x) => x.label),
     ...(k.faqs.length ? [k.faqHeading, ...k.faqs.flatMap((x) => [x.q, x.a])] : []),
     k.nearbyHeading, ...k.nearby.flatMap((x) => [x.label, x.meta ?? ""]),
     k.otherHeading, ...k.otherServices.map((x) => x.label),

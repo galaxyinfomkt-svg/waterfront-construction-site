@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { displayAddress } from "@/lib/address";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { site } from "@/lib/site";
@@ -89,7 +90,7 @@ export default function PrivacyPage() {
             <p>If we change this policy, we will update it on this page and change the &ldquo;Last updated&rdquo; date above.</p>
 
             <h2>Contact us</h2>
-            <p>Questions about this policy? Call <a href={site.phoneHref} className={a}>{site.phone}</a>, email <a href={site.emailHref} className={`${a} break-all`}>{site.email}</a>, or write to {site.name}, {site.address}.</p>
+            <p>Questions about this policy? Call <a href={site.phoneHref} className={a}>{site.phone}</a>, email <a href={site.emailHref} className={`${a} break-all`}>{site.email}</a>, or write to {site.name}, {displayAddress}.</p>
             <p className="text-sm text-ink/75">This policy is provided for general information and is not legal advice.</p>
           </div>
           <div className="mt-8"><Link href="/contact#estimate" className="btn btn-green">Get a free estimate</Link></div>

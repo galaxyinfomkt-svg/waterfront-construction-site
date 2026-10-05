@@ -26,6 +26,7 @@ const norm = (s) => String(s).replace(/[’‘]/g, "'").replace(/[“”]/g, '"'
 
 const fails = {}; const fail = (rule, page, msg) => ((fails[rule] ??= []).push(`${page}: ${msg}`));
 let pages = 0;
+const faqSeen = {}; // R16: the same Q&A must not be marked up as FAQPage on more than one page
 
 for (const file of walk(ROOT)) {
   const rel = path.relative(ROOT, file);
@@ -78,6 +79,9 @@ for (const file of walk(ROOT)) {
   for (const f of all.filter((n) => types(n).includes("FAQPage"))) {
     const t = norm(text(html));
     for (const q of f.mainEntity || []) {
+      if (!q.name || !String(q.acceptedAnswer?.text || "").trim()) fail("R09-faq-empty", rel, q.name || "(no question)");
+      const key = norm(q.name) + "||" + norm(q.acceptedAnswer?.text || "");
+      (faqSeen[key] ??= []).push(rel);
       if (!t.includes(norm(q.name))) fail("R09-faq-q-not-visible", rel, q.name);
       if (!t.includes(norm(q.acceptedAnswer?.text || ""))) fail("R09-faq-a-not-visible", rel, q.name);
     }
@@ -103,6 +107,9 @@ for (const file of walk(ROOT)) {
     for (const p of a) if (typeof p === "string" || types(p).includes("GeoCircle") || ((types(p).includes("City") || types(p).includes("AdministrativeArea") || types(p).includes("Place")) && !p.containedInPlace)) fail("R15-service-area", rel, JSON.stringify(p).slice(0, 80));
   }
 }
+
+// R16: a Q&A marked up as FAQPage on several pages is duplicate structured data (verification V4.1)
+for (const [k, list] of Object.entries(faqSeen)) if (list.length > 1) fail("R16-faq-duplicate", list[0], `"${k.split("||")[0].slice(0, 70)}" also on ${list.length - 1} other page(s), e.g. ${list[1]}`);
 
 const ruleNames = Object.keys(fails).sort();
 console.log(`Checked ${pages} indexable pages.`);

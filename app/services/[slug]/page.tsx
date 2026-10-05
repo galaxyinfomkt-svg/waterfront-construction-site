@@ -10,9 +10,11 @@ import { services, site, serviceArea, citySlug } from "@/lib/site";
 import { pageMeta, ogFor, OG_IMAGE } from "@/lib/seo";
 import { pageGraph, webPageNode, hubServiceNode, imageNode, faqNode, breadcrumbNode, placeNode, serviceId, AREA_FACTS, OWNER_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
 import { credentialLine } from "@/lib/credentials";
+import { PhoneIcon, CheckIcon } from "@/components/chrome-icons";
+import ServiceIcon from "../_components/ServiceIcon";
 import {
   getContent, serviceProjects, serviceGuides, serviceTestimonials, proofPlaces, projectCardImage, cityFromLabel,
-  LEAD_SAFE_RULES, LEAD_SAFE_OUTRO, CVV_CREDIT, CVV_LABEL, SOURCES, usd, type Table,
+  LEAD_SAFE_RULES, LEAD_SAFE_OUTRO, LEAD_SAFE_HREF, CVV_CREDIT, CVV_LABEL, SOURCES, usd, benchmarkGlance, type Table,
 } from "@/lib/service-content";
 import MEDIA from "@/lib/media-manifest.json";
 
@@ -72,15 +74,14 @@ function DataTable({ t }: { t: Table }) {
   );
 }
 
-// "At a glance" facts. With a real hero photo they sit in the overview; without one (painting) they fill the
-// hero's right column on the dark background.
-function Glance({ items, dark }: { items: [string, string][]; dark?: boolean }) {
+// "At a glance" facts, at the top of the overview on every hub (the hero's right column holds the estimate form).
+function Glance({ items }: { items: [string, string][] }) {
   return (
-    <dl className={`grid gap-3 ${dark ? "" : "sm:grid-cols-2 mt-6"}`}>
+    <dl className="mt-6 grid gap-3 sm:grid-cols-2">
       {items.map(([k, v]) => (
-        <div key={k} className={dark ? "rounded-2xl bg-white/10 ring-1 ring-white/20 p-4" : "card p-4"}>
-          <dt className={`text-xs font-bold uppercase tracking-wider ${dark ? "text-white" : "text-blue"}`}>{k}</dt>
-          <dd className={`mt-1 text-[15px] ${dark ? "text-white/90" : "text-ink/85"}`}>{v}</dd>
+        <div key={k} className="card p-4">
+          <dt className="text-xs font-bold uppercase tracking-wider text-blue">{k}</dt>
+          <dd className="mt-1 text-[15px] text-ink/85">{v}</dd>
         </div>
       ))}
     </dl>
@@ -100,7 +101,8 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
   const heroPortrait = heroDims ? heroDims.h > heroDims.w : false;
   const heroCity = hero?.place ? cityFromLabel(hero.place) : undefined;
   const caseStudies = serviceProjects(s.slug);
-  // Never show the same photo twice on a page: hero → case-study cards → the rest of the gallery.
+  // Never show the same photo twice on a page: lead photo ("Our work") → case-study cards → the rest of the gallery.
+  // (app/sitemap/entries.ts mirrors this order for the image sitemap.)
   const shown = new Set<string>(hero ? [hero.src] : []);
   const cards = caseStudies.map((p) => {
     const im = projectCardImage(p, shown);
@@ -116,11 +118,10 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
   const updated = fmtDate(s.updated);
   const credentials = credentialLine();
   const lower = s.name.toLowerCase();
-  const costs = c.cost.benchmark?.map((b) => b.jobCost) ?? [];
 
   const toc = [
     { id: "overview", label: "Overview" },
-    ...(cards.length || gallery.length ? [{ id: "our-work", label: "Our work" }] : []),
+    ...(hero || cards.length || gallery.length ? [{ id: "our-work", label: "Our work" }] : []),
     ...c.sections.map((x) => ({ id: x.id, label: x.nav })),
     { id: "cost", label: "Cost" },
     { id: "permits", label: "Permits & rules" },
@@ -149,8 +150,9 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
   const glance: [string, string][] = [
     ["Typical timeline", s.timeline],
     ["Permit in Massachusetts", c.permitShort],
-    ["Cost benchmark", costs.length
-      ? `${usd(Math.min(...costs))}–${usd(Math.max(...costs))} for the standard projects in the cost table below (${CVV_LABEL}, Remodeling Cost vs. Value).`
+    // Each benchmark is named: never a synthesized min–max range across different projects (V3.5).
+    ["Cost benchmark", c.cost.benchmark?.length
+      ? benchmarkGlance(c.cost.benchmark)
       : "Priced per project after a free site visit; see what drives the cost below."],
     ["Where we work", `${serviceArea.short}, from our base in Northborough, MA.`],
   ];
@@ -158,44 +160,41 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — text first; a real job photo with a true caption (no full-bleed upscaled crops, UX-H4) */}
+      {/* HERO — answer-first text on the left; the estimate card (the page's ONE LeadForm) in the right column, so
+          the form is above the fold on desktop (V5.3, audit 10 UX-H2) and follows the hero text on phones. The real
+          job photo that used to sit here leads the "Our work" section below. */}
       <section className="relative overflow-hidden bg-brand-grad text-white">
-        <div className="relative container-x py-10 md:py-14 grid gap-8 lg:gap-12 lg:grid-cols-[1.35fr_.65fr] lg:items-center">
+        <div className="relative container-x py-8 md:py-10 grid gap-8 lg:gap-12 lg:grid-cols-[1.15fr_.85fr] lg:items-center">
           <div>
             <Breadcrumbs items={crumbs} />
             <div className="mt-5 flex items-start gap-4">
-              <span aria-hidden="true" className="hidden sm:grid shrink-0 text-3xl bg-white/95 rounded-2xl w-14 h-14 place-items-center shadow">{s.icon}</span>
-              <h1 className={`text-3xl font-extrabold max-w-3xl ${c.h1.length > 64 ? "md:text-[2.6rem]" : "md:text-5xl"}`}>{c.h1}</h1>
+              <span aria-hidden="true" className="hidden sm:grid shrink-0 bg-white/15 ring-1 ring-white/30 text-white rounded-2xl w-14 h-14 place-items-center">
+                <ServiceIcon slug={s.slug} className="w-8 h-8" />
+              </span>
+              <h1 className={`text-3xl font-extrabold max-w-3xl leading-tight ${c.h1.length > 64 ? "md:text-[2.4rem]" : "md:text-[2.75rem]"}`}>{c.h1}</h1>
             </div>
-            <p className="mt-5 text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">{c.summary}</p>
+            <p className="mt-5 text-base sm:text-lg text-white/90 max-w-2xl leading-relaxed">{c.summary}</p>
             <p className="mt-4 text-sm text-white/80">
               Owner-led · Founded in {site.founded} in Northborough, MA{credentials ? ` · ${credentials}` : ""}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#estimate" className="btn btn-green text-base">Get a free estimate</a>
-              <a href={site.phoneHref} className="btn btn-outline text-base"><span aria-hidden="true">📞</span> {site.phone}</a>
+              {/* On desktop the form is right beside this text, so the jump link is for phones only. */}
+              <a href="#estimate" className="btn btn-green text-base lg:hidden">Get a free estimate</a>
+              <a href={site.phoneHref} className="btn btn-outline text-base"><PhoneIcon /> {site.phone}</a>
             </div>
             <p className="mt-5 text-sm text-white/75">Updated <time dateTime={s.updated}>{updated}</time></p>
           </div>
-          {hero && (
-            <figure className={`w-full ${heroPortrait ? "lg:max-w-sm" : "lg:max-w-xl"} lg:mx-0`}>
-              <div className={`relative overflow-hidden rounded-2xl shadow-card ring-1 ring-white/20 bg-navy aspect-[16/10] ${heroPortrait ? "lg:aspect-[4/5]" : "lg:aspect-[4/3]"}`}>
-                <Image src={hero.src} alt={hero.alt} fill preload quality={60} sizes="(max-width: 1024px) 100vw, 440px" className="object-cover" />
-              </div>
-              <figcaption className="mt-3 text-sm text-white/80 leading-relaxed">
-                {hero.caption}{hero.place ? ` · ${hero.place}` : ""}
-                {hero.project && (
-                  <> · <Link href={`/projects/${hero.project}`} className="underline underline-offset-2 hover:text-cyan">See the {hero.place ? `${hero.place.split(",")[0]} ` : ""}project</Link></>
-                )}
-              </figcaption>
-            </figure>
-          )}
-          {!hero && (
-            <div>
-              <h2 className="sr-only">At a glance</h2>
-              <Glance items={glance} dark />
-            </div>
-          )}
+          {/* Estimate contract: id="estimate" + data-estimate-form on the section that wraps <LeadForm />; no scroll-mt-*
+              (html scroll-padding-top already clears the sticky header, V5.2); not sticky, it sits in the hero. The card
+              header is compact (one-line note) so the whole form fits after a "Free estimate" jump: 104px scroll-padding
+              + ~80px card header + 473px form ≤ 657px at 1366×768 and ≤ 664px at 390×664. */}
+          <section id="estimate" data-estimate-form aria-labelledby="estimate-h" className="rounded-2xl bg-white text-ink p-4 sm:p-5 lg:p-4 shadow-card ring-1 ring-black/5">
+            <h2 id="estimate-h" className="text-xl font-extrabold text-navy">Request a free estimate</h2>
+            <p className="mt-1 text-sm text-ink/75">
+              Free, no obligation. Or call <a href={site.phoneHref} className="font-bold text-navy underline underline-offset-2">{site.phone}</a>.
+            </p>
+            <div className="mt-3 lg:mt-2"><LeadForm /></div>
+          </section>
         </div>
       </section>
 
@@ -212,50 +211,48 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
         </div>
       </nav>
 
-      {/* OVERVIEW + ESTIMATE FORM — one form instance. It comes first in the DOM so phones reach it right after
-          the hero (and focus order matches what is seen); on desktop it sits in the right column (UX-H2). */}
-      <section id="overview" className="py-14 scroll-mt-32">
-        <div className="container-x grid gap-10 lg:grid-cols-[1.5fr_.9fr] lg:grid-rows-[auto_1fr]">
-          <aside className="lg:col-start-2 lg:row-start-1 lg:row-span-2">
-            <div className="lg:sticky lg:top-32">
-              <section id="estimate" aria-labelledby="estimate-h" className="scroll-mt-32 rounded-2xl bg-white p-4 sm:p-6 shadow-card ring-1 ring-black/5">
-                <h2 id="estimate-h" className="text-xl font-extrabold text-navy">Request a free estimate</h2>
-                <p className="mt-1 text-sm text-ink/75">
-                  Free and no-obligation. Prefer to talk? Call <a href={site.phoneHref} className="font-bold text-navy underline underline-offset-2">{site.phone}</a> ({site.hours}).
-                </p>
-                <div className="mt-3"><LeadForm /></div>
-              </section>
-            </div>
-          </aside>
-
-          <div className="lg:col-start-1 lg:row-start-1">
-            <span className="eyebrow">{hero ? "At a glance" : "Overview"}</span>
-            <h2 className={`mt-3 ${sectionHead}`}>{s.short}: the essentials</h2>
-            {hero && <Glance items={glance} />}
-            {c.intro.map((p, i) => <p key={i} className="mt-5 text-ink/80 text-lg leading-relaxed">{p}</p>)}
-          </div>
-
-          <div className="lg:col-start-1 lg:row-start-2">
-            <h3 className="text-2xl font-extrabold text-navy">What&apos;s included</h3>
-            <ul role="list" className="mt-4 grid sm:grid-cols-2 gap-3">
-              {s.features.map((f) => (
-                <li key={f} className="flex items-start gap-2.5 card p-4">
-                  <span aria-hidden="true" className="text-green text-lg leading-none mt-0.5">✓</span>
-                  <span className="font-medium text-navy text-[15px]">{f}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+      {/* OVERVIEW — at a glance, intro, what's included */}
+      <section id="overview" aria-labelledby="overview-h" className="py-14">
+        <div className="container-x max-w-5xl">
+          <span className="eyebrow">At a glance</span>
+          <h2 id="overview-h" className={`mt-3 ${sectionHead}`}>{s.short}: the essentials</h2>
+          <Glance items={glance} />
+          {c.intro.map((p, i) => <p key={i} className="mt-5 text-ink/80 text-lg leading-relaxed">{p}</p>)}
+          <h3 className="mt-10 text-2xl font-extrabold text-navy">What&apos;s included</h3>
+          <ul role="list" className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {s.features.map((f) => (
+              <li key={f} className="flex items-start gap-2.5 card p-4">
+                <CheckIcon className="w-5 h-5 shrink-0 text-green mt-0.5" />
+                <span className="font-medium text-navy text-[15px]">{f}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* OUR WORK — case studies + real photos with true captions */}
-      {(cards.length > 0 || gallery.length > 0) && (
-        <section id="our-work" aria-labelledby="our-work-h" className="py-14 bg-tint-blue scroll-mt-32">
+      {/* OUR WORK — the lead job photo, case studies and real photos with true captions */}
+      {(hero || cards.length > 0 || gallery.length > 0) && (
+        <section id="our-work" aria-labelledby="our-work-h" className="py-14 bg-tint-blue">
           <div className="container-x">
             <span className="eyebrow">Real projects</span>
             <h2 id="our-work-h" className={`mt-3 ${sectionHead}`}>Our {lower} work: case studies and job photos</h2>
-            <p className="mt-3 text-ink/75 max-w-3xl">Every photo here is from a Waterfront Construction job, captioned with what it shows and where it was taken.</p>
+            <p className="mt-3 text-ink/75 max-w-3xl">Every photo here is from a Waterfront Construction job, captioned with what it shows and, where the job&apos;s town is recorded, where it was taken.</p>
+            {hero && (
+              <figure className={`mt-8 card overflow-hidden grid ${heroPortrait ? "max-w-3xl md:grid-cols-[minmax(0,20rem)_1fr]" : "max-w-4xl md:grid-cols-[minmax(0,1.35fr)_1fr]"}`}>
+                <div className={`relative bg-sand ${heroPortrait ? "aspect-[4/5]" : "aspect-[4/3]"}`}>
+                  <Image src={hero.src} alt={hero.alt} fill quality={60} sizes={heroPortrait ? "(max-width: 768px) 100vw, 320px" : "(max-width: 768px) 100vw, 640px"} className="object-cover" />
+                </div>
+                <figcaption className="p-5 md:p-8 flex flex-col justify-center gap-2 leading-relaxed">
+                  <span className="font-bold text-navy text-lg">{hero.caption}</span>
+                  {hero.place && <span className="text-ink/70">{hero.place}</span>}
+                  {hero.project && (
+                    <Link href={`/projects/${hero.project}`} className="mt-1 font-semibold text-blue underline underline-offset-2">
+                      See the {hero.place ? `${hero.place.split(",")[0]} ` : ""}project <span aria-hidden="true">→</span>
+                    </Link>
+                  )}
+                </figcaption>
+              </figure>
+            )}
             {cards.length > 0 && (
               <ul role="list" className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {cards.map(({ p, im }) => {
@@ -283,7 +280,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
 
       {/* HUB-SPECIFIC MODULES (materials tables, code basics, …) */}
       {c.sections.map((x, i) => (
-        <section key={x.id} id={x.id} aria-labelledby={`${x.id}-h`} className={`py-14 scroll-mt-32 ${i % 2 ? "bg-white" : ""}`}>
+        <section key={x.id} id={x.id} aria-labelledby={`${x.id}-h`} className={`py-14 ${i % 2 ? "bg-white" : ""}`}>
           <div className="container-x max-w-5xl">
             <h2 id={`${x.id}-h`} className={sectionHead}>{x.h2}</h2>
             {x.intro?.map((p, k) => <p key={k} className="mt-4 text-ink/80 text-lg leading-relaxed">{p}</p>)}
@@ -304,7 +301,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       ))}
 
       {/* COST — cited regional benchmark + drivers; no company price claims (AEO-H3) */}
-      <section id="cost" aria-labelledby="cost-h" className="py-14 bg-tint-green scroll-mt-32">
+      <section id="cost" aria-labelledby="cost-h" className="py-14 bg-tint-green">
         <div className="container-x max-w-5xl">
           <span className="eyebrow">Cost</span>
           <h2 id="cost-h" className={`mt-3 ${sectionHead}`}>{c.cost.h2}</h2>
@@ -345,7 +342,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       </section>
 
       {/* PERMITS & RULES — MA table, NH note */}
-      <section id="permits" aria-labelledby="permits-h" className="py-14 scroll-mt-32">
+      <section id="permits" aria-labelledby="permits-h" className="py-14">
         <div className="container-x max-w-5xl">
           <span className="eyebrow">Permits &amp; rules</span>
           <h2 id="permits-h" className={`mt-3 ${sectionHead}`}>Permits, inspections and rules in Massachusetts</h2>
@@ -358,28 +355,37 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
         </div>
       </section>
 
-      {/* LEAD-SAFE — stated as rules; never a company certification claim */}
+      {/* LEAD-SAFE — stated as rules; never a company certification claim. The full rule list lives in ONE canonical
+          section (painting hub, LEAD_SAFE_HREF); other hubs give their service-specific rule and link there (V3.10). */}
       {c.leadSafe && (
-        <section id="lead-safe" aria-labelledby="lead-safe-h" className="py-14 bg-white scroll-mt-32">
+        <section id="lead-safe" aria-labelledby="lead-safe-h" className="py-14 bg-white">
           <div className="container-x max-w-5xl">
             <h2 id="lead-safe-h" className={sectionHead}>Homes built before 1978: lead-safe rules</h2>
             <p className="mt-4 text-lg text-ink/80 leading-relaxed">{c.leadSafe.intro}</p>
-            <ul className="mt-5 space-y-3">
-              {LEAD_SAFE_RULES.map((r) => (
-                <li key={r} className="flex gap-3 text-ink/85 leading-relaxed">
-                  <span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-green" />
-                  <span>{r}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-5 text-ink/80">{LEAD_SAFE_OUTRO}</p>
+            {c.leadSafe.full ? (
+              <>
+                <ul className="mt-5 space-y-3">
+                  {LEAD_SAFE_RULES.map((r) => (
+                    <li key={r} className="flex gap-3 text-ink/85 leading-relaxed">
+                      <span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-green" />
+                      <span>{r}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-5 text-ink/80">{LEAD_SAFE_OUTRO}</p>
+              </>
+            ) : (
+              <p className="mt-4">
+                <Link href={LEAD_SAFE_HREF} className="font-semibold text-blue underline underline-offset-2">All the lead-safe rules for pre-1978 homes: containment, cleanup and licensing</Link>
+              </p>
+            )}
             <p className="mt-3 text-xs text-ink/65">Source: <a href={SOURCES.lead.url} className="underline underline-offset-2">{SOURCES.lead.label}</a></p>
           </div>
         </section>
       )}
 
       {/* PROCESS & TIMELINE — the one timeline statement from lib/services.ts (L6) */}
-      <section id="process" aria-labelledby="process-h" className="py-14 bg-tint-blue scroll-mt-32">
+      <section id="process" aria-labelledby="process-h" className="py-14 bg-tint-blue">
         <div className="container-x max-w-5xl">
           <span className="eyebrow">Process &amp; timeline</span>
           <h2 id="process-h" className={`mt-3 ${sectionHead}`}>How a {c.noun} works, step by step</h2>
@@ -396,7 +402,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
 
       {/* CLIENT FEEDBACK — real testimonials, verbatim, shared with permission; no stars, no Review markup */}
       {quotes.length > 0 && (
-        <section id="clients" aria-labelledby="clients-h" className="py-14 scroll-mt-32">
+        <section id="clients" aria-labelledby="clients-h" className="py-14">
           <div className="container-x">
             <h2 id="clients-h" className={sectionHead}>What clients said about this kind of work</h2>
             <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -415,9 +421,9 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       )}
 
       {/* FAQ — service-specific, answer-first; FAQPage markup mirrors this text verbatim */}
-      <section id="faq" aria-labelledby="faq-h" className="py-14 bg-white scroll-mt-32">
+      <section id="faq" aria-labelledby="faq-h" className="py-14 bg-white">
         <div className="container-x grid lg:grid-cols-[.8fr_1.2fr] gap-10 items-start">
-          <div className="lg:sticky lg:top-32">
+          <div className="lg:sticky lg:top-[6.5rem]">
             <span className="eyebrow">FAQ</span>
             <h2 id="faq-h" className={`mt-3 ${sectionHead}`}>{s.name} questions, answered</h2>
             <p className="mt-3 text-ink/75">Have a different question? Call <a href={site.phoneHref} className="font-semibold text-navy underline underline-offset-2">{site.phone}</a> or <a href="#estimate" className="font-semibold text-navy underline underline-offset-2">send us your project details</a>.</p>
@@ -439,7 +445,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       </section>
 
       {/* GUIDES + RELATED SERVICES */}
-      <section id="guides" aria-labelledby="guides-h" className="py-14 scroll-mt-32">
+      <section id="guides" aria-labelledby="guides-h" className="py-14">
         <div className="container-x grid lg:grid-cols-2 gap-10">
           <div>
             <h2 id="guides-h" className={sectionHead}>Guides for planning your {c.noun}</h2>
@@ -460,7 +466,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
               {related.map((o) => (
                 <li key={o.slug}>
                   <Link href={`/services/${o.slug}`} className="flex items-start gap-4 card p-4 pop">
-                    <span aria-hidden="true" className="text-2xl bg-sand rounded-xl w-12 h-12 grid place-items-center shrink-0">{o.icon}</span>
+                    <span aria-hidden="true" className="bg-tint-blue text-blue rounded-xl w-12 h-12 grid place-items-center shrink-0"><ServiceIcon slug={o.slug} /></span>
                     <span>
                       <span className="font-bold text-navy">{o.short}</span>
                       <span className="block mt-1 text-sm text-ink/70">{o.blurb}</span>
@@ -474,7 +480,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       </section>
 
       {/* WHERE WE'VE DONE THIS + EVERY TOWN, BY COUNTY (replaces the 198 chips and "200+ towns") */}
-      <section id="towns" aria-labelledby="towns-h" className="py-14 bg-white scroll-mt-32">
+      <section id="towns" aria-labelledby="towns-h" className="py-14 bg-white">
         <div className="container-x">
           <span className="eyebrow">Service area</span>
           <h2 id="towns-h" className={`mt-3 ${sectionHead}`}>Where we&apos;ve done {lower}, and every town we serve</h2>
@@ -504,7 +510,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       </section>
 
       {/* SOURCES + PAGE DETAILS (AEO-H5: cited sources, real Updated date) */}
-      <section id="sources" aria-labelledby="sources-h" className="py-12 bg-sand scroll-mt-32">
+      <section id="sources" aria-labelledby="sources-h" className="py-12 bg-sand">
         <div className="container-x max-w-5xl">
           <h2 id="sources-h" className="text-xl font-extrabold text-navy">Sources and page details</h2>
           <ol className="mt-4 list-decimal pl-5 space-y-1.5 text-sm text-ink/80">
@@ -529,7 +535,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           <p className="mt-3 text-white/85 max-w-xl mx-auto">Get a free, itemized estimate from Waterfront Construction Inc. Call {site.phone} or use the estimate form on this page.</p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <a href="#estimate" className="btn btn-green text-base">Get a free estimate</a>
-            <a href={site.phoneHref} className="btn btn-white text-base"><span aria-hidden="true">📞</span> {site.phone}</a>
+            <a href={site.phoneHref} className="btn btn-white text-base"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>
       </section>

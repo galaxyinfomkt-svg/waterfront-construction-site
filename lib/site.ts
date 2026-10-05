@@ -103,7 +103,6 @@ export const cities: City[] = [
 export const citySlug = (c: City) =>
   c.n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") + (c.s === "NH" ? "-nh" : "");
 export const cityLabel = (c: City) => `${c.n}, ${c.s ?? "MA"}`;
-export const cityStateFull = (c: City) => (c.s === "NH" ? "New Hampshire" : "Massachusetts");
 
 // ONE statement of the service area, used everywhere (copy, schema, llms.txt, OG, manifest).
 // Counties are computed from the actual town list so they can never drift from the town pages.

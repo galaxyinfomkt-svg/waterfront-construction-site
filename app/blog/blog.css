@@ -4,7 +4,7 @@
 .post { color: #34344a; font-size: 18px; line-height: 1.75; }
 .post .answer { font-size: 1.08rem; line-height: 1.6; color: #24215a; font-weight: 500; border-left: 4px solid #1f7a3a; background: #fff; padding: 1rem 1.25rem; border-radius: 0 .75rem .75rem 0; margin: 0 0 1.75rem; box-shadow: 0 10px 30px -18px rgb(20 20 43 / .25); }
 @media (min-width: 768px) { .post .answer { font-size: 1.2rem; line-height: 1.65; } }
-.post h2 { font-size: 1.6rem; color: #24215a; margin: 2.4rem 0 .8rem; scroll-margin-top: 7rem; }
+.post h2 { font-size: 1.6rem; color: #24215a; margin: 2.4rem 0 .8rem; } /* no scroll-margin: html scroll-padding-top already clears the header */
 .post h3 { font-size: 1.2rem; color: #24215a; margin: 1.6rem 0 .4rem; }
 .post p { margin: 0 0 1.15rem; }
 .post a { color: #1f5c92; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
@@ -23,16 +23,27 @@
 .post ol.steps > li::before { content: counter(step); position: absolute; left: 0; top: .15em; width: 1.8rem; height: 1.8rem; border-radius: 50%; background: #24215a; color: #fff; font-size: .9rem; font-weight: 800; line-height: 1.8rem; text-align: center; }
 .post ol.steps strong { color: #24215a; }
 
-.post .table-wrap { margin: 1.2rem 0 1.6rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+/* The wrapper is a focusable, named region (tabindex=0; the global focus ring applies) so keyboard users can
+   scroll it if a table ever overflows. Cost tables (table.stack, more than 3 columns) become one card per row
+   below 640px, so no column is hidden off-screen on phones (verification V5.5). */
+.post .table-wrap { position: relative; margin: 1.2rem 0 1.6rem; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: .5rem; }
 .post table { width: 100%; border-collapse: collapse; font-size: 15.5px; line-height: 1.5; background: #fff; }
-.post table.wide { min-width: 560px; }
-.post .table-hint { margin: 0 0 .4rem; font-size: 13px; color: #555569; }
-@media (min-width: 640px) { .post .table-hint { display: none; } }
 .post caption { caption-side: top; text-align: left; font-weight: 700; color: #24215a; padding-bottom: .5rem; font-size: 1rem; }
 .post th, .post td { border: 1px solid #dfe4ee; padding: .6rem .75rem; text-align: left; vertical-align: top; }
 .post thead th { background: #eef1f6; color: #24215a; font-weight: 700; }
 .post tbody th { font-weight: 600; color: #24215a; }
+.post .cell-label { display: none; }
 .post .table-note { font-size: 13.5px; line-height: 1.5; color: #555569; margin: .5rem 0 0; }
+@media (max-width: 639.98px) {
+  .post table.stack, .post table.stack caption, .post table.stack tbody, .post table.stack tr, .post table.stack th, .post table.stack td { display: block; width: 100%; }
+  .post table.stack { background: transparent; }
+  .post table.stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+  .post table.stack tbody tr { background: #fff; border: 1px solid #dfe4ee; border-radius: .75rem; margin: 0 0 .75rem; overflow: hidden; }
+  .post table.stack tbody th, .post table.stack tbody td { border: 0; padding: .5rem .95rem; }
+  .post table.stack tbody th { background: #eef1f6; font-size: 1.02rem; }
+  .post table.stack tbody td + td { border-top: 1px solid #eef1f6; }
+  .post table.stack .cell-label { display: block; margin-bottom: .1rem; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #555569; }
+}
 
 .post .callout { background: #e2f1f9; border-left: 4px solid #1f5c92; padding: .9rem 1.15rem; border-radius: 0 .6rem .6rem 0; color: #24215a; font-weight: 500; }
 .post .testimonial { margin: 1.4rem 0; padding: 1rem 1.25rem; background: #fff; border: 1px solid #e3e7ef; border-radius: .9rem; }

@@ -8,6 +8,7 @@ import { site, services } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import JsonLd from "@/components/JsonLd";
+import { PhoneIcon } from "@/components/chrome-icons";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { pageMeta, ogFor, SITE_URL } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, imageNode, placeNode, serviceId, pageUrl, OWNER_PAGE, BUSINESS_ID, type Crumb } from "@/lib/schema";
@@ -153,7 +154,8 @@ export default async function PostPage({ params }: Props) {
           <div className="min-w-0 max-w-3xl">
             <article className="post">
               <p className="answer">{p.answer}</p>
-              <PostFigure f={{ src: p.image, ...p.photo }} eager />
+              {/* Lazy like every other figure: the answer paragraph, not this photo, is the LCP (V4.4) — no eager load, no preload. */}
+              <PostFigure f={{ src: p.image, ...p.photo }} />
 
               <nav aria-label="In this guide" className="toc">
                 <p className="toc-title">In this guide</p>
@@ -212,24 +214,25 @@ export default async function PostPage({ params }: Props) {
               </section>
             </article>
 
-            <div className="mt-10 rounded-2xl bg-brand-grad p-7 text-center text-white">
+            {/* The one CTA readers see on phones; the sidebar card below is desktop-only (V5.4). */}
+            <div className="mt-10 rounded-2xl bg-brand-grad p-7 text-center text-white" data-cta-zone>
               <p className="text-2xl font-extrabold text-white">Planning a project?</p>
               <p className="mt-1 text-white/90">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
               <div className="mt-4 flex flex-wrap justify-center gap-3">
-                <Link href="/contact" className="btn btn-white">Get a Free Estimate</Link>
-                <a href={site.phoneHref} className="btn btn-green"><span aria-hidden="true">📞</span> {site.phone}</a>
+                <Link href="/contact#estimate" className="btn btn-white">Get a free estimate</Link>
+                <a href={site.phoneHref} className="btn btn-green"><PhoneIcon className="w-4 h-4" /> {site.phone}</a>
               </div>
             </div>
           </div>
 
-          {/* SIDEBAR */}
-          <aside aria-label="Contact Waterfront Construction" className="space-y-6">
-            <div className="card p-6 lg:sticky lg:top-28">
+          {/* SIDEBAR — desktop only: on phones it would stack right under the in-article CTA with the same two actions (V5.4). */}
+          <aside aria-label="Contact Waterfront Construction" className="hidden lg:block">
+            <div className="card p-6 lg:sticky lg:top-[6.5rem]" data-cta-zone>
               <Image src="/logo-solid.png" alt="" width={64} height={64} className="h-16 w-16" />
               <p className="mt-4 text-lg font-extrabold text-navy">Talk to an owner-led builder</p>
               <p className="mt-1 text-sm text-ink/70">{[credentialLine(), "Owner-led", "Based in Northborough, MA"].filter(Boolean).join(" · ")}</p>
-              <a href={site.phoneHref} className="btn btn-navy mt-4 w-full"><span aria-hidden="true">📞</span> {site.phone}</a>
-              <Link href="/contact" className="btn btn-green mt-2 w-full">Free Estimate</Link>
+              <a href={site.phoneHref} className="btn btn-navy mt-4 w-full"><PhoneIcon className="w-4 h-4" /> {site.phone}</a>
+              <Link href="/contact#estimate" className="btn btn-green mt-2 w-full">Get a free estimate</Link>
             </div>
           </aside>
         </div>

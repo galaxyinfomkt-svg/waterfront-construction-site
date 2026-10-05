@@ -1,5 +1,9 @@
 // All permanent (308) redirects, imported by next.config.ts. Keep every old URL that was ever
-// public pointing at its current home in ONE hop (no chains).
+// public pointing at its current home in ONE hop (no chains) — including its trailing-slash twin,
+// because next.config.ts sets skipTrailingSlashRedirect and this file removes slashes itself.
+import fs from "node:fs";
+import path from "node:path";
+
 type Rule = { source: string; destination: string; permanent: true };
 const r = (source: string, destination: string): Rule => ({ source, destination, permanent: true });
 
@@ -40,9 +44,22 @@ export function redirectRules(): Rule[] {
   for (const [oldSlug, newSlug, oldMedia, newMedia] of projectRenames) {
     rules.push(r(`/projects/${oldSlug}`, `/projects/${newSlug}`));
     if (oldMedia && newMedia) {
-      rules.push(r(`/images/projects/${oldMedia}-:n.webp`, `/images/projects/${newMedia}-:n.webp`));
-      rules.push(r(`/videos/${oldMedia}-:n.mp4`, `/videos/${newMedia}-:n.mp4`));
+      // Only files that still exist under the new name; a deleted photo returns a plain 404 in one hop.
+      for (const [dir, ext] of [["images/projects", ".webp"], ["videos", ".mp4"]] as const) {
+        const abs = path.join(process.cwd(), "public", dir);
+        const files = fs.existsSync(abs) ? fs.readdirSync(abs) : [];
+        for (const f of files) {
+          if (!f.startsWith(`${newMedia}-`) || !f.endsWith(ext)) continue;
+          const n = f.slice(newMedia.length + 1, -ext.length);
+          if (!/^\d{2}$/.test(n)) continue; // e.g. "-03"; skips other prefixes that share the start
+          rules.push(r(`/${dir}/${oldMedia}-${n}${ext}`, `/${dir}/${f}`));
+        }
+      }
     }
   }
+  // Trailing-slash twins of every legacy URL go straight to the final page, then a generic rule
+  // strips the slash from everything else (replaces Next's built-in redirect, which would add a hop).
+  for (const rule of [...rules]) if (!/\.[a-z0-9]+$/.test(rule.source)) rules.push(r(`${rule.source}/`, rule.destination));
+  rules.push(r("/:path+/", "/:path+"));
   return rules;
 }

@@ -108,7 +108,8 @@ export function serviceAreaLines(): string[] {
       return `- ${link(`${g.county}, ${g.state}`, `/service-areas#${g.id}`)}: ${places}, ${range} from Northborough: ${g.towns.map(townName).join(", ")}`;
     }),
     `- ${link("Every town we serve, by county, with distances", "/service-areas")}`,
-    `- Each service has a page per town at ${SITE_URL}/services/{service}/{town}, for example ${link("decks in Salem, NH", "/services/decks/salem-nh")}. New Hampshire town addresses end in "-nh".`,
+    // A relative pattern in code formatting, never a bare absolute URL: crawlers auto-link and fetch it (404; V2.4).
+    `- Each service has a page per town at \`/services/<service>/<town>\` (for example ${link("decks in Salem, NH", "/services/decks/salem-nh")}). New Hampshire town addresses end in "-nh".`,
   ];
 }
 

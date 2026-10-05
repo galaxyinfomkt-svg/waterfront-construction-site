@@ -6,7 +6,9 @@ import { services, site, serviceArea } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, serviceId, pageUrl, AREA_FACTS, type Crumb } from "@/lib/schema";
 import { credentialLine } from "@/lib/credentials";
-import { getContent, serviceProjects, serviceGuides, SOURCES } from "@/lib/service-content";
+import { getContent, serviceProjects, serviceGuides, SOURCES, PERMITS_HOW } from "@/lib/service-content";
+import { PhoneIcon } from "@/components/chrome-icons";
+import ServiceIcon from "./_components/ServiceIcon";
 
 const TITLE = "Home Remodeling Services in Central & Eastern MA";
 const DESCRIPTION = "Kitchens and baths, additions, decks, siding, windows and doors, and painting from one owner-led contractor based in Northborough, MA. Free itemized estimates.";
@@ -51,8 +53,8 @@ export default function ServicesPage() {
           <p className="mt-5 text-white/90 max-w-3xl text-lg leading-relaxed">{LEAD}</p>
           <p className="mt-4 text-sm text-white/80">Owner-led · Founded in {site.founded} in Northborough, MA{credentials ? ` · ${credentials}` : ""}</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/contact" className="btn btn-green text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-outline text-base"><span aria-hidden="true">📞</span> {site.phone}</a>
+            <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-outline text-base"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>
       </section>
@@ -66,11 +68,11 @@ export default function ServicesPage() {
                 <div className="relative h-48 bg-brand-grad">
                   {s.imageIsStock ? (
                     // No real photo for this service yet: an icon tile, never a stock photo (audit 02 C1).
-                    <span aria-hidden="true" className="absolute inset-0 grid place-items-center text-6xl">{s.icon}</span>
+                    <span aria-hidden="true" className="absolute inset-0 grid place-items-center text-white"><ServiceIcon slug={s.slug} className="w-20 h-20" /></span>
                   ) : (
                     <>
                       <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
-                      <span aria-hidden="true" className="absolute top-3 left-3 text-2xl bg-white/90 rounded-lg w-10 h-10 grid place-items-center">{s.icon}</span>
+                      <span aria-hidden="true" className="absolute top-3 left-3 bg-white/95 text-blue shadow rounded-lg w-10 h-10 grid place-items-center"><ServiceIcon slug={s.slug} /></span>
                     </>
                   )}
                 </div>
@@ -99,8 +101,8 @@ export default function ServicesPage() {
             <ul className="mt-5 space-y-3 text-ink/85 leading-relaxed">
               <li><span className="font-semibold text-navy">Owner-led.</span> The company is run by its founder, {site.owner}, who started it in {site.founded}.</li>
               <li><span className="font-semibold text-navy">Itemized estimates.</span> Every estimate is free, written and itemized for your house.</li>
-              <li><span className="font-semibold text-navy">Permits and inspections.</span> We apply for the building permit and schedule inspections; plumbing, gas and electrical permits are pulled by those trades.</li>
-              <li><span className="font-semibold text-navy">Real projects.</span> Our <Link href="/gallery" className="text-blue underline underline-offset-2">project case studies</Link> show real jobs with photos taken during the work, at town level only.</li>
+              <li><span className="font-semibold text-navy">Permits and inspections.</span> {PERMITS_HOW}</li>
+              <li><span className="font-semibold text-navy">Real projects.</span> Our <Link href="/gallery" className="text-blue underline underline-offset-2">project case studies</Link> are documented with our own photos and site videos, at town level only.</li>
             </ul>
           </div>
           <div className="rounded-2xl bg-tint-blue p-6">
@@ -126,8 +128,8 @@ export default function ServicesPage() {
           </p>
           <p className="mt-4"><Link href="/service-areas" className="font-semibold text-blue underline underline-offset-2">See every town we serve, by county</Link></p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/contact" className="btn btn-green text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-navy text-base"><span aria-hidden="true">📞</span> {site.phone}</a>
+            <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-navy text-base"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>
       </section>

@@ -9,6 +9,7 @@
 // - No "licensed" self-claims until site.hic is set (licensingAnswer() handles both cases).
 import { site, services, cities, allCities, citySlug, testimonials } from "./site";
 import { licensingAnswer, hasHic, hasCsl } from "./credentials";
+import { displayAddress } from "./address";
 import { AREA_FACTS } from "./schema";
 import { townFacts, VILLAGE_OF, DEVENS } from "./towns";
 import { projects } from "./projects";
@@ -61,7 +62,7 @@ const E = {
   trackRecord: {
     id: "track-record",
     q: "How many projects has Waterfront Construction completed?",
-    a: `${site.projectsCompleted}+ projects, in ${site.townsWithProjects}+ towns. ${cap(word(projects.length))} of them are documented on this site as case studies, with photos from the job.`,
+    a: `${site.projectsCompleted}+ projects, in ${site.townsWithProjects}+ towns. ${cap(word(projects.length))} of them are documented on this site as case studies, with our own photos and site videos.`,
     links: [{ href: "/gallery", label: "Project case studies" }],
   },
   reviews: {
@@ -100,7 +101,7 @@ const E = {
   whichPermits: {
     id: "which-permits",
     q: "Which projects need a building permit?",
-    a: "In Massachusetts, additions, decks, re-siding, replacement windows and exterior doors, and remodels that move walls, plumbing or wiring generally need a building permit from the town's building department; painting does not. In New Hampshire, each town's building department decides which work needs a permit.",
+    a: "In Massachusetts, additions, decks, re-siding, replacement windows and exterior doors, and remodels that move walls or change the structure generally need a building permit from the town's building department. Moving plumbing, gas or wiring needs separate permits taken out by Massachusetts-licensed trades. Painting does not need a building permit. In New Hampshire, each town's building department decides which work needs a permit.",
     links: guide("do-you-need-a-permit-to-remodel-massachusetts"),
   },
   lead: {
@@ -147,17 +148,18 @@ const E = {
     id: "timeline",
     q: "How long does a remodeling project take?",
     a: services.map((s) => s.timeline).join(" "),
-    links: [{ href: "/#timelines", label: "Typical timelines by service" }],
+    links: [{ href: "/services", label: "Typical timelines by service" }],
   },
   contact: {
     id: "contact",
     q: "What are your hours, and how do I reach you?",
-    a: `We're open ${site.hours}. Call ${site.phone}, email ${site.email}, or send the estimate form on our contact page. Our address is ${site.address}.`,
+    a: `We're open ${site.hours}. Call ${site.phone}, email ${site.email}, or send the estimate form on our contact page. ${site.showStreet ? "Our address is" : "We are based in"} ${displayAddress}.`,
     links: [{ href: "/contact", label: "Contact page" }],
   },
 } satisfies Record<string, FaqEntry>;
 
-/** Every pre-hire question, grouped, for /faq (FAQPage markup lives there and, for a selection, on home). */
+/** Every pre-hire question, grouped, for /faq. FAQPage markup lives ONLY on /faq: home and /contact show a
+ *  selection as visible text, without markup, so no Q&A is marked up on two URLs (V4.1). */
 export const faqGroups: FaqGroup[] = [
   { id: "company", title: "About Waterfront Construction", items: [E.whatWeDo, E.owner, E.trackRecord, E.reviews] },
   { id: "area", title: "Where we work", items: [E.area, E.nh] },
@@ -168,11 +170,8 @@ export const faqGroups: FaqGroup[] = [
 
 export const allFaqs: FaqEntry[] = faqGroups.flatMap((g) => g.items);
 
-/** Home page selection — the same entries (verbatim) as /faq. */
+/** Home page selection — the same entries (verbatim) as /faq; visible only, no FAQPage markup on home. */
 export const homeFaqs: FaqEntry[] = [E.whatWeDo, E.area, E.registered, E.costKb, E.estimates, E.nh];
 
 /** Contact page selection. */
 export const contactFaqs: FaqEntry[] = [E.estimates, E.registered, E.area, E.financing];
-
-/** Back-compat alias (older imports). */
-export const faqs: FaqEntry[] = homeFaqs;

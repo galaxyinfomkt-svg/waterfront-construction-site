@@ -1,7 +1,9 @@
 // State × service rules for the service×town pages (audit 03 §3.5-B/D, fact register §4).
 // These are the ONLY shared paragraphs on a town page. Every statement is phrased as a general rule
 // (never as a claim that we hold a credential or follow a practice the owner has not confirmed), and
-// Massachusetts-only law never appears on a New Hampshire page.
+// Massachusetts-only law never appears on a New Hampshire page. The one first-person permit sentence
+// ("we apply for the building permit") renders only once a Construction Supervisor License is on file
+// (hasCsl, lib/credentials.ts) — the same gate as lib/faq.ts and lib/service-content.ts (V3.2).
 //
 // Fact register — every templated legal/jurisdiction statement used on the 1,188 pages. A person must
 // check each one against the primary source before release, then replace "verify" with
@@ -13,6 +15,8 @@
 //   R6  deck within 100 ft of a wetland → Conservation Commission may review ........ verify (310 CMR 10.02)
 //   R7  adding a bedroom on septic → Board of Health review under Title 5 .......... verify (310 CMR 15.000)
 //   R8  MA plumbing/gas/electrical permits are taken out by licensed trades ........ verify (248 CMR; 527 CMR 12.00)
+//   R8b MA kitchen/bath: a building permit when walls or structure change; moving plumbing,
+//       gas or wiring needs those trades' own permits (not, by itself, a building permit) verify (780 CMR R105.2; 248 CMR)
 //   R9  MA lead-safe renovation rules (454 CMR 22.00) apply above 6 sq ft of paint per
 //       room inside / 20 sq ft outside; every window replacement is covered ....... verify (mass.gov lead-safe renovation)
 //   R10 NH: federal EPA RRP rule (40 CFR 745 Subpart E), same thresholds ........... verify (epa.gov RRP)
@@ -25,6 +29,7 @@
 //       by the Devens Enterprise Commission, not Ayer/Harvard/Shirley ............. verify (devensec.com)
 import type { City } from "./site";
 import { villageParent, isDevens, isNH } from "./towns";
+import { hasCsl } from "./credentials";
 
 export type ServiceSlug = "siding" | "windows-and-doors" | "kitchen-bathroom-remodeling" | "decks" | "home-additions-remodeling" | "painting";
 export const SERVICE_SLUGS: ServiceSlug[] = ["siding", "windows-and-doors", "kitchen-bathroom-remodeling", "decks", "home-additions-remodeling", "painting"];
@@ -38,15 +43,15 @@ export const SERVICE_LOCAL: Record<ServiceSlug, {
   link: string; // anchor in "Other services in {Town}"
   meta: string; // short noun for meta descriptions: "Nearest deck case study"
   project: string; // "our closest documented {project} project"
-  scope: string[]; // "What's included" (true for every town; details live on the hub)
+  scope: string[]; // "What's included": a SUBSET of the hub's features (lib/services.ts), true for every town (V3.9)
 }> = {
   siding: {
     title: "Siding Contractor", h1: "Siding Installation & Replacement", noun: "siding", link: "Siding", meta: "siding", project: "siding",
-    scope: ["Vinyl & fiber-cement siding", "Trim, soffit & fascia", "House wrap & moisture protection", "Clean-up & haul-away"],
+    scope: ["Vinyl & fiber-cement siding", "Trim, soffit & fascia", "House wrap & flashing", "Cleanup & haul-away"],
   },
   "windows-and-doors": {
     title: "Window & Door Replacement", h1: "Window & Door Replacement", noun: "window and door replacement", link: "Windows & doors", meta: "window and door", project: "window and door",
-    scope: ["Replacement windows", "Entry & patio doors", "Interior trim & casing", "Sealed, weather-tight installs"],
+    scope: ["Replacement windows", "Entry & patio doors", "Interior trim & casing", "Flashing & sealing around each unit"],
   },
   "kitchen-bathroom-remodeling": {
     title: "Kitchen & Bath Remodeling", h1: "Kitchen & Bathroom Remodeling", noun: "kitchen and bathroom remodeling", link: "Kitchen & bath remodeling", meta: "kitchen & bath", project: "kitchen or bathroom",
@@ -54,7 +59,7 @@ export const SERVICE_LOCAL: Record<ServiceSlug, {
   },
   decks: {
     title: "Deck Builder", h1: "Deck Design & Construction", noun: "deck building", link: "Decks", meta: "deck", project: "deck",
-    scope: ["Composite & wood decks", "Railings, stairs & lighting", "Pergolas & outdoor living", "Custom design to fit your yard"],
+    scope: ["Composite & pressure-treated wood decks", "Railings, stairs & landings", "Pool decks", "Custom design to fit your yard"],
   },
   "home-additions-remodeling": {
     title: "Home Additions & Remodeling", h1: "Home Additions & Remodeling", noun: "home additions and remodeling", link: "Additions & remodeling", meta: "addition", project: "addition or remodeling",
@@ -62,7 +67,7 @@ export const SERVICE_LOCAL: Record<ServiceSlug, {
   },
   painting: {
     title: "House Painting", h1: "Interior & Exterior Painting", noun: "interior and exterior painting", link: "Painting", meta: "painting", project: "painting",
-    scope: ["Interior & exterior painting", "Surface prep", "Cabinet & trim painting", "Color consultation"],
+    scope: ["Interior & exterior painting", "Washing, scraping & patching", "Cabinet & trim painting", "Color selection help"],
   },
 };
 
@@ -77,6 +82,9 @@ export function permitAuthority(c: City): Authority {
 }
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 export const authorityLabel = (c: City) => cap(permitAuthority(c).text);
+
+// First-person permit claim: only with a CSL on file (V3.2); until then the paragraph states the general rule only.
+const OUR_PERMIT = hasCsl ? " On our jobs, we apply for the building permit and schedule the inspections." : "";
 
 /** "Permits and rules" paragraph (§3.5-D). Shared within state × service except the permit authority. */
 export function rulesParagraph(svc: ServiceSlug, c: City): string {
@@ -97,15 +105,16 @@ export function rulesParagraph(svc: ServiceSlug, c: City): string {
   }
   switch (svc) {
     case "siding":
-      return `Re-siding needs a building permit in most Massachusetts towns; here it comes from ${a}. Removing painted siding or trim on a pre-1978 home falls under Massachusetts lead-safe rules (454 CMR 22.00).`;
+      return `Re-siding needs a building permit in most Massachusetts towns; here it comes from ${a}.${OUR_PERMIT} Removing painted siding or trim on a pre-1978 home falls under Massachusetts lead-safe rules (454 CMR 22.00).`;
     case "windows-and-doors":
-      return `Replacement windows and exterior doors generally need a building permit, here from ${a}. In a pre-1978 home, every window replacement falls under Massachusetts lead-safe rules (454 CMR 22.00).`;
+      return `Replacement windows and exterior doors generally need a building permit, here from ${a}.${OUR_PERMIT} In a pre-1978 home, every window replacement falls under Massachusetts lead-safe rules (454 CMR 22.00).`;
     case "kitchen-bathroom-remodeling":
-      return `A remodel that moves walls, plumbing or wiring needs a building permit from ${a}; plumbing, gas and electrical permits are taken out by Massachusetts-licensed trades.`;
+      // V3.7: moving a sink needs a plumbing permit, not by itself a building permit.
+      return `A remodel that moves walls or changes the structure needs a building permit from ${a}; moving plumbing, gas or wiring needs separate permits taken out by Massachusetts-licensed trades.${OUR_PERMIT}`;
     case "decks":
-      return `An attached deck needs a building permit from ${a}, with footing, framing and final inspections. Within 100 feet of a wetland, the Conservation Commission may also review it.`;
+      return `An attached deck needs a building permit from ${a}, with footing, framing and final inspections.${OUR_PERMIT} Within 100 feet of a wetland, the Conservation Commission may also review it.`;
     case "home-additions-remodeling":
-      return `An addition needs a building permit from ${a} and must meet zoning setbacks; adding a bedroom to a home on septic also brings Board of Health review under Title 5.`;
+      return `An addition needs a building permit from ${a} and must meet zoning setbacks; adding a bedroom to a home on septic also brings Board of Health review under Title 5.${OUR_PERMIT}`;
     case "painting":
       return "Painting needs no building permit. In a pre-1978 home, disturbing more than 6 square feet of paint in a room, or 20 outside, falls under Massachusetts lead-safe rules (454 CMR 22.00).";
   }

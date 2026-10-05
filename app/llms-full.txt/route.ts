@@ -80,7 +80,8 @@ function projectSection(p: (typeof projects)[number]): string[] {
 function guideSection(p: (typeof posts)[number]): string[] {
   return [
     `### ${p.title}`,
-    `Page: ${abs(`/blog/${p.slug}`)} · By ${site.owner}, owner · Published ${day(p.published)} · Updated ${day(p.modified)}`,
+    // Same authorship as the post pages (byline, meta author, JSON-LD author = the business; V3.4).
+    `Page: ${abs(`/blog/${p.slug}`)} · Published by ${site.name} on ${day(p.published)} · Updated ${day(p.modified)}`,
     "",
     absLinks(p.answer, `/blog/${p.slug}`),
     ...(p.faqs.length ? ["", "Questions and answers:", ...p.faqs.flatMap((f) => [`- Q: ${f.q}`, `  A: ${absLinks(f.a, `/blog/${p.slug}`)}`])] : []),
@@ -122,7 +123,8 @@ export function GET() {
       "",
     ]),
     "## Project case studies",
-    `Documented jobs with photos from the job, town level only. All of them: ${abs("/gallery")}.`,
+    // Wording matches the gallery: not every case study has photos taken during the work (V3.6).
+    `${projects.length} case studies documented with our own photos and site videos, town level only. All of them: ${abs("/gallery")}.`,
     "",
     ...projects.flatMap(projectSection),
     "## Guides",

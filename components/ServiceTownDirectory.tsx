@@ -5,6 +5,8 @@ import { townFacts } from "@/lib/towns";
 // Every town page for one service, grouped by county (internal-linking contract, IMPLEMENTATION.md §4).
 // Server-rendered plain "Town, ST" links — replaces the old 198-chip block and its false "200+ towns" copy.
 // Each county panel links to the matching county section on /service-areas (ids match lib/schema.ts county @ids).
+// prefetch={false} on every link (V4.3): opening one county would otherwise prefetch ~60 town routes (~670 KB of RSC
+// on mobile data). /service-areas does the same.
 
 type Group = { id: string; county: string; state: "MA" | "NH"; towns: City[] };
 
@@ -49,14 +51,14 @@ export default function ServiceTownDirectory({ slug, label, className = "" }: { 
               <ul role="list" className="grid grid-cols-2 gap-x-4 px-4 pb-2 text-sm">
                 {g.towns.map((c) => (
                   <li key={citySlug(c)}>
-                    <Link href={`/services/${slug}/${citySlug(c)}`} className="block py-2 text-blue hover:text-navy hover:underline underline-offset-2">
+                    <Link href={`/services/${slug}/${citySlug(c)}`} prefetch={false} className="block py-2 text-blue hover:text-navy hover:underline underline-offset-2">
                       {cityLabel(c)}
                     </Link>
                   </li>
                 ))}
               </ul>
               <p className="px-4 pb-4 text-xs">
-                <Link href={`/service-areas#${g.id}`} className="font-semibold text-ink/70 hover:text-blue underline underline-offset-2">Every service in {g.county}, {g.state}</Link>
+                <Link href={`/service-areas#${g.id}`} prefetch={false} className="font-semibold text-ink/70 hover:text-blue underline underline-offset-2">Every service in {g.county}, {g.state}</Link>
               </p>
             </details>
           );

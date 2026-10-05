@@ -22,6 +22,8 @@ const cacheFor = (seconds: number) => [{ key: "Cache-Control", value: `public, m
 const DAY = 86400;
 
 const nextConfig: NextConfig = {
+  // lib/redirects.ts handles trailing slashes so legacy URLs with a slash still take a single hop.
+  skipTrailingSlashRedirect: true,
   poweredByHeader: false, // drop "X-Powered-By: Next.js"
   images: {
     formats: ["image/avif", "image/webp"],

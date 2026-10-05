@@ -3,6 +3,7 @@ import Link from "next/link";
 import { posts, CATEGORIES, type Post } from "@/lib/posts";
 import { site } from "@/lib/site";
 import JsonLd from "@/components/JsonLd";
+import { PhoneIcon } from "@/components/chrome-icons";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { pageMeta, SITE_URL } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, pageUrl, BUSINESS_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
@@ -10,7 +11,7 @@ import { formatDate, sameDay } from "./_lib/content";
 
 const H1 = "Remodeling cost guides & advice for Massachusetts homeowners";
 const DESCRIPTION =
-  "Kitchen, bath, addition, siding, window and deck cost guides using New England Cost vs. Value data, plus Massachusetts permit and hiring checklists.";
+  "Kitchen, bath, siding, window and deck cost guides using New England Cost vs. Value data, plus addition costs and Massachusetts permit and hiring checklists.";
 const BLOG_ID = `${SITE_URL}/blog#blog`;
 const crumbs: Crumb[] = [
   { name: "Home", path: "/" },
@@ -98,12 +99,17 @@ export default function BlogPage() {
         <div className="container-x py-14 md:py-20">
           <Breadcrumbs items={crumbs} />
           <h1 className="mt-5 text-4xl md:text-5xl font-extrabold max-w-4xl">{H1}</h1>
+          {/* Authorship matches the posts, their meta author and the JSON-LD: the company publishes the guides (V3.4). */}
           <p className="mt-5 text-white text-lg max-w-3xl">
-            Cost guides, permit rules and hiring checklists by{" "}
+            Cost guides, permit rules and hiring checklists published by{" "}
+            <Link href="/about" className="font-semibold underline underline-offset-2 hover:text-cyan">
+              {site.name}
+            </Link>
+            , an owner-led remodeling contractor based in Northborough, Massachusetts, founded in {site.founded} by{" "}
             <Link href={OWNER_PAGE} className="font-semibold underline underline-offset-2 hover:text-cyan">
               {site.owner}
             </Link>
-            , owner of {site.name}, an owner-led remodeling contractor based in Northborough, Massachusetts. Prices cite Remodeling magazine&apos;s Cost vs. Value data for New England, and legal and permit guidance links to state sources.
+            . Prices cite Remodeling magazine&apos;s Cost vs. Value data for New England, and legal and permit guidance links to state sources.
           </p>
           <nav aria-label="Guide topics" className="mt-6 flex flex-wrap gap-2">
             {CATEGORIES.map((c) => (
@@ -119,7 +125,7 @@ export default function BlogPage() {
         const list = posts.filter((p) => p.category === c.name).sort(byPublished);
         if (!list.length) return null;
         return (
-          <section key={c.id} id={c.id} aria-labelledby={`${c.id}-h`} className={`py-14 scroll-mt-24 ${i % 2 ? "bg-sand" : ""}`}>
+          <section key={c.id} id={c.id} aria-labelledby={`${c.id}-h`} className={`py-14 ${i % 2 ? "bg-sand" : ""}`}>
             <div className="container-x">
               <h2 id={`${c.id}-h`} className="text-3xl font-extrabold text-navy">{c.name}</h2>
               <p className="mt-2 text-ink/70 max-w-2xl">{c.intro}</p>
@@ -130,6 +136,20 @@ export default function BlogPage() {
           </section>
         );
       })}
+
+      {/* Slim estimate CTA after the last guide grid (V5.4 / audit 10 L5). */}
+      <section aria-labelledby="blog-cta-h" className="bg-brand-grad text-white" data-cta-zone>
+        <div className="container-x py-8 md:py-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 id="blog-cta-h" className="text-2xl font-extrabold text-white">Planning a project?</h2>
+            <p className="mt-1 text-white/90">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/contact#estimate" className="btn btn-white">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-green"><PhoneIcon className="w-4 h-4" /> {site.phone}</a>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

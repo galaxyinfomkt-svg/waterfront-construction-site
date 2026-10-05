@@ -10,7 +10,7 @@
 // - Dates: `published` = first git commit that added the post (GitHub history of lib/posts.ts);
 //   `modified` = last SUBSTANTIVE edit. Never re-date a post to look fresh.
 import { site, type City } from "./site";
-import { licensingAnswer } from "./credentials";
+import { licensingAnswer, hasCsl } from "./credentials";
 
 export type PostCategory = "Cost guides" | "Planning, permits & hiring" | "Exteriors: siding & windows";
 export const CATEGORIES: { name: PostCategory; id: string; intro: string }[] = [
@@ -83,19 +83,17 @@ const S = {
 } satisfies Record<string, Source>;
 
 // ---------- Remodeling 2025 Cost vs. Value, New England division ----------
-// Figures: study/03-aeo-geo.md §10A and audit 04 [CvV-2025 NE].
+// Figures: ONLY the 8 approved projects in study/03-aeo-geo.md §10A (lines ~398-407). The report's other projects
+// (major kitchen remodels, upscale bathroom remodels, bathroom and suite additions) are described qualitatively and
+// sent to the full report: their numbers were never checked on jlconline (verification V3.1). Add one here only
+// after it has been checked on the jlconline 2025 New England page and added to the study notes.
 // verify against jlconline before next update — figures, scope wording and the credit line (swap in the 2026 edition when it is out).
 export const CVV_CREDIT = "© 2025 Zonda Media, a Delaware corporation. Complete data from the Remodeling 2025 Cost vs. Value Report can be downloaded free at www.costvsvalue.com.";
 const CVV_NOTE = `New England average, 2025. ${CVV_CREDIT} These are regional averages for standard projects, not quotes: your price depends on your house, your choices and the conditions found once work starts.`;
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
 const CVV = {
   minorKitchen: { job: 28936, rec: "134.3%" },
-  majorKitchenMid: { job: 102857, rec: "47.2%" },
-  majorKitchenUp: { job: 172718, rec: "37.0%" },
   bathMid: { job: 27559, rec: "90.5%" },
-  bathUp: { job: 83877, rec: "45%" },
-  bathAddMid: { job: 63783, rec: "44%" },
-  bathAddUp: { job: 116146, rec: "35.5%" },
   fiberCement: { job: 20678, rec: "144.9%" },
   vinylSiding: { job: 17590, rec: "92.7%" },
   vinylWindows: { job: 21922, rec: "71.2%" },
@@ -117,7 +115,12 @@ const NEEDHAM: City = { n: "Needham" };
 const LYNNFIELD: City = { n: "Lynnfield" };
 const SALEM_NH: City = { n: "Salem", s: "NH" };
 
+// The full lead-safe rule set is published ONCE in the blog (signs-its-time-to-replace-your-siding#lead) and site-wide
+// on /faq#pre-1978-homes. Other posts give one sentence specific to their work plus a link (verification V3.10).
 const LEAD_RULE = "In homes built before 1978, paid renovation that disturbs more than 6 square feet of painted surface per room inside, or more than 20 square feet outside, and any window replacement, must follow lead-safe work rules. In Massachusetts the company doing the work needs a Lead-Safe Renovation Contractor license from the Department of Labor Standards, with a certified renovator directing the job. That license is separate from Home Improvement Contractor registration and the Construction Supervisor License.";
+const LEAD_LINK = "[lead-safe rules for pre-1978 homes](/faq#pre-1978-homes)";
+/** "the full report" pointer for Cost vs. Value projects whose figures are not repeated here (V3.1). */
+const FULL_REPORT = "the full New England data is free at [costvsvalue.com](https://www.costvsvalue.com)";
 const CONTRACT_RULE = "Massachusetts requires a written contract for home improvement work over $1,000 on an owner-occupied home. The deposit can't be more than one-third of the total price, or the cost of special-order materials if that is greater.";
 const OWNER_LINE = `${site.owner} has ${site.experience}+ years of hands-on construction experience and founded ${site.name} in ${site.founded}.`;
 
@@ -127,9 +130,9 @@ export const posts: Post[] = [
     slug: "kitchen-remodel-cost-massachusetts",
     title: "How Much Does a Kitchen Remodel Cost in Massachusetts?",
     seoTitle: "Kitchen Remodel Cost in Massachusetts (2026 Guide)",
-    description: "A midrange minor kitchen remodel averaged $28,936 in New England and a major one $102,857 (Cost vs. Value 2025). What drives kitchen prices in Massachusetts.",
-    excerpt: "New England cost benchmarks for minor and major kitchen remodels, what moves the price in Massachusetts, permits, timing and a real kitchen we remodeled in Mansfield.",
-    answer: `Remodeling magazine's 2025 Cost vs. Value report puts the New England average for a midrange minor kitchen remodel at ${$("minorKitchen")}, a midrange major remodel with new semi-custom cabinets and an island at ${$("majorKitchenMid")}, and an upscale major remodel at ${$("majorKitchenUp")}. In Massachusetts, new cabinets, layout changes and what turns up behind old walls move the price most.`,
+    description: "A midrange minor kitchen remodel averaged $28,936 in New England and recouped 134.3% (Cost vs. Value 2025). What drives kitchen prices in Massachusetts.",
+    excerpt: "A New England cost benchmark for a minor kitchen remodel, how a major remodel differs, what moves the price in Massachusetts, permits, timing and a kitchen we remodeled in Mansfield.",
+    answer: `Remodeling magazine's 2025 Cost vs. Value report puts the New England average for a midrange minor kitchen remodel, which keeps the layout and cabinet boxes, at ${$("minorKitchen")}. A major remodel with new cabinets and a new layout costs more. In Massachusetts, new cabinets, layout changes and what turns up behind old walls move the price most.`,
     category: "Cost guides",
     published: KITCHEN_COMMIT,
     modified: REWRITE,
@@ -150,16 +153,15 @@ export const posts: Post[] = [
       {
         id: "cost-table", h: "What does a kitchen remodel cost in New England?", blocks: [
           { table: {
-            caption: "Kitchen remodel costs: New England averages (Cost vs. Value 2025)",
+            caption: "Minor kitchen remodel cost: New England average (Cost vs. Value 2025)",
             head: ["Project", "Typical scope (about 200 sq ft kitchen)", "New England average, 2025", "Cost recouped at resale"],
             rows: [
               ["Minor remodel, midrange", "New cabinet fronts and hardware, laminate counters, sink and faucet, oven and cooktop, flooring and paint; layout and cabinet boxes stay", $("minorKitchen"), pct("minorKitchen")],
-              ["Major remodel, midrange", "New semi-custom cabinets including an island, new counters, sink, appliances, lighting, flooring and paint", $("majorKitchenMid"), pct("majorKitchenMid")],
-              ["Major remodel, upscale", "Custom cabinets, stone counters, high-end built-in appliances and a full redesign", $("majorKitchenUp"), pct("majorKitchenUp")],
             ],
             note: CVV_NOTE,
           } },
-          { p: "Use these numbers as a reference point, not a price list. They describe a standard project in a typical New England house. We don't publish our own price ranges; we price each kitchen from an itemized estimate after a free visit, so you can see where the money goes." },
+          { p: `The same report also prices midrange and upscale major kitchen remodels, with new cabinets, an island or a new layout. Those cost more than a minor remodel and recoup a smaller share of their cost at resale; we don't repeat their figures here, and ${FULL_REPORT}.` },
+          { p: "Use this number as a reference point, not a price list. It describes a standard project in a typical New England house. We don't publish our own price ranges; we price each kitchen from an itemized estimate after a free visit, so you can see where the money goes." },
         ],
       },
       {
@@ -169,7 +171,7 @@ export const posts: Post[] = [
             "Minor: new doors and drawer fronts (or painted cabinets), new counters, sink and faucet, new appliances, flooring, lighting fixtures and paint. Plumbing and gas stay where they are.",
             "Major: new cabinets, often an island or a new layout, new counters and appliances, new lighting circuits, and sometimes moved plumbing, a moved gas line or a removed wall.",
           ] },
-          { p: `The gap between the two midrange projects in the table above, about ${diff("majorKitchenMid", "minorKitchen", 1000)}, is mostly new cabinetry, layout changes and the trade work that comes with them.` },
+          { p: "The extra cost of a major remodel is mostly new cabinetry, layout changes and the trade work that comes with them." },
         ],
       },
       {
@@ -198,7 +200,7 @@ export const posts: Post[] = [
       },
       {
         id: "save", h: "Where can you save on a kitchen remodel?", blocks: [
-          { p: `The resale data favors restraint: in New England, the minor remodel recouped ${pct("minorKitchen")} of its cost while the midrange major remodel recouped ${pct("majorKitchenMid")}. Ways to get the most change per dollar:` },
+          { p: `The resale data favors restraint: in New England, the midrange minor remodel recouped ${pct("minorKitchen")} of its cost, while major remodels recouped a smaller share. Ways to get the most change per dollar:` },
           { ul: [
             "Keep the sink, range and dishwasher where they are, so plumbing and gas lines don't move.",
             "Keep solid cabinet boxes and replace the doors and drawer fronts, or paint them.",
@@ -223,7 +225,8 @@ export const posts: Post[] = [
         ],
       },
       {
-        id: "estimate", h: "How do you get an accurate kitchen estimate?", blocks: [
+        // Never use the id "estimate" for content: it is reserved for the estimate form (global "Free estimate" CTAs scroll to it; V5.1).
+        id: "accurate-estimate", h: "How do you get an accurate kitchen estimate?", blocks: [
           { ul: [
             "Ask for an itemized estimate that lists cabinets, counters, appliances, trade work, permits and any allowances separately.",
             "Ask what each allowance covers. A low allowance for cabinets or tile makes a bid look cheaper than it is.",
@@ -235,7 +238,7 @@ export const posts: Post[] = [
       },
     ],
     faqs: [
-      { q: "Is a kitchen remodel worth it for resale in Massachusetts?", a: `Smaller updates pay back more. In the 2025 Cost vs. Value data for New England, a midrange minor kitchen remodel recouped ${pct("minorKitchen")} of its cost at resale, while a midrange major remodel recouped ${pct("majorKitchenMid")} and an upscale one ${pct("majorKitchenUp")}. A major remodel is usually about how you live, not resale.` },
+      { q: "Is a kitchen remodel worth it for resale in Massachusetts?", a: `Smaller updates pay back more. In the 2025 Cost vs. Value data for New England, a midrange minor kitchen remodel recouped ${pct("minorKitchen")} of its cost at resale, while major remodels recouped a smaller share. A major remodel is usually about how you live, not resale.` },
       { q: "What's the most expensive part of a kitchen remodel?", a: "Usually the cabinets, followed by counters, appliances and any trade work needed to move plumbing, gas or walls." },
       { q: "Can we keep using the kitchen during the remodel?", a: "Not during demolition and installation. Many families set up a temporary kitchen in another room with the refrigerator and a microwave for those weeks." },
       { q: "What should a kitchen remodel contract include?", a: "Both parties' names and addresses, the contractor's Home Improvement Contractor registration number, start and completion dates, the detailed scope and materials, the total price and payment schedule, and who obtains the permits. The deposit is capped at one-third of the price or the cost of special-order materials, whichever is greater." },
@@ -249,19 +252,18 @@ export const posts: Post[] = [
     slug: "bathroom-remodel-cost-massachusetts",
     title: "How Much Does a Bathroom Remodel Cost in Massachusetts?",
     seoTitle: "Bathroom Remodel Cost in Massachusetts (2026 Guide)",
-    description: "A midrange bathroom remodel averaged $27,559 in New England and an upscale one $83,877 (Cost vs. Value 2025). How tile, layout and plumbing move the price.",
-    excerpt: "New England benchmarks for midrange and upscale bathroom remodels, what moves the price in Massachusetts, permits, timing and why waterproofing matters.",
-    answer: `Remodeling magazine's 2025 Cost vs. Value report puts the New England average for a midrange remodel of a 5-by-7-foot bathroom at ${$("bathMid")}, and an upscale remodel that enlarges and re-plans a primary bath at ${$("bathUp")}. In Massachusetts, moving plumbing, the amount of tile and water damage found behind old walls move the price most.`,
+    description: "A midrange 5x7-foot bathroom remodel averaged $27,559 in New England and recouped 90.5% (Cost vs. Value 2025). How tile, layout and plumbing move the price.",
+    excerpt: "A New England cost benchmark for a midrange bathroom remodel, how an upscale remodel differs, what moves the price in Massachusetts, permits, timing and why waterproofing matters.",
+    answer: `Remodeling magazine's 2025 Cost vs. Value report puts the New England average for a midrange remodel of a 5-by-7-foot bathroom at ${$("bathMid")}. An upscale remodel that enlarges and re-plans the room costs more. In Massachusetts, moving plumbing, the amount of tile and water damage found behind old walls move the price most.`,
     category: "Cost guides",
     published: SIX_POSTS_COMMIT,
     modified: REWRITE,
-    image: `${PR}/bathroom-remodels-03.webp`,
+    image: `${PR}/bathroom-remodels-03.webp`, // the file itself is now cropped (no baked-in banner), so no CSS crop
     photo: {
-      alt: "Walk-in shower with marble-look tile walls, a pebble-style floor and a hinged glass door, next to a toilet",
+      alt: "Walk-in shower with marble-look tile walls, a hexagon mosaic floor and a hinged glass door, next to a toilet",
       caption: "A walk-in shower from one of our recent bathroom remodels in Massachusetts.",
       href: "/projects/bathroom-remodels",
       hrefLabel: "See more of our bathroom remodels",
-      aspect: "6 / 5", // crops the baked-in contact banner off the bottom of the original photo
     },
     related: {
       services: ["kitchen-bathroom-remodeling"],
@@ -272,15 +274,14 @@ export const posts: Post[] = [
       {
         id: "cost-table", h: "What does a bathroom remodel cost in New England?", blocks: [
           { table: {
-            caption: "Bathroom costs: New England averages (Cost vs. Value 2025)",
+            caption: "Bathroom remodel cost: New England average (Cost vs. Value 2025)",
             head: ["Project", "Typical scope", "New England average, 2025", "Cost recouped at resale"],
             rows: [
               ["Bathroom remodel, midrange", "Update a 5 × 7 ft bathroom: new tub with ceramic tile surround, toilet, fixtures, vanity with solid-surface top and tile floor", $("bathMid"), pct("bathMid")],
-              ["Bathroom remodel, upscale", "Expand a small bathroom to about 100 sq ft within the house, relocate fixtures, tile shower with frameless glass, freestanding tub and high-end finishes", $("bathUp"), pct("bathUp")],
-              ["Bathroom addition, midrange", "Add a new 6 × 8 ft full bathroom to a house with one or one-and-a-half baths", $("bathAddMid"), pct("bathAddMid")],
             ],
             note: CVV_NOTE,
           } },
+          { p: `The same report also prices an upscale bathroom remodel, which enlarges the room and moves fixtures, and bathroom additions. Those larger projects cost more and recoup a smaller share of their cost at resale; we don't repeat their figures here, and ${FULL_REPORT}.` },
           { p: "We don't publish our own price ranges. Every bathroom is priced from an itemized estimate after a free visit, because tile choices, the shower design and what's behind the walls vary so much from house to house." },
         ],
       },
@@ -323,7 +324,7 @@ export const posts: Post[] = [
       },
       {
         id: "examples", h: "What do our recent bathroom remodels look like?", blocks: [
-          { p: "The shower at the top of this guide is from one of our recent bathroom remodels: marble-look tile walls, a pebble-style floor and a hinged glass door. Our [bathroom projects page](/projects/bathroom-remodels) shows more, including walk-in showers with frameless glass, a tub with a glass panel and subway tile, and a corner shower beside a soaking tub." },
+          { p: "The shower at the top of this guide is from one of our recent bathroom remodels: marble-look tile walls, a hexagon mosaic floor and a hinged glass door. Our [bathroom projects page](/projects/bathroom-remodels) shows more, including walk-in showers with frameless glass, a tub with a glass panel and subway tile, and a corner shower beside a soaking tub." },
           { p: "We remodel bathrooms across our service area, including [bathroom and kitchen remodeling in Hudson](/services/kitchen-bathroom-remodeling/hudson) and [in Northborough](/services/kitchen-bathroom-remodeling/northborough), where we're based. A client in Hudson shared this:" },
           { testimonial: "Rafael C." },
           { p: "See our [kitchen and bathroom remodeling service](/services/kitchen-bathroom-remodeling) for the full scope of what we do." },
@@ -331,7 +332,7 @@ export const posts: Post[] = [
       },
     ],
     faqs: [
-      { q: "Is a bathroom remodel worth it for resale?", a: `A midrange remodel comes close: in the 2025 Cost vs. Value data for New England, it recouped ${pct("bathMid")} of its cost at resale. The upscale remodel recouped ${pct("bathUp")}, so the extra spending is mostly for your own use.` },
+      { q: "Is a bathroom remodel worth it for resale?", a: `A midrange remodel comes close: in the 2025 Cost vs. Value data for New England, it recouped ${pct("bathMid")} of its cost at resale. An upscale remodel recoups a smaller share, so the extra spending is mostly for your own use.` },
       { q: "Can I keep my tub and still update the bathroom?", a: "Yes. Keeping the tub and toilet where they are avoids moving drains, one of the bigger cost drivers. New tile, a new vanity, fixtures and lighting can go in around the existing layout." },
       { q: "Do I need a permit to replace a vanity or toilet?", a: "When a contractor does the work, plumbing is done by a licensed plumber under a plumbing permit. Ask your plumber or your town whether a like-for-like fixture swap needs a permit; moving or adding fixtures does." },
       { q: "How long will we be without the bathroom?", a: "Typically 2 to 3 weeks of work once materials are in, plus a short wait at the end if a custom glass door is made to fit after the tile is finished." },
@@ -345,16 +346,16 @@ export const posts: Post[] = [
     slug: "home-addition-cost-massachusetts",
     title: "How Much Does a Home Addition Cost in Massachusetts?",
     seoTitle: "Home Addition Cost in Massachusetts (2026 Guide)",
-    description: "A midrange 6x8-foot bathroom addition averaged $63,783 in New England (Cost vs. Value 2025). What drives the cost of an addition in Massachusetts, and why.",
-    excerpt: "Regional benchmarks for additions, the Massachusetts costs to budget for (zoning, septic, wetlands, energy code), timelines and additions we've built in Needham and Lynnfield.",
-    answer: `Additions vary more than any other remodel. As a regional benchmark, Remodeling magazine's 2025 Cost vs. Value report puts a midrange 6-by-8-foot bathroom addition in New England at ${$("bathAddMid")} and an upscale bathroom addition at ${$("bathAddUp")}; larger room additions cost more. In Massachusetts, foundation work, zoning, septic rules and engineering are the biggest swing factors.`,
+    description: "No single figure fits every addition. What drives home addition costs in Massachusetts: foundation, zoning, septic, wetlands, energy code and engineering.",
+    excerpt: "Why no single figure fits every addition, the Massachusetts costs to budget for (zoning, septic, wetlands, energy code), timelines and our addition projects in Needham and Lynnfield.",
+    answer: "No single figure fits every home addition, and this guide doesn't quote one: the size, the foundation, the site and how the new space ties into the house vary too much. In Massachusetts, foundation work, zoning, septic rules, wetlands review and engineering are the biggest swing factors. An itemized estimate based on your plans is the dependable number.",
     category: "Cost guides",
     published: SIX_POSTS_COMMIT,
     modified: REWRITE,
     image: `${PR}/home-addition-needham-ma-05.webp`,
     photo: {
       alt: "Colonial house in Needham, MA with a new front porch roof frame, house wrap along the base and a plywood-sheathed section at the side",
-      caption: "Framing stage of a home addition we built in Needham, MA.",
+      caption: "Framing stage of a front porch addition on our Needham, MA project.",
       href: "/projects/home-addition-needham-ma",
       hrefLabel: "See the Needham addition project",
       place: NEEDHAM,
@@ -366,18 +367,10 @@ export const posts: Post[] = [
     },
     sections: [
       {
-        id: "cost-table", h: "What does an addition cost in New England?", blocks: [
-          { table: {
-            caption: "Bathroom additions: New England averages (Cost vs. Value 2025)",
-            head: ["Project", "Typical scope", "New England average, 2025", "Cost recouped at resale"],
-            rows: [
-              ["Bathroom addition, midrange", "Add a new 6 × 8 ft full bathroom to a house with one or one-and-a-half baths", $("bathAddMid"), pct("bathAddMid")],
-              ["Bathroom addition, upscale", "A larger primary bathroom addition with high-end fixtures and finishes", $("bathAddUp"), pct("bathAddUp")],
-            ],
-            note: CVV_NOTE,
-          } },
-          { p: "Why does a 48-square-foot bathroom addition cost so much? Every new room needs its own foundation, framing, roof, insulation, windows, plumbing, electrical work and finishes, and it has to be tied into the existing house. Those fixed costs don't shrink much as the room gets smaller. The report also covers larger primary-suite additions; the full New England data is free at costvsvalue.com." },
-          { p: "We don't publish our own price ranges for additions. Each one is priced from its plans after a site visit, with an itemized estimate." },
+        id: "benchmark", h: "Is there a typical cost for a home addition in New England?", blocks: [
+          { p: `Not one you can rely on for your house. This guide doesn't quote a dollar figure for additions. Remodeling magazine's Cost vs. Value report does price standard bathroom and primary-suite additions for New England, and ${FULL_REPORT}, but an addition's real cost depends on its size, foundation, plans and site far more than on a regional average.` },
+          { p: "Even a small addition costs more than its size suggests. Every new room needs its own foundation, framing, roof, insulation, windows, plumbing, electrical work and finishes, and it has to be tied into the existing house. Those fixed costs don't shrink much as the room gets smaller." },
+          { p: "We don't publish our own price ranges for additions either. Each one is priced from its plans after a site visit, with an itemized estimate. The sections below cover what moves that number in Massachusetts." },
         ],
       },
       {
@@ -421,11 +414,11 @@ export const posts: Post[] = [
             "Moving: agent commission, the Massachusetts deed excise tax (customarily paid by the seller), closing costs on the new house, moving costs, and the price difference between your house and a bigger one in the area you want.",
             "Adding on: design and engineering, permits and approvals, construction, possible changes to your property tax assessment, and living with construction for several months.",
           ] },
-          { p: `At resale, additions rarely pay for themselves: the bathroom additions in the table above recouped ${pct("bathAddMid")} and ${pct("bathAddUp")}. An addition makes the most sense when you plan to stay and the extra space changes how you live.` },
+          { p: `At resale, additions rarely pay for themselves: in the Cost vs. Value data, additions recoup a smaller share of their cost than smaller projects such as new siding or a minor kitchen remodel (see our [resale value guide](/blog/5-remodels-that-add-the-most-home-value)). An addition makes the most sense when you plan to stay and the extra space changes how you live.` },
         ],
       },
       {
-        id: "examples", h: "What additions have we built?", blocks: [
+        id: "examples", h: "What addition projects have we documented?", blocks: [
           { ul: [
             "[Home addition in Needham, MA](/projects/home-addition-needham-ma): a front porch addition documented from the excavation to the framed porch posts and roof.",
             "[Home addition and exterior remodel in Lynnfield, MA](/projects/home-addition-exterior-lynnfield-ma): a two-story addition beside the original house, with new windows and siding and front porch work.",
@@ -441,7 +434,7 @@ export const posts: Post[] = [
       { q: "Do I need an architect for a home addition in Massachusetts?", a: "You need drawings good enough for a building permit, and often a structural engineer for foundations, beams or a second story. Ask your building department what it requires for your project before you hire a designer." },
       { q: "Can we live at home during an addition?", a: "Often, yes. Much of the work happens outside the existing rooms until the new space is tied in. Expect noise, short utility shutoffs and a stretch when the opening between old and new is made. Second-story additions are harder to live through because the roof comes off." },
       { q: "Does an addition raise property taxes?", a: "Usually, because it raises the assessed value of the house. Your town's assessor can explain how improvements are assessed." },
-      { q: "Do additions pay for themselves at resale?", a: `Rarely. In the 2025 Cost vs. Value data for New England, a midrange bathroom addition recouped ${pct("bathAddMid")} of its cost and an upscale one ${pct("bathAddUp")}.` },
+      { q: "Do additions pay for themselves at resale?", a: "Rarely. In the 2025 Cost vs. Value data for New England, additions recoup a smaller share of their cost at resale than smaller projects such as new siding or a minor kitchen remodel. An addition makes the most sense when you plan to stay." },
     ],
     sources: [S.cvv, S.cvvData, S.contract, S.c142a2],
     tags: ["home additions", "remodeling costs", "Massachusetts"],
@@ -487,7 +480,8 @@ export const posts: Post[] = [
         ],
       },
       {
-        id: "estimate", h: "How do you estimate siding for your house?", blocks: [
+        // Never use the id "estimate" for content: it is reserved for the estimate form (V5.1).
+        id: "estimate-your-siding", h: "How do you estimate siding for your house?", blocks: [
           { ol: [
             { t: "Measure each wall.", d: "Multiply length by height for each wall, and add the triangles of the gable ends (half the base times the height)." },
             { t: "Subtract the large openings.", d: "Garage doors and big window groups come out; small windows usually don't, because of the waste around them." },
@@ -513,7 +507,7 @@ export const posts: Post[] = [
       {
         id: "permits-lead", h: "Do you need a permit and lead-safe work for new siding in Massachusetts?", blocks: [
           { p: "Usually, yes. Most Massachusetts towns require a building permit for re-siding, often a short-form permit, taken out by a Construction Supervisor License holder. Homes in a local historic district may also need the historic commission's approval first. See the [siding section of our permit guide](/blog/do-you-need-a-permit-to-remodel-massachusetts#siding)." },
-          { p: `If the house was built before 1978 and the old siding or trim is painted, lead-safe rules apply. ${LEAD_RULE}` },
+          { p: `If the house was built before 1978 and the work disturbs more than 20 square feet of painted siding or trim, Massachusetts lead-safe rules apply, including a Lead-Safe Renovation Contractor license for the company doing the work; see ${LEAD_LINK}.` },
         ],
       },
       {
@@ -543,9 +537,9 @@ export const posts: Post[] = [
     slug: "5-remodels-that-add-the-most-home-value",
     title: "Which Remodels Add the Most Resale Value in Massachusetts?",
     seoTitle: "Which Remodels Pay Back Most in Massachusetts? (2025 Data)",
-    description: "In New England, fiber-cement siding recouped 144.9% at resale and a minor kitchen remodel 134.3%, vs. 47.2% for a major kitchen (Cost vs. Value 2025).",
+    description: "In New England, fiber-cement siding recouped 144.9% of its cost at resale, a minor kitchen remodel 134.3% and a composite deck 95.8% (Cost vs. Value 2025).",
     excerpt: "Five common remodels ranked by how much of their cost they recouped at resale in New England, plus the projects that are about how you live rather than resale.",
-    answer: `In New England, smaller exterior and cosmetic projects recoup the most at resale. In Remodeling magazine's 2025 Cost vs. Value report, fiber-cement siding recouped ${pct("fiberCement")} of its cost and a midrange minor kitchen remodel ${pct("minorKitchen")}, while a midrange major kitchen remodel recouped ${pct("majorKitchenMid")} and a midrange bathroom addition ${pct("bathAddMid")}.`,
+    answer: `In New England, smaller exterior and cosmetic projects recoup the most at resale. In Remodeling magazine's 2025 Cost vs. Value report, fiber-cement siding recouped ${pct("fiberCement")} of its cost and a midrange minor kitchen remodel ${pct("minorKitchen")}. Larger projects, such as major kitchen remodels, upscale bathrooms and additions, recouped a smaller share.`,
     category: "Cost guides",
     published: FIRST_COMMIT,
     modified: REWRITE,
@@ -589,14 +583,10 @@ export const posts: Post[] = [
               ["Deck addition, wood", $("woodDeck"), pct("woodDeck")],
               ["Vinyl window replacement", $("vinylWindows"), pct("vinylWindows")],
               ["Wood window replacement", $("woodWindows"), pct("woodWindows")],
-              ["Major kitchen remodel, midrange", $("majorKitchenMid"), pct("majorKitchenMid")],
-              ["Bathroom remodel, upscale", $("bathUp"), pct("bathUp")],
-              ["Bathroom addition, midrange", $("bathAddMid"), pct("bathAddMid")],
-              ["Major kitchen remodel, upscale", $("majorKitchenUp"), pct("majorKitchenUp")],
-              ["Bathroom addition, upscale", $("bathAddUp"), pct("bathAddUp")],
             ],
             note: CVV_NOTE,
           } },
+          { p: `The full report also covers larger projects, such as major kitchen remodels, upscale bathroom remodels and additions. We don't repeat their figures here; they recouped a smaller share of their cost than the siding, kitchen and deck projects at the top of the table, and ${FULL_REPORT}.` },
         ],
       },
       {
@@ -612,7 +602,7 @@ export const posts: Post[] = [
       },
       {
         id: "live-not-resale", h: "Which remodels are about how you live, not resale?", blocks: [
-          { p: `Major kitchen remodels (${pct("majorKitchenMid")} midrange, ${pct("majorKitchenUp")} upscale), upscale bathrooms (${pct("bathUp")}) and additions (${pct("bathAddMid")} for a midrange bathroom addition) recoup the least. They rarely pay for themselves at sale, but they can still be the right call when you plan to stay: more room for a growing family, a kitchen that works, a second bathroom.` },
+          { p: "Major kitchen remodels, upscale bathroom remodels and additions recoup a smaller share of their cost than the siding, kitchen and deck projects at the top of the table above. They rarely pay for themselves at sale, but they can still be the right call when you plan to stay: more room for a growing family, a kitchen that works, a second bathroom." },
           { p: "If that's your situation, our [home addition cost guide](/blog/home-addition-cost-massachusetts) and [home additions service](/services/home-additions-remodeling) are the place to start." },
         ],
       },
@@ -630,8 +620,8 @@ export const posts: Post[] = [
     ],
     faqs: [
       { q: "What remodel adds the most value to a house in Massachusetts?", a: `Of the projects compared in this guide, fiber-cement siding replacement recouped the most in the 2025 Cost vs. Value data for New England (${pct("fiberCement")}), followed by a midrange minor kitchen remodel (${pct("minorKitchen")}). Nationally, garage-door and steel entry-door replacements have also ranked at or near the top of recent reports.` },
-      { q: "Is a kitchen remodel worth it before selling?", a: `A modest one can be: the midrange minor kitchen remodel recouped ${pct("minorKitchen")} in New England. A major remodel recouped ${pct("majorKitchenMid")} at the midrange level, so it is rarely worth doing just to sell.` },
-      { q: "Do additions pay for themselves?", a: `Usually not at resale. A midrange bathroom addition recouped ${pct("bathAddMid")} in New England in 2025 and an upscale one ${pct("bathAddUp")}. Additions make sense when you plan to stay.` },
+      { q: "Is a kitchen remodel worth it before selling?", a: `A modest one can be: the midrange minor kitchen remodel recouped ${pct("minorKitchen")} in New England. Major remodels recouped a smaller share, so they are rarely worth doing just to sell.` },
+      { q: "Do additions pay for themselves?", a: "Usually not at resale. In the 2025 Cost vs. Value data for New England, additions recouped a smaller share of their cost than smaller projects such as new siding or a minor kitchen remodel. Additions make sense when you plan to stay." },
     ],
     sources: [S.cvv, S.cvvData],
     tags: ["home value", "resale", "remodeling costs", "New England"],
@@ -767,7 +757,7 @@ export const posts: Post[] = [
             { t: "Check the Construction Supervisor License.", d: "Structural work needs a building permit taken out by an individual who holds a Construction Supervisor License (CSL), issued by the state Board of Building Regulations and Standards. Ask whose CSL will be on your permit and look that person up too." },
             { t: "For a house built before 1978, ask for the lead-safe license.", d: "Work that disturbs painted surfaces beyond small thresholds, and any window replacement, must be done by a company with a Massachusetts Lead-Safe Renovation Contractor license." },
             { t: "Get a certificate of insurance.", d: "Ask for a certificate showing general liability coverage and, if the contractor has employees, workers' compensation, which Massachusetts requires of employers. Ask for it to come from the insurance agent so you know it's current." },
-            { t: "Get a written contract.", d: "Massachusetts requires a written contract for home improvement work over $1,000. It should include both parties' names and addresses, the contractor's HIC number, the start and substantial completion dates, a detailed scope with materials, the total price and payment schedule, and who obtains the permits. Our [kitchen cost guide](/blog/kitchen-remodel-cost-massachusetts#estimate) shows what an itemized estimate should list." },
+            { t: "Get a written contract.", d: "Massachusetts requires a written contract for home improvement work over $1,000. It should include both parties' names and addresses, the contractor's HIC number, the start and substantial completion dates, a detailed scope with materials, the total price and payment schedule, and who obtains the permits. Our [kitchen cost guide](/blog/kitchen-remodel-cost-massachusetts#accurate-estimate) shows what an itemized estimate should list." },
             { t: "Keep the deposit within the legal limit.", d: "The deposit can't be more than one-third of the total price, or the cost of special-order materials if that is greater." },
             { t: "Know your three-day cancellation right.", d: "If you sign the contract somewhere other than the contractor's place of business, such as at home, Massachusetts law generally gives you three business days to cancel." },
             { t: "Make sure the permit is in the contractor's name.", d: "The building permit should be taken out by the contractor's CSL holder. If you pull it yourself as the homeowner for work a contractor does, you generally lose access to the state's Home Improvement Contractor Guaranty Fund. Our [permit guide](/blog/do-you-need-a-permit-to-remodel-massachusetts#who-pulls) explains who pulls which permit." },
@@ -798,8 +788,10 @@ export const posts: Post[] = [
         ],
       },
       {
-        id: "check-us", h: "How can you check Waterfront Construction?", blocks: [
-          { p: licensingAnswer("MA") },
+        // Not "How can you check Waterfront Construction?": until site.hic is set, the page must not invite a check
+        // that its own checklist says we would fail (verification V3.3). licensingAnswer() adds the numbers once set.
+        id: "about-publisher", h: "Who publishes this checklist?", blocks: [
+          { p: `This checklist is published by ${site.name}, an owner-led home remodeling contractor based in Northborough, Massachusetts. ${licensingAnswer("MA")}` },
           { p: `${OWNER_LINE} You can read more [about Ernando](/about/ernando-nunes), see [our projects](/gallery), such as the [Needham addition](/projects/home-addition-needham-ma) and the [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), and read [what our clients say](/reviews). Our [kitchen and bathroom remodeling](/services/kitchen-bathroom-remodeling) and [home additions](/services/home-additions-remodeling) pages explain how we run each kind of job, and our [Northborough page](/services/kitchen-bathroom-remodeling/northborough) covers the town where we're based.` },
         ],
       },
@@ -900,12 +892,12 @@ export const posts: Post[] = [
       },
       {
         id: "permits", h: "Do you need a permit to replace windows in Massachusetts?", blocks: [
-          { p: "Usually, yes. Most Massachusetts towns require a building permit for replacement windows, often a short-form permit taken out by a Construction Supervisor License holder. New units must meet the energy code, bedroom windows must keep the emergency escape opening the code requires, and glass near doors, tubs and stairs must be safety glass. In a local historic district, visible changes may need the commission's approval. See the [windows section of our permit guide](/blog/do-you-need-a-permit-to-remodel-massachusetts#windows)." },
+          { p: "Usually, yes. Most Massachusetts towns require a building permit for replacement windows, often a short-form permit taken out by a Construction Supervisor License holder. New units must meet the energy code, a replacement in a bedroom's emergency escape opening must not make that opening smaller, and glass near doors, tubs and stairs must be safety glass. In a local historic district, visible changes may need the commission's approval. See the [windows section of our permit guide](/blog/do-you-need-a-permit-to-remodel-massachusetts#windows)." },
         ],
       },
       {
         id: "lead", h: "What if your house was built before 1978?", blocks: [
-          { p: `Any window replacement in a pre-1978 home falls under the lead-safe rules. ${LEAD_RULE}` },
+          { p: `Replacing even one window in a pre-1978 home falls under the lead-safe rules, however little painted surface it disturbs: in Massachusetts the company doing it needs a Lead-Safe Renovation Contractor license, and in New Hampshire the federal EPA renovation rule applies. See ${LEAD_LINK}.` },
         ],
       },
       {
@@ -996,11 +988,11 @@ export const posts: Post[] = [
       },
       {
         id: "example", h: "What does new siding look like on a real project?", blocks: [
-          { p: "On our [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), the new addition got white vertical siding and the original house got white lap siding, two profiles on one house." },
+          { p: "On our [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), the new addition got white vertical siding and the main house's second floor got white lap siding, two profiles on one house." },
           { figure: {
             src: `${PR}/home-addition-exterior-lynnfield-ma-11.webp`,
             alt: "Upper story of a house in Lynnfield, MA with new white lap siding and black windows above a new front porch frame, in snow",
-            caption: "New white lap siding on the original house in our Lynnfield project.",
+            caption: "New white lap siding on the main house's second floor in our Lynnfield project.",
             href: "/projects/home-addition-exterior-lynnfield-ma",
             hrefLabel: "See the project",
             place: LYNNFIELD,
@@ -1032,7 +1024,7 @@ export const posts: Post[] = [
     image: `${PR}/home-addition-needham-ma-progress-05.webp`,
     photo: {
       alt: "Mini excavator digging beside a colonial house in Needham, MA, next to a Waterfront Construction job sign",
-      caption: "Site work for a home addition we built in Needham, MA.",
+      caption: "Site work for the front porch addition on our Needham, MA project.",
       href: "/projects/home-addition-needham-ma",
       hrefLabel: "See the Needham addition project",
       place: NEEDHAM,
@@ -1059,7 +1051,7 @@ export const posts: Post[] = [
               ["Re-siding", "Usually, often a short-form permit", "Lead-safe rules on pre-1978 homes; historic-district review where one applies"],
               ["Replacement windows and doors", "Usually, often a short-form permit", "Energy code, egress and safety glass; lead-safe rules for any window replacement in a pre-1978 home"],
               ["Re-roofing", "Usually", "Historic-district review where one applies"],
-              ["Kitchen or bathroom remodel", "When walls, structure or layout change", "Plumbing, gas and electrical permits pulled by the licensed trades"],
+              ["Kitchen or bathroom remodel", "When walls or the structure change", "Moving plumbing, gas or wiring needs separate permits pulled by the licensed trades"],
               ["Painting, flooring, cabinets and counters replaced in place", "Usually not", "Lead-safe rules still apply to painted surfaces in pre-1978 homes"],
             ],
           } },
@@ -1090,12 +1082,12 @@ export const posts: Post[] = [
       },
       {
         id: "windows", h: "Do you need a permit to replace windows or doors?", blocks: [
-          { p: "Usually, yes, even when the new windows go in the same openings. Most towns require a building permit, often a short-form permit. New units must meet the energy code, bedroom windows must keep the emergency escape opening the code requires, and glass near doors, tubs and stairs must be safety glass. Any window replacement in a pre-1978 home falls under the lead-safe rules. See our [window replacement cost guide](/blog/window-replacement-cost-massachusetts) and [window and door service](/services/windows-and-doors)." },
+          { p: "Usually, yes, even when the new windows go in the same openings. Most towns require a building permit, often a short-form permit. New units must meet the energy code, a replacement in a bedroom's emergency escape opening must not make that opening smaller, and glass near doors, tubs and stairs must be safety glass. Any window replacement in a pre-1978 home falls under the lead-safe rules. See our [window replacement cost guide](/blog/window-replacement-cost-massachusetts) and [window and door service](/services/windows-and-doors)." },
         ],
       },
       {
         id: "kitchens-baths", h: "Do kitchen and bathroom remodels need permits?", blocks: [
-          { p: "When walls, structure or the layout change, yes: a building permit. Plumbing and gas work need permits pulled by a licensed plumber or gas fitter, and electrical work needs a permit pulled by a licensed electrician. Replacing cabinets, counters, tile or fixtures in place is usually treated as finish work, though any plumbing in a contractor's remodel is still done by a licensed plumber. See our [kitchen remodel cost guide](/blog/kitchen-remodel-cost-massachusetts), [bathroom remodel cost guide](/blog/bathroom-remodel-cost-massachusetts) and [kitchen and bathroom remodeling service](/services/kitchen-bathroom-remodeling)." },
+          { p: "A remodel that moves walls or changes the structure needs a building permit. Moving plumbing, gas or wiring needs separate permits: plumbing and gas permits pulled by a licensed plumber or gas fitter, and an electrical permit pulled by a licensed electrician. Replacing cabinets, counters, tile or fixtures in place is usually treated as finish work, though any plumbing in a contractor's remodel is still done by a licensed plumber. See our [kitchen remodel cost guide](/blog/kitchen-remodel-cost-massachusetts), [bathroom remodel cost guide](/blog/bathroom-remodel-cost-massachusetts) and [kitchen and bathroom remodeling service](/services/kitchen-bathroom-remodeling)." },
         ],
       },
       {
@@ -1112,7 +1104,8 @@ export const posts: Post[] = [
       {
         id: "who-pulls", h: "Who pulls the permit: you or your contractor?", blocks: [
           { p: "The building permit should be taken out by the contractor's Construction Supervisor License holder, whose license number goes on the permit, along with the company's Home Improvement Contractor registration number. Plumbers, gas fitters and electricians pull their own trade permits. Permit applications also ask for proof of workers' compensation coverage, and a Massachusetts home improvement contract should state who obtains the permits." },
-          { p: "Don't pull the permit yourself for work a contractor is doing. Homeowners who do generally lose access to the state's Home Improvement Contractor Guaranty Fund. On our jobs, we apply for the building permit and schedule the inspections, and we coordinate the licensed plumbers and electricians, who pull their own permits. Our [pre-hire checklist](/blog/how-to-choose-a-contractor-in-massachusetts) covers what else to confirm before you sign." },
+          // V3.2: the first-person "we apply for the building permit" renders only once site.csl is set.
+          { p: `Don't pull the permit yourself for work a contractor is doing. Homeowners who do generally lose access to the state's Home Improvement Contractor Guaranty Fund. ${hasCsl ? "On our jobs, we apply for the building permit and schedule the inspections, and we coordinate the licensed plumbers and electricians, who pull their own permits." : "Whoever you hire, the written contract should name who obtains each permit, and the building permit should carry the contractor's Construction Supervisor License number."} Our [pre-hire checklist](/blog/how-to-choose-a-contractor-in-massachusetts) covers what else to confirm before you sign.` },
         ],
       },
       {
@@ -1205,7 +1198,7 @@ export const posts: Post[] = [
       {
         id: "permits-lead", h: "Do replacement windows need a permit and lead-safe work?", blocks: [
           { p: "Usually, yes, to both. Most Massachusetts towns require a building permit for replacement windows, often a short-form permit, and new units must meet the energy code, egress and safety-glass rules. See the [windows section of our permit guide](/blog/do-you-need-a-permit-to-remodel-massachusetts#windows)." },
-          { p: `For a home built before 1978: ${LEAD_RULE}` },
+          { p: `In a home built before 1978, every window replacement falls under the lead-safe rules, and in Massachusetts the company doing it needs a Lead-Safe Renovation Contractor license; see ${LEAD_LINK}.` },
         ],
       },
       {

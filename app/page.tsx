@@ -3,14 +3,16 @@ import Link from "next/link";
 import LeadForm from "@/components/LeadForm";
 import JsonLd from "@/components/JsonLd";
 import { PhoneIcon, CheckIcon } from "@/components/chrome-icons";
+import ServiceIcon from "@/app/services/_components/ServiceIcon";
 import { services, testimonials, site, stats, serviceArea } from "@/lib/site";
 import { PHOTO_CAPTIONS } from "@/lib/services";
 import { homeFaqs } from "@/lib/faq";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
-import { projects } from "@/lib/projects";
+import { projects, type Project } from "@/lib/projects";
+import { displayAddress } from "@/lib/address";
 import { posts } from "@/lib/posts";
 import { pageMeta } from "@/lib/seo";
-import { pageGraph, webPageNode, faqNode, BUSINESS_ID, OWNER_PAGE } from "@/lib/schema";
+import { pageGraph, webPageNode, BUSINESS_ID, OWNER_PAGE } from "@/lib/schema";
 import FaqList from "./faq/FaqList";
 import { countyGroups, AREA_SENTENCE } from "./service-areas/areas";
 
@@ -33,18 +35,21 @@ const project = (slug: string) => projects.find((p) => p.slug === slug);
 // True descriptions of what each photo shows; shared captions come from lib/services.ts.
 const caption = (src: string) => PHOTO_CAPTIONS[src]?.alt ?? "Photo from a Waterfront Construction job";
 
-// Recent work: real photos, each linked to its case study, with the true location (never a town for the
-// bathroom album, whose town was not recorded).
+// Recent work: ONE tile per case study (V5.8: no project repeated), a real photo each, linked to its case
+// study, with the true location (never a town for the bathroom album, whose town was not recorded). The
+// Lynnfield framing job is documented in video only, so its tile is a video still, described as one. The
+// deck-and-stairs clip (a blurry still) is reached through "See all projects".
 const RECENT: { src: string; slug: string; kind: string }[] = [
   { src: "/images/projects/kitchen-remodel-mansfield-ma-02.webp", slug: "kitchen-remodel-mansfield-ma", kind: "Kitchen" },
-  { src: "/images/projects/bathroom-remodels-01.webp", slug: "bathroom-remodels", kind: "Bathroom" },
+  { src: "/images/projects/bathroom-remodels-01.webp", slug: "bathroom-remodels", kind: "Bathrooms" },
   { src: "/images/projects/deck-salem-nh-02.webp", slug: "pool-deck-salem-nh", kind: "Deck" },
-  { src: "/images/projects/home-addition-exterior-lynnfield-ma-19.webp", slug: "home-addition-exterior-lynnfield-ma", kind: "Siding" },
-  { src: "/images/projects/home-addition-needham-ma-05.webp", slug: "home-addition-needham-ma", kind: "Addition" },
-  { src: "/images/projects/home-addition-exterior-lynnfield-ma-13.webp", slug: "home-addition-exterior-lynnfield-ma", kind: "Windows" },
-  { src: "/images/projects/bathroom-remodels-04.webp", slug: "bathroom-remodels", kind: "Bathroom" },
-  { src: "/images/projects/deck-salem-nh-05.webp", slug: "pool-deck-salem-nh", kind: "Deck" },
+  { src: "/images/projects/home-addition-exterior-lynnfield-ma-19.webp", slug: "home-addition-exterior-lynnfield-ma", kind: "Siding & windows" },
+  { src: "/images/projects/home-addition-needham-ma-05.webp", slug: "home-addition-needham-ma", kind: "Porch addition" },
+  { src: "/images/projects/home-addition-lynnfield-ma-01.webp", slug: "home-addition-framing-lynnfield-ma", kind: "Addition framing" },
 ];
+// A video still keeps its own description (it already names the town and says it is a still).
+const tileAlt = (p: Project, src: string, where: string) =>
+  p.videos.find((v) => v.poster === src)?.posterAlt ?? `${caption(src)} (${where})`;
 
 const statLabel = (s: { value: string; label: string }) =>
   s.value === `${site.experience}+` ? `${s.label} (owner ${site.owner})` : s.label;
@@ -54,7 +59,7 @@ const credentials = hasHic || hasCsl ? credentialLine({ insured: false }) : "";
 const ld = pageGraph(
   [
     webPageNode({ path: "/", name: H1, description: DESCRIPTION, mainEntity: { "@id": BUSINESS_ID }, primaryImage: HERO, crumbs: false }),
-    faqNode("/", homeFaqs),
+    // No FAQPage here: the same Q&A is marked up once, on /faq (V4.1). The home FAQ below is visible text only.
   ],
   { business: "full" },
 );
@@ -70,7 +75,7 @@ export default function Home() {
         <Image src={HERO} alt="Kitchen remodeled by Waterfront Construction in Mansfield, MA, with white shaker-style cabinets, a dark stone-look island and glass pendant lights"
           fill loading="eager" fetchPriority="high" quality={60} sizes="100vw" className="object-cover kenburns" />
         <div className="absolute inset-0 hero-overlay" />
-        <div className="relative container-x py-14 md:py-20 grid lg:grid-cols-[1.1fr_.9fr] gap-10 lg:gap-12 items-center">
+        <div className="relative container-x py-14 md:py-20 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-10 lg:gap-12 items-center">
           <div className="text-white reveal">
             <ul className="flex flex-wrap items-center gap-2 text-sm">
               <li className="rounded-full bg-white/10 border border-white/25 px-3.5 py-1.5">Free estimates</li>
@@ -92,7 +97,7 @@ export default function Home() {
             </ul>
           </div>
           <div className="reveal-2 self-start lg:self-center">
-            <section id="estimate" aria-labelledby="estimate-h" className="rounded-2xl bg-white text-ink p-4 sm:p-6 shadow-card">
+            <section id="estimate" data-estimate-form aria-labelledby="estimate-h" className="rounded-2xl bg-white text-ink p-4 sm:p-6 shadow-card">
               <h2 id="estimate-h" className="text-xl font-extrabold text-navy">Request a free estimate</h2>
               <p className="mt-1 text-sm text-ink/75">
                 Free and no-obligation. Prefer to talk? Call <a href={site.phoneHref} className="font-bold text-navy underline underline-offset-2">{site.phone}</a> ({site.hours}).
@@ -117,7 +122,7 @@ export default function Home() {
 
       {/* ABOUT — real job photo honestly captioned (no stock "owner" photo), entity facts block */}
       <section className="py-16 md:py-20 bg-tint-blue gridlines" aria-labelledby="about-h">
-        <div className="container-x grid lg:grid-cols-[.85fr_1.15fr] gap-10 lg:gap-12 items-start">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-[.85fr_1.15fr] gap-10 lg:gap-12 items-start">
           <figure>
             <div className="relative h-[420px] md:h-[520px] rounded-3xl overflow-hidden shadow-card">
               <Image src={OWNER_PHOTO} alt="Waterfront Construction Inc work van parked at a home-addition job in Lynnfield, MA, with the new addition framed and sheathed behind it"
@@ -144,7 +149,7 @@ export default function Home() {
               <dt className="font-bold text-navy">Track record</dt><dd className="text-ink/85">{site.projectsCompleted}+ projects completed, in {site.townsWithProjects}+ towns</dd>
               <dt className="font-bold text-navy">Service area</dt>
               <dd className="text-ink/85">{AREA_SENTENCE} (<Link href="/service-areas" className="font-semibold text-blue underline underline-offset-2">full list</Link>)</dd>
-              <dt className="font-bold text-navy">Address</dt><dd className="text-ink/85">{site.address}</dd>
+              <dt className="font-bold text-navy">Address</dt><dd className="text-ink/85">{displayAddress}</dd>
               <dt className="font-bold text-navy">Phone · Hours</dt><dd className="text-ink/85"><a href={site.phoneHref} className="font-semibold text-blue underline underline-offset-2">{site.phone}</a> · {site.hours}</dd>
               <dt className="font-bold text-navy">Estimates</dt><dd className="text-ink/85">Free and itemized</dd>
               <dt className="font-bold text-navy">Financing</dt><dd className="text-ink/85">Not offered</dd>
@@ -170,7 +175,7 @@ export default function Home() {
               <li key={s.slug} className="group card gborder overflow-hidden pop flex flex-col">
                 <div className="relative h-48 overflow-hidden bg-brand-grad">
                   {s.imageIsStock ? (
-                    <span aria-hidden="true" className="absolute inset-0 grid place-items-center text-6xl">{s.icon}</span>
+                    <span className="absolute inset-0 grid place-items-center text-white"><ServiceIcon slug={s.slug} className="w-20 h-20" /></span>
                   ) : (
                     <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" className="object-cover zoomimg" />
                   )}
@@ -199,7 +204,7 @@ export default function Home() {
           <ul className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               { t: "Owner-led", d: `${site.owner} founded the company in ${site.founded} and brings ${site.experience}+ years of hands-on construction experience.`, href: OWNER_PAGE, cta: `About ${site.owner}` },
-              { t: "Documented work", d: `${projects.length} case studies on this site show real jobs with photos taken during the work.`, href: "/gallery", cta: "See the projects" },
+              { t: "Documented work", d: `${projects.length} case studies on this site are documented with our own photos and site videos.`, href: "/gallery", cta: "See the projects" },
               { t: "Client testimonials", d: "Read what clients wrote about their projects, shared with their permission, and see our public Google reviews.", href: "/reviews", cta: "Read reviews" },
               { t: "Free, itemized estimates", d: "Every estimate is free and itemized, so you can see what each part of the job costs.", href: "#estimate", cta: "Request one" },
               { t: hasHic ? "Registered in Massachusetts" : "Insured", d: hasHic ? `${credentialLine({ insured: true })}. Certificate of insurance on request.` : "We carry insurance and provide a certificate of insurance on request.", href: "/faq#registered-insured", cta: "Registration and insurance" },
@@ -227,15 +232,15 @@ export default function Home() {
             <h2 id="recent-h" className="mt-3 text-3xl md:text-5xl font-extrabold">Recent projects</h2>
             <p className="mt-3 text-white/85 text-lg">Photos from our own jobs. Each one opens its project case study.</p>
           </div>
-          <ul className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <ul className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             {RECENT.map((r) => {
               const p = project(r.slug);
               if (!p) return null;
               const where = /,\s(MA|NH)$/.test(p.location) ? p.location : "Massachusetts";
               return (
                 <li key={r.src}>
-                  <Link href={`/projects/${p.slug}`} className="group relative block h-48 md:h-56 overflow-hidden rounded-2xl">
-                    <Image src={r.src} alt={`${caption(r.src)} (${where})`} fill quality={60} sizes="(min-width:768px) 25vw, 50vw" className="object-cover zoomimg" />
+                  <Link href={`/projects/${p.slug}`} className="group relative block h-48 md:h-60 overflow-hidden rounded-2xl">
+                    <Image src={r.src} alt={tileAlt(p, r.src, where)} fill quality={60} sizes="(min-width:1200px) 390px, (min-width:768px) 33vw, 50vw" className="object-cover zoomimg" />
                     <span className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/20 to-transparent" />
                     <span className="absolute bottom-3 left-3 right-3 text-left">
                       <span className="inline-block rounded bg-navy/85 px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">{r.kind}</span>
@@ -261,7 +266,7 @@ export default function Home() {
           <ol className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
             {[
               ["Free estimate", "We look at the job, listen to what you want, and give you a free, itemized estimate."],
-              ["Plan", "We confirm the scope, materials, schedule and permits before work starts."],
+              ["Plan", "We confirm the scope, materials, schedule and which permits the job needs before work starts."],
               ["Build", "We do the work, with one point of contact from start to finish."],
               ["Walkthrough", "We walk through the finished work with you."],
             ].map(([t, d], i) => (
@@ -272,38 +277,6 @@ export default function Home() {
               </li>
             ))}
           </ol>
-        </div>
-      </section>
-
-      {/* TIMELINES TABLE — one source (lib/services.ts timeline), caption + scoped headers; stacks on phones */}
-      <section id="timelines" className="py-16 md:py-20 bg-sand" aria-labelledby="timelines-h">
-        <div className="container-x">
-          <div className="text-center max-w-2xl mx-auto">
-            <span className="eyebrow">At a glance</span>
-            <h2 id="timelines-h" className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Services, timelines and what&apos;s included</h2>
-          </div>
-          <div className="mt-10 rounded-2xl bg-white shadow-soft ring-1 ring-black/5 overflow-hidden">
-            <table className="w-full text-left">
-              <caption className="sr-only">Typical timelines and scope for Waterfront Construction services</caption>
-              <thead className="hidden md:table-header-group bg-navy text-white text-sm">
-                <tr><th scope="col" className="p-4 font-bold">Service</th><th scope="col" className="p-4 font-bold">Typical timeline</th><th scope="col" className="p-4 font-bold">What&apos;s included</th></tr>
-              </thead>
-              <tbody>
-                {services.map((s, i) => (
-                  <tr key={s.slug} className={`block md:table-row border-t border-sand first:border-t-0 ${i % 2 ? "md:bg-sand/40" : ""}`}>
-                    <th scope="row" className="block md:table-cell px-4 pt-4 md:p-4 font-bold text-navy align-top">
-                      <Link href={`/services/${s.slug}`} className="hover:text-blue underline-offset-2 hover:underline">{s.short}</Link>
-                    </th>
-                    <td className="block md:table-cell px-4 pt-1 md:p-4 text-ink/85 text-sm align-top"><span className="md:hidden font-semibold text-navy">Typical timeline: </span>{s.timeline}</td>
-                    <td className="block md:table-cell px-4 pt-1 pb-4 md:p-4 text-ink/80 text-sm align-top">
-                      <span className="md:hidden font-semibold text-navy">Included:</span>
-                      <ul className="list-disc pl-4 space-y-0.5">{s.features.map((f) => <li key={f}>{f}</li>)}</ul>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
       </section>
 
@@ -356,9 +329,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ — answer-first, same text as the FAQPage markup and /faq */}
+      {/* FAQ — answer-first, the same text as /faq (the FAQPage markup lives on /faq only, V4.1) */}
       <section className="py-16 md:py-20 bg-tint-green" aria-labelledby="faq-h">
-        <div className="container-x grid lg:grid-cols-[.8fr_1.2fr] gap-10 lg:gap-12 items-start">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-[.8fr_1.2fr] gap-10 lg:gap-12 items-start">
           <div className="lg:sticky lg:top-32">
             <span className="eyebrow">Good to know</span>
             <h2 id="faq-h" className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Frequently asked questions</h2>

@@ -49,7 +49,6 @@
   .container-x { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 1.25rem; }
 
   .bg-brand-grad { background: linear-gradient(135deg, #24215a 0%, #1f5c92 60%, #2f7cb8 100%); }
-  .text-grad { background: linear-gradient(90deg, #2f7cb8, #57a9d0); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .hero-overlay { background: linear-gradient(110deg, rgba(18, 16, 48, .93) 0%, rgba(24, 33, 90, .84) 45%, rgba(31, 92, 146, .6) 100%); }
 
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 700;
@@ -73,10 +72,6 @@
   .eyebrow { display: inline-flex; align-items: center; gap: .6rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: .74rem; color: var(--color-blue); }
   .eyebrow::before { content: ""; width: 28px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, #57a9d0, #37a24e); }
 
-  .link-underline { position: relative; }
-  .link-underline::after { content: ""; position: absolute; left: 0; bottom: -3px; height: 2px; width: 0; background: var(--color-cyan); transition: .25s; }
-  .link-underline:hover::after { width: 100%; }
-
   /* three rings, then still (no endless motion; UX-M8, WCAG 2.2.2) */
   .pulse { animation: pulse-ring 2.2s ease-out 3; }
 
@@ -85,20 +80,9 @@
   .reveal-2 { animation: fadeup .7s cubic-bezier(.2, .7, .2, 1) .15s both; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
 
-  /* Scroll reveal — CSS only. Transform only, over a fixed 160px range after the element appears,
-     so tall blocks are fully in place almost immediately and text is always 100% opaque. */
-  .r-up { transform: none; }
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .r-up { animation: revealup .8s linear both; animation-timeline: view(); animation-range: entry 0% entry 160px; }
-    }
-  }
-
   .kenburns { animation: kenburns 20s ease-out forwards; }
   .zoomimg { transition: transform .6s cubic-bezier(.2, .7, .2, 1); }
   .group:hover .zoomimg { transform: scale(1.07); }
-  .shimmer-bar { background: linear-gradient(90deg, #24215a, #1f5c92, #57a9d0, #1f5c92, #24215a); background-size: 200% 100%; animation: shimmer 6s linear 2; }
-  .bob { animation: bob 3s ease-in-out 3; }
 
   /* Blog / legal prose */
   .prose { color: #3c3c4e; font-size: 18px; line-height: 1.78; }
@@ -109,25 +93,13 @@
   .prose ul { margin: 0 0 1.3rem; padding-left: 0; list-style: none; }
   .prose li { position: relative; padding-left: 1.9rem; margin: .55rem 0; }
   .prose li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--color-green); font-weight: 800; }
-  .prose .dropcap::first-letter { float: left; font-family: var(--font-display); font-size: 3.6rem; line-height: .8; font-weight: 800; color: var(--color-blue); padding: .2rem .6rem .2rem 0; }
   .prose blockquote { border-left: 4px solid var(--color-cyan); background: var(--color-sand); padding: 1rem 1.25rem; border-radius: 0 .6rem .6rem 0; font-size: 1.15rem; color: var(--color-navy); font-weight: 500; margin: 1.6rem 0; }
 
   /* Color variety — strictly within the logo palette (navy / blue / cyan / green) */
   .bg-tint-blue { background: #e1eafb; }
   .bg-tint-cyan { background: #e2f1f9; }
   .bg-tint-green { background: #dff0e7; }
-  .bg-grad-green { background: linear-gradient(135deg, #37a24e 0%, #57a9d0 100%); }
   .bg-grad-sunset { background: linear-gradient(120deg, #24215a 0%, #1f5c92 42%, #57a9d0 72%, #37a24e 100%); }
-  .text-grad-green { background: linear-gradient(90deg, #37a24e, #57a9d0); -webkit-background-clip: text; background-clip: text; color: transparent; }
-
-  /* Brand gradient band. Static: the old infinite background-position animation repainted every
-     frame (36% of the mobile main thread, audit 07 T06). Stops keep white text ≥ 7:1. */
-  .bg-animated { background: linear-gradient(120deg, #24215a 0%, #1f5c92 55%, #24215a 100%); }
-
-  /* Decorative blobs */
-  .blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .45; pointer-events: none; z-index: 0; }
-  /* rotating a blurred circle has no visible effect — kept as a no-op for old markup (07 T06) */
-  .spin-slow { animation: none; }
 
   /* Hover pop for cards */
   .pop { transition: transform .3s cubic-bezier(.2, .7, .2, 1), box-shadow .3s; }
@@ -136,8 +108,6 @@
   /* Nav pill */
   .navpill { padding: .5rem .9rem; border-radius: 9999px; transition: background-color .2s, color .2s; }
   .navpill:hover, .navpill[aria-current="page"] { background: var(--color-sand); color: var(--color-navy); }
-
-  .marquee { display: flex; gap: 3rem; white-space: nowrap; animation: marquee 22s linear infinite; }
 
   /* ===== Premium visual system (logo palette) ===== */
   .mesh { background-color: #191740; background-image:
@@ -157,16 +127,6 @@
     background: linear-gradient(135deg, #57a9d0, #37a24e 45%, #1f5c92); opacity: 0; transition: opacity .35s;
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
   .gborder:hover::before { opacity: 1; }
-
-  .glow-cyan { box-shadow: 0 30px 90px -34px rgba(87, 169, 208, .65); }
-  .glow-green { box-shadow: 0 30px 90px -34px rgba(55, 162, 78, .55); }
-  .glow-soft { box-shadow: 0 40px 90px -40px rgba(20, 20, 43, .5); }
-  .ring-accent { box-shadow: 0 0 0 1px rgba(31, 92, 146, .10), var(--shadow-soft); }
-
-  .fade-top { -webkit-mask-image: linear-gradient(#000 92%, transparent); mask-image: linear-gradient(#000 92%, transparent); }
-  .wm { font-family: var(--font-display); font-weight: 800; line-height: .8; color: transparent; -webkit-text-stroke: 1.5px rgba(31, 92, 146, .12); }
-  .head-accent { position: relative; display: inline-block; }
-  .head-accent::after { content: ""; position: absolute; left: 0; bottom: -.35rem; height: 5px; width: 64px; border-radius: 5px; background: linear-gradient(90deg, #1f5c92, #37a24e); }
 
   /* Diagonal section cuts (content has py padding) */
   .slant-top { clip-path: polygon(0 32px, 100% 0, 100% 100%, 0 100%); }
@@ -196,11 +156,7 @@
 /* ---------- keyframes ---------- */
 @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(55, 162, 78, .55) } 70% { box-shadow: 0 0 0 14px rgba(55, 162, 78, 0) } 100% { box-shadow: 0 0 0 0 rgba(55, 162, 78, 0) } }
 @keyframes fadeup { from { transform: translateY(16px) } to { transform: none } }
-@keyframes revealup { from { transform: translateY(24px) } to { transform: none } }
 @keyframes kenburns { from { transform: scale(1.08) } to { transform: scale(1.18) } }
-@keyframes shimmer { 0% { background-position: 0% 50% } 100% { background-position: 200% 50% } }
-@keyframes bob { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-7px) } }
-@keyframes marquee { from { transform: translateX(0) } to { transform: translateX(-50%) } }
 
 /* The open mobile menu locks page scroll and hides the bottom CTA bar (UX-M1). Unlayered so it beats
    the bar's own `grid` utility. */
@@ -216,7 +172,7 @@ html.menu-open .mobile-cta-bar { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .r-up, .reveal, .reveal-2, .kenburns, .bob, .shimmer-bar, .pulse, .marquee, .spin-slow, .bg-animated {
+  .reveal, .reveal-2, .kenburns, .pulse {
     animation: none !important; transition: none !important; transform: none !important;
   }
   .zoomimg, .pop, .btn, .group:hover .zoomimg, .pop:hover { transition: none !important; transform: none !important; }

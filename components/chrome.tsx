@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { site, nav, services, serviceArea } from "@/lib/site";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
+import { displayAddress } from "@/lib/address";
 import { HeaderClient, FloatingCall, EstimateLink } from "./chrome-client";
 import { PhoneIcon, MailIcon } from "./chrome-icons";
 
@@ -36,7 +37,7 @@ export function SiteHeader() {
   return (
     <HeaderClient
       nav={nav}
-      services={services.map((s) => ({ slug: s.slug, name: s.name, short: s.short, icon: s.icon }))}
+      services={services.map((s) => ({ slug: s.slug, name: s.name, short: s.short }))}
       phone={site.phone}
       phoneHref={site.phoneHref}
       brand={site.name}
@@ -109,7 +110,7 @@ export function SiteFooter() {
           <p className="text-white font-bold mb-3 text-sm uppercase tracking-wider">Contact</p>
           <address className="not-italic text-sm space-y-2">
             <p className="font-semibold text-white">{site.name}</p>
-            <p>{site.address}</p>
+            <p>{displayAddress}</p>
             <p><a href={site.phoneHref} className="hover:text-cyan font-semibold">{site.phone}</a></p>
             <p><a href={site.emailHref} className="hover:text-cyan break-all">{site.email}</a></p>
             <p>Hours: {site.hours}</p>

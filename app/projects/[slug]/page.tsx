@@ -10,7 +10,7 @@ import { site, services, citySlug, cityLabel } from "@/lib/site";
 import { posts } from "@/lib/posts";
 import { townFacts, projectTown, placeLabel, milesBetween, isNH } from "@/lib/towns";
 import { VIDEO_FACTS, PROJECT_PUBLISHED } from "@/lib/media-facts";
-import { pageMeta, ogFor, OG_IMAGE } from "@/lib/seo";
+import { pageMeta, ogFor } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, projectNodes, pageUrl, type Crumb } from "@/lib/schema";
 
 // /projects/[slug] — a truthful case study (audit 05 PG-H1…PG-M6, 08 §5.7, 10 H1/L3/L4/M3):
@@ -25,9 +25,6 @@ export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-// public/og/project-home-addition-needham-ma.jpg shows the client's house number → brand card until re-cropped.
-const OG_HOLD = new Set<string>(); // all project OG crops are safe to publish
-
 const path = (p: Project) => `/projects/${p.slug}`;
 const published = (p: Project) => PROJECT_PUBLISHED[p.slug];
 
@@ -39,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: p.seoTitle,
     description: p.metaDescription,
     path: path(p),
-    image: OG_HOLD.has(p.slug) ? OG_IMAGE : ogFor(`project-${p.slug}`, imageAlt(p, p.ogSource) || p.title),
+    image: ogFor(`project-${p.slug}`, imageAlt(p, p.ogSource) || p.title),
     article: { published: published(p), modified: p.updated, section: "Project case studies" },
   });
 }

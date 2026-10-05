@@ -18,9 +18,3 @@ export function ClockIcon({ className = "w-[1em] h-[1em]" }: P) {
 export function CheckIcon({ className = "w-[1em] h-[1em]" }: P) {
   return <svg {...base} className={className}><path d="M20 6 9 17l-5-5" /></svg>;
 }
-export function ShieldIcon({ className = "w-[1em] h-[1em]" }: P) {
-  return <svg {...base} className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-4" /></svg>;
-}
-export function ArrowIcon({ className = "w-[1em] h-[1em]" }: P) {
-  return <svg {...base} className={className}><path d="M5 12h14M13 6l6 6-6 6" /></svg>;
-}

@@ -6,6 +6,7 @@ import { PhoneIcon } from "@/components/chrome-icons";
 import { site, services, stats, serviceArea, testimonials } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
+import { displayAddress } from "@/lib/address";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, BUSINESS_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
 import { projectCardImage } from "@/lib/service-content";
@@ -72,7 +73,7 @@ export default function AboutPage() {
 
       {/* OWNER + COMPANY FACTS */}
       <section className="py-16 md:py-20" aria-labelledby="owner-h">
-        <div className="container-x grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
           <div>
             <span className="eyebrow">The owner</span>
             <h2 id="owner-h" className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Meet {site.owner}</h2>
@@ -115,7 +116,7 @@ export default function AboutPage() {
                   <span key={s.slug}>{i > 0 ? ", " : ""}<Link href={`/services/${s.slug}`} className="text-blue underline underline-offset-2">{s.short}</Link></span>
                 ))}
               </dd>
-              <dt className="font-bold text-navy">Address</dt><dd className="text-ink/85">{site.address}</dd>
+              <dt className="font-bold text-navy">Address</dt><dd className="text-ink/85">{displayAddress}</dd>
               <dt className="font-bold text-navy">Phone</dt><dd className="text-ink/85"><a href={site.phoneHref} className="font-semibold text-blue underline underline-offset-2">{site.phone}</a></dd>
               <dt className="font-bold text-navy">Email</dt><dd className="text-ink/85 [overflow-wrap:anywhere]"><a href={site.emailHref} className="text-blue underline underline-offset-2">{site.email}</a></dd>
               <dt className="font-bold text-navy">Hours</dt><dd className="text-ink/85">{site.hours}</dd>
@@ -165,7 +166,7 @@ export default function AboutPage() {
           <div className="text-center max-w-2xl mx-auto">
             <span className="eyebrow">Our work</span>
             <h2 id="work-h" className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Projects documented on this site</h2>
-            <p className="mt-3 text-ink/80">Case studies with photos from each job site.</p>
+            <p className="mt-3 text-ink/80">{`${projects.length} case studies documented with our own photos and site videos.`}</p>
           </div>
           <ul className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((p) => {

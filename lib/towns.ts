@@ -1,13 +1,13 @@
 // Computed, verifiable facts about each served town — used to make every service×town page
 // genuinely specific without inventing anything. All distances are straight-line, town center
-// to town center (GeoNames postal-code centroids, see lib/town-geo.ts), rounded and labelled "about".
+// to town center (GeoNames populated-place points, see lib/town-geo.ts), rounded and labelled "about".
 import { allCities, citySlug, cityLabel, type City } from "./site";
 import { TOWN_GEO } from "./town-geo";
 import { projects, type Project } from "./projects";
 
 /** Date the service×town template and its data last changed substantively (sitemap lastModified,
  *  WebPage dateModified and the visible "Page updated" line). Bump ONLY on a substantive change. */
-export const TOWN_PAGES_UPDATED = "2026-10-05T09:07:27-04:00";
+export const TOWN_PAGES_UPDATED = "2026-10-05T12:32:27-04:00";
 
 const BASE = { lat: 42.3195, lng: -71.6412 }; // Northborough town center (GeoNames populated place = lib/town-geo.ts)
 type LatLng = { lat: number; lng: number };
@@ -42,10 +42,8 @@ export const VILLAGE_OF: Record<string, string> = {
 // permitting authority, the Devens Enterprise Commission. [verify R16: devensec.com]
 export const DEVENS = "devens";
 
-// Same town name in both states → always disambiguate.
-const NAME_COUNT = allCities.reduce<Record<string, number>>((m, c) => ((m[c.n] = (m[c.n] || 0) + 1), m), {});
-export const hasTwin = (c: City) => NAME_COUNT[c.n] > 1;
-// Easily-confused pairs: the same name in MA and NH, plus Manchester NH ⇄ Manchester-by-the-Sea MA.
+// Easily-confused pairs (always disambiguated): the same name in MA and NH, plus Manchester NH ⇄
+// Manchester-by-the-Sea MA.
 const TWIN_OF: Record<string, string> = {
   salem: "salem-nh", "salem-nh": "salem",
   hudson: "hudson-nh", "hudson-nh": "hudson",
@@ -54,7 +52,9 @@ const TWIN_OF: Record<string, string> = {
 };
 
 const BY_SLUG: Record<string, City> = Object.fromEntries(allCities.map((c) => [citySlug(c), c]));
-export const cityBySlug = (slug: string): City | undefined => BY_SLUG[slug];
+/** Same served place? Always compare by slug, never by object identity: callers (e.g. lib/posts.ts) may pass
+ *  their own City objects, which must not become their own neighbour or poison the townFacts cache (V4.8). */
+export const sameCity = (a: City, b: City) => citySlug(a) === citySlug(b);
 export const isNH = (c: City) => c.s === "NH";
 export const isDevens = (c: City) => citySlug(c) === DEVENS;
 /** Parent town of a village (Whitinsville → Northbridge), else undefined. */
@@ -64,7 +64,10 @@ export function villageParent(c: City): City | undefined {
 }
 /** Villages whose parent is this town (Leicester → Cherry Valley, Rochdale). */
 export function villagesOf(c: City): City[] {
-  return allCities.filter((x) => villageParent(x) === c);
+  return allCities.filter((x) => {
+    const p = villageParent(x);
+    return Boolean(p && sameCity(p, c));
+  });
 }
 /** The same-name (or easily confused) place in the other state, if any. */
 export function twinOf(c: City): City | undefined {
@@ -111,7 +114,7 @@ export function townFacts(c: City): TownFacts {
   const isBase = slug === "northborough";
   const m = isBase ? 0 : miles(BASE, g);
   const nearest = allCities
-    .filter((x) => x !== c)
+    .filter((x) => citySlug(x) !== slug) // by slug: a non-canonical City object must not list itself (V4.8)
     .map((x) => ({ city: x, exact: miles(g, geoOf(x)) }))
     .sort((a, b) => a.exact - b.exact)
     .slice(0, 8)

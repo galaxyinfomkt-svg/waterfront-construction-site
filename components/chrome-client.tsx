@@ -8,9 +8,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { PhoneIcon } from "./chrome-icons";
+import ServiceIcon from "@/app/services/_components/ServiceIcon";
 
 export type HeaderNavItem = { label: string; href: string };
-export type HeaderService = { slug: string; name: string; short: string; icon: string };
+export type HeaderService = { slug: string; name: string; short: string };
+
+/** The on-page estimate form: the section that wraps <LeadForm /> carries data-estimate-form (and
+ *  id="estimate"). A bare #estimate is only a fallback, and never a heading, so an article heading can
+ *  never hijack the "Free estimate" links (V5.1). */
+function estimateTarget(): HTMLElement | null {
+  const marked = document.querySelector<HTMLElement>("[data-estimate-form]");
+  if (marked) return marked;
+  const el = document.getElementById("estimate");
+  return el && !/^H[1-6]$/.test(el.tagName) ? el : null;
+}
 
 const isCurrent = (pathname: string, href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
 
@@ -21,7 +32,26 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
   const [menuTop, setMenuTop] = useState(0);
   const headerRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const svcRef = useRef<HTMLDivElement>(null);
+  const svcLinkRef = useRef<HTMLAnchorElement>(null);
+  // Services dropdown dismissed with Escape (WCAG 2.2 SC 1.4.13, V5.7). It stays closed until the pointer
+  // leaves the group or focus moves out of it; then hover / focus opens it again as usual.
+  const [svcDismissed, setSvcDismissed] = useState(false);
   const pathname = usePathname() ?? "/";
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      const g = svcRef.current;
+      if (!g) return;
+      const focused = g.contains(document.activeElement);
+      if (!focused && !g.matches(":hover")) return;
+      setSvcDismissed(true);
+      if (focused) svcLinkRef.current?.focus();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
 
   // While the mobile menu is open: Escape closes it, the page behind does not scroll, and the
   // fixed bottom CTA bar is hidden so it cannot cover the menu's own items (audit 10 UX-M1).
@@ -55,18 +85,21 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
         <nav aria-label="Main" className="hidden lg:flex items-center gap-1 xl:gap-2 font-semibold text-[14px] xl:text-[15px] text-ink/80">
           {nav.map((n) =>
             n.href === "/services" ? (
-              // Opens on hover AND on keyboard focus (focus-within), so the service links are reachable by Tab (01 M4).
-              <div key={n.href} className="relative group/svc">
-                <Link href={n.href} aria-current={isCurrent(pathname, n.href) ? "page" : undefined} className="navpill font-semibold flex items-center gap-1">
+              // Opens on hover AND on keyboard focus (focus-within), so the service links are reachable by Tab (01 M4);
+              // Escape closes it and returns focus to "Services" (V5.7).
+              <div key={n.href} ref={svcRef} className="relative group/svc"
+                onMouseLeave={() => setSvcDismissed(false)}
+                onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setSvcDismissed(false); }}>
+                <Link ref={svcLinkRef} href={n.href} aria-current={isCurrent(pathname, n.href) ? "page" : undefined} className="navpill font-semibold flex items-center gap-1">
                   {n.label}<span aria-hidden="true" className="text-[10px] mt-0.5">▼</span>
                 </Link>
-                <div className="absolute left-1/2 -translate-x-1/2 top-full pt-4 opacity-0 invisible translate-y-1 transition-[opacity,translate] duration-200 group-hover/svc:opacity-100 group-hover/svc:visible group-hover/svc:translate-y-0 group-focus-within/svc:opacity-100 group-focus-within/svc:visible group-focus-within/svc:translate-y-0">
+                <div className={`absolute left-1/2 -translate-x-1/2 top-full pt-4 opacity-0 invisible translate-y-1 transition-[opacity,translate] duration-200 ${svcDismissed ? "" : "group-hover/svc:opacity-100 group-hover/svc:visible group-hover/svc:translate-y-0 group-focus-within/svc:opacity-100 group-focus-within/svc:visible group-focus-within/svc:translate-y-0"}`}>
                   <ul className="w-72 card p-2 shadow-card">
                     {services.map((s) => (
                       <li key={s.slug}>
                         <Link href={`/services/${s.slug}`} aria-current={isCurrent(pathname, `/services/${s.slug}`) ? "page" : undefined}
                           className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-sand text-[14px] text-ink/80 hover:text-navy">
-                          <span aria-hidden="true" className="text-base">{s.icon}</span>{s.short}
+                          <ServiceIcon slug={s.slug} className="w-5 h-5 shrink-0 text-blue" />{s.short}
                         </Link>
                       </li>
                     ))}
@@ -112,7 +145,7 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
                     {services.map((s) => (
                       <li key={s.slug}>
                         <Link href={`/services/${s.slug}`} onClick={close} className="flex items-center gap-1.5 min-h-11 text-sm text-ink/80">
-                          <span aria-hidden="true">{s.icon}</span>{s.name}
+                          <ServiceIcon slug={s.slug} className="w-[1.15em] h-[1.15em] shrink-0 text-blue" />{s.name}
                         </Link>
                       </li>
                     ))}
@@ -132,8 +165,8 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
   );
 }
 
-/** "Free estimate" link: scrolls to the estimate form when this page has one (#estimate), otherwise
- *  opens /contact#estimate. Modifier-clicks still open a new tab (onNavigate). Audit 10 UX-H2. */
+/** "Free estimate" link: scrolls to the estimate form when this page has one ([data-estimate-form]),
+ *  otherwise opens /contact#estimate. Modifier-clicks still open a new tab (onNavigate). Audit 10 UX-H2, V5.1. */
 export function EstimateLink({ className = "", children, onDone }: { className?: string; children: ReactNode; onDone?: () => void }) {
   return (
     <Link
@@ -141,12 +174,13 @@ export function EstimateLink({ className = "", children, onDone }: { className?:
       className={className}
       onNavigate={(e) => {
         onDone?.();
-        const el = document.getElementById("estimate");
+        const el = estimateTarget();
         if (!el) return;
         e.preventDefault();
         const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         el.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
-        if (location.hash !== "#estimate") history.replaceState(null, "", "#estimate");
+        const hash = `#${el.id || "estimate"}`;
+        if (location.hash !== hash) history.replaceState(null, "", hash);
       }}
     >
       {children}
@@ -162,7 +196,8 @@ export function FloatingCall({ phone, phoneHref }: { phone: string; phoneHref: s
   const pathname = usePathname();
 
   useEffect(() => {
-    const zones = document.querySelectorAll("[data-cta-zone], #estimate, footer");
+    const form = estimateTarget();
+    const zones = [...document.querySelectorAll("[data-cta-zone], footer"), ...(form ? [form] : [])];
     const visible = new Set<Element>();
     const update = () => setShow(window.scrollY > 600 && visible.size === 0);
     const io = new IntersectionObserver((entries) => {

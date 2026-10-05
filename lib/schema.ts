@@ -113,13 +113,13 @@ export function businessStub(): Node {
 }
 
 /** Full business node — home, /about, /contact, /service-areas only. */
-export function businessFull(o: { contactPoint?: boolean } = {}): Node {
+export function businessFull(o: { contactPoint?: boolean; images?: boolean } = {}): Node {
   return {
     ...businessStub(),
     ...(site.legalName ? { legalName: site.legalName } : {}),
     alternateName: site.shortName,
     description: `Owner-led home remodeling contractor based in Northborough, Massachusetts, founded in ${site.founded} by Ernando Nunes. Kitchens and bathrooms, home additions, decks, siding, windows and doors, and painting for homeowners in ${AREA_FACTS.municipalities} cities and towns across ${AREA_FACTS.counties} counties of Massachusetts and southern New Hampshire.`,
-    image: BIZ_IMAGES.map((src) => ref(abs(src))),
+    ...(o.images ? { image: BIZ_IMAGES.map((src) => ref(abs(src))) } : {}),
     email: site.email,
     foundingDate: String(site.founded),
     founder: ref(OWNER_ID),
@@ -270,14 +270,18 @@ export function projectNodes(p: Project, o: { videoText?: (v: ProjectVideo, i: n
 /** One @graph per page. `full` = complete business entity (+ owner) — home, /about, /contact, /service-areas. */
 export function pageGraph(nodes: (Node | null | false | undefined)[], o: { business?: "full" | "stub"; contactPoint?: boolean; owner?: boolean } = {}) {
   const full = o.business === "full";
+  // The business photos are only described on the page that actually shows them (the home page):
+  // structured data must describe visible content (verification V4.6).
+  const isHome = nodes.some((n) => n && (n as Node)["@id"] === `${HOME_URL}#webpage`);
+  const bizImages = full && isHome;
   return {
     "@context": "https://schema.org",
     "@graph": compact<Node>([
       websiteNode(),
       STATE.MA, STATE.NH,
-      full ? businessFull({ contactPoint: o.contactPoint }) : businessStub(),
+      full ? businessFull({ contactPoint: o.contactPoint, images: bizImages }) : businessStub(),
       logoNode,
-      full ? compact(BIZ_IMAGES.map((src) => imageNode(src, { own: true }))) : null,
+      bizImages ? compact(BIZ_IMAGES.map((src) => imageNode(src, { own: true }))) : null,
       full || o.owner ? ownerNode() : null,
       ...nodes,
     ].flat() as (Node | null)[]),

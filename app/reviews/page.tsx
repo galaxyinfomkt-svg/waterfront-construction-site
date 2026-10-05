@@ -100,7 +100,7 @@ export default function ReviewsPage() {
           </ul>
           <p className="mt-8 text-sm text-ink/75 max-w-3xl">
             These testimonials are reproduced word for word. See our{" "}
-            <Link href="/gallery" className="font-semibold text-blue underline underline-offset-2">project case studies</Link> for photos from our job sites.
+            <Link href="/gallery" className="font-semibold text-blue underline underline-offset-2">project case studies</Link>, documented with our own photos and site videos.
           </p>
         </div>
       </section>

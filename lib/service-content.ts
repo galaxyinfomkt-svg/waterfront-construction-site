@@ -20,8 +20,9 @@ export type Source = { label: string; url: string };
 export type Table = { caption: string; head: string[]; rows: string[][]; note?: string };
 export type Section = { id: string; nav: string; h2: string; intro?: string[]; table?: Table; bullets?: string[]; outro?: string[] };
 export type HubFaq = Faq & { more?: { href: string; label: string } };
-/** A row of the Remodeling 2025 Cost vs. Value report, New England division. */
-export type Benchmark = { project: string; scope: string; jobCost: number; recouped: number };
+/** A row of the Remodeling 2025 Cost vs. Value report, New England division. `short` names the benchmark in the
+ *  "At a glance" box, which lists each benchmark by name (never a synthesized min–max range, V3.5). */
+export type Benchmark = { project: string; short: string; scope: string; jobCost: number; recouped: number };
 
 export type ServiceContent = {
   slug: string;
@@ -38,7 +39,9 @@ export type ServiceContent = {
   cost: { h2: string; answer: string; benchmark?: Benchmark[]; drivers: string[]; guides: string[] };
   permitShort: string; // one-line permit answer for the "At a glance" box (Massachusetts)
   permits: { intro: string; table: Table; nh: string };
-  leadSafe?: { intro: string }; // full "Homes built before 1978" section (siding, windows, painting)
+  // "Homes built before 1978" section. `full` = the ONE canonical copy of LEAD_SAFE_RULES (painting hub, #lead-safe);
+  // other hubs show only their service-specific intro and link to it (V3.10: no repeated rule block).
+  leadSafe?: { intro: string; full?: boolean };
   process: { steps: { step: string; detail: string }[] };
   faqs: HubFaq[]; // 8–10 service-specific, answer-first
   testimonials: string[]; // names in lib/site.ts testimonials whose words are about this service (real, shared with permission)
@@ -66,27 +69,40 @@ export const CVV_LABEL = "New England average, 2025";
 // Remodeling 2025 Cost vs. Value, New England division (study/03-aeo-geo.md §10A).
 // verify against jlconline before next update — figures AND scope wording.
 const CVV = {
-  vinylSiding: { project: "Vinyl siding replacement", scope: "Replace about 1,250 sq ft of siding with vinyl siding, including trim", jobCost: 17590, recouped: 92.7 },
-  fiberCementSiding: { project: "Fiber-cement siding replacement", scope: "Replace about 1,250 sq ft of siding with fiber-cement siding, including trim", jobCost: 20678, recouped: 144.9 },
-  vinylWindows: { project: "Vinyl window replacement", scope: "Replace ten 3 × 5 ft double-hung windows with vinyl windows", jobCost: 21922, recouped: 71.2 },
-  woodWindows: { project: "Wood window replacement", scope: "Replace ten 3 × 5 ft double-hung windows with wood windows", jobCost: 27226, recouped: 69.7 },
-  minorKitchen: { project: "Minor kitchen remodel, midrange", scope: "A 200 sq ft kitchen: new cabinet fronts and hardware, laminate counters, sink and faucet, oven and cooktop, flooring and paint", jobCost: 28936, recouped: 134.3 },
-  bath: { project: "Bathroom remodel, midrange", scope: "Update a 5 × 7 ft bathroom: new tub with ceramic tile surround, fixtures, solid-surface vanity top and tile floor", jobCost: 27559, recouped: 90.5 },
-  compositeDeck: { project: "Deck addition, composite", scope: "Add a 16 × 20 ft deck on a pressure-treated frame, with composite decking, railing and stairs", jobCost: 25817, recouped: 95.8 },
-  woodDeck: { project: "Deck addition, wood", scope: "Add a 16 × 20 ft deck with pressure-treated decking, railing and stairs", jobCost: 20603, recouped: 79.1 },
+  vinylSiding: { project: "Vinyl siding replacement", short: "Vinyl siding, about 1,250 sq ft", scope: "Replace about 1,250 sq ft of siding with vinyl siding, including trim", jobCost: 17590, recouped: 92.7 },
+  fiberCementSiding: { project: "Fiber-cement siding replacement", short: "Fiber-cement siding, about 1,250 sq ft", scope: "Replace about 1,250 sq ft of siding with fiber-cement siding, including trim", jobCost: 20678, recouped: 144.9 },
+  vinylWindows: { project: "Vinyl window replacement", short: "Ten vinyl replacement windows", scope: "Replace ten 3 × 5 ft double-hung windows with vinyl windows", jobCost: 21922, recouped: 71.2 },
+  woodWindows: { project: "Wood window replacement", short: "Ten wood replacement windows", scope: "Replace ten 3 × 5 ft double-hung windows with wood windows", jobCost: 27226, recouped: 69.7 },
+  minorKitchen: { project: "Minor kitchen remodel, midrange", short: "Minor kitchen remodel (midrange)", scope: "A 200 sq ft kitchen: new cabinet fronts and hardware, laminate counters, sink and faucet, oven and cooktop, flooring and paint", jobCost: 28936, recouped: 134.3 },
+  bath: { project: "Bathroom remodel, midrange", short: "Bathroom remodel (midrange)", scope: "Update a 5 × 7 ft bathroom: new tub with ceramic tile surround, fixtures, solid-surface vanity top and tile floor", jobCost: 27559, recouped: 90.5 },
+  compositeDeck: { project: "Deck addition, composite", short: "16 × 20 ft composite deck", scope: "Add a 16 × 20 ft deck on a pressure-treated frame, with composite decking, railing and stairs", jobCost: 25817, recouped: 95.8 },
+  woodDeck: { project: "Deck addition, wood", short: "16 × 20 ft pressure-treated wood deck", scope: "Add a 16 × 20 ft deck with pressure-treated decking, railing and stairs", jobCost: 20603, recouped: 79.1 },
 } satisfies Record<string, Benchmark>;
 
 export const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+/** "At a glance" cost line: each benchmark named, never a min–max range across different projects (V3.5). */
+export const benchmarkGlance = (list: Benchmark[]) =>
+  `${list.map((b) => `${b.short}: ${usd(b.jobCost)}`).join(" · ")} (${CVV_LABEL}, Remodeling Cost vs. Value). Larger or custom scopes cost more; see the cost table below.`;
 
 // ---------- shared rule text (stated as rules; never as a company credential) ----------
 const NH_NOTE = "New Hampshire has no statewide contractor license. Building permits come from each town's building department, and the federal EPA Renovation, Repair and Painting (RRP) rule governs lead-safe work on homes built before 1978.";
 const CSL_PERMIT = hasCsl
   ? "The contractor's Construction Supervisor License holder applies to the town's building department; we do this for our jobs."
   : "The contractor's Construction Supervisor License holder applies to the town's building department; the written contract must say who obtains each permit.";
+/** First-person permit claims ("we apply for the permit", "we schedule the inspections") render only once site.csl is
+ *  set (V1.4/V3.2). Until then every such string states the general Massachusetts rule instead. */
+const weOr = (we: string, rule: string) => (hasCsl ? we : rule);
+/** One-line permit answer for the /services "How we work" list (gated like every other permit claim). */
+export const PERMITS_HOW = weOr(
+  "We apply for the building permit and schedule inspections; plumbing, gas and electrical permits are pulled by those trades.",
+  "In Massachusetts the contractor's Construction Supervisor License holder applies for the building permit, and the written contract must say who obtains each permit; plumbing, gas and electrical permits are pulled by those trades.",
+);
 const LEAD_ROW = (when: string) => ["Lead-safe renovation rules", when, "A contractor holding a Massachusetts Lead-Safe Renovation Contractor license, with a certified renovator directing the work."];
 const CONTRACT_ROW = ["Written contract", "Home improvement work over $1,000 on an owner-occupied home in Massachusetts needs a written contract, and the deposit is limited.", "The contractor, who must be registered with the state Home Improvement Contractor program."];
 
-/** Rules for pre-1978 homes, shared by the lead-safe sections. Stated as rules only. */
+/** Rules for pre-1978 homes. Rendered in full ONLY on the canonical section LEAD_SAFE_HREF (painting hub); other pages
+ *  give one service-specific sentence and link there (V3.10). Stated as rules only, never as a company credential. */
+export const LEAD_SAFE_HREF = "/services/painting#lead-safe";
 export const LEAD_SAFE_RULES = [
   "The rules cover paid renovation in homes built before 1978 that disturbs more than 6 square feet of painted surface per room inside, or more than 20 square feet outside, and any window replacement.",
   "In Massachusetts, the company doing that work must hold a Lead-Safe Renovation Contractor license from the Department of Labor Standards, with a certified renovator directing the work. This is separate from Home Improvement Contractor registration and the Construction Supervisor License.",
@@ -172,12 +188,12 @@ const CONTENT: ServiceContent[] = [
       },
       nh: NH_NOTE,
     },
-    leadSafe: { intro: "Paint applied before 1978 may contain lead, and removing old siding, trim and painted clapboards can release lead dust and chips. Federal and Massachusetts rules set how that work must be done:" },
+    leadSafe: { intro: "Paint applied before 1978 may contain lead, and removing old siding, trim and painted clapboards can release lead dust and chips. On a pre-1978 home, re-siding that disturbs more than 20 square feet of exterior painted surface falls under the lead-safe renovation rules; in Massachusetts that work must be done by a firm holding a Lead-Safe Renovation Contractor license." },
     process: {
       steps: [
         { step: "Estimate visit", detail: "We look at the walls, trim and roof edges, measure, and talk through materials and colors. You get an itemized written estimate." },
         { step: "Contract and order", detail: "A written contract, then siding, trim and accessories are ordered once you approve colors and profiles." },
-        { step: "Permit", detail: "We apply for the building permit; review time varies by town." },
+        { step: "Permit", detail: weOr("We apply for the building permit; review time varies by town.", "The contractor's Construction Supervisor License holder applies for the building permit, and the written contract says who obtains it; review time varies by town.") },
         { step: "Tear-off and repairs", detail: "The old siding and trim come off, and any damaged sheathing is replaced." },
         { step: "Weather barrier and flashing", detail: "House wrap, window and door flashing, and kick-out flashing at roof-to-wall joints." },
         { step: "Siding and trim", detail: "New siding, corner boards, window and door trim, soffit and fascia." },
@@ -208,7 +224,7 @@ const CONTENT: ServiceContent[] = [
     metaTitle: "Window & Door Replacement in Central & Eastern MA",
     metaDescription: "Replacement windows plus entry and patio doors, flashed and sealed by an owner-led Northborough, MA contractor serving Central & Eastern Massachusetts.",
     h1: "Window & Door Replacement in Central & Eastern Massachusetts",
-    summary: "Waterfront Construction Inc, an owner-led remodeling contractor based in Northborough, MA, replaces windows and installs entry and patio doors, with flashing, sealing and interior trim. Most window replacements take 1–3 days of installation, depending on the number of openings. Replacement units must keep bedroom escape openings and meet the energy code for our climate.",
+    summary: "Waterfront Construction Inc, an owner-led remodeling contractor based in Northborough, MA, replaces windows and installs entry and patio doors, with flashing, sealing and interior trim. Most window replacements take 1–3 days of installation, depending on the number of openings. Replacement units must not shrink bedroom escape openings, and they must meet the energy code for our climate.",
     cardSummary: "Replacement windows and entry and patio doors, flashed, insulated and sealed, with interior trim.",
     noun: "window or door project",
     og: { slug: "service-windows-and-doors", alt: "Three arched windows and a wood entry door on a home addition in Lynnfield, MA" },
@@ -252,7 +268,8 @@ const CONTENT: ServiceContent[] = [
           "U-factor measures heat loss through the whole window; lower is better in a heating climate like ours. Replacement windows must meet the energy code's U-factor requirement for our climate zone.",
           "Solar heat gain coefficient (SHGC) measures how much of the sun's heat comes through. Choose it by the direction each window faces.",
           "Low-E coatings and gas fills between the panes improve the U-factor; the NFRC label on each unit lists its rated numbers.",
-          "Bedroom windows that serve as emergency escape openings must still provide the required clear opening after replacement, which can rule out some insert sizes.",
+          // IRC R310.2.5 (2021 IRC, base of 780 CMR 51) replacement-window exemption — verify there is no 780 CMR 51 amendment before next update.
+          "A replacement window in a bedroom's emergency escape opening must not shrink that opening: it has to be the largest standard size that fits the existing frame or rough opening, in the same operating style or one with an equal or larger clear opening. That can rule out some insert units.",
           "Glass near doors, in or next to tubs and showers, and along stairs must be safety glazing (tempered or laminated).",
           "Upper-story windows with low sills may need fall protection, such as window opening control devices.",
         ],
@@ -298,12 +315,12 @@ const CONTENT: ServiceContent[] = [
       },
       nh: NH_NOTE,
     },
-    leadSafe: { intro: "Old painted window sashes and frames are a well-known source of lead dust, because opening and closing them grinds the paint. That is why any window replacement in a pre-1978 home falls under lead-safe rules:" },
+    leadSafe: { intro: "Old painted window sashes and frames are a well-known source of lead dust, because opening and closing them grinds the paint. That is why every window replacement in a pre-1978 home falls under the lead-safe renovation rules, whatever the area disturbed; in Massachusetts the work must be done by a firm holding a Lead-Safe Renovation Contractor license." },
     process: {
       steps: [
         { step: "Estimate visit", detail: "We check each window and door, the frames and sills, measure, and talk through styles and options. You get an itemized written estimate." },
         { step: "Order", detail: "Windows and doors are usually made to order for your openings, so the install date follows the manufacturer's delivery date." },
-        { step: "Permit", detail: "We apply for the building permit where the town requires one." },
+        { step: "Permit", detail: weOr("We apply for the building permit where the town requires one.", "Where the town requires a building permit, the contractor's Construction Supervisor License holder applies for it; the written contract says who obtains it.") },
         { step: "Removal", detail: "Old sashes or whole units come out, depending on insert or full-frame installation." },
         { step: "Installation", detail: "New units are set level and square, flashed, insulated around the frame and sealed." },
         { step: "Trim, cleanup and walkthrough", detail: "Interior casing and exterior trim are finished, debris is removed, and we check each window and door with you." },
@@ -433,10 +450,19 @@ const CONTENT: ServiceContent[] = [
   {
     slug: "decks",
     metaTitle: "Deck Builder in Central & Eastern MA and Southern NH",
-    metaDescription: "Composite and pressure-treated wood decks, railings, stairs and pool decks, built to code with permits and inspections handled. Owner-led, Northborough, MA.",
+    metaDescription: weOr(
+      "Composite and pressure-treated wood decks, railings, stairs and pool decks, built to code with permits and inspections handled. Owner-led, Northborough, MA.",
+      "Composite and pressure-treated wood decks, railings, stairs and pool decks, built to code on footings below the frost line. Owner-led, Northborough, MA.",
+    ),
     h1: "Deck Design & Construction in Central & Eastern MA and Southern NH",
-    summary: "Waterfront Construction Inc, an owner-led remodeling contractor based in Northborough, MA, designs and builds composite and pressure-treated wood decks, railings, stairs and pool decks, with the building permit and inspections handled. Most decks take about 1–2 weeks to build. Our case studies include a pool deck in Salem, New Hampshire.",
-    cardSummary: "Composite and pressure-treated wood decks, railings, stairs and pool decks, with permits and inspections.",
+    summary: weOr(
+      "Waterfront Construction Inc, an owner-led remodeling contractor based in Northborough, MA, designs and builds composite and pressure-treated wood decks, railings, stairs and pool decks, with the building permit and inspections handled. Most decks take about 1–2 weeks to build. Our case studies include a pool deck in Salem, New Hampshire.",
+      "Waterfront Construction Inc, an owner-led remodeling contractor based in Northborough, MA, designs and builds composite and pressure-treated wood decks, railings, stairs and pool decks, on footings below the frost line and framed to code. Most decks take about 1–2 weeks to build. Our case studies include a pool deck in Salem, New Hampshire.",
+    ),
+    cardSummary: weOr(
+      "Composite and pressure-treated wood decks, railings, stairs and pool decks, with permits and inspections.",
+      "Composite and pressure-treated wood decks, railings, stairs and pool decks, framed to code with the town's inspections.",
+    ),
     noun: "deck project",
     og: { slug: "service-decks", alt: "Pool deck with gray decking and white railings around an above-ground pool in Salem, NH" },
     intro: [
@@ -505,7 +531,7 @@ const CONTENT: ServiceContent[] = [
         head: ["Permit or review", "When it applies", "Who handles it"],
         rows: [
           ["Building permit", "Most decks need one, and attached decks almost always do.", CSL_PERMIT],
-          ["Inspections", "Typically a footing (hole) inspection before concrete, a framing inspection, and a final.", "We schedule them with the building inspector."],
+          ["Inspections", "Typically a footing (hole) inspection before concrete, a framing inspection, and a final.", weOr("We schedule them with the building inspector.", "The permit holder schedules them with the building inspector.")],
           ["Zoning setbacks", "The deck has to stay a set distance from the property lines.", "Checked during design and shown on the permit plan."],
           ["Conservation Commission", "Work near wetlands or rivers may need review before the building permit is issued.", "The town's Conservation Commission; we tell you early if your lot may be affected."],
           ["Pool barrier rules", "Decks around pools must keep the pool barrier and gate requirements in place.", "Reviewed with the building inspector."],
@@ -527,7 +553,7 @@ const CONTENT: ServiceContent[] = [
     faqs: [
       { q: "How much does a deck cost in Massachusetts?", a: "Remodeling magazine's 2025 Cost vs. Value report puts the New England average for a 16-by-20-foot deck at $25,817 with composite decking and $20,603 with pressure-treated wood. Height, stairs, railings and footings move the price; we itemize it after a free site visit.", more: { href: "#cost", label: "Cost benchmarks and drivers" } },
       { q: "Composite or wood decking?", a: "Composite costs more up front but needs no staining or sealing, only washing. Pressure-treated wood costs less but needs regular cleaning and sealing to slow checking and splitting. In the 2025 New England Cost vs. Value data, composite decks recouped 95.8% of their cost at resale versus 79.1% for wood." },
-      { q: "Do I need a permit for a deck in Massachusetts?", a: "Usually, yes. Most Massachusetts towns require a building permit for a deck, and attached decks almost always need one. The town typically inspects the footing holes, the framing and the finished deck; we handle the application and schedule the inspections.", more: { href: "/blog/do-you-need-a-permit-to-remodel-massachusetts", label: "Massachusetts remodeling permits guide" } },
+      { q: "Do I need a permit for a deck in Massachusetts?", a: `Usually, yes. Most Massachusetts towns require a building permit for a deck, and attached decks almost always need one. The town typically inspects the footing holes, the framing and the finished deck. ${weOr("We handle the application and schedule the inspections.", "The contractor's Construction Supervisor License holder applies for the permit and schedules the inspections, and the written contract must say who obtains it.")}`, more: { href: "/blog/do-you-need-a-permit-to-remodel-massachusetts", label: "Massachusetts remodeling permits guide" } },
       { q: "How deep do deck footings go in Massachusetts?", a: "Below the frost line, which is commonly 48 inches in Massachusetts. The local building official sets the required depth, and the footing holes are inspected before the concrete is poured." },
       { q: "Can a deck be built in winter?", a: "Framing and decking can go on in cold weather, but footings need unfrozen ground for digging and pouring concrete. Winter projects plan the footings around the frost; we tell you what is realistic for your yard and schedule." },
       { q: "Can just the decking and railings be replaced?", a: "Sometimes. If the frame, ledger, footings and connectors are sound, new decking and railings can go on the existing frame. If the ledger is not flashed and bolted, or the posts and joists are rotting, the frame should be rebuilt first." },
@@ -592,7 +618,12 @@ const CONTENT: ServiceContent[] = [
           rows: [
             ["Designer or architect", "Floor plans and elevations for the permit set."],
             ["Structural engineer", "Stamped calculations or details when beams, foundations or a second story require them."],
-            ["General contractor (us)", "The building permit, taken out by the Construction Supervisor License holder; the schedule; foundation, framing, exterior and finishes; and the inspections."],
+            ...(hasCsl
+              ? [["General contractor (us)", "The building permit, taken out by the Construction Supervisor License holder; the schedule; foundation, framing, exterior and finishes; and the inspections."]]
+              : [
+                  ["General contractor (us)", "The schedule; foundation, framing, exterior and finishes; and coordinating the trades."],
+                  ["Construction Supervisor License holder", "Takes out the building permit for the contractor's work and schedules the building inspections; the written contract must say who obtains each permit."],
+                ]),
             ["Plumber, gas fitter and electrician", "Their own permits and inspections, under their Massachusetts licenses."],
             ["Town departments", "Building, zoning, Board of Health and conservation reviews, as they apply."],
           ],
@@ -625,7 +656,7 @@ const CONTENT: ServiceContent[] = [
           ["Zoning review or relief", "When the addition affects setbacks, lot coverage or height, or the house is pre-existing nonconforming.", "The zoning officer or Zoning Board of Appeals; usually applied for by the property owner with the design team's plans."],
           ["Board of Health (Title 5)", "Adding a bedroom on a septic system.", "The town's Board of Health; may require a septic inspection or upgrade."],
           ["Plumbing, gas and electrical permits", "Plumbing, gas and electrical work in the addition.", "Each trade, under its own Massachusetts license."],
-          ["Inspections", "Foundation, framing, rough trades, insulation and final.", "We schedule the building inspections; each trade schedules its own."],
+          ["Inspections", "Foundation, framing, rough trades, insulation and final.", weOr("We schedule the building inspections; each trade schedules its own.", "The building permit holder schedules the building inspections; each trade schedules its own.")],
           ["Conservation and historic reviews", "Lots near wetlands or rivers, or in a local historic district.", "The Conservation Commission or historic district commission."],
           LEAD_ROW("Homes built before 1978, when connecting to the existing house disturbs more than 6 sq ft of painted surface per room inside or 20 sq ft outside."),
           CONTRACT_ROW,
@@ -656,7 +687,7 @@ const CONTENT: ServiceContent[] = [
       { q: "How long does a home addition take?", a: "Larger additions and whole-home remodels typically take 2–4 months of construction after design and permits. Design, engineering and any zoning relief come first and can add weeks to months." },
       { q: "Can we live at home during construction?", a: "Usually, yes. Most of the work happens outside the existing house until the new space is weather-tight, and the opening between old and new is sealed with dust barriers. Work on a kitchen or bathroom inside the house affects daily routines the most." },
       { q: "Will the addition match my house?", a: "That is the goal of the design: matching rooflines, siding, trim and windows so the addition looks like part of the house. On the Lynnfield project, the addition and the main house's second floor were sided at the same time, with vertical siding on the addition and lap siding on the house." },
-      { q: "Who handles permits and inspections?", a: "We apply for the building permit and schedule the building inspections. Plumbing, gas and electrical permits are pulled by those trades, and zoning or Board of Health applications are usually filed by the property owner with the design team's plans." },
+      { q: "Who handles permits and inspections?", a: `${weOr("We apply for the building permit and schedule the building inspections.", "The contractor's Construction Supervisor License holder applies for the building permit and schedules the building inspections, and the written contract must say who obtains each permit.")} Plumbing, gas and electrical permits are pulled by those trades, and zoning or Board of Health applications are usually filed by the property owner with the design team's plans.` },
     ],
     testimonials: ["Priya S.", "Tom & Lisa B."],
     related: ["kitchen-bathroom-remodeling", "decks", "siding"],
@@ -732,7 +763,7 @@ const CONTENT: ServiceContent[] = [
       },
       nh: NH_NOTE,
     },
-    leadSafe: { intro: "Scraping and sanding old paint is exactly the kind of work lead-safe rules were written for. On homes built before 1978:" },
+    leadSafe: { intro: "Scraping and sanding old paint is exactly the kind of work lead-safe rules were written for. The same rules cover siding, window and other renovation work on homes built before 1978:", full: true },
     process: {
       steps: [
         { step: "Estimate visit", detail: "We look at every surface, note repairs and the age of the paint, and talk through colors and sheens. You get an itemized estimate." },
