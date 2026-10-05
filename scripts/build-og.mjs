@@ -28,6 +28,36 @@ for (const [slug, src] of Object.entries(crops)) {
   console.log("og", slug);
 }
 
+// BLOG-OG-START — blog posts (owned by the blog; lib/posts.ts uses ogFor(`blog-${slug}`)). Real project photos only.
+// y = vertical focus of the 1200-px-wide resized photo: 0 = top band, 1 = bottom band. Most sources are portrait,
+// so a centred crop would cut off the subject; bathroom-remodels-03 keeps y low to stay clear of its baked-in banner.
+const P = "public/images/projects";
+const blogCrops = {
+  "blog-kitchen-remodel-cost-massachusetts": { src: `${P}/kitchen-remodel-mansfield-ma-01.webp`, y: 0.5 },
+  "blog-bathroom-remodel-cost-massachusetts": { src: `${P}/bathroom-remodels-03.webp`, y: 0.3 },
+  "blog-home-addition-cost-massachusetts": { src: `${P}/home-addition-needham-ma-05.webp`, y: 0.3 },
+  "blog-siding-replacement-cost-massachusetts": { src: `${P}/home-addition-exterior-lynnfield-ma-17.webp`, y: 0.35 },
+  "blog-5-remodels-that-add-the-most-home-value": { src: `${P}/kitchen-remodel-mansfield-ma-06.webp`, y: 0.5 },
+  "blog-signs-its-time-to-replace-your-siding": { src: `${P}/home-addition-exterior-lynnfield-ma-05.webp`, y: 0.4 },
+  "blog-how-to-choose-a-contractor-in-massachusetts": { src: `${P}/home-addition-exterior-lynnfield-ma-03.webp`, y: 0.4 },
+  "blog-signs-you-need-new-windows": { src: `${P}/home-addition-exterior-lynnfield-ma-13.webp`, y: 0.5 },
+  "blog-vinyl-vs-fiber-cement-siding": { src: `${P}/home-addition-exterior-lynnfield-ma-19.webp`, y: 0.33 },
+  "blog-do-you-need-a-permit-to-remodel-massachusetts": { src: `${P}/home-addition-needham-ma-progress-05.webp`, y: 0.35 },
+  "blog-window-replacement-cost-massachusetts": { src: `${P}/home-addition-exterior-lynnfield-ma-18.webp`, y: 0.5 },
+  "blog-deck-cost-massachusetts": { src: `${P}/deck-salem-nh-02.webp`, y: 0.6 },
+};
+for (const [slug, { src, y }] of Object.entries(blogCrops)) {
+  if (!fs.existsSync(src)) { console.warn("missing", src); continue; }
+  const { data, info } = await sharp(src).resize({ width: W }).toBuffer({ resolveWithObject: true });
+  const out = sharp(data);
+  const img = info.height >= H
+    ? out.extract({ left: 0, top: Math.round((info.height - H) * y), width: W, height: H })
+    : out.resize(W, H, { fit: "cover", position: "centre" }); // wider than 1.9:1 — fall back to a centred crop
+  await img.jpeg({ quality: 82, mozjpeg: true }).toFile(`public/og/${slug}.jpg`);
+  console.log("og", slug);
+}
+// BLOG-OG-END
+
 // Default brand card (text kept in sync with lib/site.ts serviceArea.short by hand)
 const logo = await sharp("public/logo-header.png").resize({ width: 220 }).toBuffer();
 const lm = await sharp(logo).metadata();

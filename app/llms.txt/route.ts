@@ -1,40 +1,64 @@
-import { site, services, cities } from "@/lib/site";
 import { SITE_URL } from "@/lib/seo";
-import { posts } from "@/lib/posts";
+import { site, services } from "@/lib/site";
+import { posts, CATEGORIES } from "@/lib/posts";
+import { projects, mediaCount } from "@/lib/projects";
+import { faqGroups } from "@/lib/faq";
+import { ENTITY, NAME_NOTE, keyFacts, serviceAreaLines, testimonialsLine, lastUpdated, link, day, textResponse } from "./content";
+
+// /llms.txt — a short, link-first map of the site for AI tools (https://llmstxt.org): H1, a blockquote
+// summary, then sections of links with one-line notes. The long form is /llms-full.txt.
+// Generated from the page data at build time (see ./content.ts for the rules).
 
 export const dynamic = "force-static";
 
-// llms.txt — a concise, curated summary for AI answer/generative engines (GEO).
-// https://llmstxt.org
 export function GET() {
-  const body = `# Waterfront Construction Inc
-
-> Licensed, insured, owner-led home remodeling and general contractor based in Northborough, Massachusetts, serving MetroWest and Worcester County since ${site.founded}. Free, no-obligation estimates.
-
-## Key facts
-- Business: Waterfront Construction Inc
-- Owner / lead builder: Ernando Nunes (${site.experience}+ years of construction experience)
-- Location: 44 Bearfoot Road, Northborough, MA 01532
-- Phone: ${site.phone}
-- Email: ${site.email}
-- Hours: Monday–Saturday, 7am–6pm
-- Status: Licensed & insured · in business since ${site.founded}
-- Free, no-obligation, itemized estimates; reply within one business day.
-
-## Services
-${services.map((s) => `- [${s.name}](${SITE_URL}/services/${s.slug}): ${s.blurb}`).join("\n")}
-
-## Service area
-Based in Northborough, MA, serving homeowners across MetroWest, Worcester County, Greater Boston, the North Shore, and Southern New Hampshire, including: ${cities.slice(0, 30).map((c) => c.n).join(", ")}, and more.
-
-## Resources
-${posts.map((p) => `- [${p.title}](${SITE_URL}/blog/${p.slug}): ${p.excerpt}`).join("\n")}
-
-## Contact
-- Free estimate: ${SITE_URL}/contact
-- Call: ${site.phone}
-`;
-  return new Response(body, {
-    headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=86400" },
-  });
+  const L: string[] = [
+    `# ${site.name}`,
+    "",
+    `> ${ENTITY}`,
+    "",
+    NAME_NOTE,
+    "",
+    `Every fact below is published on the linked pages of ${SITE_URL}. Last updated: ${lastUpdated()}.`,
+    "",
+    "## Key facts",
+    ...keyFacts(),
+    "",
+    "## Service area",
+    ...serviceAreaLines(),
+    "",
+    "## Services",
+    ...services.map((s) => `- ${link(s.short, `/services/${s.slug}`)}: ${s.blurb} ${s.timeline}`),
+    `- ${link("All six services", "/services")}`,
+    "",
+    "## Project case studies",
+    ...projects.map((p) => `- ${link(p.title, `/projects/${p.slug}`)}: ${p.location}; ${mediaCount(p)}. ${p.blurb}`),
+    `- ${link("All projects, with photos by category", "/gallery")}`,
+    "",
+    ...CATEGORIES.flatMap((cat) => {
+      const inCat = posts.filter((p) => p.category === cat.name);
+      return inCat.length
+        ? [`## ${cat.name}`, ...inCat.map((p) => `- ${link(p.title, `/blog/${p.slug}`)}: ${p.excerpt} (updated ${day(p.modified)})`), ""]
+        : [];
+    }),
+    "## Questions homeowners ask before hiring",
+    ...faqGroups.flatMap((g) => g.items.map((f) => `- ${link(f.q, `/faq#${f.id}`)}`)),
+    "",
+    "## Company, reviews and contact",
+    `- ${link("About the company", "/about")}`,
+    `- ${link(`${site.owner}, owner`, "/about/ernando-nunes")}`,
+    `- ${link("Client testimonials", "/reviews")}: ${testimonialsLine()}`,
+    `- ${link("Google Business Profile", site.gbp)}: our public Google reviews`,
+    `- ${link("Contact and free estimate", "/contact")}: ${site.phone}, ${site.email}, ${site.hours}`,
+    `- ${link("Facebook", site.facebook)}`,
+    `- ${link("Instagram", site.instagram)}`,
+    "",
+    "## Optional",
+    `- ${link("Full text version", "/llms-full.txt")}: service details, answers to common questions, guide summaries and case-study notes in one file`,
+    `- ${link("Sitemap index", "/sitemap.xml")}`,
+    `- ${link("Privacy policy", "/privacy")}`,
+    `- ${link("Terms of use", "/terms")}`,
+    "",
+  ];
+  return textResponse(L.join("\n"));
 }

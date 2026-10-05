@@ -1,12 +1,16 @@
 import type { MetadataRoute } from "next";
+import { site, serviceArea } from "@/lib/site";
 
+// Same entity wording as the rest of the site (audit 01 H2/M8). `display` is left at the default
+// ("browser"): the site ships no 192/512 px or maskable icons, so it does not claim to be installable (07 T17).
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Waterfront Construction Inc",
+    name: site.shortName,
     short_name: "Waterfront",
-    description: "Remodeling & construction in Northborough, MA & MetroWest.",
+    description: `Owner-led home remodeling contractor in Northborough, MA, serving ${serviceArea.short}.`,
+    id: "/",
     start_url: "/",
-    display: "standalone",
+    lang: "en-US",
     background_color: "#ffffff",
     theme_color: "#24215a",
     icons: [

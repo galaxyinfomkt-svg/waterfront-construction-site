@@ -1,55 +1,95 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 
-export default function Gallery({ images, alt }: { images: string[]; alt?: string }) {
-  const altFor = (i: number) => (alt ? `${alt} — photo ${i + 1}` : `Project photo ${i + 1}`);
+// Case-study photo grid. Alt text and captions come from the data (lib/projects.ts) — one true description
+// per photo, never a templated "— photo N" or an invented town (audit 05 PG-M4). Captions are visible
+// <figcaption>s in the server HTML. The larger view is a native modal <dialog> (focus moves into it, Esc
+// closes it, the page behind is inert; audit 10 M3).
+export type GalleryPhoto = { src: string; alt: string; caption?: string };
+
+export default function Gallery({ photos, label = "Photo viewer" }: { photos: GalleryPhoto[]; label?: string }) {
   const [active, setActive] = useState<number | null>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const isOpen = active !== null;
+  const n = photos.length;
+
   const close = useCallback(() => setActive(null), []);
-  const move = useCallback((d: number) => setActive((a) => (a === null ? a : (a + d + images.length) % images.length)), [images.length]);
+  const move = useCallback((d: number) => setActive((a) => (a === null ? a : (a + d + n) % n)), [n]);
 
   useEffect(() => {
-    if (active === null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-      if (e.key === "ArrowRight") move(1);
-      if (e.key === "ArrowLeft") move(-1);
-    };
+    const d = dialogRef.current;
+    if (!d) return;
+    if (isOpen && !d.open) d.showModal();
+    if (!isOpen && d.open) d.close();
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKey);
-    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
-  }, [active, close, move]);
+    return () => {
+      document.body.style.overflow = prev;
+      triggerRef.current?.focus(); // return focus to the photo that opened the viewer
+    };
+  }, [isOpen]);
+
+  const open = (i: number, el: HTMLElement) => {
+    triggerRef.current = el;
+    setActive(i);
+  };
+  const current = active !== null ? photos[active] : null;
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {images.map((g, i) => (
-          <button
-            type="button"
-            key={g}
-            onClick={() => setActive(i)}
-            aria-label={`View ${altFor(i)}`}
-            className={`group relative overflow-hidden rounded-2xl cursor-pointer ${i === 0 ? "md:row-span-2 h-64 md:h-full" : "h-56"}`}
-          >
-            <Image src={g} alt={altFor(i)} fill quality={60} sizes="(max-width: 768px) 50vw, 33vw" className="object-cover zoomimg" />
-            <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/45 transition grid place-items-center">
-              <span className="opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition w-12 h-12 rounded-full bg-white/90 text-navy grid place-items-center text-xl shadow-lg">🔍</span>
-            </div>
-          </button>
+      <ul role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-7">
+        {photos.map((ph, i) => (
+          <li key={ph.src}>
+            <figure>
+              <button
+                type="button"
+                onClick={(e) => open(i, e.currentTarget)}
+                className="group relative block w-full aspect-[4/3] overflow-hidden rounded-xl bg-sand cursor-zoom-in focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue"
+              >
+                <Image src={ph.src} alt={ph.alt} fill quality={60} sizes="(min-width: 1200px) 380px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover zoomimg" />
+                <span className="sr-only"> (opens a larger view)</span>
+              </button>
+              {ph.caption && <figcaption className="mt-2.5 text-sm leading-relaxed text-ink/80">{ph.caption}</figcaption>}
+            </figure>
+          </li>
         ))}
-      </div>
+      </ul>
 
-      {active !== null && (
-        <div onClick={close} className="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm grid place-items-center p-4 reveal">
-          <button type="button" onClick={close} aria-label="Close" className="absolute top-4 right-5 z-10 text-white/90 hover:text-white text-5xl leading-none">×</button>
-          <button type="button" onClick={(e) => { e.stopPropagation(); move(-1); }} aria-label="Previous" className="absolute left-3 md:left-8 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white text-5xl">‹</button>
-          <button type="button" onClick={(e) => { e.stopPropagation(); move(1); }} aria-label="Next" className="absolute right-3 md:right-8 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white text-5xl">›</button>
-          <button type="button" onClick={close} aria-label="Close photo" className="relative w-[92vw] h-[82vh] cursor-zoom-out">
-            <Image src={images[active]} alt={altFor(active)} fill quality={75} className="object-contain rounded-xl" sizes="92vw" />
-          </button>
-          <div className="absolute bottom-5 text-white/70 text-sm">{active + 1} / {images.length}</div>
-        </div>
-      )}
+      <dialog
+        ref={dialogRef}
+        aria-label={current ? `${label}: ${current.caption ?? current.alt}` : label}
+        onClose={close}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight") move(1);
+          if (e.key === "ArrowLeft") move(-1);
+        }}
+        onClick={(e) => { if (e.target === e.currentTarget) close(); }}
+        className="m-0 h-dvh max-h-none w-screen max-w-none bg-black/90 p-0 text-white backdrop:bg-black/70"
+      >
+        {current && (
+          <div className="relative h-full w-full flex flex-col items-center justify-center gap-4 p-4 pt-16" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
+            <button type="button" onClick={close} aria-label="Close photo viewer" className="absolute top-3 right-3 grid h-12 w-12 place-items-center rounded-full text-4xl leading-none text-white/90 hover:bg-white/10 hover:text-white">×</button>
+            <div className="relative w-full max-w-5xl flex-1 min-h-0">
+              <Image src={current.src} alt={current.alt} fill quality={75} sizes="92vw" className="object-contain" />
+            </div>
+            <p className="max-w-3xl text-center text-sm text-white/85">
+              {current.caption ?? current.alt} <span className="text-white/70">({(active ?? 0) + 1} of {n})</span>
+            </p>
+            {n > 1 && (
+              <>
+                <button type="button" onClick={() => move(-1)} aria-label="Previous photo" className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 grid h-12 w-12 place-items-center rounded-full text-4xl text-white/85 hover:bg-white/10 hover:text-white">‹</button>
+                <button type="button" onClick={() => move(1)} aria-label="Next photo" className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 grid h-12 w-12 place-items-center rounded-full text-4xl text-white/85 hover:bg-white/10 hover:text-white">›</button>
+              </>
+            )}
+          </div>
+        )}
+      </dialog>
     </>
   );
 }

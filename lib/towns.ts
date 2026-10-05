@@ -1,20 +1,25 @@
 // Computed, verifiable facts about each served town — used to make every service×town page
 // genuinely specific without inventing anything. All distances are straight-line, town center
-// to town center, from Northborough (the company's base), rounded and labelled "about".
-import { allCities, citySlug, type City } from "./site";
+// to town center (GeoNames postal-code centroids, see lib/town-geo.ts), rounded and labelled "about".
+import { allCities, citySlug, cityLabel, type City } from "./site";
 import { TOWN_GEO } from "./town-geo";
 import { projects, type Project } from "./projects";
 
+/** Date the service×town template and its data last changed substantively (sitemap lastModified,
+ *  WebPage dateModified and the visible "Page updated" line). Bump ONLY on a substantive change. */
+export const TOWN_PAGES_UPDATED = "2026-10-05T09:07:27-04:00";
+
 const BASE = { lat: 42.3182, lng: -71.6464 }; // Northborough town center (ZIP 01532 centroid)
+type LatLng = { lat: number; lng: number };
 
 const toRad = (d: number) => (d * Math.PI) / 180;
-function miles(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
+function miles(a: LatLng, b: LatLng) {
   const R = 3958.8;
   const dLat = toRad(b.lat - a.lat), dLng = toRad(b.lng - a.lng);
   const h = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
 }
-function bearing(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
+function bearing(a: LatLng, b: LatLng) {
   const y = Math.sin(toRad(b.lng - a.lng)) * Math.cos(toRad(b.lat));
   const x = Math.cos(toRad(a.lat)) * Math.sin(toRad(b.lat)) - Math.sin(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.cos(toRad(b.lng - a.lng));
   const deg = ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
@@ -22,6 +27,8 @@ function bearing(a: { lat: number; lng: number }, b: { lat: number; lng: number 
 }
 
 // Villages that are not municipalities — building permits are issued by the parent town.
+// Values are the parent town's NAME (lib/schema.ts reads them); villageParent() returns the City.
+// [verify R15: town websites / MA municipal list]
 export const VILLAGE_OF: Record<string, string> = {
   whitinsville: "Northbridge",
   "cherry-valley": "Leicester",
@@ -31,23 +38,57 @@ export const VILLAGE_OF: Record<string, string> = {
   baldwinville: "Templeton",
   "still-river": "Harvard",
 };
-// Devens is a regional enterprise zone (Ayer/Harvard/Shirley) with its own permitting authority.
+// Devens is a regional enterprise zone (parts of Ayer, Harvard and Shirley) with its own
+// permitting authority, the Devens Enterprise Commission. [verify R16: devensec.com]
 export const DEVENS = "devens";
 
 // Same town name in both states → always disambiguate.
 const NAME_COUNT = allCities.reduce<Record<string, number>>((m, c) => ((m[c.n] = (m[c.n] || 0) + 1), m), {});
 export const hasTwin = (c: City) => NAME_COUNT[c.n] > 1;
+// Easily-confused pairs: the same name in MA and NH, plus Manchester NH ⇄ Manchester-by-the-Sea MA.
+const TWIN_OF: Record<string, string> = {
+  salem: "salem-nh", "salem-nh": "salem",
+  hudson: "hudson-nh", "hudson-nh": "hudson",
+  bedford: "bedford-nh", "bedford-nh": "bedford",
+  "manchester-by-the-sea": "manchester-nh", "manchester-nh": "manchester-by-the-sea",
+};
 
+const BY_SLUG: Record<string, City> = Object.fromEntries(allCities.map((c) => [citySlug(c), c]));
+export const cityBySlug = (slug: string): City | undefined => BY_SLUG[slug];
+export const isNH = (c: City) => c.s === "NH";
+export const isDevens = (c: City) => citySlug(c) === DEVENS;
+/** Parent town of a village (Whitinsville → Northbridge), else undefined. */
+export function villageParent(c: City): City | undefined {
+  const name = VILLAGE_OF[citySlug(c)];
+  return name ? allCities.find((x) => x.n === name && (x.s ?? "MA") === (c.s ?? "MA")) : undefined;
+}
+/** Villages whose parent is this town (Leicester → Cherry Valley, Rochdale). */
+export function villagesOf(c: City): City[] {
+  return allCities.filter((x) => villageParent(x) === c);
+}
+/** The same-name (or easily confused) place in the other state, if any. */
+export function twinOf(c: City): City | undefined {
+  const t = TWIN_OF[citySlug(c)];
+  return t ? BY_SLUG[t] : undefined;
+}
+/** "Whitinsville (Northbridge), MA" for villages, otherwise "Salem, NH". Used in H1, titles, FAQ questions. */
+export function placeLabel(c: City): string {
+  const p = villageParent(c);
+  return p ? `${c.n} (${p.n}), ${c.s ?? "MA"}` : cityLabel(c);
+}
+
+export type Neighbor = { city: City; miles: number; dir: string };
 export type TownFacts = {
   slug: string;
   county: string; // e.g. "Worcester County"
   lat: number; lng: number;
-  miles: number; // straight-line from Northborough, rounded
+  miles: number; // straight-line from Northborough, rounded (≥1 except the base itself)
+  exactMiles: number; // unrounded, for sorting and distance bands
   dir: string; // compass direction from Northborough
   isBase: boolean;
   villageOf?: string;
-  nearest: { city: City; miles: number }[]; // true nearest served towns
-  sameCounty: number; // how many served towns share the county
+  nearest: Neighbor[]; // the 8 true nearest served places, with miles and direction FROM this town
+  sameCounty: number; // how many served places share the county (same state)
 };
 
 const geoOf = (c: City) => {
@@ -56,22 +97,28 @@ const geoOf = (c: City) => {
   return { county: `${g[0]} County`, lat: g[1], lng: g[2] };
 };
 
+/** Straight-line miles between two served places (unrounded). */
+export const milesBetween = (a: City, b: City) => miles(geoOf(a), geoOf(b));
+/** Compass direction (8-point) from a to b. */
+export const dirBetween = (a: City, b: City) => bearing(geoOf(a), geoOf(b));
+
 const cache = new Map<string, TownFacts>();
 export function townFacts(c: City): TownFacts {
   const slug = citySlug(c);
   const hit = cache.get(slug);
   if (hit) return hit;
   const g = geoOf(c);
-  const m = miles(BASE, g);
+  const isBase = slug === "northborough";
+  const m = isBase ? 0 : miles(BASE, g);
   const nearest = allCities
     .filter((x) => x !== c)
-    .map((x) => ({ city: x, miles: miles(g, geoOf(x)) }))
-    .sort((a, b) => a.miles - b.miles)
+    .map((x) => ({ city: x, exact: miles(g, geoOf(x)) }))
+    .sort((a, b) => a.exact - b.exact)
     .slice(0, 8)
-    .map((x) => ({ ...x, miles: Math.max(1, Math.round(x.miles)) }));
+    .map((x) => ({ city: x.city, miles: Math.max(1, Math.round(x.exact)), dir: bearing(g, geoOf(x.city)) }));
   const facts: TownFacts = {
     slug, county: g.county, lat: g.lat, lng: g.lng,
-    miles: Math.round(m), dir: bearing(BASE, g), isBase: slug === "northborough",
+    miles: isBase ? 0 : Math.max(1, Math.round(m)), exactMiles: m, dir: bearing(BASE, g), isBase,
     villageOf: VILLAGE_OF[slug],
     nearest,
     sameCounty: allCities.filter((x) => geoOf(x).county === g.county && (x.s ?? "MA") === (c.s ?? "MA")).length,
@@ -80,7 +127,16 @@ export function townFacts(c: City): TownFacts {
   return facts;
 }
 
-// Real, documented projects with a known town → nearest one to any served town.
+/** County as shown in copy: Devens spans parts of Middlesex (Ayer, Shirley) and Worcester (Harvard). */
+export function countyLabel(c: City): string {
+  return isDevens(c) ? "Middlesex & Worcester Counties" : townFacts(c).county;
+}
+
+/** Served places (towns and villages) within `radius` miles of Northborough, straight line. */
+export const placesWithin = (radius: number) => allCities.filter((c) => townFacts(c).exactMiles <= radius).length;
+
+// Real, documented projects with a known town (town-level only; projects whose location is just
+// "Massachusetts" — e.g. the bathroom-remodels album — have no town and are never tied to one).
 const PROJECT_TOWN: Record<string, City> = {};
 for (const p of projects) {
   const m = p.location.match(/^(.+), (MA|NH)$/);
@@ -89,13 +145,14 @@ for (const p of projects) {
   if (city) PROJECT_TOWN[p.slug] = city;
 }
 
-export function nearestProjects(c: City, opts: { service?: string; limit?: number } = {}): { project: Project; miles: number; sameTown: boolean }[] {
-  const g = geoOf(c);
+export type ProjectNear = { project: Project; town: City; miles: number; dir: string; sameTown: boolean };
+export function nearestProjects(c: City, opts: { service?: string; limit?: number } = {}): ProjectNear[] {
   return projects
     .filter((p) => PROJECT_TOWN[p.slug] && (!opts.service || p.services.includes(opts.service)))
     .map((p) => {
       const pc = PROJECT_TOWN[p.slug];
-      return { project: p, miles: Math.round(miles(g, geoOf(pc))), sameTown: citySlug(pc) === citySlug(c) };
+      const same = citySlug(pc) === citySlug(c);
+      return { project: p, town: pc, miles: same ? 0 : Math.max(1, Math.round(milesBetween(c, pc))), dir: same ? "" : dirBetween(c, pc), sameTown: same };
     })
     .sort((a, b) => a.miles - b.miles)
     .slice(0, opts.limit ?? 2);
@@ -103,4 +160,24 @@ export function nearestProjects(c: City, opts: { service?: string; limit?: numbe
 
 export function projectTown(p: Project): City | undefined {
   return PROJECT_TOWN[p.slug];
+}
+
+// ---------- phase-2 records (render only when filled; never guessed) ----------
+
+/** Completed jobs from the owner's invoices/contracts — the records behind "30+ towns with completed
+ *  projects" (audit 03 §3.2-c, 09 AEO-H4). Town level only, never street addresses or client names.
+ *  Every row must be producible on request (M.G.L. c.142A §17; FTC Act §5). Empty until the owner
+ *  supplies the list; every sentence built from it renders only for towns that have a row.
+ *  Example row: { town: "grafton", service: "decks", year: 2024 } */
+export type Job = { town: string /* citySlug */; service: string /* service slug */; year: number; caseStudy?: string /* project slug */ };
+export const JOBS: Job[] = [];
+export const jobsIn = (c: City, service?: string) => JOBS.filter((j) => j.town === citySlug(c) && (!service || j.service === service));
+
+/** Official building-department pages, each opened and checked by a person (never guessed or copied
+ *  from a directory), with the month it was checked. Villages use their parent town's entry; Devens
+ *  uses "devens" (Devens Enterprise Commission). Example: { worcester: { url: "https://…", verified: "2026-11" } } */
+export const PERMIT_OFFICE: Record<string, { url: string; verified: string }> = {};
+export function permitOffice(c: City): { url: string; verified: string } | undefined {
+  const p = villageParent(c);
+  return PERMIT_OFFICE[citySlug(p ?? c)];
 }
