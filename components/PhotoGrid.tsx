@@ -17,19 +17,20 @@ export default function PhotoGrid({ photos, className = "" }: { photos: Photo[];
       {photos.map((p, i) => {
         const project = p.project ? getProject(p.project) : undefined;
         return (
-          <li key={p.src} className={`w-[80%] shrink-0 snap-start sm:w-auto ${i === 0 && n % 2 ? "sm:col-span-2" : ""} ${spanFor(i, n)}`}>
+          <li key={p.src} className={`w-[80%] shrink-0 snap-start sm:w-auto ${i === 0 && n % 2 ? "sm:col-span-2" : ""} ${n === 1 ? "lg:col-span-6 lg:max-w-[48rem]" : spanFor(i, n)}`}>
             <figure>
               <div className="relative aspect-[4/3] overflow-hidden bg-well">
                 <Image src={p.src} alt={p.alt} fill quality={60} sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
               </div>
               <figcaption className="mt-3">
-                <span className="block text-[15px] leading-normal text-ink">{p.caption}</span>
-                {p.place && <span className="block mt-1 text-sm text-muted">{p.place}</span>}
+                {/* {" "} keeps words apart in the HTML text (textContent) that crawlers and AI engines read. */}
+                <span className="block text-[15px] leading-normal text-ink">{p.caption}</span>{" "}
+                {p.place && <span className="block mt-1 text-sm text-muted">{p.place}</span>}{" "}
                 {project && (
                   <Link href={`/projects/${project.slug}`} className="link-arrow text-sm">
                     <ArrowLabel text={`${project.shortTitle} case study`} />
                   </Link>
-                )}
+                )}{" "}
               </figcaption>
             </figure>
           </li>

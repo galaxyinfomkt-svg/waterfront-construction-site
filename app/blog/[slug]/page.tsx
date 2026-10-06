@@ -9,11 +9,10 @@ import { projects } from "@/lib/projects";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import JsonLd from "@/components/JsonLd";
 import { ArrowLabel, PhoneIcon } from "@/components/chrome-icons";
-import Typeset from "@/components/Typeset";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { pageMeta, ogFor, SITE_URL } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, imageNode, placeNode, serviceId, pageUrl, OWNER_PAGE, BUSINESS_ID, type Crumb } from "@/lib/schema";
-import { PostBlock, PostFigure, Rich, formatDate, plain, readTime, sameDay, wordCount } from "../_lib/content";
+import { HeadlineSet, PostBlock, PostFigure, Rich, formatDate, plain, readTime, sameDay, wordCount } from "../_lib/content";
 
 export const dynamicParams = false;
 
@@ -136,7 +135,7 @@ export default async function PostPage({ params }: Props) {
                 {p.category}
               </Link>
             </p>
-            <h1 className="mt-4 text-h1 text-navy"><Typeset text={p.title} /></h1>
+            <h1 className="mt-4 text-h1 text-navy text-balance"><HeadlineSet text={p.title} /></h1>
             <p className="mt-6 text-sm text-muted">
               Published by{" "}
               <Link rel="author" href="/about" className="link">
@@ -232,7 +231,7 @@ export default async function PostPage({ params }: Props) {
               <p className="mt-2 text-white/80">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
-                <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+                <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
               </div>
             </div>
           </div>
@@ -243,7 +242,7 @@ export default async function PostPage({ params }: Props) {
               <p className="font-display text-[1.375rem] leading-[1.25] text-navy text-balance">Talk to an <span className="whitespace-nowrap">owner-led</span> builder</p>
               <p className="mt-2 text-sm text-muted">{[credentialLine(), "Owner-led", "Based in Northborough, MA"].filter(Boolean).join(" · ")}</p>
               <Link href="/contact#estimate" className="btn btn-primary mt-6 w-full">Get a free estimate</Link>
-              <a href={site.phoneHref} className="btn btn-secondary mt-3 w-full"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+              <a href={site.phoneHref} className="btn btn-secondary mt-3 w-full"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
             </div>
           </aside>
         </div>
@@ -258,11 +257,12 @@ export default async function PostPage({ params }: Props) {
             <div>
               <h3 className="text-h2-doc text-navy">{relServices.length > 1 ? "Related services" : "Related service"}</h3>
               <ul role="list" className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+                {/* A lone related service takes two of the three columns, so the row does not read two-thirds empty. */}
                 {relServices.map((s) => (
-                  <li key={s.slug}>
+                  <li key={s.slug} className={relServices.length === 1 ? "sm:col-span-2" : undefined}>
                     <Link href={`/services/${s.slug}`} className="card-ed group h-full border-t border-line pt-5">
                       <span className="block font-display text-h3s text-navy group-hover:underline underline-offset-[.18em] decoration-1">{s.short}</span>
-                      <span className="mt-2 block text-[15px] leading-relaxed text-muted">{s.blurb}</span>
+                      <span className="mt-2 block max-w-[60ch] text-[15px] leading-relaxed text-muted">{s.blurb}</span>
                       <span className="link-arrow text-sm mt-auto pt-2 self-start"><ArrowLabel text="See the service" /></span>
                     </Link>
                   </li>

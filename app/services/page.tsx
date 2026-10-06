@@ -53,13 +53,13 @@ export default function ServicesPage() {
             <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
             <ul className="dot-list mt-4 text-sm text-muted">
-              <li>Owner-led</li>
-              <li>Founded in {site.founded} in Northborough, MA</li>
+              <li>Owner-led</li>{" "}
+              <li>Founded in {site.founded} in Northborough, MA</li>{" "}
               {credentials && <li>{credentials}</li>}
             </ul>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
-              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
             </div>
           </div>
         </div>
@@ -68,10 +68,12 @@ export default function ServicesPage() {
       <section className="section bg-paper" aria-labelledby="services-h">
         <div className="container-x">
           <h2 id="services-h" className="sr-only">Our six services</h2>
-          {/* The 01–06 index is drawn by a CSS counter on an aria-hidden span: decorative, never page text. */}
+          {/* The 01–06 index is drawn by a CSS counter on an aria-hidden span: decorative, never page text.
+              From sm each card is a row subgrid (media, index, title, body, timeline, then one row per link), so titles,
+              bodies, timelines and link hairlines line up across a row. */}
           <ul role="list" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 [counter-reset:svc]">
             {cards.map(({ s, c, costGuide, project }) => (
-              <li key={s.slug} className="card-ed group">
+              <li key={s.slug} className="card-ed group sm:grid sm:grid-rows-subgrid sm:row-span-8 sm:gap-y-0">
                 {s.imageIsStock ? (
                   // No real photo for this service yet: an icon tile, never a stock photo (audit 02 C1).
                   <div className="media grid place-items-center" aria-hidden="true"><ServiceIcon slug={s.slug} className="w-12 h-12 text-navy" /></div>
@@ -81,15 +83,15 @@ export default function ServicesPage() {
                   </div>
                 )}
                 <p className="meta" aria-hidden="true"><span className="[counter-increment:svc] before:content-[counter(svc,decimal-leading-zero)]" /></p>
-                <h2 className="mt-2.5 font-display text-h3 text-navy lg:min-h-[2.4em]">
+                <h2 className="mt-2.5 font-display text-h3 text-navy">
                   <Link href={`/services/${s.slug}`} className="after:absolute after:inset-0 after:content-[''] underline-offset-[.18em] decoration-1 group-hover:underline focus-visible:underline">{s.short}</Link>
                 </h2>
-                <p className="body">{c.cardSummary}</p>
-                <p className="mt-3 text-sm text-muted"><span className="font-semibold text-ink">Typical timeline:</span> {s.timeline}</p>
-                <ul role="list" className="mt-auto pt-4 text-sm">
-                  <li><Link href={`/services/${s.slug}`} className="link-arrow lift text-sm"><ArrowLabel text={`${s.name}: costs, permits and FAQ`} /></Link></li>
-                  {costGuide && <li><Link href={`/blog/${costGuide.slug}`} className="block py-2 border-t border-line text-sm text-ink/80 hover:underline underline-offset-4 lift">{costGuide.title}</Link></li>}
-                  {project && <li><Link href={`/projects/${project.slug}`} className="block py-2 border-t border-line text-sm text-ink/80 hover:underline underline-offset-4 lift">Case study: {project.title}</Link></li>}
+                <p className="body">{c.cardSummary}</p>{" "}
+                <p className="mt-3 text-sm text-muted"><span className="font-semibold text-ink">Typical timeline:</span> {s.timeline}</p>{" "}
+                <ul role="list" className="pt-4 text-sm sm:grid sm:grid-rows-subgrid sm:row-span-3 sm:gap-y-0">
+                  <li><Link href={`/services/${s.slug}`} className="link-arrow lift text-sm"><ArrowLabel text={`${s.name}: costs, permits and FAQ`} /></Link>{" "}</li>
+                  {costGuide && <li><Link href={`/blog/${costGuide.slug}`} className="block py-2 border-t border-line text-sm text-ink/80 hover:underline underline-offset-4 lift">{costGuide.title}</Link>{" "}</li>}
+                  {project && <li><Link href={`/projects/${project.slug}`} className="block py-2 border-t border-line text-sm text-ink/80 hover:underline underline-offset-4 lift">Case study: {project.title}</Link>{" "}</li>}
                 </ul>
               </li>
             ))}
@@ -117,8 +119,8 @@ export default function ServicesPage() {
               <li>Let the contractor pull the building permit: homeowners who pull their own permit for a contractor&apos;s work generally lose access to the state Guaranty Fund.</li>
             </ul>
             <ul className="dot-list mt-5 text-xs text-muted">
-              <li>Sources: <a href={SOURCES.contract.url} className="link py-1.5">{SOURCES.contract.label}</a></li>
-              <li><a href={SOURCES.c142a.url} className="link py-1.5">{SOURCES.c142a.label}</a></li>
+              <li>Sources: <a href={SOURCES.contract.url} className="link py-1.5">{SOURCES.contract.label}</a></li>{" "}
+              <li><a href={SOURCES.c142a.url} className="link py-1.5">{SOURCES.c142a.label}</a></li>{" "}
               <li><a href={SOURCES.hic.url} className="link py-1.5">{SOURCES.hic.label}</a></li>
             </ul>
           </div>
@@ -134,7 +136,7 @@ export default function ServicesPage() {
           <p className="mt-4"><Link href="/service-areas" className="link-arrow"><ArrowLabel text="See every town we serve, by county" /></Link></p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+            <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>
         </div>
       </section>

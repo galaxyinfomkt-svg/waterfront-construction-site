@@ -5,9 +5,17 @@ import { testimonials } from "@/lib/site";
 import type { Block, Figure, Post } from "@/lib/posts";
 import MEDIA from "@/lib/media-manifest.json";
 import { ArrowLabel } from "@/components/chrome-icons";
+import Typeset from "@/components/Typeset";
 
 const DIMS = MEDIA as Record<string, { w: number; h: number }>;
 export const dims = (src: string) => DIMS[src] ?? { w: 1500, h: 1125 };
+
+// Headline setting for post H1s: Typeset's glue ("word &", "Town, MA"), plus hyphenated compounds kept whole, so a
+// balanced H1 never breaks inside "Fiber-Cement" and strands the next word on its own line. textContent is unchanged.
+export function HeadlineSet({ text }: { text: string }) {
+  const parts = text.split(/(\S+-\S+)/);
+  return <>{parts.map((p, i) => (i % 2 ? <span key={i} className="whitespace-nowrap">{p}</span> : <Typeset key={i} text={p} />))}</>;
+}
 
 // ---------- inline links: "[label](/path)" becomes <Link>, "[label](https://…)" becomes <a> ----------
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;

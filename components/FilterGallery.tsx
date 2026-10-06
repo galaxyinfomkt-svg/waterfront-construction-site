@@ -18,6 +18,9 @@ export default function FilterGallery({ items, categories, linkLabel = "View the
   const [active, setActive] = useState<number | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
+  // Natural aspect ratio of each photo seen in the viewer (keyed by src), and the last one, used while the next loads.
+  const [ratios, setRatios] = useState<Record<string, number>>({});
+  const [lastRatio, setLastRatio] = useState<number | null>(null);
   const isOpen = active !== null;
 
   const filtered = useMemo(() => (tab === "All" ? items : items.filter((i) => i.cat === tab)), [tab, items]);
@@ -43,6 +46,7 @@ export default function FilterGallery({ items, categories, linkLabel = "View the
   }, [isOpen]);
 
   const current = active !== null ? filtered[active] : undefined;
+  const ratio = current ? (ratios[current.src] ?? lastRatio) : null;
 
   return (
     <>
@@ -102,8 +106,30 @@ export default function FilterGallery({ items, categories, linkLabel = "View the
         {current && (
           <div className="relative h-full w-full flex flex-col items-center justify-center gap-4 p-4 pt-16 pb-20 md:pb-4" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
             <button type="button" onClick={close} aria-label="Close photo viewer" className="absolute top-3 right-3 grid h-12 w-12 place-items-center rounded-full border border-white/40 text-white hover:bg-white/10"><XIcon className="w-6 h-6" /></button>
-            <div className="relative w-full max-w-[min(92vw,1100px)] flex-1 min-h-0">
-              <Image src={current.src} alt={current.alt ?? current.label} fill quality={75} sizes="(min-width:1280px) 1100px, 92vw" className="object-contain" />
+            {/* The photo box takes the photo's own proportions once it has loaded (until then it fills the free height),
+                so the caption sits right under the photo. From md the box stays 5rem clear of each side, so the
+                prev/next circles always sit on the black scrim, never on the photo. */}
+            <div
+              className={`relative w-full max-w-[min(92vw,1100px)] md:max-w-[min(calc(100vw_-_10rem),1100px)] min-h-0 ${ratio ? "" : "flex-1"}`}
+              style={ratio ? { aspectRatio: ratio } : undefined}
+            >
+              <Image
+                src={current.src}
+                alt={current.alt ?? current.label}
+                fill
+                quality={75}
+                sizes="(min-width:1280px) 1100px, 92vw"
+                className="object-contain"
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  if (img.naturalWidth && img.naturalHeight) {
+                    const r = img.naturalWidth / img.naturalHeight;
+                    const src = current.src;
+                    setRatios((m) => (m[src] === r ? m : { ...m, [src]: r }));
+                    setLastRatio(r);
+                  }
+                }}
+              />
             </div>
             <p className="max-w-2xl text-center text-sm text-white/85">
               {current.label} <span className="block tnum text-white/70">({(active ?? 0) + 1} of {n})</span>

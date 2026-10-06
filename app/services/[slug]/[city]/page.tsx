@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import LeadForm from "@/components/LeadForm";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { PhoneIcon, PlusIcon, ArrowSuffix } from "@/components/chrome-icons";
+import { PhoneIcon, PlusIcon, ArrowLabel } from "@/components/chrome-icons";
 import Typeset from "@/components/Typeset";
 import { services, allCities, citySlug, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
@@ -35,7 +35,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMeta({ title: k.title, absoluteTitle: k.titleIsAbsolute, description: k.description, path: k.path, image: k.og });
 }
 
-const Arrow = ArrowSuffix;
 const block = "mt-12 border-t border-line pt-12"; // body blocks are separated by a hairline
 
 export default async function ServiceTownPage({ params }: Props) {
@@ -75,16 +74,16 @@ export default async function ServiceTownPage({ params }: Props) {
             {k.heroNote && (
               <p className="mt-4 text-ink/80 max-w-[36em]">
                 {k.heroNote.text}{" "}
-                <Link href={k.heroNote.href} className="link">{k.heroNote.label}<Arrow /></Link>
+                <Link href={k.heroNote.href} className="link"><ArrowLabel text={k.heroNote.label} /></Link>
               </p>
-            )}
+            )}{" "}
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               {/* On desktop the form is right beside this text, so the jump link is for phones and tablets only. */}
               <a href="#estimate" className="btn btn-primary w-full sm:w-auto lg:hidden">{k.cta.estimate}</a>
-              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /> <span className="tel">{k.cta.phone}</span></a>
-            </div>
+              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{k.cta.phone}</span></a>
+            </div>{" "}
             <ul className="dot-list eyebrow mt-6">
-              {k.trust.map((t) => <li key={t}>{t}</li>)}
+              {k.trust.map((t) => <li key={t}>{t} </li>)}
             </ul>
           </div>
 
@@ -144,8 +143,8 @@ export default async function ServiceTownPage({ params }: Props) {
                         </div>
                       )}
                       <div className={wide && card.img ? "md:col-span-5 self-center" : wide ? "md:col-span-12" : ""}>
-                        <h3 className={`mt-5 ${wide && card.img ? "md:mt-0" : ""}`}><Link href={card.href}>{card.title}</Link></h3>
-                        <p className="body">{card.caption}</p>
+                        <h3 className={`mt-5 ${wide && card.img ? "md:mt-0" : ""}`}><Link href={card.href}>{card.title}</Link></h3>{" "}
+                        <p className="body">{card.caption}</p>{" "}
                       </div>
                     </div>
                   );
@@ -155,28 +154,28 @@ export default async function ServiceTownPage({ params }: Props) {
             {k.proof.also.length > 0 && (
               <ul className="mt-6">
                 {k.proof.also.map((a) => (
-                  <li key={a.href}><Link href={a.href} className="link-arrow"><span>{a.label}<Arrow /></span></Link></li>
+                  <li key={a.href}><Link href={a.href} className="link-arrow"><ArrowLabel text={a.label} /></Link>{" "}</li>
                 ))}
               </ul>
             )}
-            <p className="mt-8 text-sm font-semibold text-ink">{k.proof.caseStudiesLabel}</p>
+            <p className="mt-8 text-sm font-semibold text-ink">{k.proof.caseStudiesLabel}</p>{" "}
             {k.proof.caseStudies.length > 0 && (
               <ul className="mt-3 rule-list text-[15px]">
                 {k.proof.caseStudies.map((x) => (
                   <li key={x.href} className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 py-3">
-                    <span><Link href={x.href} className="link">{x.label}</Link></span>
-                    <span className="text-sm text-muted tnum whitespace-nowrap">{x.meta}</span>
+                    <span><Link href={x.href} className="link">{x.label}</Link></span>{" "}
+                    <span className="text-sm text-muted tnum whitespace-nowrap">{x.meta}</span>{" "}
                   </li>
                 ))}
               </ul>
             )}
-            <p className="mt-8 text-sm font-semibold"><Link href="/reviews" className="link">{k.proof.reviewsLabel}</Link></p>
+            <p className="mt-8 text-sm font-semibold"><Link href="/reviews" className="link">{k.proof.reviewsLabel}</Link></p>{" "}
             {k.proof.reviewTowns.length > 0 && (
               <ul className="mt-3 rule-list text-[15px] text-ink">
                 {k.proof.reviewTowns.map((x) => (
                   <li key={x.label} className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 py-3">
-                    <span>{x.label}</span>
-                    <span className="text-sm text-muted tnum whitespace-nowrap">{x.meta}</span>
+                    <span>{x.label}</span>{" "}
+                    <span className="text-sm text-muted tnum whitespace-nowrap">{x.meta}</span>{" "}
                   </li>
                 ))}
               </ul>
@@ -187,15 +186,15 @@ export default async function ServiceTownPage({ params }: Props) {
             <p className="mt-5 text-prose text-ink/80">{k.rules}</p>
 
             {/* SCOPE — details, costs and timelines live on the service hub */}
-            <p className="mt-10 font-semibold text-ink">{k.scopeLabel}</p>
+            <p className="mt-10 font-semibold text-ink">{k.scopeLabel}</p>{" "}
             <ul className="mt-4 check-list grid sm:grid-cols-2 gap-x-8">
               {k.scope.map((x) => (
-                <li key={x} className="py-3 border-t border-line text-ink before:top-[calc(.75rem+.3em)]">{x}</li>
+                <li key={x} className="py-3 border-t border-line text-ink before:top-[calc(.75rem+.3em)]">{x} </li>
               ))}
             </ul>
-            <p className="mt-6"><Link href={k.hubLink.href} className="link-arrow"><span>{k.hubLink.label}<Arrow /></span></Link></p>
+            <p className="mt-6"><Link href={k.hubLink.href} className="link-arrow"><ArrowLabel text={k.hubLink.label} /></Link></p>{" "}
             {k.guideLinks.map((g) => (
-              <p key={g.href} className="mt-1"><Link href={g.href} className="link-arrow"><span>{g.label}<Arrow /></span></Link></p>
+              <p key={g.href} className="mt-1"><Link href={g.href} className="link-arrow"><ArrowLabel text={g.label} /></Link>{" "}</p>
             ))}
 
             {/* QUESTIONS — only ones specific to this place; visible text only, no FAQPage markup (V4.1) */}
@@ -205,7 +204,7 @@ export default async function ServiceTownPage({ params }: Props) {
                 <div className="mt-6 faq-list">
                   {k.faqs.map((f) => (
                     <details key={f.q} className="faq-row group">
-                      <summary><span className="faq-q">{f.q}</span><PlusIcon className="faq-icon" /></summary>
+                      <summary><span className="faq-q">{f.q}</span>{" "}<PlusIcon className="faq-icon" /></summary>
                       <div className="faq-a"><p>{f.a}</p></div>
                     </details>
                   ))}
@@ -219,8 +218,8 @@ export default async function ServiceTownPage({ params }: Props) {
               <ul className="mt-6 rule-list grid sm:grid-cols-2 gap-x-8 sm:border-t-0 sm:[&>li:nth-child(-n+2)]:border-t sm:[&>li:nth-child(-n+2)]:border-line">
                 {k.nearby.map((n) => (
                   <li key={n.href} className="flex min-h-11 items-center justify-between gap-3 py-2">
-                    <Link href={n.href} className="link-nav">{n.label}</Link>
-                    <span className="text-sm text-muted tnum whitespace-nowrap">{n.meta}</span>
+                    <Link href={n.href} className="link-nav">{n.label}</Link>{" "}
+                    <span className="text-sm text-muted tnum whitespace-nowrap">{n.meta}</span>{" "}
                   </li>
                 ))}
               </ul>
@@ -228,10 +227,10 @@ export default async function ServiceTownPage({ params }: Props) {
 
             {/* OTHER SERVICES IN THIS PLACE */}
             <nav aria-labelledby="other-h" className={block}>
-              <h2 id="other-h" className="text-h2-doc text-navy">{k.otherHeading}</h2>
+              <h2 id="other-h" className="text-h2-doc text-navy">{k.otherHeading}</h2>{" "}
               <ul className="mt-6 flex flex-wrap gap-2.5">
                 {k.otherServices.map((o) => (
-                  <li key={o.href}><Link href={o.href} className="chip">{o.label}</Link></li>
+                  <li key={o.href}><Link href={o.href} className="chip">{o.label}</Link>{" "}</li>
                 ))}
               </ul>
             </nav>

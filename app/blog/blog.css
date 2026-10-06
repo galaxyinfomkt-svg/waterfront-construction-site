@@ -34,7 +34,8 @@
    below 640px, so no column is hidden off-screen on phones (verification V5.5). */
 .post .table-wrap { position: relative; margin: 1.2rem 0 1.6rem; overflow-x: auto; -webkit-overflow-scrolling: touch;
   background: white; border: 1px solid var(--color-line); border-radius: var(--radius-panel); }
-.post table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; }
+/* Tabular figures only on number cells (§4.25): the global table tnum would widen hyphens in text cells and the caption. */
+.post table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; font-variant-numeric: normal; }
 .post caption { caption-side: top; text-align: left; font-family: var(--font-sans); font-weight: 600; font-size: 15px; line-height: 1.4; color: var(--color-ink); padding: 1rem 1rem .9rem; }
 .post th, .post td { border: 0; border-bottom: 1px solid var(--color-line); padding: .75rem 1rem; text-align: left; vertical-align: top; }
 .post tbody tr:last-child > * { border-bottom: 0; }

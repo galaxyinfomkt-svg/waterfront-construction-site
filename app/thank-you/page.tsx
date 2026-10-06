@@ -31,9 +31,9 @@ export default function ThankYouPage() {
           </div>
         </div>
         <nav aria-label="Our services" className="mt-10">
-          <ul className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-5 px-5 scroll-px-5 sm:flex-wrap sm:overflow-visible sm:mx-0 sm:px-0 sm:justify-center">
+          <ul className="flex flex-wrap justify-center gap-2.5">
             {services.map((s) => (
-              <li key={s.slug} className="shrink-0"><Link href={`/services/${s.slug}`} className="chip">{s.short}</Link></li>
+              <li key={s.slug}><Link href={`/services/${s.slug}`} className="chip">{s.short}</Link></li>
             ))}
           </ul>
         </nav>

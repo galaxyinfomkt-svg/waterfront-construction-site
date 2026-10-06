@@ -22,7 +22,8 @@ import { documentedTowns } from "../service-areas/areas";
 // address (displayAddress, honoring site.showStreet) is labelled neutrally: whether clients can visit it is
 // owner input, so the page never says "Visit".
 
-const H1 = "Contact Waterfront Construction";
+const H1_NAME = "Waterfront Construction";
+const H1 = `Contact ${H1_NAME}`;
 const LEAD = `Free, no-obligation estimates. Call ${site.phone} (${site.hours}), email us, or send the form, and tell us the town and the type of project.`;
 
 export const metadata = pageMeta({
@@ -61,7 +62,7 @@ export default function ContactPage() {
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
           <div className="max-w-[46rem]">
             <Breadcrumbs items={crumbs} />
-            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <h1 className="mt-5 text-h1 text-navy">Contact <span className="md:whitespace-nowrap">{H1_NAME}</span></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]"><WithTel text={LEAD} /></p>
           </div>
         </div>

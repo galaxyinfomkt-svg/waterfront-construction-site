@@ -50,7 +50,7 @@ export default function FaqPage() {
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
           <div className="max-w-[46rem]">
             <Breadcrumbs items={crumbs} />
-            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <h1 className="mt-5 text-h1 text-navy text-balance">{H1}</h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]"><WithTel text={LEAD} /></p>
             <p className="mt-5 text-[13px] text-muted">Updated <time dateTime={UPDATED}>{updatedLabel}</time></p>
           </div>
@@ -70,7 +70,7 @@ export default function FaqPage() {
             {faqGroups.map((g, i) => (
               <section key={g.id} id={`topic-${g.id}`} aria-labelledby={`topic-${g.id}-h`} className={i > 0 ? "mt-8 md:mt-10 border-t border-line pt-14 md:pt-20" : undefined}>
                 <h2 id={`topic-${g.id}-h`} className="text-h2-doc text-navy">{g.title}</h2>
-                <div className="mt-8"><FaqList items={g.items} collapsible={false} /></div>
+                <div className="mt-8 [&_article:first-child]:border-t-0 [&_article:first-child]:pt-0">{/* the topic rule alone marks a topic break */}<FaqList items={g.items} collapsible={false} /></div>
               </section>
             ))}
           </div>

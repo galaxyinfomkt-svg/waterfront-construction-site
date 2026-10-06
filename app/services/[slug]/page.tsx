@@ -48,13 +48,14 @@ function DataTable({ t, steps = false }: { t: Table; steps?: boolean }) {
   // is a figure, so a mixed column ("$ (lowest)" above "$$") never goes ragged.
   const numCol = t.head.map((_, j) => j > 0 && t.rows.every((r) => NUMERIC.test(r[j] ?? "")));
   return (
-    <div className="mt-8 bg-white border border-line rounded-panel overflow-x-auto">
-      <table className="w-full text-left text-[15px] leading-[1.5]">
+    <div className="mt-10 md:mt-14 bg-white border border-line rounded-panel overflow-x-auto">
+      {/* Tabular figures only on numeric cells (tnum below): the base :where(table) rule would also widen hyphens in prose. */}
+      <table className="w-full text-left text-[15px] leading-[1.5] [font-variant-numeric:normal]">
         <caption className="caption-top text-left px-5 pt-5 pb-3 text-[15px] font-semibold text-ink">{t.caption}</caption>
         <thead className="hidden md:table-header-group bg-stone">
           <tr>
             {t.head.map((h, i) => (
-              <th key={i} scope="col" className={`table-cell px-5 py-3 eyebrow text-left align-bottom ${numCol[i] ? "md:text-right" : ""}`}>{h || <span className="sr-only">Aspect</span>}</th>
+              <th key={i} scope="col" className={`table-cell px-5 py-3 eyebrow text-left align-bottom ${h.trim().split(/\s+/).length <= 2 ? "whitespace-nowrap" : ""} ${numCol[i] ? "md:text-right" : ""}`}>{h || <span className="sr-only">Aspect</span>}</th>
             ))}
           </tr>
         </thead>
@@ -74,7 +75,7 @@ function DataTable({ t, steps = false }: { t: Table; steps?: boolean }) {
           ))}
         </tbody>
       </table>
-      {t.note && <p className="px-5 pb-5 text-sm text-muted">{t.note}</p>}
+      {t.note && <p className="border-t border-line px-5 py-4 text-sm text-muted">{t.note}</p>}
     </div>
   );
 }
@@ -82,7 +83,7 @@ function DataTable({ t, steps = false }: { t: Table; steps?: boolean }) {
 // "At a glance" facts, at the top of the overview on every hub (the hero's right column holds the estimate form).
 function Glance({ items }: { items: [string, string][] }) {
   return (
-    <dl className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8">
+    <dl className="mt-10 md:mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8">
       {items.map(([k, v]) => (
         <div key={k} className="border-t border-line pt-4 pb-6">
           <dt className="eyebrow">{k}</dt>
@@ -191,14 +192,14 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
             <h1 className="mt-5 text-h1-long text-navy"><Typeset text={c.h1} /></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{c.summary}</p>
             <ul className="dot-list mt-4 text-sm text-muted">
-              <li>Owner-led</li>
-              <li>Founded in {site.founded} in Northborough, MA</li>
+              <li>Owner-led</li>{" "}
+              <li>Founded in {site.founded} in Northborough, MA</li>{" "}
               {credentials && <li>{credentials}</li>}
             </ul>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               {/* On desktop the form is right beside this text, so the jump link is for phones only. */}
               <a href="#estimate" className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</a>
-              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
             </div>
             <p className="mt-5 text-[13px] text-muted">Updated <time dateTime={s.updated}>{updated}</time></p>
           </div>
@@ -217,9 +218,11 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       </section>
 
       {/* ON THIS PAGE */}
-      <nav aria-label="On this page" className="bg-paper border-b border-line">
+      <nav aria-label="On this page" className="flow-root bg-paper border-b border-line">
         <div className="container-x">
-          <ul role="list" className="flex gap-7 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-px-5 md:mx-0 md:pl-0 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)]">
+          {/* py-1.5/-my-1.5 (and md:pl-1.5/-ml-1.5) give the 5px focus ring room inside the scroll box, which clips on both axes.
+              From lg the row wraps instead of scrolling, so every tab is reachable with a mouse. */}
+          <ul role="list" className="flex gap-7 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-px-5 py-1.5 -my-1.5 md:mx-0 md:-ml-1.5 md:pl-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)] lg:flex-wrap lg:gap-x-5 lg:gap-y-0 lg:pr-0 lg:overflow-visible lg:[mask-image:none]">
             {toc.map((t) => (
               <li key={t.id} className="shrink-0">
                 <a href={`#${t.id}`} className="inline-flex items-center min-h-12 whitespace-nowrap text-sm font-medium text-muted hover:text-navy hover:shadow-[inset_0_-2px_0_var(--color-navy)] focus-visible:text-navy">{t.label}</a>
@@ -253,7 +256,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
             <h2 id="our-work-h" className={head}>Our {lower} work: case studies and job photos</h2>
             <p className="mt-5 text-muted max-w-[38rem]">Every photo here is from a Waterfront Construction job, captioned with what it shows and, where the job&apos;s town is recorded, where it was taken.</p>
             {hero && (
-              <figure className="mt-10 md:grid md:grid-cols-12 md:gap-x-8">
+              <figure className="mt-10 md:mt-14 md:grid md:grid-cols-12 md:gap-x-8">
                 <div className={`relative overflow-hidden bg-well ${heroPortrait ? "md:col-span-5 aspect-[4/5]" : "md:col-span-8 aspect-[3/2]"}`}>
                   <Image src={hero.src} alt={hero.alt} fill quality={60} sizes={heroPortrait ? "(max-width: 768px) 100vw, 320px" : "(max-width: 768px) 100vw, 640px"} className="object-cover" />
                 </div>
@@ -264,7 +267,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
                     <Link href={`/projects/${hero.project}`} className="mt-2 link-arrow">
                       <ArrowLabel text={caseLabel(hero.place)} />
                     </Link>
-                  )}
+                  )}{" "}
                 </figcaption>
               </figure>
             )}
@@ -274,9 +277,9 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
                   <Image src={im.src} alt={im.alt} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
                 </div>
                 <div className="md:col-span-5 self-center">
-                  <h3 className="mt-5 md:mt-0"><Link href={`/projects/${p.slug}`}>{p.title}</Link></h3>
-                  <p className="body">{p.blurb}</p>
-                  <span className="mt-3 link-arrow text-sm"><ArrowLabel text="Read the case study" /></span>
+                  <h3 className="mt-5 md:mt-0"><Link href={`/projects/${p.slug}`}>{p.title}</Link></h3>{" "}
+                  <p className="body">{p.blurb}</p>{" "}
+                  <span className="mt-3 link-arrow text-sm"><ArrowLabel text="Read the case study" /></span>{" "}
                 </div>
               </div>
             ))}
@@ -287,9 +290,9 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
                     <div className="media">
                       <Image src={im.src} alt={im.alt} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
                     </div>
-                    <h3 className="mt-5"><Link href={`/projects/${p.slug}`}>{p.title}</Link></h3>
-                    <p className="body">{p.blurb}</p>
-                    <span className="mt-auto pt-3 link-arrow text-sm"><ArrowLabel text="Read the case study" /></span>
+                    <h3 className="mt-5"><Link href={`/projects/${p.slug}`}>{p.title}</Link></h3>{" "}
+                    <p className="body">{p.blurb}</p>{" "}
+                    <span className="mt-auto pt-3 link-arrow text-sm"><ArrowLabel text="Read the case study" /></span>{" "}
                   </li>
                 ))}
               </ul>
@@ -414,20 +417,20 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
             <h2 id="clients-h" className={`${h2} max-w-[48rem]`}>What clients said about this kind of work</h2>
             {quotes.length === 1 ? (
               quotes.map((t) => (
-                <figure key={t.name} className="mt-10">
+                <figure key={t.name} className="mt-10 md:mt-14">
                   <blockquote className="font-display text-quote text-navy max-w-[40ch] [text-indent:-0.42em]">&ldquo;{t.text}&rdquo;</blockquote>
                   <figcaption className="mt-6 text-sm text-muted">
-                    <ul className="dot-list"><li><span className="font-semibold text-ink">{t.name}</span>, {t.town}</li><li>{t.date}</li></ul>
+                    <ul className="dot-list"><li><span className="font-semibold text-ink">{t.name}</span>, {t.town}</li>{" "}<li>{t.date}</li></ul>{" "}
                   </figcaption>
                 </figure>
               ))
             ) : (
-              <div className="mt-10 grid md:grid-cols-3 gap-y-12">
+              <div className="mt-10 md:mt-14 grid md:grid-cols-3 gap-y-12">
                 {quotes.map((t) => (
                   <figure key={t.name} className="flex flex-col md:px-8 md:first:pl-0 md:last:pr-0 md:border-l md:first:border-l-0 border-line">
                     <blockquote className="font-display text-[1.375rem] md:text-2xl leading-[1.4] text-navy [text-indent:-0.42em]">&ldquo;{t.text}&rdquo;</blockquote>
                     <figcaption className="mt-auto pt-6">
-                      <ul className="dot-list pt-4 border-t border-line text-[13px] text-muted"><li><span className="text-sm font-semibold text-ink">{t.name}</span>, {t.town}</li><li>{t.date}</li></ul>
+                      <ul className="dot-list pt-4 border-t border-line text-[13px] text-muted"><li><span className="text-sm font-semibold text-ink">{t.name}</span>, {t.town}</li>{" "}<li>{t.date}</li></ul>{" "}
                     </figcaption>
                   </figure>
                 ))}
@@ -451,12 +454,12 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           <div className="faq-list lg:col-span-8">
             {c.faqs.map((f) => (
               <details key={f.q} className="faq-row group">
-                <summary><span className="faq-q">{f.q}</span><PlusIcon className="faq-icon" /></summary>
+                <summary><span className="faq-q">{f.q}</span>{" "}<PlusIcon className="faq-icon" /></summary>
                 <div className="faq-a">
                   <p>{f.a}</p>
                   {f.more && (
                     <p className="mt-2 text-sm"><Link href={f.more.href} className="link">{f.more.label}</Link></p>
-                  )}
+                  )}{" "}
                 </div>
               </details>
             ))}
@@ -505,7 +508,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           <span className="eyebrow">Service area</span>
           <h2 id="towns-h" className={head}>Where we&apos;ve done {lower}, and every town we serve</h2>
           {proof.length > 0 ? (
-            <ul role="list" className="mt-8 rule-list grid md:grid-cols-2 gap-x-12 md:border-t-0 md:[&>li:nth-child(-n+2)]:border-t md:[&>li:nth-child(-n+2)]:border-line">
+            <ul role="list" className="mt-10 md:mt-14 rule-list grid md:grid-cols-2 gap-x-12 md:border-t-0 md:[&>li:nth-child(-n+2)]:border-t md:[&>li:nth-child(-n+2)]:border-line">
               {proof.map((pl) => (
                 <li key={pl.label} className="py-5 text-[15px] text-ink">
                   <span className="block font-display text-[1.25rem] leading-[1.25] text-navy">{pl.label}</span>
@@ -555,7 +558,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           <p className="mt-5 text-lead text-white/80 max-w-[36em]">Get a free, itemized estimate from Waterfront Construction Inc. Call <span className="tel">{site.phone}</span> or use the estimate form on this page.</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
-            <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+            <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>
         </div>
       </section>

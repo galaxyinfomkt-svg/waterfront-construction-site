@@ -200,11 +200,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 <li>{p.category}</li>
               </ul>
             </div>
-            <h1 className="mt-5 text-h1 text-navy"><Typeset text={p.title} /></h1>
+            <h1 className="mt-5 text-h1 text-navy text-balance"><Typeset text={p.title} /></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{p.blurb}</p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
-              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
             </div>
             <p className="mt-5 text-[13px] text-muted">Updated <time dateTime={p.updated}>{dateLabel(p.updated)}</time></p>
           </div>
@@ -335,7 +335,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               {`${restVideos.length} short clip${restVideos.length === 1 ? "" : "s"} filmed on the job. They have no sound, so each one has a written description.`}
             </p>
             {/* Phones: a swipeable row (keeps the page short); tablet and up: a grid. */}
-            <ul role="list" className="mt-10 -mx-5 px-5 scroll-px-5 pb-2 flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:mx-0 sm:px-0 sm:pb-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-x-6 sm:gap-y-10 sm:overflow-visible">
+            {/* Focusable + named so keyboard users can scroll the phone row (axe scrollable-region-focusable; video controls do not count). */}
+            <ul role="list" tabIndex={0} aria-labelledby="videos-h" className="mt-10 -mx-5 px-5 scroll-px-5 pb-2 flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:mx-0 sm:px-0 sm:pb-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-x-6 sm:gap-y-10 sm:overflow-visible">
               {restVideos.map((v, i) => (
                 <li key={v.src} className="w-[72%] shrink-0 snap-start sm:w-auto">
                   <VideoFigure v={v} id={`video-${i + (videoFirst ? 2 : 1)}`} />
@@ -439,9 +440,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                   <div className="media">
                     <Image src={o.cover} alt={imageAlt(o, o.cover)} fill quality={60} sizes="(min-width: 1200px) 285px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
                   </div>
-                  <p className="meta">
+                  {/* Place, then the media count, on two fixed lines: in four columns they would otherwise run together or wrap unevenly. */}
+                  <p className="meta flex-col justify-start gap-y-1">
                     <span>{o.location}</span>
-                    <span className="text-right">{mediaCount(o)}</span>
+                    <span>{mediaCount(o)}</span>
                   </p>
                   <h3 className="text-h3s"><Link href={path(o)}>{o.title}</Link></h3>
                   <span className="link-arrow text-sm mt-auto pt-3 self-start"><ArrowLabel text="View the case study" /></span>
@@ -459,7 +461,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <p className="mt-5 text-lead text-white/80 max-w-[36em]">Tell us about your house and what you want to change. Estimates are free and there is no obligation.</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+            <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>
         </div>
       </section>

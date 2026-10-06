@@ -82,26 +82,32 @@ const ld = pageGraph([
 
 // Editorial case card (design spec §4.12): the photo carries nothing; place, kind and media count sit in the
 // meta row under it. The title link stretches over the card. The first card is featured across the row.
+// From sm the other cards share their row's tracks (subgrid: photo, meta, title, body, cue), so titles, bodies and
+// cues start level across a row even when a meta or title line wraps.
+const ROW_SUBGRID = "sm:grid sm:grid-rows-subgrid sm:row-span-5 sm:gap-y-0";
 function ProjectCard({ p, featured = false }: { p: Project; featured?: boolean }) {
   return (
-    <li className={`card-ed group ${featured ? "sm:col-span-2 lg:col-span-3 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:items-center" : ""}`}>
+    <li className={`card-ed group ${featured ? "sm:col-span-2 lg:col-span-3 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:items-center" : ROW_SUBGRID}`}>
       <div className={`media ${featured ? "[aspect-ratio:3/2] lg:col-span-7" : ""}`}>
-        <Image src={p.cover} alt={imageAlt(p, p.cover)} fill quality={60} sizes="(min-width: 1200px) 380px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
+        {/* sizes follows the box (§8 Performance): the featured photo is 7/12 of the row at lg (about 650px) and full width below. */}
+        <Image src={p.cover} alt={imageAlt(p, p.cover)} fill quality={60} sizes={featured ? "(min-width: 1200px) 650px, (min-width: 1024px) 54vw, 100vw" : "(min-width: 1200px) 380px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"} className="object-cover" />
       </div>
-      <div className={`flex flex-col grow ${featured ? "lg:col-span-5" : ""}`}>
-        <div className="meta">
+      <div className={`flex flex-col grow ${featured ? "lg:col-span-5" : "sm:contents"}`}>
+        {/* Two fixed label lines on every card (place and kind, then the media count), so the halves never run
+            together and every title in a row starts level. */}
+        <div className="meta flex-col justify-start gap-y-1">
           <div className={DOTS_WRAP}>
             <ul className={DOTS_CLIP}>
-              <li>{p.location}</li>
-              <li>{p.category}</li>
+              <li className="whitespace-nowrap">{p.location}</li>
+              <li className="whitespace-nowrap">{p.category}</li>
             </ul>
           </div>
-          <span className="shrink-0 text-right">{mediaCount(p)}</span>
+          <span>{mediaCount(p)}</span>
         </div>
-        <h3 className={featured ? "text-[2rem] leading-[1.15]" : undefined}>
+        <h3 className={featured ? "lg:text-[2rem] lg:leading-[1.15]" : undefined}>
           <Link href={`/projects/${p.slug}`}>{p.title}</Link>
         </h3>
-        <p className="body">{p.blurb}</p>
+        <p className={`body ${featured ? "max-w-[60ch]" : ""}`}>{p.blurb}</p>
         <span className="link-arrow text-sm mt-auto pt-3 self-start">
           <ArrowLabel text="View the case study" />
         </span>
@@ -118,7 +124,7 @@ export default function GalleryPage() {
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
           <div className="max-w-[46rem]">
             <Breadcrumbs items={crumbs} />
-            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <h1 className="mt-5 text-h1 text-navy text-balance">{H1}</h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[60ch]">{INTRO}</p>
             <p className="mt-4 text-muted max-w-[60ch]">Open any project for what we did, the photos in the order the work happened, and the services involved.</p>
           </div>

@@ -44,8 +44,8 @@ export default function ServiceTownDirectory({ slug, label, className = "" }: { 
           return (
             <details key={g.id} className="faq-row group">
               <summary className="grid grid-cols-[1fr_auto_auto] items-baseline gap-4">
-                <span className="text-base font-medium text-ink">{g.county}, {state}</span>
-                <span className="text-[13px] text-muted tnum whitespace-nowrap">{g.towns.length} {g.towns.length === 1 ? "town" : "towns"}</span>
+                <span className="text-base font-medium text-ink">{g.county}, {state}</span>{" "}
+                <span className="text-[13px] text-muted tnum whitespace-nowrap">{g.towns.length} {g.towns.length === 1 ? "town" : "towns"}</span>{" "}
                 <PlusIcon className="w-4 h-4 self-center text-navy transition-transform duration-200 group-open:rotate-45" />
               </summary>
               <ul role="list" className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 pb-5">
@@ -53,7 +53,7 @@ export default function ServiceTownDirectory({ slug, label, className = "" }: { 
                   <li key={citySlug(c)}>
                     <Link href={`/services/${slug}/${citySlug(c)}`} prefetch={false} className="link-nav block py-2 text-[15px]">
                       {cityLabel(c)}
-                    </Link>
+                    </Link>{" "}
                   </li>
                 ))}
               </ul>

@@ -252,36 +252,12 @@
     .svc-dir tbody td.links { grid-column: 1 / -1; }
   }
   @media (max-width: 359.98px) { .svc-dir tbody td.dist { white-space: normal; max-width: 9.5rem; } }
-
-  /* ===== LEGACY-BRIDGE (package 1 adds, integrator DELETES in step 6) =====
-     Keeps pages that packages 2–5 have not migrated yet readable while work is in flight.
-     Never use these in new markup. */
-  .bg-brand-grad, .mesh { background: var(--color-navy); }
-  .hero-overlay { background: var(--scrim-hero-sm); }
-  @media (min-width: 1024px) { .hero-overlay { background: var(--scrim-hero-lg); } }   /* same black scrim as .scrim-hero */
-  .bg-tint-blue, .bg-tint-cyan, .bg-tint-green, .bg-sand, .bg-sand\/60 { background: var(--color-stone); }
-  .border-sand { border-color: var(--color-line); }
-  .card { background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-panel); }
-  .btn-green, .btn-grad { background: var(--color-green); color: #fff; }
-  .btn-outline { border-color: rgb(255 255 255 / .62); color: #fff; }
-  .text-cyan { color: #fff; }
-  /* .glass .gborder .pop .dots .dots-light .gridlines .slant-* .kenburns .reveal .reveal-2 .pulse .navpill .bg-grad-sunset: intentionally NOT bridged (they become no-ops) */
 }
 
 /* ---------- unlayered: must beat everything ---------- */
 html.menu-open { overflow: hidden; }
 html.menu-open .mobile-cta-bar { display: none; }
 html:has(dialog[open]) .mobile-cta-bar, html:has(dialog[open]) [data-float-call] { display: none; }
-
-/* ===== LEGACY-BRIDGE (unlayered part; integrator DELETES in step 6 together with the block above) =====
-   Breadcrumbs are light-surface only now (text-muted); on a not-yet-migrated navy hero they must stay legible. */
-:is(.bg-brand-grad, .mesh) nav[aria-label="Breadcrumb"],
-:is(.bg-brand-grad, .mesh) nav[aria-label="Breadcrumb"] :is(a, svg) { color: rgb(255 255 255 / .85); }
-:is(.bg-brand-grad, .mesh) nav[aria-label="Breadcrumb"] [aria-current="page"] { color: #fff; }
-/* Not-yet-migrated alpha text (§1.5 ladder): ink/60–70 on the new stone falls under 4.5:1, so it renders muted
-   until P2–P5 swap the utilities. Unlayered so it beats the utility layer; wrapped in :is() because Tailwind
-   drops a top-level rule whose bare selector is a utility class name. */
-:is(.text-ink\/60, .text-ink\/65, .text-ink\/70) { color: var(--color-muted); }
 
 /* Two-tone focus ring — UNCHANGED */
 :where(a, button, summary, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {

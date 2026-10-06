@@ -125,7 +125,7 @@ function County({ g, open, last = false }: { g: CountyGroup; open: boolean; last
       </p>
       <details open={open} className={`faq-row svc-dir group mt-6 border-t border-line ${last ? "" : "border-b-0"}`}>
         <summary>
-          <span className="faq-q">{`Towns and service pages (${g.towns.length})`}</span>
+          <span className="faq-q">Towns and service <span className="whitespace-nowrap">{`pages (${g.towns.length})`}</span></span>
           <PlusIcon className="faq-icon" />
         </summary>
         <div className="pb-6">
@@ -158,7 +158,7 @@ function County({ g, open, last = false }: { g: CountyGroup; open: boolean; last
 
 /** Documented-town entry: town, meta and stacked case-study / testimonial links. */
 const proofTitle = "font-display text-h3s text-navy";
-const proofLink = "link-arrow text-sm";
+const proofLink = "link-arrow text-sm items-start min-h-0 py-3"; // py-3: 44px target per line (§8 targets)
 
 export default function ServiceAreasPage() {
   const bands = distanceBands();
@@ -211,9 +211,9 @@ export default function ServiceAreasPage() {
                 <tbody>
                   {groups.map((g) => (
                     <tr key={g.id} className="border-t border-line">
-                      <th scope="row" className="pl-3 pr-2 sm:px-5 lg:px-4 xl:px-5 py-3.5 font-medium text-ink align-baseline"><a href={`#${g.id}`} className="link-nav inline-block py-1"><Typeset text={`${g.county}, ${g.state}`} /></a></th>
-                      <td className="px-1.5 sm:px-5 lg:px-4 xl:px-5 py-3.5 text-ink/80 align-baseline text-right tnum">{g.towns.length}</td>
-                      <td className="px-1.5 sm:px-5 lg:px-4 xl:px-5 py-3.5 text-ink/80 align-baseline text-right tnum whitespace-nowrap">{g.min === g.max ? g.min : `${g.min}–${g.max}`}</td>
+                      <th scope="row" className="pl-3 pr-2 sm:px-5 lg:px-4 xl:px-5 py-2.5 font-medium text-ink align-top"><a href={`#${g.id}`} className="link-nav inline-block py-1"><Typeset text={`${g.county}, ${g.state}`} /></a></th>
+                      <td className="px-1.5 sm:px-5 lg:px-4 xl:px-5 pt-3.5 pb-2.5 text-ink/80 align-top text-right tnum">{g.towns.length}</td>
+                      <td className="px-1.5 sm:px-5 lg:px-4 xl:px-5 pt-3.5 pb-2.5 text-ink/80 align-top text-right tnum whitespace-nowrap">{g.min === g.max ? g.min : `${g.min}–${g.max}`}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -222,7 +222,7 @@ export default function ServiceAreasPage() {
             <h3 className="mt-12 text-h3s text-navy">Distance from Northborough</h3>
             <ul className="rule-list mt-4 text-[15px]">
               {bands.map((b) => (
-                <li key={b.label} className="grid grid-cols-[2ch_1fr] gap-x-4 py-3"><span className="font-medium text-navy tnum text-right">{b.count}</span> <span className="text-muted whitespace-nowrap">places, {b.label}</span></li>
+                <li key={b.label} className="grid grid-cols-[3ch_1fr] gap-x-4 py-3"><span className="font-medium text-navy tnum text-right">{b.count}</span> <span className="text-muted whitespace-nowrap">places, {b.label}</span></li>
               ))}
             </ul>
           </div>
@@ -263,15 +263,17 @@ export default function ServiceAreasPage() {
             })}
           </ul>
           {unplaced.length > 0 && (
-            <ul className="rule-list -mt-px grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8">
-              {unplaced.map((p) => (
-                <li key={p.slug} className="py-5">
-                  <p className={proofTitle}>Massachusetts</p>
-                  <p className="mt-1 text-sm text-muted">Town not recorded</p>
-                  <p className="mt-2"><Link href={`/projects/${p.slug}`} className={proofLink}><ArrowLabel text={`Case study: ${p.title}`} /></Link></p>
-                </li>
-              ))}
-            </ul>
+            <div className="border-t border-line pt-6 mt-6">
+              <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+                {unplaced.map((p) => (
+                  <li key={p.slug}>
+                    <p className={proofTitle}>Massachusetts</p>
+                    <p className="mt-1 text-sm text-muted">Town not recorded</p>
+                    <p className="mt-2"><Link href={`/projects/${p.slug}`} className={proofLink}><ArrowLabel text={`Case study: ${p.title}`} /></Link></p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       </section>
