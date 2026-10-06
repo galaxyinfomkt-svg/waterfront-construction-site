@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { PhoneIcon } from "@/components/chrome-icons";
+import { PhoneIcon, ArrowLabel } from "@/components/chrome-icons";
+import StatsRow from "@/components/StatsRow";
+import Typeset from "@/components/Typeset";
 import { site, services, stats, serviceArea, testimonials } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
@@ -45,6 +47,18 @@ const ld = pageGraph(
   { business: "full" },
 );
 
+// Facts dl (§4.28): each dt/dd pair on its own hairline row.
+const FACT = "grid sm:grid-cols-[10rem_1fr] lg:grid-cols-[13rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line";
+const FACT_DD = "text-[15.5px] text-ink";
+// Two-column hairline index (§4.14): at lg each column starts on its own top rule (no rule across the gap).
+const TWO_COL_RULES = "lg:border-t-0 lg:[&>li:nth-child(-n+2)]:border-t lg:[&>li:nth-child(-n+2)]:border-line";
+// Decorative index, drawn from data-n with CSS generated content: seen, but no text node (visible words unchanged).
+const Index = ({ n, className = "" }: { n: number; className?: string }) => (
+  <span aria-hidden="true" data-n={String(n).padStart(2, "0")} className={`before:content-[attr(data-n)] ${className}`} />
+);
+// Projects grid: rows of four, then rows of three (7 case studies = 4 + 3, design spec §6 About).
+const projectSpan = (i: number, n: number) => (i < (n % 3 === 1 ? 4 : n % 3 === 2 ? 8 : 0) ? "lg:col-span-3" : "lg:col-span-4");
+
 export default function AboutPage() {
   const counties = countyGroups();
   const shownTestimonials = testimonials.slice(0, 3);
@@ -58,130 +72,132 @@ export default function AboutPage() {
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — plain brand gradient (no stock photo) */}
-      <section className="bg-brand-grad text-white" data-cta-zone>
-        <div className="container-x py-14 md:py-20">
-          <Breadcrumbs items={crumbs} />
-          <h1 className="mt-5 text-4xl md:text-6xl font-extrabold max-w-4xl">{H1}</h1>
-          <p className="mt-5 text-lg md:text-xl text-white/90 max-w-3xl leading-relaxed">{LEAD}</p>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-outline text-base"><PhoneIcon /> {site.phone}</a>
+      {/* HEADER — text-only page head (no stock photo) */}
+      <section className="page-head" data-cta-zone>
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <h1 className="mt-5 text-h1 text-balance text-navy">{H1}</h1>
+            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+              <a href={site.phoneHref} className="btn btn-secondary tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
+            </div>
           </div>
         </div>
       </section>
 
       {/* OWNER + COMPANY FACTS */}
-      <section className="py-16 md:py-20" aria-labelledby="owner-h">
-        <div className="container-x grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
-          <div>
-            <span className="eyebrow">The owner</span>
-            <h2 id="owner-h" className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Meet {site.owner}</h2>
+      <section className="section" aria-labelledby="owner-h">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-x-12 gap-y-14">
+          <div className="lg:sticky lg:top-28 self-start">
+            <p className="eyebrow">The owner</p>
+            <h2 id="owner-h" className="mt-4 text-h2 text-navy">Meet {site.owner}</h2>
             {site.ownerPhoto && (
-              <figure className="mt-6 relative h-[420px] rounded-3xl overflow-hidden shadow-card">
+              <figure className="mt-8 relative aspect-[4/5] overflow-hidden bg-well">
                 <Image src={site.ownerPhoto} alt={`${site.owner}, owner of ${site.name}`} fill quality={60} sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" />
               </figure>
             )}
-            <p className="mt-5 text-lg text-ink/85 leading-relaxed">
+            <p className="mt-6 text-lead text-ink/80">
               {`${site.owner} founded ${site.name} in Northborough in ${site.founded} and leads it today. He has ${site.experience}+ years of hands-on construction experience.`}
             </p>
-            <p className="mt-4 text-ink/80 leading-relaxed">
+            <p className="mt-4 text-muted">
               {`The company has completed ${site.projectsCompleted}+ projects in ${site.townsWithProjects}+ towns, across six services: ${services.map((s) => s.short.toLowerCase()).join(", ")}. Every project starts with a free, itemized estimate.`}
             </p>
-            {credentials && <p className="mt-4 font-semibold text-navy">{credentials}</p>}
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href={OWNER_PAGE} className="btn btn-navy">{`${site.owner}'s profile`}</Link>
-              <Link href="/services" className="btn btn-white ring-1 ring-black/10">Our services</Link>
+            {credentials && <p className="mt-4 font-medium text-ink">{credentials}</p>}
+            <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-x-6">
+              <Link href={OWNER_PAGE} className="btn btn-secondary w-full sm:w-auto">{`${site.owner}'s profile`}</Link>
+              <Link href="/services" className="link-arrow"><ArrowLabel text="Our services" /></Link>
             </div>
           </div>
 
           {/* Facts block: plain HTML, one fact per row, mirrored in the business JSON-LD (06 ST-H1, 09 AEO-H2) */}
-          <div className="rounded-2xl bg-white p-6 shadow-soft ring-1 ring-black/5">
-            <h2 className="text-xl font-extrabold text-navy">Company facts</h2>
-            <dl className="mt-4 grid sm:grid-cols-[max-content_1fr] gap-x-6 gap-y-2.5 text-[15px]">
-              <dt className="font-bold text-navy">Company</dt><dd className="text-ink/85">{site.name}</dd>
-              <dt className="font-bold text-navy">Founded</dt><dd className="text-ink/85">{site.founded}, in Northborough, MA</dd>
-              <dt className="font-bold text-navy">Owner</dt>
-              <dd className="text-ink/85"><Link href={OWNER_PAGE} className="font-semibold text-blue underline underline-offset-2">{site.owner}</Link>, {site.experience}+ years of hands-on construction experience</dd>
-              {credentials && (<><dt className="font-bold text-navy">Registration</dt><dd className="text-ink/85">{credentials}</dd></>)}
-              <dt className="font-bold text-navy">Insurance</dt><dd className="text-ink/85">Insured; certificate of insurance on request</dd>
-              <dt className="font-bold text-navy">Projects completed</dt><dd className="text-ink/85">{site.projectsCompleted}+</dd>
-              <dt className="font-bold text-navy">Towns with completed projects</dt><dd className="text-ink/85">{site.townsWithProjects}+</dd>
-              <dt className="font-bold text-navy">Case studies on this site</dt><dd className="text-ink/85"><Link href="/gallery" className="font-semibold text-blue underline underline-offset-2">{projects.length}</Link></dd>
-              <dt className="font-bold text-navy">Service area</dt>
-              <dd className="text-ink/85">{AREA_SENTENCE} (<Link href="/service-areas" className="font-semibold text-blue underline underline-offset-2">every town</Link>)</dd>
-              <dt className="font-bold text-navy">Services</dt>
-              <dd className="text-ink/85">
-                {services.map((s, i) => (
-                  <span key={s.slug}>{i > 0 ? ", " : ""}<Link href={`/services/${s.slug}`} className="text-blue underline underline-offset-2">{s.short}</Link></span>
-                ))}
-              </dd>
-              <dt className="font-bold text-navy">Address</dt><dd className="text-ink/85">{displayAddress}</dd>
-              <dt className="font-bold text-navy">Phone</dt><dd className="text-ink/85"><a href={site.phoneHref} className="font-semibold text-blue underline underline-offset-2">{site.phone}</a></dd>
-              <dt className="font-bold text-navy">Email</dt><dd className="text-ink/85 [overflow-wrap:anywhere]"><a href={site.emailHref} className="text-blue underline underline-offset-2">{site.email}</a></dd>
-              <dt className="font-bold text-navy">Hours</dt><dd className="text-ink/85">{site.hours}</dd>
-              <dt className="font-bold text-navy">Estimates</dt><dd className="text-ink/85">Free and itemized</dd>
-              <dt className="font-bold text-navy">Financing</dt><dd className="text-ink/85">Not offered</dd>
+          <div>
+            <h2 className="text-h3 text-navy">Company facts</h2>
+            <dl className="mt-6 border-t border-line">
+              <div className={FACT}><dt className="eyebrow pt-0.5">Company</dt><dd className={FACT_DD}>{site.name}</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Founded</dt><dd className={FACT_DD}>{site.founded}, in Northborough, MA</dd></div>
+              <div className={FACT}>
+                <dt className="eyebrow pt-0.5">Owner</dt>
+                <dd className={FACT_DD}><Link href={OWNER_PAGE} className="link">{site.owner}</Link>, {site.experience}+ years of hands-on construction experience</dd>
+              </div>
+              {credentials && (<div className={FACT}><dt className="eyebrow pt-0.5">Registration</dt><dd className={FACT_DD}>{credentials}</dd></div>)}
+              <div className={FACT}><dt className="eyebrow pt-0.5">Insurance</dt><dd className={FACT_DD}>Insured; certificate of insurance on request</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Projects completed</dt><dd className={FACT_DD}>{site.projectsCompleted}+</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Towns with completed projects</dt><dd className={FACT_DD}>{site.townsWithProjects}+</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Case studies on this site</dt><dd className={FACT_DD}><Link href="/gallery" className="link">{projects.length}</Link></dd></div>
+              <div className={FACT}>
+                <dt className="eyebrow pt-0.5">Service area</dt>
+                <dd className={FACT_DD}>{AREA_SENTENCE} (<Link href="/service-areas" className="link">every town</Link>)</dd>
+              </div>
+              <div className={FACT}>
+                <dt className="eyebrow pt-0.5">Services</dt>
+                <dd className={FACT_DD}>
+                  {/* Stacked links. The list commas stay in the text (screen readers, copy, visible-text parity) but are not
+                      drawn; inline (not sr-only, which is absolutely positioned) so they do not break the line. */}
+                  {services.map((s, i) => (
+                    <span key={s.slug} className="block">
+                      <Link href={`/services/${s.slug}`} className="link-nav inline-block py-1">{s.short}</Link>
+                      {i < services.length - 1 && <span className="opacity-0">, </span>}
+                    </span>
+                  ))}
+                </dd>
+              </div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Address</dt><dd className={FACT_DD}>{displayAddress}</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Phone</dt><dd className={FACT_DD}><a href={site.phoneHref} className="link tel">{site.phone}</a></dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Email</dt><dd className={`${FACT_DD} [overflow-wrap:anywhere]`}><a href={site.emailHref} className="link">{site.email}</a></dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Hours</dt><dd className={FACT_DD}>{site.hours}</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Estimates</dt><dd className={FACT_DD}>Free and itemized</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Financing</dt><dd className={FACT_DD}>Not offered</dd></div>
             </dl>
           </div>
         </div>
       </section>
 
       {/* NUMBERS — exact labels (15+ is the owner's experience; the company dates from 2017) */}
-      <section className="bg-navy text-white" aria-label="Company numbers">
-        <dl className="container-x grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10">
-          {stats.map((s) => (
-            <div key={s.label} className="py-8 px-2 text-center flex flex-col-reverse">
-              <dt className="text-xs md:text-sm text-white/85 mt-1">{s.value === `${site.experience}+` ? `${s.label} (owner ${site.owner})` : s.label}</dt>
-              <dd className="text-4xl md:text-5xl font-extrabold text-cyan">{s.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      <StatsRow label="Company numbers" className="pb-0" items={stats.map((s) => ({ value: s.value, label: s.value === `${site.experience}+` ? `${s.label} (owner ${site.owner})` : s.label }))} />
 
       {/* VALUES */}
-      <section className="py-16 md:py-20 bg-tint-blue" aria-labelledby="values-h">
+      <section className="section" aria-labelledby="values-h">
         <div className="container-x">
-          <div className="text-center max-w-2xl mx-auto">
-            <span className="eyebrow">What we stand for</span>
-            <h2 id="values-h" className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">How we work</h2>
+          <div className="section-head">
+            <p className="eyebrow">What we stand for</p>
+            <h2 id="values-h" className="text-h2 text-navy">How we work</h2>
           </div>
-          <ul className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {values.map(([t, d]) => (
-              <li key={t} className="card p-6 h-full">
-                <h3 className="font-bold text-navy text-lg">{t}</h3>
-                <p className="text-sm text-ink/80 mt-1.5">{d}</p>
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+            {values.map(([t, d], i) => (
+              <li key={t} className="border-t border-ink pt-5">
+                <Index n={i + 1} className="eyebrow tnum" />
+                <h3 className="mt-4 text-h3s text-navy">{t}</h3>
+                <p className="mt-2 text-[15.5px] text-muted">{d}</p>
               </li>
             ))}
           </ul>
-          <p className="mt-8 text-center text-ink/80">
-            Questions about registration, permits, contracts or cost? <Link href="/faq" className="font-semibold text-blue underline underline-offset-2">Read our pre-hire FAQ</Link>.
+          <p className="mt-12 text-muted max-w-[60ch]">
+            Questions about registration, permits, contracts or cost? <Link href="/faq" className="link">Read our pre-hire FAQ</Link>.
           </p>
         </div>
       </section>
 
       {/* OUR WORK — the documented case studies, real photos only */}
-      <section className="py-16 md:py-20" aria-labelledby="work-h">
-        <div className="container-x">
-          <div className="text-center max-w-2xl mx-auto">
-            <span className="eyebrow">Our work</span>
-            <h2 id="work-h" className="mt-3 text-3xl md:text-5xl font-extrabold text-navy">Projects documented on this site</h2>
-            <p className="mt-3 text-ink/80">{`${projects.length} case studies documented with our own photos and site videos.`}</p>
+      <section className="section pt-0" aria-labelledby="work-h">
+        <div className="container-x"><div className="border-t border-line" /></div>
+        <div className="container-x pt-[var(--section-y)]">
+          <div className="section-head">
+            <p className="eyebrow">Our work</p>
+            <h2 id="work-h" className="text-h2 text-navy">Projects documented on this site</h2>
+            <p>{`${projects.length} case studies documented with our own photos and site videos.`}</p>
           </div>
-          <ul className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((p) => {
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-12 gap-x-8 gap-y-12">
+            {projects.map((p, i) => {
               const img = projectCardImage(p);
               return (
-                <li key={p.slug}>
-                  <Link href={`/projects/${p.slug}`} className="group card overflow-hidden pop block h-full">
-                    <span className="relative block h-52 overflow-hidden">
-                      <Image src={img.src} alt={img.alt} fill quality={60} sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" className="object-cover zoomimg" />
-                    </span>
-                    <span className="block p-5">
-                      <span className="block text-xs font-semibold uppercase tracking-wider text-blue">{p.location}</span>
-                      <span className="block mt-1 font-bold text-navy text-lg leading-tight">{p.title}</span>
-                    </span>
-                  </Link>
+                <li key={p.slug} className={`card-ed group ${projectSpan(i, projects.length)}`}>
+                  <div className="media">
+                    <Image src={img.src} alt={img.alt} fill quality={60} sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" className="object-cover" />
+                  </div>
+                  <p className="meta"><span>{p.location}</span></p>
+                  <h3 className="text-h3s"><Link href={`/projects/${p.slug}`}>{p.title}</Link></h3>
                 </li>
               );
             })}
@@ -189,72 +205,75 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* TESTIMONIALS — verbatim, with permission, no stars */}
-      <section className="py-16 md:py-20 mesh text-white" aria-labelledby="clients-h">
+      {/* TESTIMONIALS — verbatim, with permission, no stars (stone; the page's one navy band is the closing CTA) */}
+      <section className="section bg-stone" aria-labelledby="clients-h">
         <div className="container-x">
-          <div className="text-center max-w-2xl mx-auto">
-            <span className="eyebrow text-cyan">Client testimonials</span>
-            <h2 id="clients-h" className="mt-3 text-3xl md:text-5xl font-extrabold">What clients say</h2>
-            <p className="mt-3 text-white/85">Shared with permission by our clients.</p>
+          <div className="section-head">
+            <p className="eyebrow">Client testimonials</p>
+            <h2 id="clients-h" className="text-h2 text-navy">What clients say</h2>
+            <p>Shared with permission by our clients.</p>
           </div>
-          <ul className="mt-10 grid md:grid-cols-3 gap-6">
+          <ul className="grid lg:grid-cols-3 gap-y-12 lg:-mx-8">
             {shownTestimonials.map((t) => (
-              <li key={t.name}>
-                <figure className="glass rounded-2xl p-6 h-full flex flex-col">
-                  <blockquote className="flex-1 text-white/90 leading-relaxed"><p>&ldquo;{t.text}&rdquo;</p></blockquote>
-                  <figcaption className="mt-4 pt-4 border-t border-white/15"><span className="block font-bold">{t.name}</span><span className="block text-sm text-white/80">{t.town}</span></figcaption>
+              <li key={t.name} className="max-w-[34rem] lg:max-w-none lg:px-8 lg:border-l lg:first:border-l-0 border-line">
+                <figure className="h-full flex flex-col">
+                  <blockquote className="flex-1 font-display text-[1.375rem] md:text-2xl leading-[1.4] text-navy [text-indent:-0.42em]"><p>&ldquo;{t.text}&rdquo;</p></blockquote>
+                  <figcaption className="mt-6 pt-4 border-t border-line"><span className="block text-sm font-semibold text-ink">{t.name}</span><span className="block text-[13px] text-muted">{t.town}</span></figcaption>
                 </figure>
               </li>
             ))}
           </ul>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Link href="/reviews" className="btn btn-white">All testimonials</Link>
-            <a href={site.gbp} target="_blank" rel="noopener" className="btn btn-outline">Our Google reviews</a>
+          <div className="mt-12 flex flex-wrap gap-x-8 gap-y-2">
+            <Link href="/reviews" className="link-arrow"><ArrowLabel text="All testimonials" /></Link>
+            <a href={site.gbp} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Our Google reviews" external /></a>
           </div>
         </div>
       </section>
 
       {/* WHERE WE WORK */}
-      <section className="py-16 md:py-20" aria-labelledby="where-h">
+      <section className="section pb-0" aria-labelledby="where-h">
         <div className="container-x">
-          <div className="max-w-3xl">
-            <span className="eyebrow">Where we work</span>
-            <h2 id="where-h" className="mt-3 text-3xl md:text-4xl font-extrabold text-navy">Based in {serviceArea.base}</h2>
-            <p className="mt-3 text-ink/85 text-lg">{`We take projects in ${AREA_SENTENCE}.`}</p>
+          <div className="section-head">
+            <p className="eyebrow">Where we work</p>
+            <h2 id="where-h" className="text-h2 text-navy max-w-[14em]">Based in <Typeset text={serviceArea.base} /></h2>
+            <p>{`We take projects in ${AREA_SENTENCE}.`}</p>
           </div>
-          <ul className="mt-6 flex flex-wrap gap-2.5">
+          <ul className={`rule-list grid lg:grid-cols-2 gap-x-12 ${TWO_COL_RULES}`}>
             {counties.map((g) => (
               <li key={g.id}>
-                <Link href={`/service-areas#${g.id}`} className="inline-flex items-center min-h-11 px-4 rounded-full bg-white ring-1 ring-black/10 text-sm font-semibold text-navy hover:ring-blue/50">
-                  {g.county}, {g.state} ({g.towns.length})
+                <Link href={`/service-areas#${g.id}`} className="grid grid-cols-[1fr_auto] gap-x-6 items-baseline min-h-11 py-3.5 group">
+                  <span className="font-medium text-navy group-hover:underline underline-offset-4">{g.county}, {g.state} </span>
+                  <span className="text-sm text-muted tnum text-right">({g.towns.length})</span>
                 </Link>
               </li>
             ))}
           </ul>
-          <p className="mt-6"><Link href="/service-areas" className="font-semibold text-blue underline underline-offset-2">See every town we serve and its distance from Northborough</Link></p>
+          <p className="mt-8"><Link href="/service-areas" className="link-arrow"><ArrowLabel text="See every town we serve and its distance from Northborough" /></Link></p>
         </div>
       </section>
 
       {/* FIND US ONLINE — the visible counterpart of the business sameAs */}
-      <section className="pb-16" aria-labelledby="online-h">
+      <section className="pt-14 md:pt-20 pb-[var(--section-y)]" aria-labelledby="online-h">
         <div className="container-x">
-          <h2 id="online-h" className="text-2xl font-extrabold text-navy">Find us online</h2>
-          <ul className="mt-4 flex flex-wrap gap-3">
-            {profiles.map((p) => (
-              <li key={p.href}><a href={p.href} target="_blank" rel="noopener" className="btn btn-white ring-1 ring-black/10 text-sm">{p.label}</a></li>
-            ))}
-          </ul>
+          <div className="border-t border-line pt-14 md:pt-20">
+            <h2 id="online-h" className="text-h2 text-navy">Find us online</h2>
+            <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-1">
+              {profiles.map((p) => (
+                <li key={p.href}><a href={p.href} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text={p.label} external /></a></li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-brand-grad text-white" data-cta-zone>
-        <div className="container-x py-16 text-center">
-          <h2 className="text-3xl md:text-5xl font-extrabold">Let&apos;s talk about your project</h2>
-          <p className="mt-3 text-white/85 max-w-xl mx-auto">Free, no-obligation estimates from an owner-led contractor based in Northborough.</p>
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <Link href="/contact#estimate" className="btn btn-white text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-green text-base"><PhoneIcon /> {site.phone}</a>
+      {/* CTA — the page's one navy band */}
+      <section className="section bg-navy text-white on-dark" data-cta-zone>
+        <div className="container-x">
+          <h2 className="text-h2 text-white max-w-[18em]">Let&apos;s talk about your project</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[36em]">Free, no-obligation estimates from an owner-led contractor based in Northborough.</p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>
       </section>

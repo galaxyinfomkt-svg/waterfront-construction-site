@@ -32,22 +32,22 @@ const ld = pageGraph([
   breadcrumbNode(crumbs),
 ]);
 
-const a = "text-blue font-semibold underline underline-offset-2";
-
 export default function PrivacyPage() {
   return (
     <>
       <JsonLd data={ld} />
-      <section className="mesh text-white">
-        <div className="container-x py-12 md:py-16">
-          <Breadcrumbs items={crumbs} />
-          <h1 className="mt-5 text-4xl md:text-5xl font-extrabold">Privacy Policy</h1>
-          <p className="mt-3 text-white/85">Last updated: <time dateTime={UPDATED}>{updatedLabel}</time></p>
+      <section className="page-head">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <h1 className="mt-5 text-h1 text-navy">Privacy Policy</h1>
+            <p className="mt-5 text-[13px] text-muted">Last updated: <time dateTime={UPDATED}>{updatedLabel}</time></p>
+          </div>
         </div>
       </section>
 
-      <section className="py-12 md:py-14 bg-sand">
-        <div className="container-x max-w-3xl">
+      <section className="section-doc bg-paper">
+        <div className="container-x">
           <div className="prose">
             <p className="lead">{site.name} (&ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) respects your privacy. This policy explains what information we collect through this website, how we use it, who helps us process it, and the choices you have.</p>
 
@@ -90,10 +90,10 @@ export default function PrivacyPage() {
             <p>If we change this policy, we will update it on this page and change the &ldquo;Last updated&rdquo; date above.</p>
 
             <h2>Contact us</h2>
-            <p>Questions about this policy? Call <a href={site.phoneHref} className={a}>{site.phone}</a>, email <a href={site.emailHref} className={`${a} break-all`}>{site.email}</a>, or write to {site.name}, {displayAddress}.</p>
-            <p className="text-sm text-ink/75">This policy is provided for general information and is not legal advice.</p>
+            <p>Questions about this policy? Call <a href={site.phoneHref} className="link tel">{site.phone}</a>, email <a href={site.emailHref} className="link">{site.email}</a>, or write to {site.name}, {displayAddress}.</p>
+            <p className="text-sm text-muted">This policy is provided for general information and is not legal advice.</p>
           </div>
-          <div className="mt-8"><Link href="/contact#estimate" className="btn btn-green">Get a free estimate</Link></div>
+          <div className="mt-8"><Link href="/contact#estimate" className="btn btn-primary">Get a free estimate</Link></div>
         </div>
       </section>
     </>

@@ -1,37 +1,38 @@
 import Link from "next/link";
 import type { FaqEntry } from "@/lib/faq";
+import { PlusIcon } from "@/components/chrome-icons";
 
 // Renders FAQ entries from lib/faq.ts. The answer string is rendered as ONE text node, exactly as it
 // appears in the FAQPage JSON-LD (check-jsonld R09); related links and sources follow it.
 // `collapsible` = native <details> (answers stay in the HTML); otherwise every answer is shown.
 
-function Extras({ f, dark = false }: { f: FaqEntry; dark?: boolean }) {
-  const linkCls = dark ? "text-cyan hover:text-white" : "text-blue hover:text-navy";
+function Extras({ f }: { f: FaqEntry }) {
   return (
     <>
       {f.links && f.links.length > 0 && (
-        <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm font-semibold">
+        <ul className="mt-3 space-y-0.5 text-sm font-medium">
           {f.links.map((l) => (
             <li key={l.href}>
               {l.external ? (
-                <a href={l.href} target="_blank" rel="noopener" className={`inline-block py-1 underline underline-offset-2 ${linkCls}`}>{l.label}</a>
+                <a href={l.href} target="_blank" rel="noopener" className="link inline-block py-1">{l.label}</a>
               ) : (
-                <Link href={l.href} className={`inline-block py-1 underline underline-offset-2 ${linkCls}`}>{l.label}</Link>
+                <Link href={l.href} className="link inline-block py-1">{l.label}</Link>
               )}
             </li>
           ))}
         </ul>
       )}
       {f.sources && f.sources.length > 0 && (
-        <p className={`mt-2 text-xs ${dark ? "text-white/75" : "text-ink/70"}`}>
-          {f.sources.length > 1 ? "Sources: " : "Source: "}
+        // The label sits inside the first item and the link is inline (py-1.5 pads the hit area to ~27px without
+        // moving lines), so a long source title wraps after its first words instead of stranding "Source:".
+        <ul className="dot-list mt-3 text-xs text-muted">
           {f.sources.map((s, i) => (
-            <span key={s.url}>
-              {i > 0 ? " · " : ""}
-              <a href={s.url} target="_blank" rel="noopener" className="underline underline-offset-2">{s.label}</a>
-            </span>
+            <li key={s.url}>
+              {i === 0 && (f.sources!.length > 1 ? "Sources: " : "Source: ")}
+              <a href={s.url} target="_blank" rel="noopener" className="py-1.5 underline underline-offset-4 hover:text-ink">{s.label}</a>
+            </li>
           ))}
-        </p>
+        </ul>
       )}
     </>
   );
@@ -40,11 +41,11 @@ function Extras({ f, dark = false }: { f: FaqEntry; dark?: boolean }) {
 export default function FaqList({ items, collapsible = true, idPrefix = "" }: { items: FaqEntry[]; collapsible?: boolean; idPrefix?: string }) {
   if (!collapsible) {
     return (
-      <div className="space-y-4">
+      <div>
         {items.map((f) => (
-          <article key={f.id} id={`${idPrefix}${f.id}`} className="rounded-2xl bg-white p-5 md:p-6 shadow-soft ring-1 ring-black/5">
-            <h3 className="text-lg md:text-xl font-bold text-navy leading-snug">{f.q}</h3>
-            <p className="mt-2 text-ink/85 leading-relaxed">{f.a}</p>
+          <article key={f.id} id={`${idPrefix}${f.id}`} className="border-t border-line py-8 md:py-10">
+            <h3 className="text-h3 text-navy">{f.q}</h3>
+            <p className="mt-3 text-prose text-ink max-w-[68ch]">{f.a}</p>
             <Extras f={f} />
           </article>
         ))}
@@ -52,15 +53,15 @@ export default function FaqList({ items, collapsible = true, idPrefix = "" }: { 
     );
   }
   return (
-    <div>
+    <div className="faq-list">
       {items.map((f) => (
-        <details key={f.id} id={`${idPrefix}${f.id}`} className="group bg-white rounded-xl mb-3 shadow-[0_6px_20px_-14px_rgba(20,20,43,.4)] open:shadow-card">
-          <summary className="flex justify-between items-center gap-4 cursor-pointer list-none p-5 min-h-12">
-            <h3 className="font-bold text-navy text-lg leading-snug">{f.q}</h3>
-            <span aria-hidden="true" className="text-blue text-2xl leading-none group-open:rotate-45 transition shrink-0">+</span>
+        <details key={f.id} id={`${idPrefix}${f.id}`} className="faq-row group">
+          <summary>
+            <h3 className="faq-q">{f.q}</h3>
+            <PlusIcon className="faq-icon" />
           </summary>
-          <div className="px-5 pb-5 -mt-1">
-            <p className="text-ink/80 leading-relaxed">{f.a}</p>
+          <div className="faq-a">
+            <p>{f.a}</p>
             <Extras f={f} />
           </div>
         </details>

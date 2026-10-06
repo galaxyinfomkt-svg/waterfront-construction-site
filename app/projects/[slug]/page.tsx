@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import Gallery from "@/components/Gallery";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { PhoneIcon, PinIcon } from "@/components/chrome-icons";
+import { ArrowLabel, PhoneIcon, PinIcon } from "@/components/chrome-icons";
+import Typeset from "@/components/Typeset";
 import { projects, getProject, imageAlt, imageCaption, mediaCount, type Project, type ProjectVideo } from "@/lib/projects";
 import { site, services, citySlug, cityLabel } from "@/lib/site";
 import { posts } from "@/lib/posts";
@@ -16,7 +17,7 @@ import { pageGraph, webPageNode, breadcrumbNode, projectNodes, pageUrl, type Cru
 // /projects/[slug] — a truthful case study (audit 05 PG-H1…PG-M6, 08 §5.7, 10 H1/L3/L4/M3):
 // answer-first summary, facts computed from data (town, county, distance, media counts), what we did,
 // photos grouped by stage in chronological order with true captions, videos with written descriptions,
-// links to the service hub(s) and the matching service×town pages, and more projects.
+// links to the service hub(s) and the matching service-by-town pages, and more projects.
 // Everything renders server-side and outside scroll animations so it is readable at first paint.
 
 export const dynamicParams = false;
@@ -79,7 +80,7 @@ function moreProjects(p: Project, limit = 4): Project[] {
 function posterSrc(v: ProjectVideo) {
   // Optimized poster (posters load eagerly even with preload="none"; audit 05 PG-M3).
   const f = VIDEO_FACTS[v.src];
-  const w = 320; // displayed ≤ 320–380 CSS px → 640w source at 2x
+  const w = 320; // displayed ≤ 320–380 CSS px gives a 640w source at 2x
   const h = f ? Math.round((w * f.h) / f.w) : Math.round((w * 16) / 9);
   return getImageProps({ src: v.poster, alt: "", width: w, height: h, quality: 60 }).props.src;
 }
@@ -87,7 +88,7 @@ function posterSrc(v: ProjectVideo) {
 function VideoFigure({ v, id, large = false }: { v: ProjectVideo; id: string; large?: boolean }) {
   const f = VIDEO_FACTS[v.src];
   return (
-    <figure className={large ? "w-full max-w-[320px] mx-auto lg:mx-0" : ""}>
+    <figure className={large ? "w-full max-w-[300px] mx-0" : ""}>
       <video
         controls
         muted
@@ -98,16 +99,25 @@ function VideoFigure({ v, id, large = false }: { v: ProjectVideo; id: string; la
         height={f?.h}
         aria-labelledby={`${id}-t`}
         aria-describedby={`${id}-d`}
-        className="w-full h-auto aspect-[9/16] rounded-xl bg-navy object-cover shadow-card"
+        className="w-full h-auto aspect-[9/16] bg-scrim object-cover"
       >
         <source src={v.src} type="video/mp4" />
       </video>
-      <figcaption className={`mt-3 text-sm leading-relaxed ${large ? "text-white/85" : "text-ink/80"}`}>
-        <strong id={`${id}-t`} className={`block text-base ${large ? "text-white" : "text-navy"}`}>{v.title}</strong>
-        {f && <span className={large ? "text-white/75" : "text-ink/70"}>{secondsLabel(f.seconds)}, no sound. </span>}
+      <figcaption className="mt-3 text-sm leading-relaxed text-muted">
+        <strong id={`${id}-t`} className="block text-base font-semibold text-ink">{v.title}</strong>
+        {f && <span>{secondsLabel(f.seconds)}, no sound. </span>}
         <span id={`${id}-d`}>{v.description}</span>
       </figcaption>
     </figure>
+  );
+}
+
+/** Same-surface join: a hairline on the shared left edge between two neighbouring bands of the same colour. */
+function Join() {
+  return (
+    <div className="container-x">
+      <div className="border-t border-line" />
+    </div>
   );
 }
 
@@ -159,36 +169,55 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const heroImg = !videoFirst ? { src: p.cover, alt: imageAlt(p, p.cover), caption: imageCaption(p, p.cover) } : undefined;
   const placeText = town ? `${placeLabel(town)}${facts ? ` (${facts.county})` : ""}` : `${p.location} (not listed by town)`;
 
+  // Section surfaces (design spec §6 Project): glance paper, stages stone, videos paper, quote paper, related stone,
+  // more projects stone. Two rendered neighbours on the same surface are separated by a hairline join, never a tint.
+  const bands: [string, "paper" | "stone"][] = [["glance", "paper"]];
+  if (p.photos.length > 0) bands.push(["stages", "stone"]);
+  if (restVideos.length > 0) bands.push(["videos", "paper"]);
+  if (p.quote) bands.push(["quote", "paper"]);
+  bands.push(["related", "stone"]);
+  if (others.length > 0) bands.push(["more", "stone"]);
+  const joined = (key: string) => {
+    const i = bands.findIndex(([k]) => k === key);
+    return i > 0 && bands[i - 1][1] === bands[i][1];
+  };
+  const relatedCols = 1 + (town ? 1 : 0) + (guides.length > 0 ? 1 : 0);
+  const linkNav = "link-nav font-medium";
+
   return (
     <>
       <JsonLd data={ld} />
 
       {/* HERO — text first; the cover photo (or, on a video-only job, the first clip) beside it */}
-      <section className="relative overflow-hidden mesh text-white">
-        <div className="container-x py-10 md:py-14 grid gap-8 lg:gap-12 lg:grid-cols-[1.3fr_.7fr] lg:items-center">
-          <div>
+      <section className="page-head">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid gap-10 lg:grid-cols-12 lg:gap-16 lg:items-start">
+          <div className="lg:col-span-7">
             <Breadcrumbs items={crumbs} />
-            <p className="mt-5 inline-flex flex-wrap items-center gap-2 rounded-full bg-white/15 border border-white/25 px-4 py-1.5 text-sm">
-              <PinIcon className="w-4 h-4" /> {town ? cityLabel(town) : p.location} · {p.category}
-            </p>
-            <h1 className="mt-4 text-3xl md:text-5xl font-extrabold leading-tight max-w-3xl">{p.title}</h1>
-            <p className="mt-5 text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">{p.blurb}</p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
-              <a href={site.phoneHref} className="btn btn-outline text-base"><PhoneIcon className="w-4 h-4" /> {site.phone}</a>
+            <div className="mt-6 eyebrow flex items-center gap-2">
+              <PinIcon className="w-3.5 h-3.5" />
+              <ul className="dot-list">
+                <li>{town ? cityLabel(town) : p.location}</li>
+                <li>{p.category}</li>
+              </ul>
             </div>
-            <p className="mt-5 text-sm text-white/75">Updated <time dateTime={p.updated}>{dateLabel(p.updated)}</time></p>
+            <h1 className="mt-5 text-h1 text-navy"><Typeset text={p.title} /></h1>
+            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{p.blurb}</p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+            </div>
+            <p className="mt-5 text-[13px] text-muted">Updated <time dateTime={p.updated}>{dateLabel(p.updated)}</time></p>
           </div>
           {heroImg && (
-            <figure className="w-full lg:max-w-md lg:justify-self-end">
-              <div className="relative overflow-hidden rounded-2xl shadow-card ring-1 ring-white/20 bg-navy aspect-[4/3] lg:aspect-[4/5]">
+            <figure className="lg:col-span-5">
+              <div className="relative overflow-hidden bg-well aspect-[4/3] lg:aspect-[4/5]">
                 <Image src={heroImg.src} alt={heroImg.alt} fill preload quality={60} sizes="(min-width: 1024px) 448px, 100vw" className="object-cover" />
               </div>
-              {heroImg.caption && <figcaption className="mt-3 text-sm text-white/80 leading-relaxed">{heroImg.caption}</figcaption>}
+              {heroImg.caption && <figcaption className="mt-3 text-[13px] leading-relaxed text-muted">{heroImg.caption}</figcaption>}
             </figure>
           )}
           {heroVideo && (
-            <div className="lg:justify-self-end w-full">
+            <div className="lg:col-span-5 w-full flex lg:justify-end">
               <h2 className="sr-only">Site video</h2>
               <VideoFigure v={heroVideo} id="video-1" large />
             </div>
@@ -197,81 +226,96 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </section>
 
       {/* AT A GLANCE + WHAT WE DID — answer-first, server-rendered, never faded */}
-      <section className="py-12 md:py-16 bg-white" aria-labelledby="overview-h">
-        <div className="container-x grid gap-10 lg:grid-cols-[.85fr_1.15fr]">
-          <div>
-            <h2 id="overview-h" className="text-2xl md:text-3xl font-extrabold text-navy">Project at a glance</h2>
-            <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-5 gap-y-3 text-[15px]">
-              <dt className="font-bold text-navy">Location</dt>
-              <dd className="text-ink/85">{placeText}</dd>
+      <section className="section-doc bg-paper" aria-labelledby="overview-h">
+        <div className="container-x grid gap-14 lg:grid-cols-12 lg:gap-x-8">
+          <div className="lg:col-span-5">
+            <h2 id="overview-h" className="text-h2-doc text-navy">Project at a glance</h2>
+            <dl className="mt-8 border-t border-line">
+              <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
+                <dt className="eyebrow pt-0.5">Location</dt>
+                <dd className="text-[15.5px] text-ink">{placeText}</dd>
+              </div>
               {facts && !facts.isBase && (
-                <>
-                  <dt className="font-bold text-navy">Distance</dt>
-                  <dd className="text-ink/85">About {facts.miles} miles {facts.dir} of our Northborough, MA base (straight line)</dd>
-                </>
+                <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
+                  <dt className="eyebrow pt-0.5">Distance</dt>
+                  <dd className="text-[15.5px] text-ink">About {facts.miles} miles {facts.dir} of our Northborough, MA base (straight line)</dd>
+                </div>
               )}
-              <dt className="font-bold text-navy">{svcs.length > 1 ? "Services" : "Service"}</dt>
-              <dd className="text-ink/85">
-                {svcs.map((s, i) => (
-                  <span key={s.slug}>{i > 0 && ", "}<Link href={`/services/${s.slug}`} className="font-semibold text-blue underline underline-offset-2 hover:text-navy">{s.short}</Link></span>
-                ))}
-              </dd>
-              {p.completed && (<><dt className="font-bold text-navy">Completed</dt><dd className="text-ink/85">{p.completed}</dd></>)}
-              {p.durationWeeks && (<><dt className="font-bold text-navy">Duration</dt><dd className="text-ink/85">About {p.durationWeeks} weeks</dd></>)}
+              <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
+                <dt className="eyebrow pt-0.5">{svcs.length > 1 ? "Services" : "Service"}</dt>
+                <dd className="text-[15.5px] text-ink">
+                  {svcs.map((s, i) => (
+                    <span key={s.slug}>{i > 0 && ", "}<Link href={`/services/${s.slug}`} className="link">{s.short}</Link></span>
+                  ))}
+                </dd>
+              </div>
+              {p.completed && (
+                <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
+                  <dt className="eyebrow pt-0.5">Completed</dt>
+                  <dd className="text-[15.5px] text-ink">{p.completed}</dd>
+                </div>
+              )}
+              {p.durationWeeks && (
+                <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
+                  <dt className="eyebrow pt-0.5">Duration</dt>
+                  <dd className="text-[15.5px] text-ink">About {p.durationWeeks} weeks</dd>
+                </div>
+              )}
               {p.permit && (
-                <>
-                  <dt className="font-bold text-navy">Permit</dt>
-                  <dd className="text-ink/85">{p.permit.authority}{p.permit.number ? `, permit ${p.permit.number}` : ""}{p.permit.finalInspection ? "; final inspection passed" : ""}</dd>
-                </>
+                <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
+                  <dt className="eyebrow pt-0.5">Permit</dt>
+                  <dd className="text-[15.5px] text-ink">{p.permit.authority}{p.permit.number ? `, permit ${p.permit.number}` : ""}{p.permit.finalInspection ? "; final inspection passed" : ""}</dd>
+                </div>
               )}
-              <dt className="font-bold text-navy">Documented</dt>
-              <dd className="text-ink/85">{mediaCount(p)}{secs > 0 ? ` (${secondsLabel(secs)} of video, no sound)` : ""}</dd>
-              <dt className="font-bold text-navy">Published</dt>
-              <dd className="text-ink/85"><time dateTime={published(p)}>{dateLabel(published(p))}</time></dd>
+              <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
+                <dt className="eyebrow pt-0.5">Documented</dt>
+                <dd className="text-[15.5px] text-ink">{mediaCount(p)}{secs > 0 ? ` (${secondsLabel(secs)} of video, no sound)` : ""}</dd>
+              </div>
+              <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
+                <dt className="eyebrow pt-0.5">Published</dt>
+                <dd className="text-[15.5px] text-ink"><time dateTime={published(p)}>{dateLabel(published(p))}</time></dd>
+              </div>
             </dl>
           </div>
-          <div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-navy">{p.scopeHeading}</h2>
-            <ul role="list" className="mt-5 space-y-3">
+          <div className="lg:col-span-7">
+            <h2 className="text-h2-doc text-navy">{p.scopeHeading}</h2>
+            <ul role="list" className="mt-8 dash-list space-y-3 text-ink max-w-[68ch]">
               {p.scope.map((line) => (
-                <li key={line} className="flex gap-3 text-ink/85 leading-relaxed">
-                  <span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-green" />
-                  <span>{line}</span>
-                </li>
+                <li key={line}>{line}</li>
               ))}
             </ul>
             {p.materials && p.materials.length > 0 && (
               <>
-                <h3 className="mt-8 text-lg font-bold text-navy">Materials</h3>
-                <ul role="list" className="mt-2 list-disc pl-5 text-ink/85 space-y-1">{p.materials.map((m) => <li key={m}>{m}</li>)}</ul>
+                <h3 className="mt-12 text-h3s text-navy">Materials</h3>
+                <ul role="list" className="mt-4 dash-list space-y-1.5 text-ink max-w-[68ch]">{p.materials.map((m) => <li key={m}>{m}</li>)}</ul>
               </>
             )}
-            <h3 className="mt-8 text-lg font-bold text-navy">About {p.photos.length ? "these photos" : videos.length > 1 ? "these videos" : "this video"}</h3>
-            {p.notes.map((t) => <p key={t} className="mt-2 text-ink/80 leading-relaxed">{t}</p>)}
+            <h3 className="mt-12 text-h3s text-navy">About {p.photos.length ? "these photos" : videos.length > 1 ? "these videos" : "this video"}</h3>
+            {p.notes.map((t) => <p key={t} className="mt-3 text-ink max-w-[68ch]">{t}</p>)}
           </div>
         </div>
       </section>
 
       {/* PHOTOS BY STAGE — chronological, with a true caption under every photo */}
       {p.photos.length > 0 && (
-        <section className="py-12 md:py-16 bg-tint-blue" aria-labelledby="photos-h">
+        <section className="section-doc bg-stone" aria-labelledby="photos-h">
           <div className="container-x">
-            <h2 id="photos-h" className="text-2xl md:text-4xl font-extrabold text-navy">
+            <h2 id="photos-h" className="text-h2-doc text-navy">
               {p.stages.length > 1 ? "The job, stage by stage" : "Photos"}
             </h2>
-            <p className="mt-2 text-ink/80">{`${p.photos.length} photo${p.photos.length === 1 ? "" : "s"}${p.stages.length > 1 ? ", in the order the work happened" : ""}. Select a photo to see it larger.`}</p>
+            <p className="mt-5 text-muted max-w-[38rem]">{`${p.photos.length} photo${p.photos.length === 1 ? "" : "s"}${p.stages.length > 1 ? ", in the order the work happened" : ""}. Select a photo to see it larger.`}</p>
             {p.stages.map((st, i) => {
               const ph = p.photos.filter((x) => x.stage === st.id);
               if (!ph.length) return null;
               return (
-                <div key={st.id} className="mt-10">
+                <div key={st.id} className={p.stages.length > 1 ? "mt-16 border-t border-line pt-8" : "mt-10"}>
                   {p.stages.length > 1 && (
-                    <h3 className="text-xl font-extrabold text-navy">
-                      <span className="text-blue">{i + 1}.</span> {st.label}
+                    <h3 className="text-h3 text-navy">
+                      <span className="block eyebrow tnum mb-2">{i + 1}.</span> {st.label}
                     </h3>
                   )}
-                  {st.note && <p className="mt-1 mb-5 text-ink/80">{st.note}</p>}
-                  <div className={st.note ? "" : "mt-5"}>
+                  {st.note && <p className="mt-3 text-muted max-w-[68ch]">{st.note}</p>}
+                  <div className={p.stages.length > 1 || st.note ? "mt-8" : ""}>
                     <Gallery photos={ph} label={`${p.shortTitle} photos`} />
                   </div>
                 </div>
@@ -283,69 +327,74 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
       {/* VIDEOS — each with a written description (the clips have no sound) */}
       {restVideos.length > 0 && (
-        <section className="py-12 md:py-16 bg-white" aria-labelledby="videos-h">
-          <div className="container-x">
-            <h2 id="videos-h" className="text-2xl md:text-4xl font-extrabold text-navy">{videoFirst ? "More site videos" : "Site videos"}</h2>
-            <p className="mt-2 text-ink/80 max-w-2xl">
+        <section className={`section-doc bg-paper ${joined("videos") ? "pt-0" : ""}`} aria-labelledby="videos-h">
+          {joined("videos") && <Join />}
+          <div className={`container-x ${joined("videos") ? "pt-[var(--section-doc-y)]" : ""}`}>
+            <h2 id="videos-h" className="text-h2-doc text-navy">{videoFirst ? "More site videos" : "Site videos"}</h2>
+            <p className="mt-5 text-muted max-w-[38rem]">
               {`${restVideos.length} short clip${restVideos.length === 1 ? "" : "s"} filmed on the job. They have no sound, so each one has a written description.`}
             </p>
             {/* Phones: a swipeable row (keeps the page short); tablet and up: a grid. */}
-            <ul role="list" className="mt-8 -mx-5 px-5 pb-2 flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:mx-0 sm:px-0 sm:pb-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-7 sm:overflow-visible">
+            <ul role="list" className="mt-10 -mx-5 px-5 scroll-px-5 pb-2 flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:mx-0 sm:px-0 sm:pb-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-x-6 sm:gap-y-10 sm:overflow-visible">
               {restVideos.map((v, i) => (
                 <li key={v.src} className="w-[72%] shrink-0 snap-start sm:w-auto">
                   <VideoFigure v={v} id={`video-${i + (videoFirst ? 2 : 1)}`} />
                 </li>
               ))}
             </ul>
-            {restVideos.length > 1 && <p className="mt-3 text-sm text-ink/70 sm:hidden">Swipe to see all {restVideos.length} clips.</p>}
+            {restVideos.length > 1 && <p className="mt-3 text-sm text-muted sm:hidden">Swipe to see all {restVideos.length} clips.</p>}
           </div>
         </section>
       )}
 
       {/* CLIENT QUOTE — only with written consent; plain text, never Review markup */}
       {p.quote && (
-        <section className="py-12 bg-sand">
-          <figure className="container-x max-w-3xl">
-            <blockquote className="text-xl text-navy font-medium leading-relaxed">“{p.quote.text}”</blockquote>
-            <figcaption className="mt-3 text-ink/80">— {p.quote.author}, shared with permission</figcaption>
-          </figure>
+        <section className={`section-doc bg-paper ${joined("quote") ? "pt-0" : ""}`}>
+          {joined("quote") && <Join />}
+          <div className={`container-x ${joined("quote") ? "pt-[var(--section-doc-y)]" : ""}`}>
+            <figure>
+              <blockquote className="font-display text-quote text-navy max-w-[40ch] [text-indent:-0.42em]">“{p.quote.text}”</blockquote>
+              <figcaption className="mt-6 text-[15px] text-muted">— {p.quote.author}, shared with permission</figcaption>
+            </figure>
+          </div>
         </section>
       )}
 
-      {/* RELATED — service hubs, the service×town pages for this town, nearby towns, guides */}
-      <section className="py-12 md:py-16 bg-sand" aria-labelledby="related-h">
-        <div className="container-x">
-          <h2 id="related-h" className="text-2xl md:text-3xl font-extrabold text-navy">Related services{town ? ` and towns near ${town.n}` : ""}</h2>
-          <div className="mt-6 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div>
-              <h3 className="text-lg font-bold text-navy">The {svcs.length > 1 ? "services" : "service"} in this project</h3>
-              <ul role="list" className="mt-3 space-y-2.5">
+      {/* RELATED — service hubs, the service-by-town pages for this town, nearby towns, guides */}
+      <section className={`section-doc bg-stone ${joined("related") ? "pt-0" : ""}`} aria-labelledby="related-h">
+        {joined("related") && <Join />}
+        <div className={`container-x ${joined("related") ? "pt-[var(--section-doc-y)]" : ""}`}>
+          <h2 id="related-h" className="text-h2-doc text-navy max-w-[24em]">Related services{town ? ` and towns near ${town.n}` : ""}</h2>
+          <div className={`mt-10 grid gap-x-12 gap-y-12 md:grid-cols-2 ${relatedCols === 3 ? "lg:grid-cols-3" : ""}`}>
+            <div className="border-t border-line pt-5">
+              <h3 className="eyebrow">The {svcs.length > 1 ? "services" : "service"} in this project</h3>
+              <ul role="list" className="mt-4 space-y-3">
                 {svcs.map((s) => (
                   <li key={s.slug}>
-                    <Link href={`/services/${s.slug}`} className="font-semibold text-blue underline underline-offset-2 hover:text-navy">{s.short}</Link>
-                    <span className="block text-sm text-ink/75">{s.blurb}</span>
+                    <Link href={`/services/${s.slug}`} className={linkNav}>{s.short}</Link>
+                    <span className="mt-1 block text-sm text-muted">{s.blurb}</span>
                   </li>
                 ))}
               </ul>
             </div>
             {town && (
-              <div>
-                <h3 className="text-lg font-bold text-navy">In {cityLabel(town)}</h3>
-                <ul role="list" className="mt-3 space-y-2.5">
+              <div className="border-t border-line pt-5">
+                <h3 className="eyebrow">In {cityLabel(town)}</h3>
+                <ul role="list" className="mt-4 space-y-2.5">
                   {svcs.map((s) => (
                     <li key={s.slug}>
-                      <Link href={`/services/${s.slug}/${citySlug(town)}`} className="font-semibold text-blue underline underline-offset-2 hover:text-navy">{s.name} in {cityLabel(town)}</Link>
+                      <Link href={`/services/${s.slug}/${citySlug(town)}`} className={linkNav}>{s.name} in {cityLabel(town)}</Link>
                     </li>
                   ))}
                 </ul>
                 {nearby.length > 0 && primary && (
                   <>
-                    <h3 className="mt-6 text-lg font-bold text-navy">{primary.name} in towns near {town.n}</h3>
-                    <ul role="list" className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-[15px]">
+                    <h3 className="mt-10 eyebrow">{primary.name} in towns near {town.n}</h3>
+                    <ul role="list" className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 text-[15px]">
                       {nearby.map(({ city, miles }) => (
                         <li key={citySlug(city)}>
-                          <Link href={`/services/${primary.slug}/${citySlug(city)}`} className="font-semibold text-blue underline underline-offset-2 hover:text-navy">{placeLabel(city)}</Link>{" "}
-                          <span className="text-ink/70">({miles} mi)</span>
+                          <Link href={`/services/${primary.slug}/${citySlug(city)}`} className={linkNav}>{placeLabel(city)}</Link>{" "}
+                          <span className="whitespace-nowrap text-muted tnum">({miles} mi)</span>
                         </li>
                       ))}
                     </ul>
@@ -354,67 +403,66 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               </div>
             )}
             {guides.length > 0 && (
-              <div>
-                <h3 className="text-lg font-bold text-navy">Guides for this kind of project</h3>
+              <div className="border-t border-line pt-5">
+                <h3 className="eyebrow">Guides for this kind of project</h3>
                 {town && isNH(town) && (
-                  <p className="mt-2 text-sm text-ink/75">These guides are written for Massachusetts. New Hampshire has no statewide contractor license, and permits come from each town&apos;s building department.</p>
+                  <p className="mt-3 text-sm text-muted">These guides are written for Massachusetts. New Hampshire has no statewide contractor license, and permits come from each town&apos;s building department.</p>
                 )}
-                <ul role="list" className="mt-3 space-y-2.5">
+                <ul role="list" className="mt-4 space-y-3">
                   {guides.map((g) => (
-                    <li key={g.slug}><Link href={`/blog/${g.slug}`} className="font-semibold text-blue underline underline-offset-2 hover:text-navy">{g.title}</Link></li>
+                    <li key={g.slug}><Link href={`/blog/${g.slug}`} className={linkNav}>{g.title}</Link></li>
                   ))}
                 </ul>
               </div>
             )}
           </div>
           {!town && (
-            <p className="mt-8 text-ink/80">
-              This case study does not name a town. See <Link href="/service-areas" className="font-semibold text-blue underline underline-offset-2 hover:text-navy">all the towns we serve</Link>.
+            <p className="mt-10 text-ink">
+              This case study does not name a town. See <Link href="/service-areas" className="link">all the towns we serve</Link>.
             </p>
           )}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="mesh">
-        <div className="container-x py-14 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-extrabold">Planning a similar project?</h2>
-          <p className="mt-3 text-white/85 max-w-xl mx-auto">Tell us about your house and what you want to change. Estimates are free and there is no obligation.</p>
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-white text-base"><PhoneIcon className="w-4 h-4" /> {site.phone}</a>
-          </div>
-        </div>
-      </section>
-
       {/* MORE PROJECTS — same service first, then the nearest towns */}
       {others.length > 0 && (
-        <section className="py-12 md:py-16 bg-tint-blue" aria-labelledby="more-h">
-          <div className="container-x">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <h2 id="more-h" className="text-2xl md:text-3xl font-extrabold text-navy">More projects</h2>
-              <Link href="/gallery" className="font-semibold text-blue underline underline-offset-2 hover:text-navy">See all {projects.length} projects</Link>
+        <section className={`section-doc bg-stone ${joined("more") ? "pt-0" : ""}`} aria-labelledby="more-h">
+          {joined("more") && <Join />}
+          <div className={`container-x ${joined("more") ? "pt-[var(--section-doc-y)]" : ""}`}>
+            <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+              <h2 id="more-h" className="text-h2-doc text-navy">More projects</h2>
+              <Link href="/gallery" className="link-arrow"><ArrowLabel text={`See all ${projects.length} projects`} /></Link>
             </div>
-            <ul role="list" className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <ul role="list" className="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
               {others.map((o) => (
-                <li key={o.slug}>
-                  <Link href={path(o)} className="group card overflow-hidden pop flex h-full flex-col">
-                    <div className="relative aspect-[4/3] bg-sand">
-                      <Image src={o.cover} alt={imageAlt(o, o.cover)} fill quality={60} sizes="(min-width: 1200px) 285px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover zoomimg" />
-                    </div>
-                    <div className="p-5 flex flex-1 flex-col">
-                      <span className="text-xs text-blue font-semibold uppercase tracking-wider">{o.location}</span>
-                      <h3 className="font-bold text-navy text-lg mt-1 leading-snug">{o.title}</h3>
-                      <span className="mt-1 text-sm text-ink/70">{mediaCount(o)}</span>
-                      <span className="mt-auto pt-3 text-sm text-blue font-semibold">View the case study <span aria-hidden="true">→</span></span>
-                    </div>
-                  </Link>
+                <li key={o.slug} className="card-ed group">
+                  <div className="media">
+                    <Image src={o.cover} alt={imageAlt(o, o.cover)} fill quality={60} sizes="(min-width: 1200px) 285px, (min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
+                  </div>
+                  <p className="meta">
+                    <span>{o.location}</span>
+                    <span className="text-right">{mediaCount(o)}</span>
+                  </p>
+                  <h3 className="text-h3s"><Link href={path(o)}>{o.title}</Link></h3>
+                  <span className="link-arrow text-sm mt-auto pt-3 self-start"><ArrowLabel text="View the case study" /></span>
                 </li>
               ))}
             </ul>
           </div>
         </section>
       )}
+
+      {/* CTA — the page's one navy band, last (after More projects) */}
+      <section className="section bg-navy text-white on-dark">
+        <div className="container-x">
+          <h2 className="text-h2 text-white max-w-[18em]">Planning a similar project?</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[36em]">Tell us about your house and what you want to change. Estimates are free and there is no obligation.</p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

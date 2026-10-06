@@ -1,7 +1,7 @@
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { PhoneIcon } from "@/components/chrome-icons";
+import { PhoneIcon, ArrowLabel } from "@/components/chrome-icons";
 import { site, testimonials, allCities, citySlug, cityLabel } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, type Crumb } from "@/lib/schema";
@@ -50,71 +50,75 @@ export default function ReviewsPage() {
     <>
       <JsonLd data={ld} />
 
-      <section className="bg-brand-grad text-white" data-cta-zone>
-        <div className="container-x py-12 md:py-16">
-          <Breadcrumbs items={crumbs} />
-          <span className="mt-6 eyebrow text-cyan">Client testimonials</span>
-          <h1 className="mt-3 text-4xl md:text-6xl font-extrabold">{H1}</h1>
-          <p className="mt-4 text-white/90 text-lg max-w-2xl leading-relaxed">{LEAD}</p>
-          <p className="mt-2 text-white/90 font-semibold">{DISCLOSURE}</p>
-          <p className="mt-4 text-white/85 max-w-2xl">To read our public reviews, or to leave one, visit our Google Business Profile.</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a href={site.gbp} target="_blank" rel="noopener" className="btn btn-white">Read our Google reviews</a>
-            <a href={site.googleReview} target="_blank" rel="noopener" className="btn btn-outline">Leave a Google review</a>
+      <section className="page-head" data-cta-zone>
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <p className="mt-6 eyebrow">Client testimonials</p>
+            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
+            <p className="mt-3 text-[15px] text-muted">{DISCLOSURE}</p>
+            <p className="mt-4 text-muted max-w-[36em]">To read our public reviews, or to leave one, visit our Google Business Profile.</p>
+            <div className="mt-6 flex flex-wrap gap-x-8 gap-y-1">
+              <a href={site.gbp} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Read our Google reviews" external /></a>
+              <a href={site.googleReview} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Leave a Google review" external /></a>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-14 md:py-16 bg-sand" aria-labelledby="list-h">
+      <section className="section" aria-labelledby="list-h">
         <div className="container-x">
           <h2 id="list-h" className="sr-only">Testimonials</h2>
-          <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Each card is a 3-row subgrid (quote, name + meta, links), so names line up across the two columns. */}
+          <ul className="grid lg:grid-cols-2 gap-x-12 gap-y-14">
             {testimonials.map((t) => {
               const city = cityOf(t.town);
               const svcs = servicesOf(t.name);
               const iso = isoMonth(t.date);
               return (
-                <li key={`${t.name}-${t.date}`} id={testimonialAnchor(t.name)}>
-                  <figure className="card p-6 h-full flex flex-col">
-                    <blockquote className="flex-1 text-ink/85 leading-relaxed"><p>&ldquo;{t.text}&rdquo;</p></blockquote>
-                    <figcaption className="mt-4 pt-4 border-t border-sand text-sm">
-                      <span className="block font-bold text-navy">{t.name}</span>
-                      <span className="block text-ink/75">
-                        {t.town} · {iso ? <time dateTime={iso}>{t.date}</time> : t.date} · Shared with permission
-                      </span>
-                      {city && svcs.length > 0 && (
-                        <span className="mt-2 block">
-                          {svcs.map((s, i) => (
-                            <span key={s.slug}>
-                              {i > 0 ? " · " : ""}
-                              <Link href={`/services/${s.slug}/${citySlug(city)}`} className="font-semibold text-blue underline underline-offset-2 hover:text-navy">{`${s.short} in ${cityLabel(city)}`}</Link>
-                            </span>
+                <li key={`${t.name}-${t.date}`} id={testimonialAnchor(t.name)} className="grid grid-rows-subgrid row-span-3 gap-y-0 border-t border-line pt-8">
+                  <figure className="grid grid-rows-subgrid row-span-3 gap-y-0">
+                    <blockquote className="font-display text-[1.375rem] leading-[1.45] text-navy [text-indent:-0.42em]"><p>&ldquo;{t.text}&rdquo;</p></blockquote>
+                    <figcaption className="grid grid-rows-subgrid row-span-2 gap-y-0">
+                      <div className="mt-6">
+                        <span className="block text-[15px] font-semibold text-ink">{t.name}</span>
+                        <ul className="mt-1 dot-list text-[13px] text-muted">
+                          <li>{t.town}</li>
+                          <li>{iso ? <time dateTime={iso}>{t.date}</time> : t.date}</li>
+                          {/* Below sm this item takes its own line, so a wrapped line never starts with a separator dot. */}
+                          <li className="max-sm:basis-full max-sm:before:hidden"><span className="whitespace-nowrap">Shared with permission</span></li>
+                        </ul>
+                      </div>
+                      {city && svcs.length > 0 ? (
+                        <span className="mt-3 flex flex-col items-start gap-y-2">
+                          {svcs.map((s) => (
+                            <Link key={s.slug} href={`/services/${s.slug}/${citySlug(city)}`} className="link-arrow text-sm leading-snug"><ArrowLabel text={`${s.short} in ${cityLabel(city)}`} /></Link>
                           ))}
                         </span>
-                      )}
+                      ) : <span />}
                     </figcaption>
                   </figure>
                 </li>
               );
             })}
           </ul>
-          <p className="mt-8 text-sm text-ink/75 max-w-3xl">
+          <p className="mt-14 text-sm text-muted max-w-[60ch]">
             These testimonials are reproduced word for word. See our{" "}
-            <Link href="/gallery" className="font-semibold text-blue underline underline-offset-2">project case studies</Link>, documented with our own photos and site videos.
+            <Link href="/gallery" className="link">project case studies</Link>, documented with our own photos and site videos.
           </p>
         </div>
       </section>
 
-      <section className="py-14 md:py-16">
+      {/* Closing band: the page's one navy surface */}
+      <section className="section bg-navy text-white on-dark" data-cta-zone>
         <div className="container-x">
-          <div className="rounded-3xl bg-navy text-white p-8 md:p-14 text-center" data-cta-zone>
-            <h2 className="text-3xl md:text-4xl font-extrabold">Worked with us?</h2>
-            <p className="mt-3 text-white/85 max-w-xl mx-auto">A Google review helps other homeowners decide. Planning a project of your own? Estimates are free.</p>
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
-              <a href={site.googleReview} target="_blank" rel="noopener" className="btn btn-green text-base">Leave a Google review</a>
-              <Link href="/contact#estimate" className="btn btn-white text-base">Get a free estimate</Link>
-              <a href={site.phoneHref} className="btn btn-white text-base"><PhoneIcon /> {site.phone}</a>
-            </div>
+          <h2 className="text-h2 text-white max-w-[18em]">Worked with us?</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[36em]">A Google review helps other homeowners decide. Planning a project of your own? Estimates are free.</p>
+          <p className="mt-6"><a href={site.googleReview} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Leave a Google review" external /></a></p>
+          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>
       </section>

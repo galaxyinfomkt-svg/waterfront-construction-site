@@ -1,71 +1,95 @@
-/* Blog article typography (audit 04-blog.md §4.2, B-18). Scoped to .post so it can't leak into other pages.
-   Replaces the shared .prose rules for posts: neutral list bullets instead of a green ✓ on every item
-   (warnings and cons are not "checks"), tables, callouts, attributed testimonials and figures. */
-.post { color: #34344a; font-size: 18px; line-height: 1.75; }
-.post .answer { font-size: 1.08rem; line-height: 1.6; color: #24215a; font-weight: 500; border-left: 4px solid #1f7a3a; background: #fff; padding: 1rem 1.25rem; border-radius: 0 .75rem .75rem 0; margin: 0 0 1.75rem; box-shadow: 0 10px 30px -18px rgb(20 20 43 / .25); }
-@media (min-width: 768px) { .post .answer { font-size: 1.2rem; line-height: 1.65; } }
-.post h2 { font-size: 1.6rem; color: #24215a; margin: 2.4rem 0 .8rem; } /* no scroll-margin: html scroll-padding-top already clears the header */
-.post h3 { font-size: 1.2rem; color: #24215a; margin: 1.6rem 0 .4rem; }
-.post p { margin: 0 0 1.15rem; }
-.post a { color: #1f5c92; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
-.post a:hover { color: #24215a; }
+/* Blog article typography ("Paper & Ink", design spec §4.25). Scoped to .post so it can't leak into other pages.
+   Tokens only (app/globals.css @theme): no hex colours in this file. Lists use a 10x1 dash, a check mask
+   or an alert mask; warnings and cons are never drawn as "checks". */
+.post { color: var(--color-ink); font-size: 17px; line-height: 1.65; }
+@media (min-width: 768px) { .post { font-size: 18px; line-height: 1.75; } }
 
+.post .answer { margin: 0 0 1.75rem; padding: 1.25rem 1.5rem; background: var(--color-stone); border: 1px solid var(--color-line); border-radius: var(--radius-panel);
+  box-shadow: none; color: var(--color-ink); font-weight: 500; font-size: 1.0625rem; line-height: 1.6; }
+@media (min-width: 768px) { .post .answer { font-size: 1.1875rem; } }
+
+/* no scroll-margin: html scroll-padding-top already clears the header */
+.post h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.875rem; line-height: 1.2; letter-spacing: -.01em; color: var(--color-navy); margin: 3rem 0 .9rem; text-wrap: balance; }
+.post h3 { font-family: var(--font-sans); font-weight: 600; font-size: 1.125rem; line-height: 1.4; color: var(--color-ink); letter-spacing: 0; margin: 1.75rem 0 .4rem; }
+.post p { margin: 0 0 1.15rem; }
+.post a { color: var(--color-blue); font-weight: inherit; text-decoration: underline 1px; text-underline-offset: .22em; }
+.post a:hover { text-decoration-thickness: 2px; }
+
+/* Lists: every variant indents 1.75rem */
 .post ul { margin: 0 0 1.3rem; padding-left: 0; list-style: none; }
-.post ul > li { position: relative; padding-left: 1.5rem; margin: .5rem 0; }
-.post ul > li::before { content: ""; position: absolute; left: .35rem; top: .72em; width: .42rem; height: .42rem; border-radius: 50%; background: #1f5c92; }
-.post ul.check > li { padding-left: 1.9rem; }
-.post ul.check > li::before { content: "✓"; width: auto; height: auto; background: none; left: 0; top: 0; color: #1f7a3a; font-weight: 800; border-radius: 0; }
-.post ul.warn > li { padding-left: 1.9rem; }
-.post ul.warn > li::before { content: "!"; width: 1.1rem; height: 1.1rem; left: 0; top: .3em; border-radius: 50%; background: #b45309; color: #fff; font-size: .75rem; font-weight: 800; line-height: 1.1rem; text-align: center; }
+.post ul > li { position: relative; padding-left: 1.75rem; margin: .5rem 0; }
+.post ul > li::before { content: ""; position: absolute; left: 0; top: .86em; width: 10px; height: 1px; background: var(--color-muted); }
+.post ul.check > li::before, .post ul.warn > li::before { top: .3em; width: 1.05em; height: 1.05em; background: var(--color-navy); }
+.post ul.check > li::before { -webkit-mask: var(--icon-check) center / contain no-repeat; mask: var(--icon-check) center / contain no-repeat; }
+.post ul.warn > li::before { -webkit-mask: var(--icon-alert) center / contain no-repeat; mask: var(--icon-alert) center / contain no-repeat; }
 
 .post ol.steps { counter-reset: step; list-style: none; padding-left: 0; margin: 0 0 1.4rem; }
-.post ol.steps > li { counter-increment: step; position: relative; padding-left: 2.6rem; margin: .9rem 0; }
-.post ol.steps > li::before { content: counter(step); position: absolute; left: 0; top: .15em; width: 1.8rem; height: 1.8rem; border-radius: 50%; background: #24215a; color: #fff; font-size: .9rem; font-weight: 800; line-height: 1.8rem; text-align: center; }
-.post ol.steps strong { color: #24215a; }
+.post ol.steps > li { counter-increment: step; position: relative; padding-left: 2.75rem; padding-top: .9rem; margin: .9rem 0 0; border-top: 1px solid var(--color-line); }
+.post ol.steps > li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 0; top: calc(.9rem + .45em); font-family: var(--font-sans); font-weight: 600; font-size: 13px; line-height: 1.4;
+  color: var(--color-navy); font-variant-numeric: lining-nums tabular-nums; }
+.post ol.steps strong { color: var(--color-ink); }
 
 /* The wrapper is a focusable, named region (tabindex=0; the global focus ring applies) so keyboard users can
-   scroll it if a table ever overflows. Tables with 3+ columns (table.stack) become one card per row
+   scroll it if a table ever overflows. Tables with 3+ columns (table.stack) become one ruled block per row
    below 640px, so no column is hidden off-screen on phones (verification V5.5). */
-.post .table-wrap { position: relative; margin: 1.2rem 0 1.6rem; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: .5rem; }
-.post table { width: 100%; border-collapse: collapse; font-size: 15.5px; line-height: 1.5; background: #fff; }
-.post caption { caption-side: top; text-align: left; font-weight: 700; color: #24215a; padding-bottom: .5rem; font-size: 1rem; }
-.post th, .post td { border: 1px solid #dfe4ee; padding: .6rem .75rem; text-align: left; vertical-align: top; }
-.post thead th { background: #eef1f6; color: #24215a; font-weight: 700; }
-.post tbody th { font-weight: 600; color: #24215a; }
+.post .table-wrap { position: relative; margin: 1.2rem 0 1.6rem; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  background: white; border: 1px solid var(--color-line); border-radius: var(--radius-panel); }
+.post table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; }
+.post caption { caption-side: top; text-align: left; font-family: var(--font-sans); font-weight: 600; font-size: 15px; line-height: 1.4; color: var(--color-ink); padding: 1rem 1rem .9rem; }
+.post th, .post td { border: 0; border-bottom: 1px solid var(--color-line); padding: .75rem 1rem; text-align: left; vertical-align: top; }
+.post tbody tr:last-child > * { border-bottom: 0; }
+.post thead th { background: var(--color-stone); color: var(--color-muted); vertical-align: bottom; font-weight: 600; font-size: .75rem; line-height: 1.4;
+  letter-spacing: .14em; text-transform: uppercase; font-feature-settings: "case"; }
+.post tbody th { font-family: var(--font-sans); font-weight: 600; color: var(--color-ink); }
+.post td.num { text-align: right; font-variant-numeric: lining-nums tabular-nums; }
+.post th.num { text-align: right; }   /* head of an all-numeric column sits over its figures */
 .post .cell-label { display: none; }
-.post .table-note { font-size: 13.5px; line-height: 1.5; color: #555569; margin: .5rem 0 0; }
+.post .table-note { font-size: 13.5px; line-height: 1.5; color: var(--color-muted); margin: 0; padding: .75rem 1rem 1rem; }
 @media (max-width: 639.98px) {
+  .post .table-wrap:has(table.stack) { background: transparent; border: 0; border-radius: 0; }
+  .post table.stack caption { padding: 0 0 .9rem; }
+  .post .table-wrap:has(table.stack) .table-note { padding: .25rem 0 0; }
   .post table.stack, .post table.stack caption, .post table.stack tbody, .post table.stack tr, .post table.stack th, .post table.stack td { display: block; width: 100%; }
-  .post table.stack { background: transparent; }
   .post table.stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
-  .post table.stack tbody tr { background: #fff; border: 1px solid #dfe4ee; border-radius: .75rem; margin: 0 0 .75rem; overflow: hidden; }
-  .post table.stack tbody th, .post table.stack tbody td { border: 0; padding: .5rem .95rem; }
-  .post table.stack tbody th { background: #eef1f6; font-size: 1.02rem; }
-  .post table.stack tbody td + td { border-top: 1px solid #eef1f6; }
-  .post table.stack .cell-label { display: block; margin-bottom: .1rem; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #555569; }
+  .post table.stack tbody tr { background: white; border: 1px solid var(--color-line); border-radius: var(--radius-panel); margin: 0 0 .75rem; overflow: hidden; }
+  .post table.stack tbody th, .post table.stack tbody td { border: 0; padding: .5rem 1rem; }
+  .post table.stack tbody th { background: var(--color-stone); font-size: 1rem; border-bottom: 1px solid var(--color-line); }
+  .post table.stack tbody td + td { border-top: 1px solid var(--color-line); }
+  .post table.stack td.num { text-align: left; }
+  .post table.stack .cell-label { display: block; margin-bottom: .1rem; font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-feature-settings: "case"; color: var(--color-muted); }
 }
 
-.post .callout { background: #e2f1f9; border-left: 4px solid #1f5c92; padding: .9rem 1.15rem; border-radius: 0 .6rem .6rem 0; color: #24215a; font-weight: 500; }
-.post .testimonial { margin: 1.4rem 0; padding: 1rem 1.25rem; background: #fff; border: 1px solid #e3e7ef; border-radius: .9rem; }
-.post .testimonial p { margin: 0 0 .4rem; color: #24215a; font-size: 1.08rem; }
-.post .testimonial footer { font-size: .9rem; color: #555569; }
+.post .callout { background: var(--color-stone); border: 1px solid var(--color-line); border-radius: var(--radius-panel); padding: 1rem 1.25rem; color: var(--color-ink); font-weight: 400; }
+.post .testimonial { margin: 1.75rem 0; border-left: 1px solid var(--color-navy); padding: .25rem 0 .25rem 1.5rem; }
+.post .testimonial p { margin: 0 0 .75rem; font-family: var(--font-display); font-weight: 400; font-size: 1.375rem; line-height: 1.45; color: var(--color-navy); text-indent: -.42em; }
+.post .testimonial footer { font-weight: 600; font-size: .75rem; line-height: 1.4; letter-spacing: .16em; text-transform: uppercase; font-feature-settings: "case"; color: var(--color-muted); }
 
 .post .post-figure { margin: 1.8rem 0; }
-.post .post-figure figcaption { margin-top: .55rem; font-size: .92rem; line-height: 1.5; color: #555569; }
+.post .post-figure img { border-radius: 0; background: var(--color-well); }
+.post .post-figure figcaption { margin-top: .6rem; font-size: 13.5px; line-height: 1.5; color: var(--color-muted); }
+@media (min-width: 768px) {
+  .post .post-figure.portrait { display: grid; grid-template-columns: 22.5rem 1fr; gap: 1.5rem; align-items: end; }
+  .post .post-figure.portrait figcaption { margin-top: 0; }
+}
 
-.post .faq h3 { margin-top: 1.3rem; }
-.post .sources { padding-left: 1.3rem; list-style: decimal; font-size: 15.5px; line-height: 1.55; }
+.post .faq h3 { margin-top: 0; }
+.post .faq > div { border-top: 1px solid var(--color-line); padding-top: 1.25rem; margin-top: 1.25rem; }
+.post .sources { padding-left: 1.3rem; list-style: decimal; font-size: 14px; line-height: 1.55; color: var(--color-muted); }
 .post .sources li { margin: .4rem 0; }
+.post .sources a { color: var(--color-ink); font-weight: 400; }
 
-.post .toc { margin: 2rem 0; padding: 1.1rem 1.25rem; background: #fff; border: 1px solid #e3e7ef; border-radius: .9rem; }
-.post .toc .toc-title { margin: 0 0 .4rem; font-size: .8rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #24215a; }
+.post .toc { margin: 2rem 0; padding: 1.25rem 0; border-block: 1px solid var(--color-line); counter-reset: toc; }
+.post .toc .toc-title { margin: 0 0 .5rem; font-weight: 600; font-size: .75rem; line-height: 1.4; letter-spacing: .16em; text-transform: uppercase; font-feature-settings: "case"; color: var(--color-muted); }
 .post .toc ul { margin: 0; }
-.post .toc li { margin: .25rem 0; padding-left: 0; font-size: 16px; line-height: 1.45; }
-.post .toc li::before { display: none; }
-.post .toc a { font-weight: 500; text-decoration: none; }
-.post .toc a:hover { text-decoration: underline; }
-.post .small-note { font-size: 15px; color: #555569; }
-.post .author-box { margin-top: 2.5rem; padding: 1.4rem 1.5rem; background: #fff; border: 1px solid #e3e7ef; border-radius: 1rem; }
-.post .author-box h2 { margin-top: 0; font-size: 1.25rem; }
+.post .toc li { counter-increment: toc; margin: .3rem 0; padding-left: 2.25rem; font-size: 16px; line-height: 1.45; }
+.post .toc li::before { content: counter(toc, decimal-leading-zero); top: .3em; width: auto; height: auto; background: none; font-size: 12px; line-height: 1.4;
+  color: var(--color-muted); font-variant-numeric: lining-nums tabular-nums; }
+.post .toc a { color: var(--color-ink); font-weight: 400; text-decoration: none; }
+.post .toc a:hover { text-decoration: underline 1px; }
+.post .small-note { font-size: 15px; color: var(--color-muted); }
+
+.post .author-box { margin-top: 2.5rem; border-top: 1px solid var(--color-line); padding-top: 1.5rem; }
+.post .author-box h2 { margin: 0 0 .75rem; font-family: var(--font-sans); font-weight: 600; font-size: .75rem; line-height: 1.4; letter-spacing: .16em;
+  text-transform: uppercase; font-feature-settings: "case"; color: var(--color-muted); }
 .post .author-box p { font-size: 16.5px; margin-bottom: .6rem; }
 .post .author-box p:last-child { margin-bottom: 0; }

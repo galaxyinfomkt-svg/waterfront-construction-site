@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { PhoneIcon } from "@/components/chrome-icons";
@@ -34,45 +35,55 @@ const ld = pageGraph([
   faqNode("/faq", allFaqs),
 ]);
 
+/** Renders a copy string with the phone number kept on one line (.tel); the text content is unchanged. */
+function WithTel({ text }: { text: string }) {
+  const parts = text.split(site.phone);
+  return <>{parts.map((p, i) => (i === 0 ? p : <Fragment key={i}><span className="tel">{site.phone}</span>{p}</Fragment>))}</>;
+}
+
 export default function FaqPage() {
   return (
     <>
       <JsonLd data={ld} />
 
-      <section className="bg-brand-grad text-white" data-cta-zone>
-        <div className="container-x py-12 md:py-16">
-          <Breadcrumbs items={crumbs} />
-          <h1 className="mt-5 text-4xl md:text-5xl font-extrabold max-w-4xl">{H1}</h1>
-          <p className="mt-4 text-white/90 text-lg max-w-3xl leading-relaxed">{LEAD}</p>
-          <p className="mt-3 text-sm text-white/80">Updated <time dateTime={UPDATED}>{updatedLabel}</time></p>
-          <nav aria-label="FAQ topics" className="mt-6">
-            <ul className="flex flex-wrap gap-2">
+      <section className="page-head" data-cta-zone>
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <p className="mt-5 text-lead text-ink/80 max-w-[36em]"><WithTel text={LEAD} /></p>
+            <p className="mt-5 text-[13px] text-muted">Updated <time dateTime={UPDATED}>{updatedLabel}</time></p>
+          </div>
+          <nav aria-label="FAQ topics" className="mt-8">
+            <ul className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-5 px-5 scroll-px-5 sm:flex-wrap sm:overflow-visible sm:mx-0 sm:px-0">
               {faqGroups.map((g) => (
-                <li key={g.id}><a href={`#topic-${g.id}`} className="inline-flex items-center min-h-11 px-4 rounded-full bg-white/10 border border-white/25 text-sm font-semibold hover:bg-white/20">{g.title}</a></li>
+                <li key={g.id} className="shrink-0"><a href={`#topic-${g.id}`} className="chip">{g.title}</a></li>
               ))}
             </ul>
           </nav>
         </div>
       </section>
 
-      <div className="py-12 md:py-16">
-        <div className="container-x max-w-4xl space-y-14">
-          {faqGroups.map((g) => (
-            <section key={g.id} id={`topic-${g.id}`} aria-labelledby={`topic-${g.id}-h`}>
-              <h2 id={`topic-${g.id}-h`} className="text-2xl md:text-3xl font-extrabold text-navy">{g.title}</h2>
-              <div className="mt-5"><FaqList items={g.items} collapsible={false} /></div>
-            </section>
-          ))}
+      <div className="section">
+        <div className="container-x">
+          <div className="max-w-[48rem]">
+            {faqGroups.map((g, i) => (
+              <section key={g.id} id={`topic-${g.id}`} aria-labelledby={`topic-${g.id}-h`} className={i > 0 ? "mt-8 md:mt-10 border-t border-line pt-14 md:pt-20" : undefined}>
+                <h2 id={`topic-${g.id}-h`} className="text-h2-doc text-navy">{g.title}</h2>
+                <div className="mt-8"><FaqList items={g.items} collapsible={false} /></div>
+              </section>
+            ))}
+          </div>
         </div>
       </div>
 
-      <section className="mesh text-white" data-cta-zone>
-        <div className="container-x py-16 text-center">
-          <h2 className="text-3xl md:text-5xl font-extrabold">Have another question?</h2>
-          <p className="mt-3 text-white/85 max-w-xl mx-auto">{`Call ${site.phone} (${site.hours}) or send the estimate form. Estimates are free.`}</p>
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-white text-base"><PhoneIcon /> {site.phone}</a>
+      <section className="section bg-navy text-white on-dark" data-cta-zone>
+        <div className="container-x">
+          <h2 className="text-h2 text-white max-w-[18em]">Have another question?</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[36em]"><WithTel text={`Call ${site.phone} (${site.hours}) or send the estimate form. Estimates are free.`} /></p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>
       </section>

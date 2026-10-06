@@ -4,6 +4,7 @@ import FilterGallery, { type GalleryItem } from "@/components/FilterGallery";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { site } from "@/lib/site";
+import { ArrowLabel } from "@/components/chrome-icons";
 import { pageMeta, ogFor } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, pageUrl, type Crumb } from "@/lib/schema";
 import { projects, featuredImages, imageAlt, mediaCount, type GalleryCategory, type Project } from "@/lib/projects";
@@ -33,6 +34,14 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const H1 = "Our Remodeling Projects: Real Photos and Site Videos";
 const INTRO = `${site.name}, an owner-led remodeling contractor founded in ${site.founded} and based in Northborough, MA, has completed ${site.projectsCompleted}+ projects. ${cap(word(projects.length))} of them are documented here as case studies with our own photos and site videos. ${cap(word(located.length))} are from jobs in ${TOWNS}, between ${MIN} and ${MAX} miles from our base${UNLOCATED ? `; for the other ${word(UNLOCATED)}, the town is not listed` : ""}.`;
+
+// .dot-list that may wrap: every item carries the dot (the first one too) and the list is pulled left by one dot
+// inside an overflow-clipped wrapper, so a wrapped line never starts with a stray dot.
+const DOTS_WRAP = "min-w-0 overflow-hidden";
+const DOTS_CLIP =
+  "dot-list -ml-[calc(1.5em+3px)] [&>li:first-child]:before:content-[''] [&>li:first-child]:before:inline-block [&>li:first-child]:before:w-[3px] [&>li:first-child]:before:h-[3px] [&>li:first-child]:before:rounded-full [&>li:first-child]:before:bg-current [&>li:first-child]:before:opacity-60 [&>li:first-child]:before:mx-[.75em] [&>li:first-child]:before:align-[.25em]";
+// Split section heads (§4.10): below lg the intro is not an h2 sibling, so it carries its own rhythm and colour.
+const SPLIT_P = "mt-5 max-w-[38rem] text-lead text-muted lg:mt-0 lg:max-w-none";
 
 export const metadata = pageMeta({
   title: "Remodeling Project Photos & Videos: Real Jobs in MA & NH",
@@ -71,20 +80,33 @@ const ld = pageGraph([
   breadcrumbNode(crumbs),
 ]);
 
-function ProjectCard({ p }: { p: Project }) {
+// Editorial case card (design spec §4.12): the photo carries nothing; place, kind and media count sit in the
+// meta row under it. The title link stretches over the card. The first card is featured across the row.
+function ProjectCard({ p, featured = false }: { p: Project; featured?: boolean }) {
   return (
-    <Link href={`/projects/${p.slug}`} className="group card overflow-hidden pop flex h-full flex-col">
-      <div className="relative aspect-[4/3] bg-sand">
-        <Image src={p.cover} alt={imageAlt(p, p.cover)} fill quality={60} sizes="(min-width: 1200px) 380px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover zoomimg" />
-        <span className="absolute top-3 left-3 rounded-full bg-white/95 text-navy text-xs font-bold px-3 py-1">{mediaCount(p)}</span>
+    <li className={`card-ed group ${featured ? "sm:col-span-2 lg:col-span-3 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:items-center" : ""}`}>
+      <div className={`media ${featured ? "[aspect-ratio:3/2] lg:col-span-7" : ""}`}>
+        <Image src={p.cover} alt={imageAlt(p, p.cover)} fill quality={60} sizes="(min-width: 1200px) 380px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover" />
       </div>
-      <div className="p-5 flex flex-1 flex-col">
-        <span className="text-xs font-semibold uppercase tracking-wider text-blue">{p.location} · {p.category}</span>
-        <h3 className="mt-1 font-extrabold text-xl text-navy leading-snug">{p.title}</h3>
-        <p className="mt-2 text-sm text-ink/80 leading-relaxed">{p.blurb}</p>
-        <span className="mt-auto pt-4 text-sm font-bold text-blue">View the case study <span aria-hidden="true">→</span></span>
+      <div className={`flex flex-col grow ${featured ? "lg:col-span-5" : ""}`}>
+        <div className="meta">
+          <div className={DOTS_WRAP}>
+            <ul className={DOTS_CLIP}>
+              <li>{p.location}</li>
+              <li>{p.category}</li>
+            </ul>
+          </div>
+          <span className="shrink-0 text-right">{mediaCount(p)}</span>
+        </div>
+        <h3 className={featured ? "text-[2rem] leading-[1.15]" : undefined}>
+          <Link href={`/projects/${p.slug}`}>{p.title}</Link>
+        </h3>
+        <p className="body">{p.blurb}</p>
+        <span className="link-arrow text-sm mt-auto pt-3 self-start">
+          <ArrowLabel text="View the case study" />
+        </span>
       </div>
-    </Link>
+    </li>
   );
 }
 
@@ -92,37 +114,47 @@ export default function GalleryPage() {
   return (
     <>
       <JsonLd data={ld} />
-      <section className="mesh text-white">
-        <div className="container-x py-12 md:py-16">
-          <Breadcrumbs items={crumbs} />
-          <h1 className="mt-5 text-4xl md:text-5xl font-extrabold max-w-3xl leading-tight">{H1}</h1>
-          <p className="mt-5 text-white/90 text-lg max-w-3xl leading-relaxed">{INTRO}</p>
-          <p className="mt-3 text-white/85 max-w-3xl">Open any project for what we did, the photos in the order the work happened, and the services involved.</p>
+      <section className="page-head">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <p className="mt-5 text-lead text-ink/80 max-w-[60ch]">{INTRO}</p>
+            <p className="mt-4 text-muted max-w-[60ch]">Open any project for what we did, the photos in the order the work happened, and the services involved.</p>
+          </div>
         </div>
       </section>
 
       {/* CASE STUDIES */}
-      <section className="py-12 md:py-16" aria-labelledby="cases-h">
+      <section className="section bg-paper" aria-labelledby="cases-h">
         <div className="container-x">
-          <h2 id="cases-h" className="text-3xl md:text-4xl font-extrabold text-navy">Case studies</h2>
-          <p className="mt-2 text-ink/80 max-w-2xl">Each one is a real job, described only by what its photos and videos show.</p>
-          <ul role="list" className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
-            {projects.map((p) => <li key={p.slug}><ProjectCard p={p} /></li>)}
+          <div className="section-head section-head--split">
+            <div>
+              <h2 id="cases-h" className="text-h2 text-navy">Case studies</h2>
+            </div>
+            <p className={SPLIT_P}>Each one is a real job, described only by what its photos and videos show.</p>
+          </div>
+          <ul role="list" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+            {projects.map((p, i) => <ProjectCard key={p.slug} p={p} featured={i === 0} />)}
           </ul>
         </div>
       </section>
 
       {/* PHOTOS BY PROJECT TYPE */}
-      <section className="py-12 md:py-16 bg-sand" aria-labelledby="browse-h">
+      <section className="section bg-stone" aria-labelledby="browse-h">
         <div className="container-x">
-          <div className="text-center max-w-2xl mx-auto mb-8">
-            <h2 id="browse-h" className="text-2xl md:text-3xl font-extrabold text-navy">Browse photos by project type</h2>
-            <p className="mt-2 text-ink/80">Every photo is from one of the jobs above and links to its case study.</p>
+          <div className="section-head section-head--split">
+            <div>
+              <h2 id="browse-h" className="text-h2 text-navy">Browse photos by project type</h2>
+            </div>
+            <p className={SPLIT_P}>Every photo is from one of the jobs above and links to its case study.</p>
           </div>
           <FilterGallery items={items} categories={categories} />
-          <div className="mt-10 text-center flex flex-wrap justify-center gap-3">
-            <Link href="/contact#estimate" className="btn btn-green">Get a free estimate</Link>
-            <a href={site.instagram} target="_blank" rel="noopener" className="btn btn-navy">Follow us on Instagram</a>
+          <div className="mt-14 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8">
+            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <a href={site.instagram} target="_blank" rel="noopener" className="link-arrow self-start sm:self-auto">
+              <ArrowLabel text="Follow us on Instagram" external />
+            </a>
           </div>
         </div>
       </section>

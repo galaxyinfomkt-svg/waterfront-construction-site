@@ -3,7 +3,7 @@ import Link from "next/link";
 import { posts, CATEGORIES, type Post } from "@/lib/posts";
 import { site } from "@/lib/site";
 import JsonLd from "@/components/JsonLd";
-import { PhoneIcon } from "@/components/chrome-icons";
+import { ArrowLabel, PhoneIcon } from "@/components/chrome-icons";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { pageMeta, SITE_URL } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, pageUrl, BUSINESS_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
@@ -17,6 +17,9 @@ const crumbs: Crumb[] = [
   { name: "Home", path: "/" },
   { name: "Blog", path: "/blog" },
 ];
+
+// Split section heads (§4.10): below lg the intro is not an h2 sibling, so it carries its own rhythm and colour.
+const SPLIT_P = "mt-5 max-w-[38rem] text-lead text-muted lg:mt-0 lg:max-w-none";
 
 export const metadata = pageMeta({
   title: "Remodeling Cost Guides & Advice for MA Homeowners",
@@ -63,57 +66,70 @@ function blogGraph() {
   );
 }
 
-function PostCard({ p }: { p: Post }) {
+// Editorial card (design spec §4.12, §6 Blog index): 3:2 photo, the date line above the title, then the excerpt.
+// The title link stretches over the whole card; "Read the guide" is its visual cue (plain text under that link,
+// so the card stays one link, as before).
+function PostCard({ p, featured = false, className = "" }: { p: Post; featured?: boolean; className?: string }) {
   const updated = !sameDay(p.published, p.modified);
   return (
-    <Link href={`/blog/${p.slug}`} className="group card overflow-hidden pop flex flex-col">
-      <div className="relative h-48 bg-sand">
+    <li className={`card-ed group ${featured ? "lg:grid lg:grid-cols-12 lg:gap-x-8 lg:items-center" : ""} ${className}`}>
+      <div className={`media [aspect-ratio:3/2] ${featured ? "lg:col-span-7" : ""}`}>
         {/* Decorative: the card title next to it says what the post is (audit B-18) */}
-        <Image src={p.image} alt="" fill quality={60} sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition duration-500" />
+        <Image src={p.image} alt="" fill quality={60} sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
       </div>
-      <div className="p-5 flex flex-col grow">
-        <h3 className="font-bold text-lg text-navy leading-snug">{p.title}</h3>
-        <p className="text-sm text-ink/70 mt-2">{p.excerpt}</p>
-        <p className="mt-3 text-xs font-semibold text-ink/70">
-          {updated ? (
-            <>
-              Updated <time dateTime={p.modified}>{formatDate(p.modified)}</time>
-            </>
-          ) : (
-            <>
-              Published <time dateTime={p.published}>{formatDate(p.published)}</time>
-            </>
-          )}
+      <div className={`flex flex-col grow ${featured ? "lg:col-span-5" : ""}`}>
+        <p className="meta">
+          <span>
+            {updated ? (
+              <>
+                Updated <time dateTime={p.modified}>{formatDate(p.modified)}</time>
+              </>
+            ) : (
+              <>
+                Published <time dateTime={p.published}>{formatDate(p.published)}</time>
+              </>
+            )}
+          </span>
         </p>
-        <span className="mt-auto pt-3 inline-block text-sm font-semibold text-blue">Read the guide →</span>
+        <h3 className={featured ? "text-[2rem] leading-[1.15]" : "text-h3s"}>
+          <Link href={`/blog/${p.slug}`}>{p.title}</Link>
+        </h3>
+        <p className="body">{p.excerpt}</p>
+        <span className="link-arrow text-sm mt-auto pt-4 self-start">
+          <ArrowLabel text="Read the guide" />
+        </span>
       </div>
-    </Link>
+    </li>
   );
 }
+
+const COLS = ["", "lg:grid-cols-1", "lg:grid-cols-2", "lg:grid-cols-3"];
 
 export default function BlogPage() {
   return (
     <>
       <JsonLd data={blogGraph()} />
-      <section className="bg-brand-grad text-white">
-        <div className="container-x py-14 md:py-20">
-          <Breadcrumbs items={crumbs} />
-          <h1 className="mt-5 text-4xl md:text-5xl font-extrabold max-w-4xl">{H1}</h1>
-          {/* Authorship matches the posts, their meta author and the JSON-LD: the company publishes the guides (V3.4). */}
-          <p className="mt-5 text-white text-lg max-w-3xl">
-            Cost guides, permit rules and hiring checklists published by{" "}
-            <Link href="/about" className="font-semibold underline underline-offset-2 hover:text-cyan">
-              {site.name}
-            </Link>
-            , an owner-led remodeling contractor based in Northborough, Massachusetts, founded in {site.founded} by{" "}
-            <Link href={OWNER_PAGE} className="font-semibold underline underline-offset-2 hover:text-cyan">
-              {site.owner}
-            </Link>
-            . Prices cite Remodeling magazine&apos;s Cost vs. Value data for New England, and legal and permit guidance links to state sources.
-          </p>
-          <nav aria-label="Guide topics" className="mt-6 flex flex-wrap gap-2">
+      <section className="page-head">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            {/* Authorship matches the posts, their meta author and the JSON-LD: the company publishes the guides (V3.4). */}
+            <p className="mt-5 text-lead text-ink/80 max-w-[60ch]">
+              Cost guides, permit rules and hiring checklists published by{" "}
+              <Link href="/about" className="link">
+                {site.name}
+              </Link>
+              , an owner-led remodeling contractor based in Northborough, Massachusetts, founded in {site.founded} by{" "}
+              <Link href={OWNER_PAGE} className="link">
+                {site.owner}
+              </Link>
+              . Prices cite Remodeling magazine&apos;s Cost vs. Value data for New England, and legal and permit guidance links to state sources.
+            </p>
+          </div>
+          <nav aria-label="Guide topics" className="mt-8 -mx-5 px-5 py-1.5 flex gap-2.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:mx-0 sm:px-0 sm:overflow-visible">
             {CATEGORIES.map((c) => (
-              <a key={c.id} href={`#${c.id}`} className="rounded-full border border-white/60 px-4 py-2 text-sm font-semibold text-white hover:bg-white hover:text-navy transition">
+              <a key={c.id} href={`#${c.id}`} className="chip">
                 {c.name}
               </a>
             ))}
@@ -121,32 +137,44 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {CATEGORIES.map((c, i) => {
+      {CATEGORIES.filter((c) => posts.some((p) => p.category === c.name)).map((c, i) => {
         const list = posts.filter((p) => p.category === c.name).sort(byPublished);
-        if (!list.length) return null;
+        // The first category features its newest guide across the full row; the rest fill rows of min(count, 3).
+        const feature = i === 0 && list.length > 1;
+        const cols = Math.min(feature ? 3 : list.length, 3);
         return (
-          <section key={c.id} id={c.id} aria-labelledby={`${c.id}-h`} className={`py-14 ${i % 2 ? "bg-sand" : ""}`}>
-            <div className="container-x">
-              <h2 id={`${c.id}-h`} className="text-3xl font-extrabold text-navy">{c.name}</h2>
-              <p className="mt-2 text-ink/70 max-w-2xl">{c.intro}</p>
-              <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-7">
-                {list.map((p) => <PostCard key={p.slug} p={p} />)}
+          <section key={c.id} id={c.id} aria-labelledby={`${c.id}-h`} className={`section bg-paper ${i ? "pt-0" : ""}`}>
+            {/* Same-surface join: categories share the paper background, so a hairline separates them. */}
+            {i > 0 && (
+              <div className="container-x">
+                <div className="border-t border-line" />
               </div>
+            )}
+            <div className={`container-x ${i ? "pt-[var(--section-y)]" : ""}`}>
+              <div className="section-head section-head--split">
+                <div>
+                  <h2 id={`${c.id}-h`} className="text-h2 text-navy">{c.name}</h2>
+                </div>
+                <p className={SPLIT_P}>{c.intro}</p>
+              </div>
+              <ul role="list" className={`grid sm:grid-cols-2 ${COLS[cols]} gap-x-8 gap-y-12`}>
+                {list.map((p, j) => (
+                  <PostCard key={p.slug} p={p} featured={feature && j === 0} className={feature && j === 0 ? "sm:col-span-2 lg:col-span-3" : ""} />
+                ))}
+              </ul>
             </div>
           </section>
         );
       })}
 
-      {/* Slim estimate CTA after the last guide grid (V5.4 / audit 10 L5). */}
-      <section aria-labelledby="blog-cta-h" className="bg-brand-grad text-white" data-cta-zone>
-        <div className="container-x py-8 md:py-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 id="blog-cta-h" className="text-2xl font-extrabold text-white">Planning a project?</h2>
-            <p className="mt-1 text-white/90">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="/contact#estimate" className="btn btn-white">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-green"><PhoneIcon className="w-4 h-4" /> {site.phone}</a>
+      {/* Estimate CTA after the last guide grid (V5.4 / audit 10 L5): the page's one navy band. */}
+      <section aria-labelledby="blog-cta-h" className="section bg-navy text-white on-dark" data-cta-zone>
+        <div className="container-x">
+          <h2 id="blog-cta-h" className="text-h2 text-white max-w-[18em]">Planning a project?</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[36em]">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
           </div>
         </div>
       </section>

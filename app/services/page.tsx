@@ -7,7 +7,7 @@ import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, serviceId, pageUrl, AREA_FACTS, type Crumb } from "@/lib/schema";
 import { credentialLine } from "@/lib/credentials";
 import { getContent, serviceProjects, serviceGuides, SOURCES, PERMITS_HOW } from "@/lib/service-content";
-import { PhoneIcon } from "@/components/chrome-icons";
+import { PhoneIcon, ArrowLabel } from "@/components/chrome-icons";
 import ServiceIcon from "./_components/ServiceIcon";
 
 const TITLE = "Home Remodeling Services in Central & Eastern MA";
@@ -46,90 +46,95 @@ export default function ServicesPage() {
     <>
       <JsonLd data={ld} />
 
-      <section className="bg-brand-grad text-white">
-        <div className="container-x py-12 md:py-16">
-          <Breadcrumbs items={crumbs} />
-          <h1 className="mt-5 text-4xl md:text-5xl font-extrabold max-w-4xl">{H1}</h1>
-          <p className="mt-5 text-white/90 max-w-3xl text-lg leading-relaxed">{LEAD}</p>
-          <p className="mt-4 text-sm text-white/80">Owner-led · Founded in {site.founded} in Northborough, MA{credentials ? ` · ${credentials}` : ""}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-outline text-base"><PhoneIcon /> {site.phone}</a>
+      <section className="page-head">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
+            <ul className="dot-list mt-4 text-sm text-muted">
+              <li>Owner-led</li>
+              <li>Founded in {site.founded} in Northborough, MA</li>
+              {credentials && <li>{credentials}</li>}
+            </ul>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+              <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-14" aria-labelledby="services-h">
+      <section className="section bg-paper" aria-labelledby="services-h">
         <div className="container-x">
           <h2 id="services-h" className="sr-only">Our six services</h2>
-          <ul role="list" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* The 01–06 index is drawn by a CSS counter on an aria-hidden span: decorative, never page text. */}
+          <ul role="list" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 [counter-reset:svc]">
             {cards.map(({ s, c, costGuide, project }) => (
-              <li key={s.slug} className="card overflow-hidden flex flex-col">
-                <div className="relative h-48 bg-brand-grad">
-                  {s.imageIsStock ? (
-                    // No real photo for this service yet: an icon tile, never a stock photo (audit 02 C1).
-                    <span aria-hidden="true" className="absolute inset-0 grid place-items-center text-white"><ServiceIcon slug={s.slug} className="w-20 h-20" /></span>
-                  ) : (
-                    <>
-                      <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
-                      <span aria-hidden="true" className="absolute top-3 left-3 bg-white/95 text-blue shadow rounded-lg w-10 h-10 grid place-items-center"><ServiceIcon slug={s.slug} /></span>
-                    </>
-                  )}
-                </div>
-                <div className="p-5 flex-1 flex flex-col">
-                  <h2 className="font-bold text-xl text-navy">
-                    <Link href={`/services/${s.slug}`} className="hover:text-blue">{s.short}</Link>
-                  </h2>
-                  <p className="text-[15px] text-ink/80 mt-2">{c.cardSummary}</p>
-                  <p className="text-sm text-ink/70 mt-2"><span className="font-semibold text-navy">Typical timeline:</span> {s.timeline}</p>
-                  <ul role="list" className="mt-4 space-y-1.5 text-sm font-semibold">
-                    <li><Link href={`/services/${s.slug}`} className="text-blue underline underline-offset-2">{s.name}: costs, permits and FAQ</Link></li>
-                    {costGuide && <li><Link href={`/blog/${costGuide.slug}`} className="text-blue underline underline-offset-2">{costGuide.title}</Link></li>}
-                    {project && <li><Link href={`/projects/${project.slug}`} className="text-blue underline underline-offset-2">Case study: {project.title}</Link></li>}
-                  </ul>
-                </div>
+              <li key={s.slug} className="card-ed group">
+                {s.imageIsStock ? (
+                  // No real photo for this service yet: an icon tile, never a stock photo (audit 02 C1).
+                  <div className="media grid place-items-center" aria-hidden="true"><ServiceIcon slug={s.slug} className="w-12 h-12 text-navy" /></div>
+                ) : (
+                  <div className="media">
+                    <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
+                  </div>
+                )}
+                <p className="meta" aria-hidden="true"><span className="[counter-increment:svc] before:content-[counter(svc,decimal-leading-zero)]" /></p>
+                <h2 className="mt-2.5 font-display text-h3 text-navy lg:min-h-[2.4em]">
+                  <Link href={`/services/${s.slug}`} className="after:absolute after:inset-0 after:content-[''] underline-offset-[.18em] decoration-1 group-hover:underline focus-visible:underline">{s.short}</Link>
+                </h2>
+                <p className="body">{c.cardSummary}</p>
+                <p className="mt-3 text-sm text-muted"><span className="font-semibold text-ink">Typical timeline:</span> {s.timeline}</p>
+                <ul role="list" className="mt-auto pt-4 text-sm">
+                  <li><Link href={`/services/${s.slug}`} className="link-arrow lift text-sm"><ArrowLabel text={`${s.name}: costs, permits and FAQ`} /></Link></li>
+                  {costGuide && <li><Link href={`/blog/${costGuide.slug}`} className="block py-2 border-t border-line text-sm text-ink/80 hover:underline underline-offset-4 lift">{costGuide.title}</Link></li>}
+                  {project && <li><Link href={`/projects/${project.slug}`} className="block py-2 border-t border-line text-sm text-ink/80 hover:underline underline-offset-4 lift">Case study: {project.title}</Link></li>}
+                </ul>
               </li>
             ))}
           </ul>
         </div>
       </section>
 
-      <section className="py-14 bg-white" aria-labelledby="how-h">
-        <div className="container-x grid lg:grid-cols-2 gap-10">
-          <div>
-            <h2 id="how-h" className="text-2xl md:text-3xl font-extrabold text-navy">How we work</h2>
-            <ul className="mt-5 space-y-3 text-ink/85 leading-relaxed">
-              <li><span className="font-semibold text-navy">Owner-led.</span> The company is run by its founder, {site.owner}, who started it in {site.founded}.</li>
-              <li><span className="font-semibold text-navy">Itemized estimates.</span> Every estimate is free, written and itemized for your house.</li>
-              <li><span className="font-semibold text-navy">Permits and inspections.</span> {PERMITS_HOW}</li>
-              <li><span className="font-semibold text-navy">Real projects.</span> Our <Link href="/gallery" className="text-blue underline underline-offset-2">project case studies</Link> are documented with our own photos and site videos, at town level only.</li>
+      <section className="section bg-stone" aria-labelledby="how-h">
+        <div className="container-x grid lg:grid-cols-12 gap-x-8 gap-y-14">
+          <div className="lg:col-span-7">
+            <h2 id="how-h" className="text-h2 text-navy">How we work</h2>
+            <ul className="mt-8 rule-list text-ink max-w-[68ch]">
+              <li className="py-4"><span className="font-semibold">Owner-led.</span> The company is run by its founder, {site.owner}, who started it in {site.founded}.</li>
+              <li className="py-4"><span className="font-semibold">Itemized estimates.</span> Every estimate is free, written and itemized for your house.</li>
+              <li className="py-4"><span className="font-semibold">Permits and inspections.</span> {PERMITS_HOW}</li>
+              <li className="py-4"><span className="font-semibold">Real projects.</span> Our <Link href="/gallery" className="link">project case studies</Link> are documented with our own photos and site videos, at town level only.</li>
             </ul>
           </div>
-          <div className="rounded-2xl bg-tint-blue p-6">
-            <h2 className="text-xl font-extrabold text-navy">Before you hire any contractor in Massachusetts</h2>
-            <ul className="mt-4 space-y-2.5 text-[15px] text-ink/85 leading-relaxed">
+          <div className="lg:col-span-4 lg:col-start-9 lg:border-l lg:border-line lg:pl-8">
+            <h2 className="text-h3 text-navy">Before you hire any contractor in Massachusetts</h2>
+            <ul className="mt-5 dash-list space-y-3 text-[15px] text-ink">
               <li>Home improvement work over $1,000 on an owner-occupied home needs a written contract with the price, payment schedule, start and completion dates, and the contractor&apos;s registration number.</li>
               <li>The deposit can be no more than one-third of the total price, or the cost of special-order materials if that is greater.</li>
               <li>The contractor must be registered with the state Home Improvement Contractor program; you can check a registration with the Office of Consumer Affairs and Business Regulation.</li>
               <li>Let the contractor pull the building permit: homeowners who pull their own permit for a contractor&apos;s work generally lose access to the state Guaranty Fund.</li>
             </ul>
-            <p className="mt-4 text-xs text-ink/65">
-              Sources: <a href={SOURCES.contract.url} className="underline underline-offset-2">{SOURCES.contract.label}</a> · <a href={SOURCES.c142a.url} className="underline underline-offset-2">{SOURCES.c142a.label}</a> · <a href={SOURCES.hic.url} className="underline underline-offset-2">{SOURCES.hic.label}</a>
-            </p>
+            <ul className="dot-list mt-5 text-xs text-muted">
+              <li>Sources: <a href={SOURCES.contract.url} className="link py-1.5">{SOURCES.contract.label}</a></li>
+              <li><a href={SOURCES.c142a.url} className="link py-1.5">{SOURCES.c142a.label}</a></li>
+              <li><a href={SOURCES.hic.url} className="link py-1.5">{SOURCES.hic.label}</a></li>
+            </ul>
           </div>
         </div>
       </section>
 
-      <section className="py-14" aria-labelledby="area-h">
-        <div className="container-x max-w-4xl">
-          <h2 id="area-h" className="text-2xl md:text-3xl font-extrabold text-navy">Where we work</h2>
-          <p className="mt-4 text-lg text-ink/85 leading-relaxed">
+      <section className="section bg-paper" aria-labelledby="area-h">
+        <div className="container-x">
+          <h2 id="area-h" className="text-h2 text-navy">Where we work</h2>
+          <p className="mt-5 text-lead text-ink/80 max-w-[38rem]">
             Based in Northborough (Worcester County), we work across {serviceArea.regions}: {AREA_FACTS.municipalities} cities and towns in {AREA_FACTS.counties} counties. Each service page lists every town we serve, by county.
           </p>
-          <p className="mt-4"><Link href="/service-areas" className="font-semibold text-blue underline underline-offset-2">See every town we serve, by county</Link></p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/contact#estimate" className="btn btn-green text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-navy text-base"><PhoneIcon /> {site.phone}</a>
+          <p className="mt-4"><Link href="/service-areas" className="link-arrow"><ArrowLabel text="See every town we serve, by county" /></Link></p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
           </div>
         </div>
       </section>

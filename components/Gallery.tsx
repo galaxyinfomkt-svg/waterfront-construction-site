@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
+import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "@/components/chrome-icons";
+import { spanFor } from "@/lib/grid";
 
 // Case-study photo grid. Alt text and captions come from the data (lib/projects.ts) — one true description
 // per photo, never a templated "— photo N" or an invented town (audit 05 PG-M4). Captions are visible
@@ -43,19 +45,21 @@ export default function Gallery({ photos, label = "Photo viewer" }: { photos: Ga
 
   return (
     <>
-      <ul role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-7">
+      {/* 6-column stage grid (design spec §4.27): rows of two large photos, then rows of three; never an empty cell.
+          At sm (2 columns) an odd count lets the first photo span the row. */}
+      <ul role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-x-6 gap-y-10">
         {photos.map((ph, i) => (
-          <li key={ph.src}>
+          <li key={ph.src} className={`${i === 0 && n % 2 ? "sm:col-span-2" : ""} ${spanFor(i, n)}`}>
             <figure>
               <button
                 type="button"
                 onClick={(e) => open(i, e.currentTarget)}
-                className="group relative block w-full aspect-[4/3] overflow-hidden rounded-xl bg-sand cursor-zoom-in focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue"
+                className="group relative block w-full aspect-[4/3] overflow-hidden bg-well cursor-zoom-in"
               >
                 <Image src={ph.src} alt={ph.alt} fill quality={60} sizes="(min-width: 1200px) 380px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover zoomimg" />
                 <span className="sr-only"> (opens a larger view)</span>
               </button>
-              {ph.caption && <figcaption className="mt-2.5 text-sm leading-relaxed text-ink/80">{ph.caption}</figcaption>}
+              {ph.caption && <figcaption className="mt-3 text-sm leading-relaxed text-muted">{ph.caption}</figcaption>}
             </figure>
           </li>
         ))}
@@ -70,21 +74,21 @@ export default function Gallery({ photos, label = "Photo viewer" }: { photos: Ga
           if (e.key === "ArrowLeft") move(-1);
         }}
         onClick={(e) => { if (e.target === e.currentTarget) close(); }}
-        className="m-0 h-dvh max-h-none w-screen max-w-none bg-black/90 p-0 text-white backdrop:bg-black/70"
+        className="m-0 h-dvh max-h-none w-screen max-w-none bg-scrim p-0 text-white backdrop:bg-black"
       >
         {current && (
-          <div className="relative h-full w-full flex flex-col items-center justify-center gap-4 p-4 pt-16" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
-            <button type="button" onClick={close} aria-label="Close photo viewer" className="absolute top-3 right-3 grid h-12 w-12 place-items-center rounded-full text-4xl leading-none text-white/90 hover:bg-white/10 hover:text-white">×</button>
-            <div className="relative w-full max-w-5xl flex-1 min-h-0">
-              <Image src={current.src} alt={current.alt} fill quality={75} sizes="92vw" className="object-contain" />
+          <div className="relative h-full w-full flex flex-col items-center justify-center gap-4 p-4 pt-16 pb-20 md:pb-4" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
+            <button type="button" onClick={close} aria-label="Close photo viewer" className="absolute top-3 right-3 grid h-12 w-12 place-items-center rounded-full border border-white/40 text-white hover:bg-white/10"><XIcon className="w-6 h-6" /></button>
+            <div className="relative w-full max-w-[min(92vw,1100px)] flex-1 min-h-0">
+              <Image src={current.src} alt={current.alt} fill quality={75} sizes="(min-width:1280px) 1100px, 92vw" className="object-contain" />
             </div>
-            <p className="max-w-3xl text-center text-sm text-white/85">
-              {current.caption ?? current.alt} <span className="text-white/70">({(active ?? 0) + 1} of {n})</span>
+            <p className="max-w-2xl text-center text-sm text-white/85">
+              {current.caption ?? current.alt} <span className="block tnum text-white/70">({(active ?? 0) + 1} of {n})</span>
             </p>
             {n > 1 && (
               <>
-                <button type="button" onClick={() => move(-1)} aria-label="Previous photo" className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 grid h-12 w-12 place-items-center rounded-full text-4xl text-white/85 hover:bg-white/10 hover:text-white">‹</button>
-                <button type="button" onClick={() => move(1)} aria-label="Next photo" className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 grid h-12 w-12 place-items-center rounded-full text-4xl text-white/85 hover:bg-white/10 hover:text-white">›</button>
+                <button type="button" onClick={() => move(-1)} aria-label="Previous photo" className="absolute bottom-4 left-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:left-6 grid h-12 w-12 place-items-center rounded-full border border-white/40 text-white hover:bg-white/10"><ChevronLeftIcon className="w-6 h-6" /></button>
+                <button type="button" onClick={() => move(1)} aria-label="Next photo" className="absolute bottom-4 right-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:right-6 grid h-12 w-12 place-items-center rounded-full border border-white/40 text-white hover:bg-white/10"><ChevronRightIcon className="w-6 h-6" /></button>
               </>
             )}
           </div>

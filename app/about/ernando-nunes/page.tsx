@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { PhoneIcon } from "@/components/chrome-icons";
+import { PhoneIcon, ArrowLabel } from "@/components/chrome-icons";
 import { site, services } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { posts } from "@/lib/posts";
@@ -47,92 +47,102 @@ const ld = pageGraph(
   { owner: true },
 );
 
+// Facts dl (§4.28): each dt/dd pair on its own hairline row.
+const FACT = "grid sm:grid-cols-[10rem_1fr] lg:grid-cols-[13rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line";
+const FACT_DD = "text-[15.5px] text-ink";
+// Projects grid: rows of four, then rows of three (7 case studies = 4 + 3, design spec §6 Owner).
+const projectSpan = (i: number, n: number) => (i < (n % 3 === 1 ? 4 : n % 3 === 2 ? 8 : 0) ? "lg:col-span-3" : "lg:col-span-4");
+
 export default function OwnerPage() {
   const guides = posts.slice(0, 12);
   return (
     <>
       <JsonLd data={ld} />
 
-      <section className="bg-brand-grad text-white" data-cta-zone>
-        <div className="container-x py-14 md:py-20">
-          <Breadcrumbs items={crumbs} />
-          <div className="mt-6 grid md:grid-cols-[auto_1fr] gap-8 items-center">
-            {site.ownerPhoto && (
-              <div className="relative w-40 h-40 md:w-52 md:h-52 rounded-full overflow-hidden ring-4 ring-white/30">
-                <Image src={site.ownerPhoto} alt={`${NAME}, owner of ${site.name}`} fill sizes="208px" quality={60} className="object-cover" />
+      <section className="page-head" data-cta-zone>
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <div className="mt-5 grid md:grid-cols-[auto_1fr] gap-8 items-center">
+              {site.ownerPhoto && (
+                <div className="relative w-40 md:w-52 aspect-[4/5] overflow-hidden bg-well">
+                  <Image src={site.ownerPhoto} alt={`${NAME}, owner of ${site.name}`} fill sizes="208px" quality={60} className="object-cover" />
+                </div>
+              )}
+              <div>
+                <h1 className="text-h1 text-navy">{NAME}</h1>
+                <p className="mt-4 eyebrow">{ROLE}, {site.name}</p>
               </div>
-            )}
-            <div>
-              <h1 className="text-4xl md:text-6xl font-extrabold">{NAME}</h1>
-              <p className="mt-2 text-lg md:text-xl font-semibold text-cyan">{ROLE}, {site.name}</p>
             </div>
+            <p className="mt-6 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
+            <p className="mt-5 text-[13px] text-muted">Profile updated <time dateTime={UPDATED}>{updatedLabel}</time></p>
           </div>
-          <p className="mt-6 text-lg md:text-xl text-white/90 max-w-3xl leading-relaxed">{LEAD}</p>
-          <p className="mt-4 text-sm text-white/80">Profile updated <time dateTime={UPDATED}>{updatedLabel}</time></p>
         </div>
       </section>
 
-      <section className="py-16 md:py-20" aria-labelledby="profile-h">
-        <div className="container-x grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+      <section className="section" aria-labelledby="profile-h">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-16 items-start">
           <div>
-            <h2 id="profile-h" className="text-3xl md:text-4xl font-extrabold text-navy">Profile</h2>
-            <dl className="mt-6 grid sm:grid-cols-[max-content_1fr] gap-x-6 gap-y-2.5 rounded-2xl bg-white p-6 shadow-soft ring-1 ring-black/5 text-[15px]">
-              <dt className="font-bold text-navy">Name</dt><dd className="text-ink/85">{NAME}</dd>
-              <dt className="font-bold text-navy">Role</dt><dd className="text-ink/85">{ROLE}</dd>
-              <dt className="font-bold text-navy">Company</dt><dd className="text-ink/85"><Link href="/about" className="font-semibold text-blue underline underline-offset-2">{site.name}</Link></dd>
-              <dt className="font-bold text-navy">Founded the company</dt><dd className="text-ink/85">{site.founded}, in Northborough, MA</dd>
-              <dt className="font-bold text-navy">Experience</dt><dd className="text-ink/85">{site.experience}+ years of hands-on residential construction experience</dd>
-              {hasCsl && (<><dt className="font-bold text-navy">License</dt><dd className="text-ink/85">Massachusetts Construction Supervisor License {site.csl}</dd></>)}
-              <dt className="font-bold text-navy">Based in</dt><dd className="text-ink/85">Northborough, Massachusetts (Worcester County)</dd>
-              <dt className="font-bold text-navy">Phone</dt>
-              <dd className="text-ink/85"><a href={site.phoneHref} className="font-semibold text-blue underline underline-offset-2">{site.phone}</a></dd>
-              <dt className="font-bold text-navy">Email</dt>
-              <dd className="text-ink/85 [overflow-wrap:anywhere]"><a href={site.emailHref} className="text-blue underline underline-offset-2">{site.email}</a></dd>
+            <h2 id="profile-h" className="text-h2 text-navy">Profile</h2>
+            <dl className="mt-8 border-t border-line">
+              <div className={FACT}><dt className="eyebrow pt-0.5">Name</dt><dd className={FACT_DD}>{NAME}</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Role</dt><dd className={FACT_DD}>{ROLE}</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Company</dt><dd className={FACT_DD}><Link href="/about" className="link">{site.name}</Link></dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Founded the company</dt><dd className={FACT_DD}>{site.founded}, in Northborough, MA</dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Experience</dt><dd className={FACT_DD}>{site.experience}+ years of hands-on residential construction experience</dd></div>
+              {hasCsl && (<div className={FACT}><dt className="eyebrow pt-0.5">License</dt><dd className={FACT_DD}>Massachusetts Construction Supervisor License {site.csl}</dd></div>)}
+              <div className={FACT}><dt className="eyebrow pt-0.5">Based in</dt><dd className={FACT_DD}>Northborough, Massachusetts (Worcester County)</dd></div>
+              <div className={FACT}>
+                <dt className="eyebrow pt-0.5">Phone</dt>
+                <dd className={FACT_DD}><a href={site.phoneHref} className="link tel">{site.phone}</a></dd>
+              </div>
+              <div className={FACT}>
+                <dt className="eyebrow pt-0.5">Email</dt>
+                <dd className={`${FACT_DD} [overflow-wrap:anywhere]`}><a href={site.emailHref} className="link">{site.email}</a></dd>
+              </div>
             </dl>
             {site.ownerProfiles.length > 0 && (
-              <div className="mt-6">
-                <h3 className="font-bold text-navy">Find {NAME} online</h3>
-                <ul className="mt-2 flex flex-wrap gap-3 text-sm">
+              <div className="mt-10">
+                <h3 className="text-h3s text-navy">Find {NAME} online</h3>
+                <ul className="mt-3 flex flex-wrap gap-x-8 gap-y-1">
                   {site.ownerProfiles.map((href) => (
-                    <li key={href}><a href={href} target="_blank" rel="noopener" className="font-semibold text-blue underline underline-offset-2">{new URL(href).hostname.replace(/^www\./, "")}</a></li>
+                    <li key={href}><a href={href} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text={new URL(href).hostname.replace(/^www\./, "")} external /></a></li>
                   ))}
                 </ul>
               </div>
             )}
           </div>
           <div>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-navy">The company he leads</h2>
-            <p className="mt-4 text-ink/85 text-lg leading-relaxed">
+            <h2 className="text-h2 text-navy">The company he leads</h2>
+            <p className="mt-8 text-lead text-ink/80 max-w-[36em]">
               {`${site.name} has completed ${site.projectsCompleted}+ projects in ${site.townsWithProjects}+ towns in Massachusetts and southern New Hampshire. It is owner-led, and every project starts with a free, itemized estimate.`}
             </p>
-            <h3 className="mt-6 font-bold text-navy">Services</h3>
-            <ul className="mt-2 grid sm:grid-cols-2 gap-x-6 gap-y-1">
+            <h3 className="mt-10 text-h3s text-navy">Services</h3>
+            <ul className="mt-4 rule-list grid sm:grid-cols-2 gap-x-8 sm:border-t-0 sm:[&>li:nth-child(-n+2)]:border-t sm:[&>li:nth-child(-n+2)]:border-line">
               {services.map((s) => (
-                <li key={s.slug}><Link href={`/services/${s.slug}`} className="inline-block py-1.5 font-semibold text-blue underline underline-offset-2">{s.short}</Link></li>
+                <li key={s.slug}><Link href={`/services/${s.slug}`} className="link-nav flex items-center min-h-12 py-2">{s.short}</Link></li>
               ))}
             </ul>
           </div>
         </div>
       </section>
 
-      <section className="py-16 md:py-20 bg-tint-blue" aria-labelledby="projects-h">
+      <section className="section bg-stone" aria-labelledby="projects-h">
         <div className="container-x">
-          <h2 id="projects-h" className="text-3xl md:text-4xl font-extrabold text-navy">Projects documented on this site</h2>
-          <p className="mt-3 text-ink/80 max-w-2xl">{`${projects.length} case studies documented with our own photos and site videos.`}</p>
-          <ul className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((p) => {
+          <div className="section-head">
+            <h2 id="projects-h" className="text-h2 text-navy">Projects documented on this site</h2>
+            <p>{`${projects.length} case studies documented with our own photos and site videos.`}</p>
+          </div>
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-12 gap-x-8 gap-y-12">
+            {projects.map((p, i) => {
               const img = projectCardImage(p);
               return (
-                <li key={p.slug}>
-                  <Link href={`/projects/${p.slug}`} className="group card overflow-hidden pop block h-full">
-                    <span className="relative block h-48 overflow-hidden">
-                      <Image src={img.src} alt={img.alt} fill quality={60} sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" className="object-cover zoomimg" />
-                    </span>
-                    <span className="block p-5">
-                      <span className="block text-xs font-semibold uppercase tracking-wider text-blue">{p.location}</span>
-                      <span className="block mt-1 font-bold text-navy leading-tight">{p.title}</span>
-                    </span>
-                  </Link>
+                <li key={p.slug} className={`card-ed group ${projectSpan(i, projects.length)}`}>
+                  <div className="media">
+                    <Image src={img.src} alt={img.alt} fill quality={60} sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" className="object-cover" />
+                  </div>
+                  <p className="meta"><span>{p.location}</span></p>
+                  <h3 className="text-h3s"><Link href={`/projects/${p.slug}`}>{p.title}</Link></h3>
                 </li>
               );
             })}
@@ -141,25 +151,25 @@ export default function OwnerPage() {
       </section>
 
       {guides.length > 0 && (
-        <section className="py-16 md:py-20" aria-labelledby="guides-h">
+        <section className="section" aria-labelledby="guides-h">
           <div className="container-x">
-            <h2 id="guides-h" className="text-3xl md:text-4xl font-extrabold text-navy">Homeowner guides on our blog</h2>
-            <ul className="mt-6 grid md:grid-cols-2 gap-x-8 gap-y-2">
+            <h2 id="guides-h" className="text-h2 text-navy">Homeowner guides on our blog</h2>
+            <ul className="mt-10 rule-list max-w-[48rem]">
               {guides.map((g) => (
-                <li key={g.slug}><Link href={`/blog/${g.slug}`} className="inline-block py-1.5 font-semibold text-blue underline underline-offset-2 hover:text-navy">{g.title}</Link></li>
+                <li key={g.slug}><Link href={`/blog/${g.slug}`} className="link-nav block py-3.5 text-[17px]">{g.title}</Link></li>
               ))}
             </ul>
           </div>
         </section>
       )}
 
-      <section className="bg-brand-grad text-white" data-cta-zone>
-        <div className="container-x py-16 text-center">
-          <h2 className="text-3xl md:text-5xl font-extrabold">Talk to us about your project</h2>
-          <p className="mt-3 text-white/85 max-w-xl mx-auto">Free, no-obligation estimates. {site.hours}.</p>
-          <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <Link href="/contact#estimate" className="btn btn-white text-base">Get a free estimate</Link>
-            <a href={site.phoneHref} className="btn btn-green text-base"><PhoneIcon /> {site.phone}</a>
+      <section className="section bg-navy text-white on-dark" data-cta-zone>
+        <div className="container-x">
+          <h2 className="text-h2 text-white max-w-[18em]">Talk to us about your project</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[36em]">Free, no-obligation estimates. {site.hours}.</p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>
       </section>

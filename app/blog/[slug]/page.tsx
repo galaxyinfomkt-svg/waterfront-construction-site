@@ -8,7 +8,8 @@ import { site, services } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import JsonLd from "@/components/JsonLd";
-import { PhoneIcon } from "@/components/chrome-icons";
+import { ArrowLabel, PhoneIcon } from "@/components/chrome-icons";
+import Typeset from "@/components/Typeset";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { pageMeta, ogFor, SITE_URL } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, imageNode, placeNode, serviceId, pageUrl, OWNER_PAGE, BUSINESS_ID, type Crumb } from "@/lib/schema";
@@ -21,6 +22,12 @@ export function generateStaticParams() {
 }
 
 type Props = { params: Promise<{ slug: string }> };
+
+// .dot-list that may wrap: every item carries the dot (the first one too) and the list is pulled left by one dot
+// inside an overflow-clipped wrapper, so a wrapped line never starts with a stray dot.
+const DOTS_WRAP = "min-w-0 overflow-hidden";
+const DOTS_CLIP =
+  "dot-list -ml-[calc(1.5em+3px)] [&>li:first-child]:before:content-[''] [&>li:first-child]:before:inline-block [&>li:first-child]:before:w-[3px] [&>li:first-child]:before:h-[3px] [&>li:first-child]:before:rounded-full [&>li:first-child]:before:bg-current [&>li:first-child]:before:opacity-60 [&>li:first-child]:before:mx-[.75em] [&>li:first-child]:before:align-[.25em]";
 
 const BLOG_ID = `${SITE_URL}/blog#blog`;
 const ogImage = (p: Post) => ogFor(`blog-${p.slug}`, p.photo.alt); // public/og/blog-<slug>.jpg (scripts/build-og.mjs)
@@ -120,38 +127,43 @@ export default async function PostPage({ params }: Props) {
       <JsonLd data={postGraph(p)} />
 
       {/* HERO — text only (audit B-14: the H1 is the LCP element; no decorative stock photo) */}
-      <section className="bg-brand-grad text-white">
-        <div className="container-x py-12 md:py-16 max-w-4xl">
-          <Breadcrumbs items={crumbs} />
-          <p className="mt-5">
-            <Link href={`/blog#${p.category === "Cost guides" ? "cost-guides" : p.category === "Planning, permits & hiring" ? "planning" : "exteriors"}`} className="inline-block rounded-full bg-[#1f7a3a] px-3 py-1 text-sm font-bold text-white hover:bg-[#19682f]">
-              {p.category}
-            </Link>
-          </p>
-          <h1 className="mt-3 text-3xl md:text-5xl font-extrabold leading-tight">{p.title}</h1>
-          <p className="mt-5 text-white text-[15px]">
-            Published by{" "}
-            <Link rel="author" href="/about" className="font-semibold underline underline-offset-2 hover:text-cyan">
-              {site.name}
-            </Link>
-          </p>
-          <p className="mt-1 text-white text-[15px]">
-            Published <time dateTime={p.published}>{formatDate(p.published)}</time>
-            {updated && (
-              <>
-                {" · "}Updated <time dateTime={p.modified}>{formatDate(p.modified)}</time>
-              </>
-            )}
-            {" · "}
-            {readTime(p)}
-          </p>
+      <section className="page-head">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <p className="mt-6">
+              <Link href={`/blog#${p.category === "Cost guides" ? "cost-guides" : p.category === "Planning, permits & hiring" ? "planning" : "exteriors"}`} className="eyebrow inline-block py-1 text-navy hover:underline underline-offset-4">
+                {p.category}
+              </Link>
+            </p>
+            <h1 className="mt-4 text-h1 text-navy"><Typeset text={p.title} /></h1>
+            <p className="mt-6 text-sm text-muted">
+              Published by{" "}
+              <Link rel="author" href="/about" className="link">
+                {site.name}
+              </Link>
+            </p>
+            <div className={`mt-1.5 ${DOTS_WRAP}`}>
+              <ul className={`${DOTS_CLIP} text-[13px] text-muted`}>
+                <li className="whitespace-nowrap">
+                  Published <time dateTime={p.published}>{formatDate(p.published)}</time>
+                </li>
+                {updated && (
+                  <li className="whitespace-nowrap">
+                    Updated <time dateTime={p.modified}>{formatDate(p.modified)}</time>
+                  </li>
+                )}
+                <li className="whitespace-nowrap">{readTime(p)}</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* BODY */}
-      <div className="py-12 md:py-14">
-        <div className="container-x grid lg:grid-cols-[minmax(0,1fr)_300px] gap-12">
-          <div className="min-w-0 max-w-3xl">
+      <div className="section-doc bg-paper">
+        <div className="container-x grid lg:grid-cols-[minmax(0,41rem)_18rem] lg:justify-between gap-16">
+          <div className="min-w-0 max-w-[41rem]">
             <article className="post">
               <p className="answer">{p.answer}</p>
               {/* Lazy like every other figure: the answer paragraph, not this photo, is the LCP (V4.4) — no eager load, no preload. */}
@@ -209,92 +221,98 @@ export default async function PostPage({ params }: Props) {
                 </p>
                 {(hasHic || hasCsl) && <p>{credentialLine({ insured: false })}</p>}
                 <p>
-                  <Link href={OWNER_PAGE}>About the owner, Ernando Nunes →</Link>
+                  <Link href={OWNER_PAGE}><ArrowLabel text="About the owner, Ernando Nunes" /></Link>
                 </p>
               </section>
             </article>
 
-            {/* The one CTA readers see on phones; the sidebar card below is desktop-only (V5.4). */}
-            <div className="mt-10 rounded-2xl bg-brand-grad p-7 text-center text-white" data-cta-zone>
-              <p className="text-2xl font-extrabold text-white">Planning a project?</p>
-              <p className="mt-1 text-white/90">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
-              <div className="mt-4 flex flex-wrap justify-center gap-3">
-                <Link href="/contact#estimate" className="btn btn-white">Get a free estimate</Link>
-                <a href={site.phoneHref} className="btn btn-green"><PhoneIcon className="w-4 h-4" /> {site.phone}</a>
+            {/* The one CTA readers see on phones; the sidebar card below is desktop-only (V5.4). The post's one navy surface. */}
+            <div className="mt-12 on-dark bg-navy text-white rounded-panel p-7 md:p-8" data-cta-zone>
+              <p className="font-display text-h3 text-white">Planning a project?</p>
+              <p className="mt-2 text-white/80">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+                <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
               </div>
             </div>
           </div>
 
           {/* SIDEBAR — desktop only: on phones it would stack right under the in-article CTA with the same two actions (V5.4). */}
           <aside aria-label="Contact Waterfront Construction" className="hidden lg:block">
-            <div className="card p-6 lg:sticky lg:top-[6.5rem]" data-cta-zone>
-              <Image src="/logo-solid.png" alt="" width={64} height={64} className="h-16 w-16" />
-              <p className="mt-4 text-lg font-extrabold text-navy">Talk to an owner-led builder</p>
-              <p className="mt-1 text-sm text-ink/70">{[credentialLine(), "Owner-led", "Based in Northborough, MA"].filter(Boolean).join(" · ")}</p>
-              <a href={site.phoneHref} className="btn btn-navy mt-4 w-full"><PhoneIcon className="w-4 h-4" /> {site.phone}</a>
-              <Link href="/contact#estimate" className="btn btn-green mt-2 w-full">Get a free estimate</Link>
+            <div className="panel p-7 lg:sticky lg:top-28" data-cta-zone>
+              <p className="font-display text-[1.375rem] leading-[1.25] text-navy text-balance">Talk to an <span className="whitespace-nowrap">owner-led</span> builder</p>
+              <p className="mt-2 text-sm text-muted">{[credentialLine(), "Owner-led", "Based in Northborough, MA"].filter(Boolean).join(" · ")}</p>
+              <Link href="/contact#estimate" className="btn btn-primary mt-6 w-full">Get a free estimate</Link>
+              <a href={site.phoneHref} className="btn btn-secondary mt-3 w-full"><PhoneIcon /> <span className="tel">{site.phone}</span></a>
             </div>
           </aside>
         </div>
       </div>
 
       {/* RELATED: service hubs, real projects, explicit next reads (audit B-08) */}
-      <section className="py-14 bg-sand" aria-labelledby="related-heading">
-        <div className="container-x space-y-12">
+      <section className="section-doc bg-stone" aria-labelledby="related-heading">
+        <div className="container-x space-y-16 md:space-y-20">
           <h2 id="related-heading" className="sr-only">Related services, projects and guides</h2>
 
           {relServices.length > 0 && (
             <div>
-              <h3 className="text-2xl font-extrabold text-navy mb-5">{relServices.length > 1 ? "Related services" : "Related service"}</h3>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <h3 className="text-h2-doc text-navy">{relServices.length > 1 ? "Related services" : "Related service"}</h3>
+              <ul role="list" className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
                 {relServices.map((s) => (
-                  <Link key={s.slug} href={`/services/${s.slug}`} className="card p-5 pop block">
-                    <span className="block font-bold text-navy">{s.short}</span>
-                    <span className="mt-1 block text-sm text-ink/70">{s.blurb}</span>
-                    <span className="mt-2 inline-block text-sm font-semibold text-blue">See the service →</span>
-                  </Link>
+                  <li key={s.slug}>
+                    <Link href={`/services/${s.slug}`} className="card-ed group h-full border-t border-line pt-5">
+                      <span className="block font-display text-h3s text-navy group-hover:underline underline-offset-[.18em] decoration-1">{s.short}</span>
+                      <span className="mt-2 block text-[15px] leading-relaxed text-muted">{s.blurb}</span>
+                      <span className="link-arrow text-sm mt-auto pt-2 self-start"><ArrowLabel text="See the service" /></span>
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           )}
 
           {relProjects.length > 0 && (
             <div>
-              <h3 className="text-2xl font-extrabold text-navy mb-5">See it in a real project</h3>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <h3 className="text-h2-doc text-navy">See it in a real project</h3>
+              <ul role="list" className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
                 {relProjects.map((pr) => (
-                  <Link key={pr.slug} href={`/projects/${pr.slug}`} className="card overflow-hidden pop flex">
-                    <div className="relative w-28 shrink-0">
-                      <Image src={pr.cover} alt="" fill quality={60} sizes="112px" className="object-cover" />
-                    </div>
-                    <div className="p-4">
-                      <span className="block font-bold text-navy leading-snug">{pr.shortTitle}</span>
-                      <span className="mt-1 block text-sm text-ink/70">{pr.location}</span>
-                      <span className="mt-1 inline-block text-sm font-semibold text-blue">See the project →</span>
-                    </div>
-                  </Link>
+                  <li key={pr.slug}>
+                    <Link href={`/projects/${pr.slug}`} className="group flex gap-5">
+                      <div className="relative w-28 h-28 shrink-0 self-start overflow-hidden bg-well">
+                        <Image src={pr.cover} alt="" fill quality={60} sizes="112px" className="object-cover zoomimg" />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="block font-display text-h3s text-navy group-hover:underline underline-offset-[.18em] decoration-1">{pr.shortTitle}</span>
+                        <span className="mt-1 block text-sm text-muted">{pr.location}</span>
+                        <span className="link-arrow text-sm self-start"><ArrowLabel text="See the project" /></span>
+                      </div>
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           )}
 
           {relPosts.length > 0 && (
             <div>
-              <h3 className="text-2xl font-extrabold text-navy mb-5">Keep reading</h3>
-              <div className="grid sm:grid-cols-2 gap-5">
+              <h3 className="text-h2-doc text-navy">Keep reading</h3>
+              {/* Two columns only from lg: a 176px photo beside the text needs a wide card, or the text column turns into a sliver. */}
+              <ul role="list" className="mt-8 grid lg:grid-cols-2 gap-x-8 gap-y-10">
                 {relPosts.map((r) => (
-                  <Link key={r.slug} href={`/blog/${r.slug}`} className="card overflow-hidden pop flex">
-                    <div className="relative w-32 shrink-0">
-                      <Image src={r.image} alt="" fill quality={60} sizes="128px" className="object-cover" />
-                    </div>
-                    <div className="p-4">
-                      <span className="text-xs font-bold uppercase tracking-wider text-blue">{r.category}</span>
-                      <span className="mt-1 block font-bold text-navy leading-snug">{r.title}</span>
-                      <span className="mt-1 block text-sm text-ink/70">{plain(r.excerpt)}</span>
-                    </div>
-                  </Link>
+                  <li key={r.slug} className="h-full">
+                    <Link href={`/blog/${r.slug}`} className="group flex h-full flex-col sm:flex-row gap-5">
+                      <div className="relative aspect-[3/2] sm:aspect-auto sm:w-44 sm:self-stretch shrink-0 overflow-hidden bg-well">
+                        <Image src={r.image} alt="" fill quality={60} sizes="(min-width:640px) 176px, 100vw" className="object-cover zoomimg" />
+                      </div>
+                      <div className="min-w-0 sm:py-1">
+                        <span className="eyebrow">{r.category}</span>
+                        <span className="mt-2 block font-display text-h3s text-navy group-hover:underline underline-offset-[.18em] decoration-1">{r.title}</span>
+                        <span className="mt-2 block text-[15px] leading-relaxed text-muted">{plain(r.excerpt)}</span>
+                      </div>
+                    </Link>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           )}
         </div>

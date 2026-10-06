@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import LeadForm from "@/components/LeadForm";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { PhoneIcon, MailIcon, PinIcon, ClockIcon } from "@/components/chrome-icons";
+import { PhoneIcon, MailIcon, PinIcon, ClockIcon, ArrowLabel } from "@/components/chrome-icons";
 import { site, serviceArea, citySlug } from "@/lib/site";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import { displayAddress } from "@/lib/address";
@@ -41,71 +42,80 @@ const ld = pageGraph(
   { business: "full", contactPoint: true },
 );
 
-const card = "flex items-center gap-4 rounded-2xl bg-white p-5 shadow-soft ring-1 ring-black/5";
-const iconBox = "shrink-0 rounded-xl w-12 h-12 grid place-items-center bg-sand text-navy";
-const labelCls = "block text-xs text-ink/70 font-semibold uppercase tracking-wide";
+/** Renders a copy string with the phone number kept on one line (.tel); the text content is unchanged. */
+function WithTel({ text }: { text: string }) {
+  const parts = text.split(site.phone);
+  return <>{parts.map((p, i) => (i === 0 ? p : <Fragment key={i}><span className="tel">{site.phone}</span>{p}</Fragment>))}</>;
+}
+
+const row = "grid grid-cols-[1.25rem_1fr] gap-x-4 py-4 border-b border-line";
+const rowIcon = "w-5 h-5 text-muted mt-[2px]";
+const rowValue = "block mt-1 text-[17px] font-medium text-ink";
 
 export default function ContactPage() {
   return (
     <>
       <JsonLd data={ld} />
 
-      <section className="bg-brand-grad text-white">
-        <div className="container-x py-12 md:py-16">
-          <Breadcrumbs items={crumbs} />
-          <h1 className="mt-5 text-4xl md:text-5xl font-extrabold">{H1}</h1>
-          <p className="mt-4 text-white/90 text-lg max-w-2xl leading-relaxed">{LEAD}</p>
+      <section className="page-head">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
+          <div className="max-w-[46rem]">
+            <Breadcrumbs items={crumbs} />
+            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <p className="mt-5 text-lead text-ink/80 max-w-[36em]"><WithTel text={LEAD} /></p>
+          </div>
         </div>
       </section>
 
-      <section className="py-12 md:py-16">
-        <div className="container-x grid grid-cols-1 lg:grid-cols-[.9fr_1.1fr] gap-10 lg:gap-12 items-start">
+      <section className="section">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-x-12 gap-y-14 items-start">
           {/* Form first on phones (right after the hero), right column on desktop (UX-H2) */}
-          <section id="estimate" data-estimate-form aria-labelledby="estimate-h" className="order-first lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2 self-start rounded-2xl bg-white p-4 sm:p-6 shadow-card ring-1 ring-black/5">
-            <h2 id="estimate-h" className="text-2xl font-extrabold text-navy">Request a free estimate</h2>
-            <p className="mt-1 text-ink/75">Tell us the town, the type of project and a good time to call.</p>
-            <div className="mt-3"><LeadForm /></div>
+          <section id="estimate" data-estimate-form aria-labelledby="estimate-h" className="order-first lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2 self-start bg-white text-ink border border-line rounded-panel p-6 sm:p-7">
+            <h2 id="estimate-h" className="font-display text-[1.625rem] leading-[1.15] text-navy">Request a free estimate</h2>
+            <p className="mt-2 text-sm text-muted">Tell us the town, the type of project and a good time to call.</p>
+            <div className="mt-4"><LeadForm /></div>
           </section>
 
           <div className="lg:col-start-1 lg:row-start-1">
-            <h2 className="text-2xl font-extrabold text-navy">Talk to us directly</h2>
-            <p className="text-ink/80 mt-2">{site.name} is owner-led. Call, email, or send the form.</p>
-            <address className="not-italic mt-6 space-y-3">
-              <a href={site.phoneHref} className={`${card} hover:ring-blue/40 transition`}>
-                <span className={iconBox}><PhoneIcon className="w-5 h-5" /></span>
-                <span><span className={labelCls}>Phone</span><span className="font-bold text-navy text-lg">{site.phone}</span></span>
+            <h2 className="text-h2-doc text-navy">Talk to us directly</h2>
+            <p className="mt-4 text-muted">{site.name} is owner-led. Call, email, or send the form.</p>
+            <address className="not-italic mt-8 border-t border-line">
+              <a href={site.phoneHref} className={`${row} group`}>
+                <PhoneIcon className={rowIcon} />
+                <span><span className="eyebrow">Phone</span><span className={`${rowValue} tel group-hover:underline underline-offset-4`}>{site.phone}</span></span>
               </a>
-              <a href={site.emailHref} className={`${card} hover:ring-blue/40 transition`}>
-                <span className={iconBox}><MailIcon className="w-5 h-5" /></span>
-                <span className="min-w-0"><span className={labelCls}>Email</span><span className="font-bold text-navy break-all">{site.email}</span></span>
+              <a href={site.emailHref} className={`${row} group`}>
+                <MailIcon className={rowIcon} />
+                <span className="min-w-0"><span className="eyebrow">Email</span><span className={`${rowValue} [overflow-wrap:anywhere] group-hover:underline underline-offset-4`}>{site.email}</span></span>
               </a>
-              <div className={card}>
-                <span className={iconBox}><PinIcon className="w-5 h-5" /></span>
-                <span><span className={labelCls}>Business address</span><span className="font-bold text-navy">{displayAddress}</span></span>
+              <div className={row}>
+                <PinIcon className={rowIcon} />
+                <span><span className="eyebrow">Business address</span><span className={rowValue}>{displayAddress}</span></span>
               </div>
-              <div className={card}>
-                <span className={iconBox}><ClockIcon className="w-5 h-5" /></span>
-                <span><span className={labelCls}>Hours</span><span className="font-bold text-navy">{site.hours}</span></span>
+              <div className={row}>
+                <ClockIcon className={rowIcon} />
+                <span><span className="eyebrow">Hours</span><span className={rowValue}>{site.hours}</span></span>
               </div>
             </address>
-            {credentials && <p className="mt-4 font-semibold text-navy">{credentials}</p>}
-            <p className="mt-6 text-ink/80">
+            {credentials && <p className="mt-5 text-[15px] font-medium text-ink">{credentials}</p>}
+            <p className="mt-5 text-muted">
               {`Based in ${serviceArea.base}, we take projects across ${serviceArea.short}.`}{" "}
-              <Link href="/service-areas" className="font-semibold text-blue underline underline-offset-2">See every town we serve</Link>
+              <Link href="/service-areas" className="link">See every town we serve</Link>
             </p>
           </div>
 
           <div className="lg:col-start-1 lg:row-start-2">
-            <h2 className="text-2xl font-extrabold text-navy">What happens next</h2>
-            <ol className="mt-4 space-y-3">
+            <h2 className="text-h2-doc text-navy">What happens next</h2>
+            {/* Numerals read 01 02 03; the leading zero is CSS content, so the step text stays "1 2 3" as before. */}
+            <ol className="mt-6 border-b border-line">
               {[
                 "We call you back to talk through the project.",
                 "We look at the job and give you a free, itemized estimate.",
                 "Before work starts, the scope, price and schedule are confirmed in a written contract.",
               ].map((t, i) => (
-                <li key={t} className="flex gap-3">
-                  <span aria-hidden="true" className="shrink-0 w-8 h-8 rounded-full bg-navy text-white grid place-items-center text-sm font-bold">{i + 1}</span>
-                  <span className="pt-1 text-ink/85">{t}</span>
+                <li key={t} className="grid grid-cols-[2.5rem_1fr] border-t border-line py-4">
+                  <span aria-hidden="true" className="eyebrow tnum pt-[3px] before:content-['0']">{i + 1}</span>
+                  <span className="text-ink">{t}</span>
                 </li>
               ))}
             </ol>
@@ -113,27 +123,27 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="py-12 md:py-16 bg-tint-green" aria-labelledby="contact-faq-h">
-        <div className="container-x grid grid-cols-1 lg:grid-cols-[.8fr_1.2fr] gap-10 items-start">
-          <div>
-            <h2 id="contact-faq-h" className="text-2xl md:text-4xl font-extrabold text-navy">Before you call</h2>
-            <p className="mt-3 text-ink/80">Quick answers to common questions. More on our <Link href="/faq" className="font-semibold text-blue underline underline-offset-2">FAQ page</Link>.</p>
+      <section className="section bg-stone" aria-labelledby="contact-faq-h">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-10">
+          <div className="lg:col-span-4 lg:sticky lg:top-28 self-start">
+            <h2 id="contact-faq-h" className="text-h2 text-navy">Before you call</h2>
+            <p className="mt-5 text-muted max-w-[38rem]">Quick answers to common questions. More on our <Link href="/faq" className="link">FAQ page</Link>.</p>
           </div>
-          <FaqList items={contactFaqs} />
+          <div className="lg:col-span-8"><FaqList items={contactFaqs} /></div>
         </div>
       </section>
 
-      <section className="py-12 md:py-16" aria-labelledby="map-h">
-        <div className="container-x grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-10 items-center">
-          <figure className="min-w-0 rounded-2xl bg-white p-3 shadow-soft ring-1 ring-black/5">
+      <section className="section" aria-labelledby="map-h">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-x-12 gap-y-10 items-center">
+          <figure className="min-w-0 border-y border-line py-4">
             <ServiceAreaMap documented={new Set(documentedTowns().map((p) => citySlug(p.city)))} />
           </figure>
           <div>
-            <h2 id="map-h" className="text-2xl md:text-4xl font-extrabold text-navy">Where we work</h2>
-            <p className="mt-3 text-ink/85">Each dot is a town we serve; rings are 10 miles apart around our Northborough base. Green dots mark towns where our work is documented on this site.</p>
-            <ul className="mt-5 space-y-2 font-semibold">
-              <li><Link href="/service-areas" className="text-blue underline underline-offset-2">Every town we serve, by county</Link></li>
-              <li><a href={site.gbp} target="_blank" rel="noopener" className="text-blue underline underline-offset-2">Our Google Business Profile</a></li>
+            <h2 id="map-h" className="text-h2 text-navy">Where we work</h2>
+            <p className="mt-5 text-muted max-w-[38rem]">Each dot is a town we serve; rings are 10 miles apart around our Northborough base. Green dots mark towns where our work is documented on this site.</p>
+            <ul className="mt-6">
+              <li><Link href="/service-areas" className="link-arrow"><ArrowLabel text="Every town we serve, by county" /></Link></li>
+              <li><a href={site.gbp} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Our Google Business Profile" external /></a></li>
             </ul>
           </div>
         </div>

@@ -4,11 +4,12 @@ import Link from "next/link";
 import { testimonials } from "@/lib/site";
 import type { Block, Figure, Post } from "@/lib/posts";
 import MEDIA from "@/lib/media-manifest.json";
+import { ArrowLabel } from "@/components/chrome-icons";
 
 const DIMS = MEDIA as Record<string, { w: number; h: number }>;
 export const dims = (src: string) => DIMS[src] ?? { w: 1500, h: 1125 };
 
-// ---------- inline links: "[label](/path)" → <Link>, "[label](https://…)" → <a> ----------
+// ---------- inline links: "[label](/path)" becomes <Link>, "[label](https://…)" becomes <a> ----------
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
 export const plain = (s: string) => s.replace(LINK, "$1");
 
@@ -32,7 +33,7 @@ export function Rich({ text }: { text: string }) {
   return <>{out}</>;
 }
 
-// ---------- dates: ISO with offset → "June 4, 2026" in Massachusetts time ----------
+// ---------- dates: ISO with offset becomes "June 4, 2026" in Massachusetts time ----------
 const FMT = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "America/New_York" });
 export const formatDate = (iso: string) => FMT.format(new Date(iso));
 export const sameDay = (a: string, b: string) => formatDate(a) === formatDate(b);
@@ -62,9 +63,9 @@ export function PostFigure({ f }: { f: Figure }) {
   const d = dims(f.src);
   const portrait = d.h > d.w;
   return (
-    <figure className="post-figure">
+    <figure className={portrait && !f.aspect ? "post-figure portrait" : "post-figure"}>
       {f.aspect ? (
-        <div className="relative w-full overflow-hidden rounded-xl bg-sand" style={{ aspectRatio: f.aspect }}>
+        <div className="relative w-full overflow-hidden bg-well" style={{ aspectRatio: f.aspect }}>
           <Image src={f.src} alt={f.alt} fill quality={75} sizes="(min-width: 1024px) 768px, 92vw" className="object-cover object-top" />
         </div>
       ) : (
@@ -75,7 +76,7 @@ export function PostFigure({ f }: { f: Figure }) {
           height={d.h}
           quality={75}
           sizes={portrait ? "(min-width: 768px) 360px, 92vw" : "(min-width: 1024px) 768px, 92vw"}
-          className={`rounded-xl bg-sand ${portrait ? "mx-auto h-auto max-h-[640px] w-auto max-w-full" : "h-auto w-full"}`}
+          className={`bg-well ${portrait ? "h-auto max-h-[640px] w-auto max-w-full" : "h-auto w-full"}`}
         />
       )}
       <figcaption>
@@ -83,7 +84,7 @@ export function PostFigure({ f }: { f: Figure }) {
         {f.href && (
           <>
             {" "}
-            <Link href={f.href}>{f.hrefLabel ?? "See the project"} →</Link>
+            <Link href={f.href}><ArrowLabel text={f.hrefLabel ?? "See the project"} /></Link>
           </>
         )}
       </figcaption>
@@ -92,6 +93,8 @@ export function PostFigure({ f }: { f: Figure }) {
 }
 
 // ---------- one content block ----------
+// A cell that is only an amount, count or range ("$24,000–$41,000", "70%"): tabular figures, right-aligned when its whole column is figures.
+const NUM = /^[$\d][\d,.%$–\s-]*$/;
 export function PostBlock({ b }: { b: Block }) {
   if ("p" in b) return <p><Rich text={b.p} /></p>;
   if ("ul" in b) return <ul className={b.marker === "check" ? "check" : b.marker === "warn" ? "warn" : undefined}>{b.ul.map((li, i) => <li key={i}><Rich text={li} /></li>)}</ul>;
@@ -113,12 +116,15 @@ export function PostBlock({ b }: { b: Block }) {
     // per-cell labels are visual only (aria-hidden) because the column headers already name each cell.
     // The wrapper is a named, focusable region so keyboard users can scroll it if it ever overflows.
     const stack = t.head.length >= 3;
+    // Right-align only columns whose every body cell is a figure; a figure in a mixed column keeps the column's
+    // left edge and only gets tabular digits.
+    const numCol = t.head.map((_, j) => j > 0 && t.rows.every((r) => NUM.test(r[j] ?? "")));
     return (
       <div className="table-wrap" tabIndex={0} role="region" aria-label={t.caption}>
         <table className={stack ? "stack" : undefined} role="table">
           <caption>{t.caption}</caption>
           <thead role="rowgroup">
-            <tr role="row">{t.head.map((h, i) => <th key={i} scope="col" role="columnheader">{h}</th>)}</tr>
+            <tr role="row">{t.head.map((h, i) => <th key={i} scope="col" role="columnheader" className={numCol[i] ? "num" : undefined}>{h}</th>)}</tr>
           </thead>
           <tbody role="rowgroup">
             {t.rows.map((r, i) => (
@@ -127,7 +133,7 @@ export function PostBlock({ b }: { b: Block }) {
                   j === 0 ? (
                     <th key={j} scope="row" role="rowheader"><Rich text={c} /></th>
                   ) : (
-                    <td key={j} role="cell">
+                    <td key={j} role="cell" className={numCol[j] ? "num" : NUM.test(c) ? "tnum" : undefined}>
                       {stack && <span className="cell-label" aria-hidden="true">{t.head[j]}</span>}
                       <Rich text={c} />
                     </td>

@@ -7,7 +7,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { PhoneIcon } from "./chrome-icons";
+import { PhoneIcon, ChevronDownIcon, MenuIcon, XIcon, ArrowLabel } from "./chrome-icons";
+import Typeset from "./Typeset";
 import ServiceIcon from "@/app/services/_components/ServiceIcon";
 
 export type HeaderNavItem = { label: string; href: string };
@@ -25,7 +26,7 @@ function estimateTarget(): HTMLElement | null {
 
 /** Scrolls so the whole estimate form is on screen. Normally the card top lands under the sticky header
  *  (html scroll-padding-top). When the card is taller than the space left between the header and the bottom
- *  edge or the phone's fixed call/estimate bar (short viewports such as 390×664 or a 1366×768 laptop's 657px),
+ *  edge or the phone's fixed call/estimate bar (short viewports such as 390x664 or a 1366x768 laptop's 657px),
  *  the form's bottom is lined up just above that bar instead, so the submit button is never covered, while
  *  the form's top still stays below the header. */
 function jumpToEstimate(el: HTMLElement, animate = true) {
@@ -95,14 +96,14 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
   const close = () => setOpen(false);
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-50 bg-white shadow-[0_6px_24px_-14px_rgba(20,20,43,.4)]">
-      <div className="container-x flex h-[72px] md:h-[88px] items-center justify-between gap-4">
+    <header ref={headerRef} className="sticky top-0 z-50 bg-white border-b border-line">
+      <div className="container-x flex h-[72px] md:h-20 items-center justify-between gap-5">
         <Link href="/" className="flex items-center shrink-0" aria-label={`${brand}, home`}>
           {/* Eager but low priority: React does not preload it, so it never competes with the page's hero image (07 T07). */}
-          <Image src="/logo-header.png" alt={brand} width={497} height={349} sizes="96px" loading="eager" fetchPriority="low" className="h-14 md:h-16 lg:h-[52px] xl:h-[60px] w-auto" />
+          <Image src="/logo-header.png" alt={brand} width={497} height={349} sizes="96px" loading="eager" fetchPriority="low" className="h-12 lg:h-14 w-auto" />
         </Link>
 
-        <nav aria-label="Main" className="hidden lg:flex items-center gap-1 xl:gap-2 font-semibold text-[14px] xl:text-[15px] text-ink/80">
+        <nav aria-label="Main" className="hidden lg:flex items-center gap-5 xl:gap-7 text-[14px] xl:text-[14.5px]">
           {nav.map((n) =>
             n.href === "/services" ? (
               // Opens on hover AND on keyboard focus (focus-within), so the service links are reachable by Tab (01 M4);
@@ -110,62 +111,58 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
               <div key={n.href} ref={svcRef} className="relative group/svc"
                 onMouseLeave={() => setSvcDismissed(false)}
                 onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setSvcDismissed(false); }}>
-                <Link ref={svcLinkRef} href={n.href} aria-current={isCurrent(pathname, n.href) ? "page" : undefined} className="navpill font-semibold flex items-center gap-1">
-                  {n.label}<span aria-hidden="true" className="text-[10px] mt-0.5">▼</span>
+                <Link ref={svcLinkRef} href={n.href} aria-current={isCurrent(pathname, n.href) ? "page" : undefined} className="navlink -mx-1.5 px-1.5 rounded-control">
+                  {n.label}<ChevronDownIcon className={`w-3 h-3 text-muted transition-transform duration-150 ${svcDismissed ? "" : "group-hover/svc:rotate-180 group-focus-within/svc:rotate-180"}`} />
                 </Link>
-                <div className={`absolute left-1/2 -translate-x-1/2 top-full pt-4 opacity-0 invisible translate-y-1 transition-[opacity,translate] duration-200 ${svcDismissed ? "" : "group-hover/svc:opacity-100 group-hover/svc:visible group-hover/svc:translate-y-0 group-focus-within/svc:opacity-100 group-focus-within/svc:visible group-focus-within/svc:translate-y-0"}`}>
-                  <ul className="w-72 card p-2 shadow-card">
+                <div className={`absolute -left-5 top-full pt-4 opacity-0 invisible transition-[opacity,visibility] duration-150 ${svcDismissed ? "" : "group-hover/svc:opacity-100 group-hover/svc:visible group-focus-within/svc:opacity-100 group-focus-within/svc:visible"}`}>
+                  <ul className="w-[22rem] bg-white border border-line rounded-panel shadow-pop p-2">
                     {services.map((s) => (
                       <li key={s.slug}>
                         <Link href={`/services/${s.slug}`} aria-current={isCurrent(pathname, `/services/${s.slug}`) ? "page" : undefined}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-sand text-[14px] text-ink/80 hover:text-navy">
-                          <ServiceIcon slug={s.slug} className="w-5 h-5 shrink-0 text-blue" />{s.short}
+                          className="flex items-center gap-3 min-h-11 px-3 rounded-control text-[14.5px] text-ink/80 hover:bg-stone hover:text-navy aria-[current=page]:text-navy">
+                          <ServiceIcon slug={s.slug} className="w-5 h-5 shrink-0 text-muted" /><span><Typeset text={s.short} /></span>
                         </Link>
                       </li>
                     ))}
-                    <li><Link href="/services" className="block text-center mt-1 px-3 py-2 rounded-lg bg-sand text-blue font-bold text-sm">All services</Link></li>
+                    <li className="mt-2 pt-1 border-t border-line"><Link href="/services" className="link-arrow px-3 text-sm"><ArrowLabel text="All services" /></Link></li>
                   </ul>
                 </div>
               </div>
             ) : (
-              <Link key={n.href} href={n.href} aria-current={isCurrent(pathname, n.href) ? "page" : undefined} className="navpill font-semibold whitespace-nowrap">{n.label}</Link>
+              <Link key={n.href} href={n.href} aria-current={isCurrent(pathname, n.href) ? "page" : undefined} className="navlink -mx-1.5 px-1.5 rounded-control">{n.label}</Link>
             )
           )}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-3 shrink-0">
-          <a href={phoneHref} className="hidden xl:flex items-center gap-2 font-bold text-navy hover:text-blue whitespace-nowrap">
-            <span className="w-9 h-9 rounded-full bg-[#1f7a3a] text-white grid place-items-center"><PhoneIcon className="w-4 h-4" /></span>{phone}
+        <div className="hidden lg:flex items-center gap-5 shrink-0">
+          <a href={phoneHref} className="inline-flex items-center gap-2 min-h-11 text-[15px] font-medium text-navy tel hover:underline underline-offset-4">
+            <PhoneIcon className="w-4 h-4" />{phone}
           </a>
-          <EstimateLink className="btn btn-grad text-sm">Free estimate</EstimateLink>
+          <EstimateLink className="btn btn-primary px-5 xl:px-6">Free estimate</EstimateLink>
         </div>
 
         <button ref={toggleRef} type="button" onClick={toggle} aria-expanded={open} aria-controls="mobile-menu"
-          aria-label={open ? "Close menu" : "Open menu"} className="lg:hidden w-12 h-12 -mr-2 grid place-items-center text-navy">
-          <span aria-hidden="true" className="space-y-1.5">
-            <span className={`block h-0.5 w-6 bg-navy transition ${open ? "translate-y-2 rotate-45" : ""}`} />
-            <span className={`block h-0.5 w-6 bg-navy transition ${open ? "opacity-0" : ""}`} />
-            <span className={`block h-0.5 w-6 bg-navy transition ${open ? "-translate-y-2 -rotate-45" : ""}`} />
-          </span>
+          aria-label={open ? "Close menu" : "Open menu"} className="lg:hidden w-12 h-12 -mr-3 grid place-items-center text-navy">
+          {open ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
         </button>
       </div>
-      <div aria-hidden="true" className="h-[3px] bg-grad-sunset" />
 
       {open && (
         // Fixed below the header and scrollable on its own, so every item is reachable even on
-        // 360×640 phones (the old menu was taller than the screen and could not scroll).
+        // 360x640 phones (the old menu was taller than the screen and could not scroll).
         <nav id="mobile-menu" aria-label="Main" style={{ top: menuTop }}
-          className="lg:hidden fixed inset-x-0 bottom-0 z-[60] overflow-y-auto overscroll-contain bg-white border-t border-sand">
+          className="lg:hidden fixed inset-x-0 bottom-0 z-[60] overflow-y-auto overscroll-contain bg-white">
           <div className="container-x pt-3 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] flex flex-col">
             {nav.map((n) =>
               n.href === "/services" ? (
-                <div key={n.href} className="border-b border-sand py-1">
-                  <Link href={n.href} onClick={close} aria-current={isCurrent(pathname, n.href) ? "page" : undefined} className="flex items-center min-h-12 font-semibold text-navy">Services</Link>
-                  <ul className="grid grid-cols-2 gap-x-3 pb-2">
+                <div key={n.href} className="border-b border-line">
+                  <Link href={n.href} onClick={close} aria-current={isCurrent(pathname, n.href) ? "page" : undefined} className="flex items-center min-h-12 text-[17px] font-medium text-ink aria-[current=page]:text-navy aria-[current=page]:underline aria-[current=page]:decoration-1 aria-[current=page]:underline-offset-[.55em]">Services</Link>
+                  <ul className="grid grid-cols-1 pb-3">
                     {services.map((s) => (
                       <li key={s.slug}>
-                        <Link href={`/services/${s.slug}`} onClick={close} className="flex items-center gap-1.5 min-h-11 text-sm text-ink/80">
-                          <ServiceIcon slug={s.slug} className="w-[1.15em] h-[1.15em] shrink-0 text-blue" />{s.name}
+                        <Link href={`/services/${s.slug}`} onClick={close} aria-current={isCurrent(pathname, `/services/${s.slug}`) ? "page" : undefined}
+                          className="flex items-center gap-3 min-h-11 pl-1 text-[15px] text-ink/80 aria-[current=page]:text-navy aria-[current=page]:underline aria-[current=page]:decoration-1 aria-[current=page]:underline-offset-[.55em]">
+                          <ServiceIcon slug={s.slug} className="w-5 h-5 shrink-0 text-muted" />{s.name}
                         </Link>
                       </li>
                     ))}
@@ -173,11 +170,11 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
                 </div>
               ) : (
                 <Link key={n.href} href={n.href} onClick={close} aria-current={isCurrent(pathname, n.href) ? "page" : undefined}
-                  className="flex items-center min-h-12 font-semibold text-ink/85 border-b border-sand">{n.label}</Link>
+                  className="flex items-center min-h-12 text-[17px] font-medium text-ink border-b border-line aria-[current=page]:text-navy aria-[current=page]:underline aria-[current=page]:decoration-1 aria-[current=page]:underline-offset-[.55em]">{n.label}</Link>
               )
             )}
-            <a href={phoneHref} className="btn btn-navy mt-4"><PhoneIcon /> Call {phone}</a>
-            <EstimateLink onDone={close} className="btn btn-green mt-2">Get a free estimate</EstimateLink>
+            <a href={phoneHref} className="btn btn-secondary w-full mt-6"><PhoneIcon /><span>Call <span className="tel">{phone}</span></span></a>
+            <EstimateLink onDone={close} className="btn btn-primary w-full mt-3">Get a free estimate</EstimateLink>
           </div>
         </nav>
       )}
@@ -261,9 +258,9 @@ export function FloatingCall({ phone, phoneHref }: { phone: string; phoneHref: s
   }, [pathname]);
 
   return (
-    <div className={`hidden md:block fixed bottom-6 right-6 z-50 transition duration-300 ${show ? "visible opacity-100 translate-y-0" : "invisible opacity-0 translate-y-3"}`}>
-      <a href={phoneHref} className="btn btn-green pulse text-base shadow-lg px-6 py-3.5">
-        <PhoneIcon /> Call {phone}
+    <div data-float-call className={`hidden min-[1360px]:block fixed bottom-6 right-6 z-50 transition-opacity duration-200 ${show ? "visible opacity-100" : "invisible opacity-0"}`}>
+      <a href={phoneHref} aria-label={`Call ${phone}`} className="grid place-items-center w-14 h-14 rounded-full bg-navy text-white shadow-pop hover:bg-navy-deep">
+        <PhoneIcon className="w-6 h-6" />
       </a>
     </div>
   );

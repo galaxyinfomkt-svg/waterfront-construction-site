@@ -1,13 +1,12 @@
 // Inline SVG icons for the six services (V5.6): emoji glyphs vary by platform and some vanish on light tiles
-// (🍽️ white on white) or are missing on Windows 10 (🪟). Stroke icons follow the text color, so every tile
-// sets a contrasting color. Always decorative: aria-hidden + focusable=false. Server- and client-safe (no hooks).
+// or are missing on Windows 10. Stroke icons follow the text color, so every tile sets a contrasting color. Always decorative: aria-hidden + focusable=false. Server- and client-safe (no hooks).
 // Private folder (_components): not a route. Other templates (menu, home) may import it too.
 import type { ReactNode } from "react";
 
 type Props = { slug: string; className?: string };
 
 const base = {
-  "aria-hidden": true, focusable: false, fill: "none", stroke: "currentColor", strokeWidth: 1.8,
+  "aria-hidden": true, focusable: false, fill: "none", stroke: "currentColor", strokeWidth: 1.5,
   strokeLinecap: "round", strokeLinejoin: "round", viewBox: "0 0 24 24",
 } as const;
 
@@ -63,5 +62,5 @@ const PATHS: Record<string, ReactNode> = {
 export default function ServiceIcon({ slug, className = "w-6 h-6" }: Props) {
   const d = PATHS[slug];
   if (!d) return null;
-  return <svg {...base} className={className}>{d}</svg>;
+  return <svg {...base} className={`icon ${className}`}>{d}</svg>;
 }

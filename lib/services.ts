@@ -29,7 +29,6 @@ export type Service = {
   name: string; // short label: nav, breadcrumbs ("Siding")
   short: string; // descriptive name: schema Service.name, cards ("Siding Installation & Replacement")
   blurb: string; // one plain sentence: cards, llms.txt
-  icon: string; // decorative emoji (Emoji 1.0 only, so Windows 10 has the glyph; never a white glyph like 🍽️ that vanishes on a white tile) — render with aria-hidden="true". The /services pages draw SVG icons instead (app/services/_components/ServiceIcon.tsx).
   image: string; // card/cover image (real photo, except where imageIsStock)
   imageAlt: string; // true description of `image`; "" when decorative
   imageIsStock?: boolean; // true = NOT Waterfront's work: decorative only (alt=""), never in galleries, og:image, JSON-LD or sitemaps
@@ -104,7 +103,7 @@ const UPDATED = "2026-10-05T09:15:42-04:00";
 
 const raw: Omit<Service, "photos">[] = [
   {
-    slug: "siding", name: "Siding", short: "Siding Installation & Replacement", icon: "🏠",
+    slug: "siding", name: "Siding", short: "Siding Installation & Replacement",
     image: P.ha18.src, imageAlt: P.ha18.alt,
     blurb: "Vinyl, fiber-cement and engineered-wood siding with trim, soffit and fascia, installed over a proper weather barrier.",
     features: ["Vinyl, fiber-cement and engineered-wood siding", "Trim, soffit and fascia", "Tear-off and sheathing repairs", "House wrap and flashing at every opening", "Color and profile selection help", "Cleanup and haul-away"],
@@ -122,7 +121,7 @@ const raw: Omit<Service, "photos">[] = [
     updated: UPDATED,
   },
   {
-    slug: "windows-and-doors", name: "Windows & Doors", short: "Window & Door Replacement", icon: "🚪",
+    slug: "windows-and-doors", name: "Windows & Doors", short: "Window & Door Replacement",
     image: P.ha13.src, imageAlt: P.ha13.alt,
     blurb: "Replacement windows and entry and patio doors, flashed, sealed and trimmed to keep drafts and water out.",
     features: ["Replacement windows", "Entry and patio doors", "Flashing, insulation and sealing around each unit", "Interior trim and casing", "Help choosing styles, glass and colors", "Cleanup and haul-away of old units"],
@@ -140,7 +139,7 @@ const raw: Omit<Service, "photos">[] = [
     updated: UPDATED,
   },
   {
-    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling", icon: "🍳",
+    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling",
     image: P.man01.src, imageAlt: P.man01.alt,
     blurb: "Kitchen and bathroom remodels managed start to finish: cabinets, counters, tile showers, fixtures and lighting.",
     features: ["Cabinets and islands", "Countertops and backsplashes", "Tile showers and walk-in showers", "Vanities, fixtures and lighting", "Waterproofing behind tile", "Plumbing and electrical trades scheduled and coordinated"],
@@ -158,7 +157,7 @@ const raw: Omit<Service, "photos">[] = [
     updated: UPDATED,
   },
   {
-    slug: "decks", name: "Decks", short: "Deck Design & Construction", icon: "🌳",
+    slug: "decks", name: "Decks", short: "Deck Design & Construction",
     image: P.sal02.src, imageAlt: P.sal02.alt,
     blurb: "Composite and pressure-treated wood decks, railings, stairs and pool decks, built to code from the footings up.",
     features: ["Composite and pressure-treated wood decks", "Railings, stairs and landings", "Pool decks", "Custom design to fit your yard", "Footings, framing and hardware built to code", "Footing, framing and final inspections planned into the schedule"],
@@ -176,7 +175,7 @@ const raw: Omit<Service, "photos">[] = [
     updated: UPDATED,
   },
   {
-    slug: "home-additions-remodeling", name: "Additions & Remodeling", short: "Home Additions & Remodeling", icon: "📐",
+    slug: "home-additions-remodeling", name: "Additions & Remodeling", short: "Home Additions & Remodeling",
     image: P.ha12.src, imageAlt: P.ha12.alt,
     blurb: "Room and second-story additions, in-law suites and whole-home remodels, from foundation to final finish.",
     features: ["Room and second-story additions", "In-law suites and sunrooms", "Whole-home renovations", "Basement finishing", "Foundation to final finish", "Designer and structural engineer coordination"],
@@ -194,7 +193,7 @@ const raw: Omit<Service, "photos">[] = [
     updated: UPDATED,
   },
   {
-    slug: "painting", name: "Painting", short: "Interior & Exterior Painting", icon: "🎨",
+    slug: "painting", name: "Painting", short: "Interior & Exterior Painting",
     // No real painting photos yet: this stock image is decorative only (alt="", never in galleries/OG/JSON-LD/sitemap).
     image: "", imageAlt: "", imageIsStock: true, // no real painting photo yet → icon tile
     blurb: "Interior and exterior painting, trim and cabinets, with thorough prep: washing, scraping, patching, caulking and priming.",

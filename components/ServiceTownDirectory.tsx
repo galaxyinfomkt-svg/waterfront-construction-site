@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { allCities, citySlug, cityLabel, type City } from "@/lib/site";
 import { townFacts } from "@/lib/towns";
+import { PlusIcon, ArrowLabel } from "./chrome-icons";
 
 // Every town page for one service, grouped by county (internal-linking contract, IMPLEMENTATION.md §4).
 // Server-rendered plain "Town, ST" links — replaces the old 198-chip block and its false "200+ towns" copy.
@@ -37,28 +38,27 @@ export default function ServiceTownDirectory({ slug, label, className = "" }: { 
   // while the page stays short on phones.
   return (
     <nav aria-label={`${label} pages by town`} className={className}>
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 items-start">
+      <div className="faq-list lg:grid lg:grid-cols-2 lg:gap-x-12 lg:items-start lg:border-t-0 lg:[&>details:nth-child(-n+2)]:border-t lg:[&>details:nth-child(-n+2)]:border-line">
         {list.map((g) => {
           const state = g.state === "MA" ? "Massachusetts" : "New Hampshire";
           return (
-            <details key={g.id} className="group rounded-xl bg-white ring-1 ring-black/5 shadow-soft">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 font-bold text-navy [&::-webkit-details-marker]:hidden">
-                <span>{g.county}, {state}</span>
-                <span className="flex items-center gap-2 text-sm font-semibold text-ink/70">
-                  {g.towns.length} {g.towns.length === 1 ? "town" : "towns"}<span aria-hidden="true" className="text-blue text-lg transition group-open:rotate-45 after:content-['+']" />
-                </span>
+            <details key={g.id} className="faq-row group">
+              <summary className="grid grid-cols-[1fr_auto_auto] items-baseline gap-4">
+                <span className="text-base font-medium text-ink">{g.county}, {state}</span>
+                <span className="text-[13px] text-muted tnum whitespace-nowrap">{g.towns.length} {g.towns.length === 1 ? "town" : "towns"}</span>
+                <PlusIcon className="w-4 h-4 self-center text-navy transition-transform duration-200 group-open:rotate-45" />
               </summary>
-              <ul role="list" className="grid grid-cols-2 gap-x-4 px-4 pb-2 text-sm">
+              <ul role="list" className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 pb-5">
                 {g.towns.map((c) => (
                   <li key={citySlug(c)}>
-                    <Link href={`/services/${slug}/${citySlug(c)}`} prefetch={false} className="block py-2 text-blue hover:text-navy hover:underline underline-offset-2">
+                    <Link href={`/services/${slug}/${citySlug(c)}`} prefetch={false} className="link-nav block py-2 text-[15px]">
                       {cityLabel(c)}
                     </Link>
                   </li>
                 ))}
               </ul>
-              <p className="px-4 pb-4 text-xs">
-                <Link href={`/service-areas#${g.id}`} prefetch={false} className="font-semibold text-ink/70 hover:text-blue underline underline-offset-2">Every service in {g.county}, {g.state}</Link>
+              <p className="pb-4">
+                <Link href={`/service-areas#${g.id}`} prefetch={false} className="link-arrow text-[13px]"><ArrowLabel text={`Every service in ${g.county}, ${g.state}`} /></Link>
               </p>
             </details>
           );

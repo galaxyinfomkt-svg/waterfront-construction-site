@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Sora } from "next/font/google";
+import { Inter, Newsreader } from "next/font/google";
 import "./globals.css";
 import { TopBar, SiteHeader, SiteFooter, FloatingCTA } from "@/components/chrome";
 import { SITE_URL, SITE_NAME } from "@/lib/seo";
@@ -7,7 +7,8 @@ import Analytics from "@/components/Analytics";
 import ChatWidget from "@/components/ChatWidget";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap", weight: ["600", "700", "800"] });
+// Newsreader: one static 400 roman (no opsz axis, no italic) for h1–h3, stat numerals and quotes (design spec §1.2).
+const newsreader = Newsreader({ subsets: ["latin"], weight: "400", style: "normal", variable: "--font-newsreader", display: "swap" });
 
 // Root defaults only. Every indexable page sets its own title, description, self-canonical and
 // og:url through pageMeta() — none are set here, because metadata merges shallowly and a root
@@ -36,10 +37,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-US" data-scroll-behavior="smooth" className={`${inter.variable} ${sora.variable}`}>
+    <html lang="en-US" data-scroll-behavior="smooth" className={`${inter.variable} ${newsreader.variable}`}>
       <body>
         {/* Skip link: first Tab stop on every page (10 UX-M2). */}
-        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] btn btn-white shadow-card">Skip to content</a>
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:px-6 focus:whitespace-nowrap btn btn-white border border-line">Skip to content</a>
         <TopBar />
         <SiteHeader />
         <main id="main" tabIndex={-1} className="outline-none">{children}</main>
