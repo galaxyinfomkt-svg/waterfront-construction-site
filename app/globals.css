@@ -381,3 +381,14 @@ html.menu-open [data-float-call], html:has(dialog[open]) [data-float-call] { dis
    Reserve GHL's own data-height so the form is always fully visible; form_embed.js
    can still grow it. */
 iframe[id^="inline-"][data-form-id] { min-height: 473px; }
+
+/* HERO TEXT LEFT ON DESKTOP (owner, Oct 2026): the hero copy beside the bare estimate form is centered on phones and
+   tablets only; from lg it starts at the left edge again. Scope: the siblings of the page's one [data-estimate-form]
+   (the hero text column). Unlayered on purpose so it beats the mx-auto / justify-center utilities in the hero. */
+@media (min-width: 1024px) {
+  main :has(> [data-estimate-form]) > :not([data-estimate-form]) { text-align: start; }
+  main :has(> [data-estimate-form]) > :not([data-estimate-form]) :is(.mx-auto, [class*="max-w-"]) { margin-inline: 0; }
+  main :has(> [data-estimate-form]) > :not([data-estimate-form]) :is(.justify-center, .sm\:justify-center, .dot-list-wrap, .dot-list, nav ol, nav ul) { justify-content: flex-start; }
+  main :has(> [data-estimate-form]) > :not([data-estimate-form]) :is(.self-center) { align-self: flex-start; }
+  main :has(> [data-estimate-form]) > :not([data-estimate-form]).items-center { align-items: flex-start; }
+}
