@@ -29,8 +29,9 @@ function Extras({ f }: { f: FaqEntry }) {
       {f.sources && f.sources.length > 0 && (
         // The label sits inside the first item and the link is inline (py-1.5 pads the hit area to ~27px without
         // moving lines), so a long source title wraps after its first words instead of stranding "Source:".
-        // .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot and no glyph is clipped.
-        <ul className="dot-list-wrap mt-3 text-[13px] text-muted">
+        // .dot-list-wrap--stack (globals.css): long source titles, so one centered source per line at every width (no dots,
+        // so no line can start with a separator).
+        <ul className="dot-list-wrap dot-list-wrap--stack mt-3 text-[13px] text-muted">
           {f.sources.map((s, i) => (
             <li key={s.url}>
               {i === 0 && (f.sources!.length > 1 ? "Sources: " : "Source: ")}
@@ -49,8 +50,8 @@ export default function FaqList({ items, collapsible = true, idPrefix = "" }: { 
       <div>
         {items.map((f) => (
           <article key={f.id} id={`${idPrefix}${f.id}`} className="border-t border-line py-8 md:py-10">
-            <h3 className="text-h3 text-navy">{f.q}</h3>
-            <p className="mt-3 text-prose text-ink max-w-[68ch]">{f.a}</p>
+            <h3 className="mx-auto max-w-[24em] text-h3 text-navy">{f.q}</h3>
+            <p className="mt-3 mx-auto text-prose text-ink max-w-[38em]">{f.a}</p>
             <Extras f={f} />
           </article>
         ))}

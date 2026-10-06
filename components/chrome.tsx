@@ -13,14 +13,19 @@ const credentials = hasHic || hasCsl ? credentialLine({ insured: false }) : "";
 
 export function TopBar() {
   return (
-    // Solid navy, md+ only (phones get the floating call button instead). White 13px text at 14.6:1.
-    <div role="region" aria-label="Contact details" className="hidden md:block bg-navy text-white text-[13px]">
-      <div className="container-x flex h-9 items-center justify-between gap-6">
-        <div className="flex items-center gap-5">
-          <a href={site.phoneHref} className="inline-flex items-center gap-2 min-h-9 font-medium tel hover:underline underline-offset-4">
+    // Solid navy at EVERY width (owner's request: phone and email in a blue bar on phones too). White 13px text at 14.6:1.
+    // Not sticky: it scrolls away with the page and only the white header stays (html scroll-padding-top clears the header
+    // alone). Below md: phone and email in one centered row, tagline hidden; under 360px the row may wrap into two
+    // centered lines (each link keeps a 36px tap row). Below sm the side padding, the gap between the two links and the
+    // icon gaps are trimmed so phone + email (~325px) still share one line at 360px. From md: contacts left, tagline
+    // right, as before.
+    <div role="region" aria-label="Contact details" className="bg-navy text-white text-[13px]">
+      <div className="container-x max-sm:px-4 flex flex-wrap md:flex-nowrap min-h-9 items-center justify-center md:justify-between gap-x-6">
+        <div className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-5">
+          <a href={site.phoneHref} className="inline-flex items-center gap-1.5 sm:gap-2 min-h-9 font-medium tel hover:underline underline-offset-4">
             <PhoneIcon className="w-3.5 h-3.5" /><span>{site.phone}</span>
           </a>
-          <a href={site.emailHref} className="hidden sm:inline-flex items-center gap-2 min-h-9 hover:underline underline-offset-4">
+          <a href={site.emailHref} className="inline-flex items-center gap-1.5 sm:gap-2 min-h-9 hover:underline underline-offset-4">
             <MailIcon className="w-3.5 h-3.5" /><span>{site.email}</span>
           </a>
         </div>
@@ -80,9 +85,9 @@ export function SiteFooter() {
   const link = "block py-1.5 text-[14.5px] text-ink hover:underline underline-offset-4";
   const social = "w-11 h-11 rounded-full border border-line-strong text-navy grid place-items-center hover:bg-navy hover:text-white hover:border-navy transition-colors";
   return (
-    // Light footer (stone). pb-28 at every width keeps the legal row clear of the floating call button (bottom-left)
-    // and the chat bubble (bottom-right).
-    <footer className="bg-stone text-ink border-t border-line pt-[72px] pb-28">
+    // Light footer (stone), centered like every page (text-center; flex rows justify-center). pb-28 at every width keeps
+    // the legal row clear of the floating call button (bottom-left) and the chat bubble (bottom-right).
+    <footer className="bg-stone text-ink text-center border-t border-line pt-[72px] pb-28">
       {/* Two columns until xl: at lg (1024) four columns leave the Contact column ~190px, which breaks the email
           and wraps every service name. From xl each column is ≥230px. */}
       <div className="container-x grid gap-12 md:grid-cols-2 xl:grid-cols-[1.3fr_1fr_1fr_1fr]">
@@ -90,10 +95,10 @@ export function SiteFooter() {
           <Link href="/" aria-label={`${site.name}, home`} className="inline-block">
             <Image src="/logo-header.png" alt={site.name} width={497} height={349} sizes="92px" className="h-14 w-auto" />
           </Link>
-          <p className="mt-5 text-sm text-muted max-w-[34ch]">
+          <p className="mt-5 mx-auto text-sm text-muted max-w-[34ch]">
             Owner-led home remodeling contractor based in Northborough, MA, since {site.founded}. From the foundation to the final finish.
           </p>
-          <div className="mt-5 flex gap-3">
+          <div className="mt-5 flex justify-center gap-3">
             <a href={site.facebook} target="_blank" rel="noopener" aria-label="Waterfront Construction on Facebook" className={social}>
               <FacebookIcon className="w-[18px] h-[18px]" />
             </a>
@@ -127,7 +132,7 @@ export function SiteFooter() {
 
         <div>
           <p className="eyebrow mb-4">Service area</p>
-          <p className="text-[14.5px] text-muted">
+          <p className="mx-auto max-w-[34ch] text-[14.5px] text-muted">
             Based in {serviceArea.base}. We take projects across {serviceArea.short}.
           </p>
           {/* The only break allowed is after the colon: "every town we serve" + arrow stays on one line. */}
@@ -136,7 +141,7 @@ export function SiteFooter() {
       </div>
 
       <nav aria-label="Site" className="container-x mt-14">
-        <ul className="flex flex-wrap gap-x-6 gap-y-1 border-t border-line pt-6">
+        <ul className="flex flex-wrap justify-center gap-x-6 gap-y-1 border-t border-line pt-6">
           {footerLinks.map((l) => (
             <li key={l.href}><Link href={l.href} className="inline-block py-1.5 text-[14.5px] text-ink hover:underline underline-offset-4">{l.label}</Link></li>
           ))}
@@ -144,7 +149,7 @@ export function SiteFooter() {
       </nav>
 
       <div className="container-x">
-        <div className="mt-6 pt-6 border-t border-line text-[13px] text-muted flex flex-col sm:flex-row justify-between gap-2">
+        <div className="mt-6 pt-6 border-t border-line text-[13px] text-muted flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-x-8 gap-y-2">
           <span>© {year} {site.name}. All rights reserved.</span>
           {credentials && <span>{credentials}</span>}
           <span>Website by <a href="https://galaxyinfo.us" target="_blank" rel="nofollow noopener" className="text-ink underline underline-offset-4">galaxyinfo.us</a></span>

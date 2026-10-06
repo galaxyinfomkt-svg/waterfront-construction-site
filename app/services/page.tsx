@@ -49,21 +49,23 @@ export default function ServicesPage() {
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — text on the left; the bare estimate form (the page's ONE EstimateForm) in the right column from lg,
+      {/* HERO — centered text on the left; the bare estimate form (the page's ONE EstimateForm) in the right column from lg,
           after the hero text on phones. The /contact#estimate links are EstimateLinks: they jump to this form. */}
       <section className="page-head">
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
-            <h1 className="mt-5 text-h1 text-navy lg:pr-12">{H1}</h1>
-            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
-            {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
-            <ul className="dot-list-wrap mt-4 text-sm text-muted">
+            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">{LEAD}</p>
+            {/* .dot-list-wrap (globals.css): centered; stacked below sm, one dotted line from sm. A registration line
+                (once lib/site.ts holds the numbers) makes the row too long to share one line (it needs <= ~64 characters
+                at 640px), so the list then stacks at every width. */}
+            <ul className={`dot-list-wrap mt-4 text-sm text-muted${`Owner-led · Founded in ${site.founded} in Northborough, MA · ${credentials}`.length > 64 ? " dot-list-wrap--stack" : ""}`}>
               <li>Owner-led</li>{" "}
               <li>Founded in {site.founded} in Northborough, MA</li>{" "}
               {credentials && <li>{credentials}</li>}
             </ul>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
               <EstimateLink className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</EstimateLink>
               <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
             </div>
@@ -87,9 +89,9 @@ export default function ServicesPage() {
                 {s.imageIsStock ? (
                   // No real photo for this service yet: a typographic title plate, never a stock photo (audit 02 C1).
                   // Stone well, inset hairline frame, the card's own name drawn with CSS generated content from data-name
-                  // (no text node), bottom-left in Newsreader 400 navy; same 4:3 box as the photo cards.
+                  // (no text node), bottom-centre in Newsreader 400 navy (centered like the card text); same 4:3 box as the photo cards.
                   <div className="media bg-stone" aria-hidden="true">
-                    <span data-name={s.short} className="absolute inset-3 border border-line flex items-end p-5 sm:p-6 font-display text-[2.125rem] leading-[1.06] tracking-[-0.01em] text-navy text-balance before:content-[attr(data-name)]" />
+                    <span data-name={s.short} className="absolute inset-3 border border-line flex items-end justify-center text-center p-5 sm:p-6 font-display text-[2.125rem] leading-[1.06] tracking-[-0.01em] text-navy text-balance before:content-[attr(data-name)]" />
                   </div>
                 ) : (
                   <div className="media">
@@ -118,7 +120,7 @@ export default function ServicesPage() {
         <div className="container-x grid lg:grid-cols-12 gap-x-8 gap-y-14">
           <div className="lg:col-span-7">
             <h2 id="how-h" className="text-h2 text-navy">How we work</h2>
-            <ul className="mt-8 rule-list text-ink max-w-[68ch]">
+            <ul className="mt-8 rule-list text-ink max-w-[38em] mx-auto">
               <li className="py-4"><span className="font-semibold">Owner-led.</span> The company is run by its founder, {site.owner}, who started it in {site.founded}.</li>
               <li className="py-4"><span className="font-semibold">Itemized estimates.</span> Every estimate is free, written and itemized for your house.</li>
               <li className="py-4"><span className="font-semibold">Permits and inspections.</span> {PERMITS_HOW}</li>
@@ -133,7 +135,8 @@ export default function ServicesPage() {
               <li>The contractor must be registered with the state Home Improvement Contractor program; you can check a registration with the Office of Consumer Affairs and Business Regulation.</li>
               <li>Let the contractor pull the building permit: homeowners who pull their own permit for a contractor&apos;s work generally lose access to the state Guaranty Fund.</li>
             </ul>
-            <ul className="dot-list-wrap mt-5 text-[13px] text-muted">
+            {/* Long source titles in a narrow column: stacked (one per line, centered) at every width. */}
+            <ul className="dot-list-wrap dot-list-wrap--stack mt-5 text-[13px] text-muted">
               <li>Sources: <a href={SOURCES.contract.url} className="link py-1.5">{SOURCES.contract.label}</a></li>{" "}
               <li><a href={SOURCES.c142a.url} className="link py-1.5">{SOURCES.c142a.label}</a></li>{" "}
               <li><a href={SOURCES.hic.url} className="link py-1.5">{SOURCES.hic.label}</a></li>
@@ -148,11 +151,11 @@ export default function ServicesPage() {
       <section className="section bg-stone" aria-labelledby="area-h">
         <div className="container-x">
           <h2 id="area-h" className="text-h2 text-navy">Where we work</h2>
-          <p className="mt-5 text-lead text-ink/80 max-w-[38rem]">
+          <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">
             Based in Northborough (Worcester County), we work across {serviceArea.regions}: {AREA_FACTS.municipalities} cities and towns in {AREA_FACTS.counties} counties. Each service page lists every town we serve, by county.
           </p>
           <p className="mt-4"><Link href="/service-areas" className="link-arrow"><ArrowLabel text="See every town we serve, by county" /></Link></p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
             <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>

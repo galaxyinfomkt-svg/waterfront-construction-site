@@ -26,12 +26,6 @@ export function generateStaticParams() {
 
 type Props = { params: Promise<{ slug: string }> };
 
-// .dot-list that may wrap: every item carries the dot (the first one too) and the list is pulled left by one dot
-// inside an overflow-clipped wrapper, so a wrapped line never starts with a stray dot.
-const DOTS_WRAP = "min-w-0 overflow-hidden";
-const DOTS_CLIP =
-  "dot-list -ml-[calc(1.5em+3px)] [&>li:first-child]:before:content-[''] [&>li:first-child]:before:inline-block [&>li:first-child]:before:w-[3px] [&>li:first-child]:before:h-[3px] [&>li:first-child]:before:rounded-full [&>li:first-child]:before:bg-current [&>li:first-child]:before:opacity-60 [&>li:first-child]:before:mx-[.75em] [&>li:first-child]:before:align-[.25em]";
-
 const BLOG_ID = `${SITE_URL}/blog#blog`;
 const ogImage = (p: Post) => ogFor(`blog-${p.slug}`, p.photo.alt); // public/og/blog-<slug>.jpg (scripts/build-og.mjs)
 const crumbsFor = (p: Post): Crumb[] => [
@@ -140,8 +134,8 @@ export default async function PostPage({ params }: Props) {
     <>
       <JsonLd data={postGraph(p)} />
 
-      {/* HERO — text on the left (7/12; audit B-14: the H1 is the LCP element, no decorative stock photo); the bare
-          estimate form (the page's ONE EstimateForm) in the right 5/12 from lg, after the hero text on phones. */}
+      {/* HERO — centered text in the left 7/12 (audit B-14: the H1 is the LCP element, no decorative stock photo); the
+          bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg, after the hero text on phones. */}
       <section className="page-head">
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
@@ -158,38 +152,42 @@ export default async function PostPage({ params }: Props) {
                 {site.name}
               </Link>
             </p>
-            <div className={`mt-1.5 ${DOTS_WRAP}`}>
-              <ul className={`${DOTS_CLIP} text-[13px] text-muted`}>
+            {/* Centered meta (.dot-list-wrap): stacked below sm, one dotted line from sm. */}
+            <ul className="mt-1.5 dot-list-wrap text-[13px] text-muted">
+              <li className="whitespace-nowrap">
+                Published <time dateTime={p.published}>{formatDate(p.published)}</time>
+              </li>
+              {updated && (
                 <li className="whitespace-nowrap">
-                  Published <time dateTime={p.published}>{formatDate(p.published)}</time>
+                  Updated <time dateTime={p.modified}>{formatDate(p.modified)}</time>
                 </li>
-                {updated && (
-                  <li className="whitespace-nowrap">
-                    Updated <time dateTime={p.modified}>{formatDate(p.modified)}</time>
-                  </li>
-                )}
-                <li className="whitespace-nowrap">{readTime(p)}</li>
-              </ul>
-            </div>
+              )}
+              <li className="whitespace-nowrap">{readTime(p)}</li>
+            </ul>
           </div>
           <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
       {/* BODY — one article in two paper parts with the mid-page estimate band (stone, full width) between them, at
-          the midpoint of the H2 sections. It replaces the old end-of-article navy panel and the desktop sidebar card. */}
+          the midpoint of the H2 sections. It replaces the old end-of-article navy panel and the desktop sidebar card.
+          The running text (.post: answer, paragraphs, lists, steps, tables, callouts, the "In this guide" list) stays
+          LEFT-aligned for readability, the one exception to the centered site; the hero, the CTA rows, the form band,
+          the publisher box and the related links are centered. Below lg the 41rem article column (and the guide list)
+          is centered on the page; from lg both parts keep the same left 7/12 reading column (the first beside the sticky
+          "In this guide" rail), so the text never jumps sideways after the form band. */}
       <article>
         {/* First part: from lg the "In this guide" list moves into a sticky right rail (cols 9-12) beside the article
             column; below lg it stays inline after the photo. DOM order is unchanged (answer, photo, list, sections). */}
         <div className="section-doc bg-paper">
           <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-12">
-            <div className="post max-w-[41rem] min-w-0 lg:col-span-7">
+            <div className="post w-full max-w-[41rem] min-w-0 mx-auto lg:mx-0 lg:col-span-7">
               <p className="answer">{p.answer}</p>
               {/* Lazy like every other figure: the answer paragraph, not this photo, is the LCP (V4.4) — no eager load, no preload. */}
               <PostFigure f={{ src: p.image, ...p.photo }} />
             </div>
 
-            <div className="post toc-rail min-w-0 lg:col-start-9 lg:col-span-4 lg:row-start-1 lg:row-span-2 lg:self-start lg:sticky lg:top-28">
+            <div className="post toc-rail w-full max-w-[41rem] min-w-0 mx-auto lg:max-w-none lg:mx-0 lg:col-start-9 lg:col-span-4 lg:row-start-1 lg:row-span-2 lg:self-start lg:sticky lg:top-28">
               <nav aria-label="In this guide" className="toc">
                 <p className="toc-title">In this guide</p>
                 <ul>
@@ -202,7 +200,7 @@ export default async function PostPage({ params }: Props) {
               </nav>
             </div>
 
-            <div className="post max-w-[41rem] min-w-0 mt-4 lg:mt-6 lg:col-start-1 lg:col-span-7">
+            <div className="post w-full max-w-[41rem] min-w-0 mx-auto lg:mx-0 mt-4 lg:mt-6 lg:col-start-1 lg:col-span-7">
               {p.sections.slice(0, mid).map((s, i) => (
                 <Fragment key={s.id}>
                   <PostSection s={s} />
@@ -217,8 +215,9 @@ export default async function PostPage({ params }: Props) {
         <FormBand tone="stone" doc />
 
         <div className="section-doc bg-paper">
-          <div className="container-x">
-            <div className="post max-w-[41rem]">
+          {/* Same 7/12 reading column as the first part from lg, so the text never jumps sideways after the band. */}
+          <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-12">
+            <div className="post w-full max-w-[41rem] min-w-0 mx-auto lg:mx-0 lg:col-span-7">
               {p.sections.slice(mid).map((s) => <PostSection key={s.id} s={s} />)}
 
               {p.faqs.length > 0 && (
@@ -266,7 +265,8 @@ export default async function PostPage({ params }: Props) {
         </div>
       </article>
 
-      {/* RELATED: service hubs, real projects, explicit next reads (audit B-08) */}
+      {/* RELATED: service hubs, real projects, explicit next reads (audit B-08). Centered rows: each list wraps with
+          justify-center and fixed column widths (2rem gaps), so a short last row sits in the middle, never at the left. */}
       <section className="section-doc bg-stone" aria-labelledby="related-heading">
         <div className="container-x space-y-16 md:space-y-20">
           <h2 id="related-heading" className="sr-only">Related services, projects and guides</h2>
@@ -274,14 +274,14 @@ export default async function PostPage({ params }: Props) {
           {relServices.length > 0 && (
             <div>
               <h3 className="text-h2-doc text-navy">{relServices.length > 1 ? "Related services" : "Related service"}</h3>
-              <ul role="list" className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
-                {/* A lone related service takes two of the three columns, so the row does not read two-thirds empty. */}
+              <ul role="list" className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-10">
+                {/* A lone related service is two columns wide (centered), so the row does not read two-thirds empty. */}
                 {relServices.map((s) => (
-                  <li key={s.slug} className={relServices.length === 1 ? "sm:col-span-2" : undefined}>
+                  <li key={s.slug} className={relServices.length === 1 ? "w-full lg:w-[calc((100%-4rem)*2/3+2rem)]" : "w-full sm:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)]"}>
                     <Link href={`/services/${s.slug}`} className="card-ed group h-full border-t border-line pt-5">
                       <span className="block font-display text-h3s text-navy group-hover:underline underline-offset-[.18em] decoration-1">{s.short}</span>
-                      <span className="mt-2 block max-w-[60ch] text-[15px] leading-relaxed text-muted">{s.blurb}</span>
-                      <span className="link-arrow text-sm mt-auto pt-2 self-start"><ArrowLabel text="See the service" /></span>
+                      <span className="mt-2 mx-auto block max-w-[36em] text-[15px] leading-relaxed text-muted">{s.blurb}</span>
+                      <span className="link-arrow text-sm mt-auto pt-2 self-center"><ArrowLabel text="See the service" /></span>
                     </Link>
                   </li>
                 ))}
@@ -292,18 +292,17 @@ export default async function PostPage({ params }: Props) {
           {relProjects.length > 0 && (
             <div>
               <h3 className="text-h2-doc text-navy">See it in a real project</h3>
-              <ul role="list" className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+              <ul role="list" className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-10">
+                {/* Centered stack: the square thumbnail over the centered title, place and cue. */}
                 {relProjects.map((pr) => (
-                  <li key={pr.slug}>
-                    <Link href={`/projects/${pr.slug}`} className="group flex gap-5">
-                      <div className="relative w-28 h-28 shrink-0 self-start overflow-hidden bg-well">
+                  <li key={pr.slug} className="w-full sm:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)]">
+                    <Link href={`/projects/${pr.slug}`} className="group flex flex-col items-center">
+                      <div className="relative w-28 h-28 shrink-0 overflow-hidden bg-well">
                         <Image src={pr.cover} alt="" fill quality={60} sizes="112px" className="object-cover zoomimg" />
                       </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="block font-display text-h3s text-navy group-hover:underline underline-offset-[.18em] decoration-1">{pr.shortTitle}</span>
-                        <span className="mt-1 block text-sm text-muted">{pr.location}</span>
-                        <span className="link-arrow text-sm self-start"><ArrowLabel text="See the project" /></span>
-                      </div>
+                      <span className="mt-4 block font-display text-h3s text-navy group-hover:underline underline-offset-[.18em] decoration-1">{pr.shortTitle}</span>
+                      <span className="mt-1 block text-sm text-muted">{pr.location}</span>
+                      <span className="link-arrow text-sm"><ArrowLabel text="See the project" /></span>
                     </Link>
                   </li>
                 ))}
@@ -314,18 +313,19 @@ export default async function PostPage({ params }: Props) {
           {relPosts.length > 0 && (
             <div>
               <h3 className="text-h2-doc text-navy">Keep reading</h3>
-              {/* Two columns only from lg: a 176px photo beside the text needs a wide card, or the text column turns into a sliver. */}
-              <ul role="list" className="mt-8 grid lg:grid-cols-2 gap-x-8 gap-y-10">
+              {/* Two columns only from lg: a 176px photo beside the text needs a wide card, or the text column turns into a sliver.
+                  The text is centered in its own column (beside the photo from sm, under it on phones). */}
+              <ul role="list" className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-10">
                 {relPosts.map((r) => (
-                  <li key={r.slug} className="h-full">
+                  <li key={r.slug} className="w-full lg:w-[calc((100%-2rem)/2)]">
                     <Link href={`/blog/${r.slug}`} className="group flex h-full flex-col sm:flex-row gap-5">
                       <div className="relative aspect-[3/2] sm:aspect-auto sm:w-44 sm:self-stretch shrink-0 overflow-hidden bg-well">
                         <Image src={r.image} alt="" fill quality={60} sizes="(min-width:640px) 176px, 100vw" className="object-cover zoomimg" />
                       </div>
-                      <div className="min-w-0 sm:py-1">
+                      <div className="min-w-0 flex-1 sm:self-center sm:py-1">
                         <span className="eyebrow">{r.category}</span>
                         <span className="mt-2 block font-display text-h3s text-navy group-hover:underline underline-offset-[.18em] decoration-1">{r.title}</span>
-                        <span className="mt-2 block text-[15px] leading-relaxed text-muted">{plain(r.excerpt)}</span>
+                        <span className="mt-2 mx-auto block max-w-[36em] text-[15px] leading-relaxed text-muted">{plain(r.excerpt)}</span>
                       </div>
                     </Link>
                   </li>

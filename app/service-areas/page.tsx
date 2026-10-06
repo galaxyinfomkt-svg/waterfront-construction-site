@@ -123,7 +123,7 @@ function County({ g, open, last = false }: { g: CountyGroup; open: boolean; last
   return (
     <section id={g.id} aria-labelledby={`${g.id}-h`} className="border-t border-line pt-10">
       <h3 id={`${g.id}-h`} className="text-h3 text-navy">{g.county}, {g.state}</h3>
-      <p className="mt-3 text-muted max-w-[68ch]">
+      <p className="mt-3 text-muted max-w-[38em] mx-auto">
         {`${placesWord(g.towns.length)}, ${span(g)} miles from Northborough.`}
         {g.projects.length > 0 && <> Documented on this site: {g.projects.map((p) => p.title).join("; ")}.</>}
       </p>
@@ -174,18 +174,18 @@ export default function ServiceAreasPage() {
       <JsonLd data={ld} />
       <OpenOnHash />
 
-      {/* HEADER — text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12
-          from lg, after the hero text on phones. */}
+      {/* HEADER — centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right
+          5/12 from lg, after the hero text on phones. */}
       <section className="page-head" data-cta-zone>
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 max-[359px]:text-h1-long text-navy"><Typeset text={H1} /></h1>
-            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{DESCRIPTION}</p>
-            <p className="mt-4 text-[15px] text-muted max-w-[40em]">
+            <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">{DESCRIPTION}</p>
+            <p className="mt-4 text-[15px] text-muted max-w-[38em] mx-auto">
               {`The ${PLACES} places on this page range from about ${nearest.miles} miles away (${cityLabel(NEAREST)}) to about ${farthest.miles} miles (${cityLabel(FARTHEST)}), in a straight line. We have completed projects in ${site.townsWithProjects}+ of these towns, and each town has its own page for each of our six services.`}
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
               <EstimateLink className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</EstimateLink>
               <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span></a>
             </div>
@@ -200,7 +200,7 @@ export default function ServiceAreasPage() {
         <div className="container-x grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[1.1fr_.9fr] gap-x-12 gap-y-14 items-start">
           <figure className="min-w-0 self-start border-y border-line py-4 lg:sticky lg:top-28">
             <ServiceAreaMap documented={new Set(proof.map((p) => citySlug(p.city)))} />
-            <figcaption className="mt-3 text-sm text-muted max-w-[68ch]">
+            <figcaption className="mt-3 text-sm text-muted max-w-[38em] mx-auto">
               Every place we serve, by its coordinates. Rings are 10 miles apart (straight line) around our Northborough base; green dots mark towns where our work is documented on this site.
             </figcaption>
           </figure>
@@ -230,7 +230,7 @@ export default function ServiceAreasPage() {
             <h3 className="mt-12 text-h3s text-navy">Distance from Northborough</h3>
             <ul className="rule-list mt-4 text-[15px]">
               {bands.map((b) => (
-                <li key={b.label} className="grid grid-cols-[3ch_1fr] gap-x-4 py-3"><span className="font-medium text-navy tnum text-right">{b.count}</span> <span className="text-muted whitespace-nowrap">places, {b.label}</span></li>
+                <li key={b.label} className="flex justify-center items-baseline gap-x-2 py-3"><span className="font-medium text-navy tnum">{b.count}</span> <span className="text-muted whitespace-nowrap">places, {b.label}</span></li>
               ))}
             </ul>
             <CtaRow className="mt-10" />
@@ -251,8 +251,9 @@ export default function ServiceAreasPage() {
               return (
                 <li key={citySlug(city)} className="py-5">
                   <p className={proofTitle}>{cityLabel(city)}</p>
-                  {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot and no glyph is clipped. */}
-                  <ul className="dot-list-wrap mt-1 text-sm text-muted">
+                  {/* .dot-list-wrap--stack (globals.css): county over distance, centered. The pair (~365px at text-sm) does
+                      not fit one line in the 2- and 3-column grid, so it stacks at every width (no separator dots). */}
+                  <ul className="dot-list-wrap dot-list-wrap--stack mt-1 text-sm text-muted">
                     <li>{f.county}</li>
                     <li>{f.isBase ? "our base" : `about ${f.miles} miles ${f.dir} of Northborough`}</li>
                   </ul>
@@ -327,9 +328,9 @@ export default function ServiceAreasPage() {
       {/* CTA — the page's one navy band */}
       <section className="section bg-navy text-white on-dark" data-cta-zone>
         <div className="container-x">
-          <h2 className="text-h2 text-white max-w-[18em]">Planning a project in one of these towns?</h2>
-          <p className="mt-5 text-lead text-white/80 max-w-[36em]">Estimates are free and there is no obligation.</p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <h2 className="text-h2 text-white max-w-[18em] mx-auto text-balance">Planning a project in one of these towns?</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[34em] mx-auto">Estimates are free and there is no obligation.</p>
+          <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
             <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span></a>
           </div>

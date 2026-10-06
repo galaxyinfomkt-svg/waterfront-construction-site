@@ -38,17 +38,22 @@ export default function ServiceTownDirectory({ slug, label, className = "" }: { 
   // while the page stays short on phones.
   return (
     <nav aria-label={`${label} pages by town`} className={className}>
-      <div className="faq-list lg:grid lg:grid-cols-2 lg:gap-x-12 lg:items-start lg:border-t-0 lg:[&>details:nth-child(-n+2)]:border-t lg:[&>details:nth-child(-n+2)]:border-line">
+      <div className="faq-list grid-center lg:[--cols:2] [--gx:3rem] lg:items-start lg:border-t-0 lg:[&>details:nth-child(-n+2)]:border-t lg:[&>details:nth-child(-n+2)]:border-line">
         {list.map((g) => {
           const state = g.state === "MA" ? "Massachusetts" : "New Hampshire";
           return (
             <details key={g.id} className="faq-row group">
-              <summary className="grid grid-cols-[1fr_auto_auto] items-baseline gap-4">
-                <span className="text-base font-medium text-ink">{g.county}, {state}</span>{" "}
-                <span className="text-[13px] text-muted tnum whitespace-nowrap">{g.towns.length} {g.towns.length === 1 ? "town" : "towns"}</span>{" "}
-                <PlusIcon className="w-4 h-4 self-center text-navy transition-transform duration-200 group-open:rotate-45" />
+              {/* Centered row (.faq-row summary is a centered flex row): county, town count and the plus icon. */}
+              <summary className="flex-wrap items-baseline gap-x-3 gap-y-0">
+                {/* Below sm the name fills line 1 and the count + icon sit together, centered, on line 2 (every county
+                    row the same shape); from sm one centered line, the count + icon wrapping together if ever needed. */}
+                <span className="basis-full sm:basis-auto text-base font-medium text-ink">{g.county}, {state}</span>{" "}
+                <span className="inline-flex items-center gap-3 whitespace-nowrap">
+                  <span className="text-[13px] text-muted tnum">{g.towns.length} {g.towns.length === 1 ? "town" : "towns"}</span>{" "}
+                  <PlusIcon className="w-4 h-4 text-navy transition-transform duration-200 group-open:rotate-45" />
+                </span>
               </summary>
-              <ul role="list" className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 pb-5">
+              <ul role="list" className="grid-center [--cols:2] sm:[--cols:3] [--gx:1.5rem] pb-5 text-center">
                 {g.towns.map((c) => (
                   <li key={citySlug(c)}>
                     <Link href={`/services/${slug}/${citySlug(c)}`} prefetch={false} className="link-nav block py-2 text-[15px]">

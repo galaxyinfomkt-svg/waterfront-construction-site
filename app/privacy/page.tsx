@@ -39,8 +39,8 @@ export default function PrivacyPage() {
   return (
     <>
       <JsonLd data={ld} />
-      {/* HERO — title on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from
-          lg, after the title on phones. */}
+      {/* HERO — centered title on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right
+          5/12 from lg, after the title on phones. The policy text below stays left-aligned (.prose), as a centered column. */}
       <section className="page-head">
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
@@ -110,7 +110,7 @@ export default function PrivacyPage() {
             <p className="text-sm text-muted">This policy is provided for general information and is not legal advice.</p>
           </div>
           {/* CTA row (as <CtaRow />): the estimate link jumps to the hero form; the call button beside it. */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
             <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto">
               <PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span>

@@ -47,6 +47,8 @@ function jumpToEstimate(el: HTMLElement, animate = true) {
   if (location.hash !== hash) history.replaceState(null, "", hash);
 }
 
+const bottomOf = (el: HTMLElement | null) => (el ? Math.round(el.getBoundingClientRect().bottom) : 0);
+
 const isCurrent = (pathname: string, href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
 
 export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
@@ -79,21 +81,30 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
 
   // While the mobile menu is open: Escape closes it, the page behind does not scroll, and the
   // floating call button is hidden so it cannot cover the menu's own items (audit 10 UX-M1).
+  // The panel is fixed right under the header's bottom edge (menuTop), and that edge moves: at the top of the page the
+  // navy top bar (TopBar, every width, not sticky) sits above the header, so the panel starts at 36 + 72px; once the
+  // bar has scrolled away the sticky header is at 0 and the panel starts at 72px. menuTop is measured on open and
+  // follows the header if the page still moves underneath (iOS rubber-banding, rotation, resize).
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") { setOpen(false); toggleRef.current?.focus(); }
     };
+    const onMove = () => setMenuTop(bottomOf(headerRef.current));
     document.addEventListener("keydown", onKey);
+    window.addEventListener("scroll", onMove, { passive: true });
+    window.addEventListener("resize", onMove);
     document.documentElement.classList.add("menu-open");
     return () => {
       document.removeEventListener("keydown", onKey);
+      window.removeEventListener("scroll", onMove);
+      window.removeEventListener("resize", onMove);
       document.documentElement.classList.remove("menu-open");
     };
   }, [open]);
 
   const toggle = () => {
-    setMenuTop(headerRef.current ? Math.round(headerRef.current.getBoundingClientRect().bottom) : 0);
+    setMenuTop(bottomOf(headerRef.current));
     setOpen((v) => !v);
   };
   const close = () => setOpen(false);

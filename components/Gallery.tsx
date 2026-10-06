@@ -76,7 +76,7 @@ export default function Gallery({ photos, label = "Photo viewer" }: { photos: Ga
                 <Image src={ph.src} alt={ph.alt} fill quality={60} sizes={tileSizes(span, fullAtSm)} className="object-cover zoomimg" />
                 <span className="sr-only"> (opens a larger view)</span>
               </button>
-              {ph.caption && <figcaption className="mt-3 text-sm leading-relaxed text-muted">{ph.caption}</figcaption>}
+              {ph.caption && <figcaption className="mt-3 mx-auto max-w-[36em] text-center text-sm leading-relaxed text-muted">{ph.caption}</figcaption>}
             </figure>
           </li>
           );

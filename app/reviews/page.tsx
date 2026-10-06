@@ -57,7 +57,7 @@ function Testimonial({ t }: { t: (typeof testimonials)[number] }) {
   return (
     <li id={testimonialAnchor(t.name)} className="grid grid-rows-subgrid row-span-3 gap-y-0 border-t border-line pt-8">
       <figure className="grid grid-rows-subgrid row-span-3 gap-y-0">
-        <blockquote className="font-display text-[1.375rem] leading-[1.45] text-navy [text-indent:-0.42em]"><p>&ldquo;{t.text}&rdquo;</p></blockquote>
+        <blockquote className="font-display text-[1.375rem] leading-[1.45] text-navy"><p className="mx-auto max-w-[30em]">&ldquo;{t.text}&rdquo;</p></blockquote>
         <figcaption className="grid grid-rows-subgrid row-span-2 gap-y-0">
           <div className="mt-6">
             <span className="block text-[15px] font-semibold text-ink">{t.name}</span>
@@ -69,7 +69,7 @@ function Testimonial({ t }: { t: (typeof testimonials)[number] }) {
             </ul>
           </div>
           {city && svcs.length > 0 ? (
-            <span className="mt-3 flex flex-col items-start gap-y-2">
+            <span className="mt-3 flex flex-col items-center gap-y-2">
               {svcs.map((s) => (
                 <Link key={s.slug} href={`/services/${s.slug}/${citySlug(city)}`} className="link-arrow text-sm leading-snug"><ArrowLabel text={`${s.short} in ${cityLabel(city)}`} /></Link>
               ))}
@@ -94,18 +94,18 @@ export default function ReviewsPage() {
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg,
-          after the hero text on phones. */}
+      {/* HERO — centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12
+          from lg, after the hero text on phones. */}
       <section className="page-head" data-cta-zone>
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <p className="mt-6 eyebrow">Client testimonials</p>
             <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
-            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
+            <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">{LEAD}</p>
             <p className="mt-3 text-[15px] text-muted">{DISCLOSURE}</p>
-            <p className="mt-4 text-muted max-w-[36em]">To read our public reviews, or to leave one, visit our Google Business Profile.</p>
-            <div className="mt-6 flex flex-wrap gap-x-8 gap-y-1">
+            <p className="mt-4 text-muted max-w-[36em] mx-auto">To read our public reviews, or to leave one, visit our Google Business Profile.</p>
+            <div className="mt-6 flex flex-wrap justify-center gap-x-8 gap-y-1">
               <a href={site.gbp} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Read our Google reviews" external /></a>
               <a href={site.googleReview} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Leave a Google review" external /></a>
             </div>
@@ -143,7 +143,7 @@ export default function ReviewsPage() {
               {tail.map((t) => <Testimonial key={`${t.name}-${t.date}`} t={t} />)}
             </ul>
           )}
-          <p className={`${tail.length > 0 ? "mt-14 " : ""}text-sm text-muted max-w-[60ch]`}>
+          <p className={`${tail.length > 0 ? "mt-14 " : ""}text-sm text-muted max-w-[60ch] mx-auto`}>
             These testimonials are reproduced word for word. See our{" "}
             <Link href="/gallery" className="link">project case studies</Link>, documented with our own photos and site videos.
           </p>
@@ -153,10 +153,10 @@ export default function ReviewsPage() {
       {/* Closing band: the page's one navy surface */}
       <section className="section bg-navy text-white on-dark" data-cta-zone>
         <div className="container-x">
-          <h2 className="text-h2 text-white max-w-[18em]">Worked with us?</h2>
-          <p className="mt-5 text-lead text-white/80 max-w-[36em]">A Google review helps other homeowners decide. Planning a project of your own? Estimates are free.</p>
+          <h2 className="text-h2 text-white max-w-[18em] mx-auto text-balance">Worked with us?</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[34em] mx-auto">A Google review helps other homeowners decide. Planning a project of your own? Estimates are free.</p>
           <p className="mt-6"><a href={site.googleReview} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Leave a Google review" external /></a></p>
-          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <div className="mt-6 flex flex-col sm:flex-row sm:justify-center gap-3">
             <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
           </div>

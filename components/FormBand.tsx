@@ -3,7 +3,7 @@ import { site } from "@/lib/site";
 import LeadForm from "./LeadForm";
 import { CheckIcon, PhoneIcon } from "./chrome-icons";
 
-/** Mid-page estimate band: a short pitch on the left, the bare GHL form (second, lazy instance) on the right.
+/** Mid-page estimate band: a short pitch (centered text) on the left, the bare GHL form (second, lazy instance) on the right.
  *  NOT the page's estimate target (no id="estimate", no data-estimate-form): "Free estimate" links always go
  *  to the hero <EstimateForm />. tone picks the band surface; alternate it with the neighbouring sections.
  *  doc: the reference rhythm (section-doc, text-h2-doc) for article-like pages (blog posts, towns, FAQ, policies), so
@@ -16,16 +16,17 @@ export default function FormBand({ tone = "stone", heading = "Tell us about your
   return (
     <section data-form-band aria-labelledby={h} className={`${doc ? "section-doc" : "section"} ${tone === "stone" ? "bg-stone" : "bg-paper"}`}>
       <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10 items-start">
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5 text-center">
           <p className="eyebrow">Free estimate</p>
-          <h2 id={h} className={`mt-4 ${doc ? "text-h2-doc" : "text-h2"} text-navy text-balance`}>{heading}</h2>
-          <p className="mt-5 text-lead text-muted max-w-[34em]">
+          <h2 id={h} className={`mt-4 mx-auto max-w-[18em] ${doc ? "text-h2-doc" : "text-h2"} text-navy text-balance`}>{heading}</h2>
+          <p className="mt-5 mx-auto text-lead text-muted max-w-[34em]">
             Free and no-obligation. Prefer to talk? Call <a href={site.phoneHref} className="link tel">{site.phone}</a> <span className="whitespace-nowrap">({site.hours})</span>.
           </p>
-          <ul className="mt-6 space-y-2 text-[15px] text-ink">
-            <li className="flex items-center gap-2"><CheckIcon className="w-4 h-4 shrink-0 text-navy" />Itemized estimates</li>
-            <li className="flex items-center gap-2"><CheckIcon className="w-4 h-4 shrink-0 text-navy" />{site.projectsCompleted}+ projects completed</li>
-            <li className="flex items-center gap-2"><CheckIcon className="w-4 h-4 shrink-0 text-navy" />Insured</li>
+          {/* .icon-list: a centered column of icon + text rows (globals.css). */}
+          <ul className="icon-list mt-6 gap-y-2 text-[15px] text-ink">
+            <li><CheckIcon className="w-4 h-4 text-navy" />Itemized estimates</li>
+            <li><CheckIcon className="w-4 h-4 text-navy" />{site.projectsCompleted}+ projects completed</li>
+            <li><CheckIcon className="w-4 h-4 text-navy" />Insured</li>
           </ul>
           {/* From lg only: on phones the inline tel link and the floating call button already cover calling, and the
               form moves up. */}

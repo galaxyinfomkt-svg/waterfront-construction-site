@@ -38,13 +38,6 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const H1 = "Our Remodeling Projects: Real Photos and Site Videos";
 const INTRO = `${site.name}, an owner-led remodeling contractor founded in ${site.founded} and based in Northborough, MA, has completed ${site.projectsCompleted}+ projects. ${cap(word(projects.length))} of them are documented here as case studies with our own photos and site videos. ${cap(word(located.length))} are from jobs in ${TOWNS}, between ${MIN} and ${MAX} miles from our base${UNLOCATED ? `; for the other ${word(UNLOCATED)}, the town is not listed` : ""}.`;
 
-// .dot-list that may wrap: every item carries the dot (the first one too) and the list is pulled left by one dot
-// inside an overflow-clipped wrapper, so a wrapped line never starts with a stray dot.
-const DOTS_WRAP = "min-w-0 overflow-hidden";
-const DOTS_CLIP =
-  "dot-list -ml-[calc(1.5em+3px)] [&>li:first-child]:before:content-[''] [&>li:first-child]:before:inline-block [&>li:first-child]:before:w-[3px] [&>li:first-child]:before:h-[3px] [&>li:first-child]:before:rounded-full [&>li:first-child]:before:bg-current [&>li:first-child]:before:opacity-60 [&>li:first-child]:before:mx-[.75em] [&>li:first-child]:before:align-[.25em]";
-// Split section heads (§4.10): below lg the intro is not an h2 sibling, so it carries its own rhythm and colour.
-const SPLIT_P = "mt-5 max-w-[38rem] text-lead text-muted lg:mt-0 lg:max-w-none";
 
 export const metadata = pageMeta({
   title: "Remodeling Project Photos & Videos: Real Jobs in MA & NH",
@@ -96,22 +89,21 @@ function ProjectCard({ p, featured = false }: { p: Project; featured?: boolean }
         <Image src={p.cover} alt={imageAlt(p, p.cover)} fill quality={60} sizes={featured ? "(min-width: 1200px) 650px, (min-width: 1024px) 54vw, 100vw" : "(min-width: 1200px) 380px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"} className="object-cover" />
       </div>
       <div className={`flex flex-col grow ${featured ? "lg:col-span-5" : "sm:contents"}`}>
-        {/* Two fixed label lines on every card (place and kind, then the media count), so the halves never run
-            together and every title in a row starts level. */}
+        {/* Three short centered label lines on every card (place, kind, media count; .dot-list-wrap--stack), so the
+            labels never run together or wrap mid-row ("Massachusetts · Bathroom remodels" outgrows a card at sm-lg), and
+            every title in a row starts level. */}
         <div className="meta flex-col justify-start gap-y-1">
-          <div className={DOTS_WRAP}>
-            <ul className={DOTS_CLIP}>
-              <li className="whitespace-nowrap">{p.location}</li>
-              <li className="whitespace-nowrap">{p.category}</li>
-            </ul>
-          </div>
+          <ul className="dot-list-wrap dot-list-wrap--stack">
+            <li className="whitespace-nowrap">{p.location}</li>
+            <li className="whitespace-nowrap">{p.category}</li>
+          </ul>
           <span>{mediaCount(p)}</span>
         </div>
         <h3 className={featured ? "lg:text-[2rem] lg:leading-[1.15]" : undefined}>
           <Link href={`/projects/${p.slug}`}>{p.title}</Link>
         </h3>
         <p className={`body ${featured ? "max-w-[60ch]" : ""}`}>{p.blurb}</p>
-        <span className="link-arrow text-sm mt-auto pt-3 self-start">
+        <span className="link-arrow text-sm mt-auto pt-3 self-center">
           <ArrowLabel text="View the case study" />
         </span>
       </div>
@@ -123,15 +115,15 @@ export default function GalleryPage() {
   return (
     <>
       <JsonLd data={ld} />
-      {/* HERO — text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg,
+      {/* HERO — centered text in the left 7/12; the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg,
           after the hero text on phones. */}
       <section className="page-head">
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-navy text-balance">{H1}</h1>
-            <p className="mt-5 text-lead text-ink/80 max-w-[60ch]">{INTRO}</p>
-            <p className="mt-4 text-muted max-w-[60ch]">Open any project for what we did, the photos in the order the work happened, and the services involved.</p>
+            <p className="mt-5 mx-auto text-lead text-ink/80 max-w-[34em]">{INTRO}</p>
+            <p className="mt-4 mx-auto text-muted max-w-[36em]">Open any project for what we did, the photos in the order the work happened, and the services involved.</p>
           </div>
           <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
@@ -144,7 +136,7 @@ export default function GalleryPage() {
             <div>
               <h2 id="cases-h" className="text-h2 text-navy">Case studies</h2>
             </div>
-            <p className={SPLIT_P}>Each one is a real job, described only by what its photos and videos show.</p>
+            <p>Each one is a real job, described only by what its photos and videos show.</p>
           </div>
           <ul role="list" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
             {projects.map((p, i) => <ProjectCard key={p.slug} p={p} featured={i === 0} />)}
@@ -162,16 +154,17 @@ export default function GalleryPage() {
             <div>
               <h2 id="browse-h" className="text-h2 text-navy">Browse photos by project type</h2>
             </div>
-            <p className={SPLIT_P}>Every photo is from one of the jobs above and links to its case study.</p>
+            <p>Every photo is from one of the jobs above and links to its case study.</p>
           </div>
           <FilterGallery items={items} categories={categories} />
-          {/* CTA row: estimate (jumps to the hero form) and call, then Instagram. */}
-          <div className="mt-14 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
+          {/* CTA row, centered: estimate (jumps to the hero form) and call, then Instagram (on the same line from md,
+              centered on its own line under the buttons at sm). */}
+          <div className="mt-14 flex flex-col items-center sm:flex-row sm:flex-wrap sm:justify-center gap-3">
             <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto">
               <PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span>
             </a>
-            <a href={site.instagram} target="_blank" rel="noopener" className="link-arrow self-start sm:self-auto sm:ml-5">
+            <a href={site.instagram} target="_blank" rel="noopener" className="link-arrow md:ml-5">
               <ArrowLabel text="Follow us on Instagram" external />
             </a>
           </div>

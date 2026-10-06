@@ -64,27 +64,28 @@ export default async function ServiceTownPage({ params }: Props) {
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — answer-first text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right
-          5/12 from lg, so the form is above the fold on desktop (V5.3, audit 10 UX-H2). On phones the form follows the
+      {/* HERO — answer-first centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the
+          right 5/12 from lg, so the form is above the fold on desktop (V5.3, audit 10 UX-H2). On phones the form follows the
           summary and the call buttons, before the testimonial. The case-study photo leads the proof section. */}
       <section className="page-head">
         <div className="container-x py-8 md:py-10 grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-12 lg:grid-rows-[auto_1fr]">
           <div className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-1">
             <Breadcrumbs items={k.crumbs} />
             <h1 className="mt-5 text-h1-long text-navy"><Typeset text={k.h1} /></h1>
-            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{k.summary}</p>
+            <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">{k.summary}</p>
             {k.heroNote && (
-              <p className="mt-4 text-ink/80 max-w-[36em]">
+              <p className="mt-4 text-ink/80 max-w-[34em] mx-auto">
                 {k.heroNote.text}{" "}
                 <Link href={k.heroNote.href} className="link"><ArrowLabel text={k.heroNote.label} /></Link>
               </p>
             )}{" "}
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
               {/* On desktop the form is right beside this text, so the jump link is for phones and tablets only. */}
               <a href="#estimate" className="btn btn-primary w-full sm:w-auto lg:hidden">{k.cta.estimate}</a>
               <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{k.cta.phone}</span></a>
             </div>{" "}
-            <ul className="dot-list eyebrow mt-6">
+            {/* .dot-list-wrap (globals.css): centered, one dotted line from sm; a long credential line stacks instead. */}
+            <ul className={`dot-list-wrap eyebrow mt-6${k.trust.join(" · ").length > 40 ? " dot-list-wrap--stack" : ""}`}>
               {k.trust.map((t) => <li key={t}>{t} </li>)}
             </ul>
           </div>
@@ -93,8 +94,8 @@ export default async function ServiceTownPage({ params }: Props) {
 
           {k.quote && (
             <figure className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-2 border-t border-line pt-6">
-              <blockquote className="font-display text-[1.375rem] leading-[1.4] text-navy [text-indent:-0.42em] max-w-[36em]">“{k.quote.text}”</blockquote>
-              <figcaption className="mt-3 text-[13px] text-muted">
+              <blockquote className="font-display text-[1.375rem] leading-[1.4] text-navy max-w-[34em] mx-auto">“{k.quote.text}”</blockquote>
+              <figcaption className="mt-3 mx-auto max-w-[40em] text-[13px] text-muted text-balance">
                 — {k.quote.cite}. {k.quote.disclosure}{" "}
                 <a href={site.gbp} target="_blank" rel="noopener noreferrer" className="link">{k.quote.reviewsLabel}</a>
               </figcaption>
@@ -103,12 +104,12 @@ export default async function ServiceTownPage({ params }: Props) {
         </div>
       </section>
 
-      {/* BODY — one column: facts, proof, rules (first half); the mid-page estimate band; then questions and the
-          nearby / sibling-service link blocks (second half) */}
+      {/* BODY — one centered column (46rem, every text centered): facts, proof, rules (first half); the mid-page
+          estimate band; then questions and the nearby / sibling-service link blocks (second half) */}
       <section className="section-doc bg-paper">
         <div className="container-x">
-          <div className="max-w-[46rem]">
-            {/* AT A GLANCE */}
+          <div className="max-w-[46rem] mx-auto">
+            {/* AT A GLANCE — label over value, centered (inherited), 1 / 2 columns */}
             <h2 className="text-h2-doc text-navy">{k.glanceHeading}</h2>
             <dl className="mt-8 grid sm:grid-cols-2 gap-x-8">
               {k.facts.map((f) => (
@@ -153,12 +154,13 @@ export default async function ServiceTownPage({ params }: Props) {
               </ul>
             )}
             <p className="mt-8 text-sm font-semibold text-ink">{k.proof.caseStudiesLabel}</p>{" "}
+            {/* Label over value rows (centered): the case study, then its town and distance under it. */}
             {k.proof.caseStudies.length > 0 && (
               <ul className="mt-3 rule-list text-[15px]">
                 {k.proof.caseStudies.map((x) => (
-                  <li key={x.href} className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 py-3">
-                    <span><Link href={x.href} className="link">{x.label}</Link></span>{" "}
-                    <span className="text-sm text-muted tnum whitespace-nowrap">{x.meta}</span>{" "}
+                  <li key={x.href} className="py-3">
+                    <span className="block"><Link href={x.href} className="link">{x.label}</Link></span>{" "}
+                    <span className="block mt-0.5 text-sm text-muted tnum">{x.meta}</span>{" "}
                   </li>
                 ))}
               </ul>
@@ -171,9 +173,9 @@ export default async function ServiceTownPage({ params }: Props) {
             {k.proof.reviewTowns.length > 0 && (
               <ul className="mt-3 rule-list text-[15px] text-ink">
                 {k.proof.reviewTowns.map((x) => (
-                  <li key={x.label} className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 py-3">
-                    <span>{x.label}</span>{" "}
-                    <span className="text-sm text-muted tnum whitespace-nowrap">{x.meta}</span>{" "}
+                  <li key={x.label} className="py-3">
+                    <span className="block">{x.label}</span>{" "}
+                    <span className="block mt-0.5 text-sm text-muted tnum">{x.meta}</span>{" "}
                   </li>
                 ))}
               </ul>
@@ -182,13 +184,13 @@ export default async function ServiceTownPage({ params }: Props) {
 
             {/* PERMITS AND RULES — state x service rule; the permit authority is this place's */}
             <h2 className={`${block} text-h2-doc text-navy`}>{k.rulesHeading}</h2>
-            <p className="mt-5 text-prose text-ink/80">{k.rules}</p>
+            <p className="mt-5 mx-auto max-w-[38em] text-prose text-ink/80">{k.rules}</p>
 
             {/* SCOPE — details, costs and timelines live on the service hub */}
             <p className="mt-10 font-semibold text-ink">{k.scopeLabel}</p>{" "}
             <ul className="mt-4 check-list grid sm:grid-cols-2 gap-x-8">
               {k.scope.map((x) => (
-                <li key={x} className="py-3 border-t border-line text-ink before:top-[calc(.75rem+.3em)]">{x} </li>
+                <li key={x} className="py-3 border-t border-line text-ink">{x} </li>
               ))}
             </ul>
             <p className="mt-6"><Link href={k.hubLink.href} className="link-arrow"><ArrowLabel text={k.hubLink.label} /></Link></p>{" "}
@@ -204,7 +206,7 @@ export default async function ServiceTownPage({ params }: Props) {
 
       <section className="section-doc bg-paper">
         <div className="container-x">
-          <div className="max-w-[46rem]">
+          <div className="max-w-[46rem] mx-auto">
 
             {/* QUESTIONS — only ones specific to this place; visible text only, no FAQPage markup (V4.1) */}
             {k.faqs.length > 0 && (
@@ -226,7 +228,8 @@ export default async function ServiceTownPage({ params }: Props) {
               <h2 id="nearby-h" className="text-h2-doc text-navy">{k.nearbyHeading}</h2>
               <ul className="mt-6 rule-list grid sm:grid-cols-2 gap-x-8 sm:border-t-0 sm:[&>li:nth-child(-n+2)]:border-t sm:[&>li:nth-child(-n+2)]:border-line">
                 {k.nearby.map((n) => (
-                  <li key={n.href} className="flex min-h-11 items-center justify-between gap-3 py-2">
+                  // Centered row: the town link and its distance side by side (wrapping under it if the cell is narrow).
+                  <li key={n.href} className="flex flex-wrap min-h-11 items-center justify-center gap-x-3 py-2">
                     <Link href={n.href} className="link-nav">{n.label}</Link>{" "}
                     <span className="text-sm text-muted tnum whitespace-nowrap">{n.meta}</span>{" "}
                   </li>
@@ -237,14 +240,14 @@ export default async function ServiceTownPage({ params }: Props) {
             {/* OTHER SERVICES IN THIS PLACE */}
             <nav aria-labelledby="other-h" className={block}>
               <h2 id="other-h" className="text-h2-doc text-navy">{k.otherHeading}</h2>{" "}
-              <ul className="mt-6 flex flex-wrap gap-2.5">
+              <ul className="mt-6 flex flex-wrap justify-center gap-2.5">
                 {k.otherServices.map((o) => (
                   <li key={o.href}><Link href={o.href} className="chip">{o.label}</Link>{" "}</li>
                 ))}
               </ul>
             </nav>
 
-            <p className="mt-12 text-[13px] text-muted">
+            <p className="mt-12 mx-auto max-w-[40em] text-[13px] text-muted">
               {k.footnote} {k.updated.label} <time dateTime={k.updated.iso}>{k.updated.date}</time>.
             </p>
           </div>

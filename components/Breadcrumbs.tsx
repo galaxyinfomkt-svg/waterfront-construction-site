@@ -8,16 +8,17 @@ import { ChevronRightIcon } from "./chrome-icons";
 export default function Breadcrumbs({ items, light = true, className = "" }: { items: Crumb[]; light?: boolean; className?: string }) {
   void light;
   return (
-    <nav aria-label="Breadcrumb" className={`text-[13px] text-muted ${className}`}>
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
+    <nav aria-label="Breadcrumb" className={`text-[13px] text-muted text-center ${className}`}>
+      <ol className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
         {items.map((it, i) => {
           const last = i === items.length - 1;
           return (
-            // The chevron closes each parent crumb instead of opening the next one, so a wrapped line never
-            // starts with a bare separator. Below sm the current crumb claims the rest of the line (min 8rem)
-            // and ellipsizes there, so a long title does not cost an extra line above the H1.
+            // Centered trail. The chevron closes each parent crumb instead of opening the next one, so a wrapped
+            // line never starts with a bare separator. The current crumb keeps its own width (so the trail stays
+            // centered); when it does not fit beside its parents it moves to its own centered line, and only a title
+            // longer than a whole line ellipsizes.
             last ? (
-              <li key={it.path} className="inline-flex items-center min-w-0 flex-[1_1_8rem] sm:flex-initial">
+              <li key={it.path} className="inline-flex items-center min-w-0 max-w-full">
                 <span aria-current="page" className="text-ink truncate max-w-full">{it.name}</span>
               </li>
             ) : (

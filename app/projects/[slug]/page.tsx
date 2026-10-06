@@ -92,7 +92,7 @@ function posterSrc(v: ProjectVideo) {
 function VideoFigure({ v, id, large = false }: { v: ProjectVideo; id: string; large?: boolean }) {
   const f = VIDEO_FACTS[v.src];
   return (
-    <figure className={large ? "w-full max-w-[300px] mx-0" : ""}>
+    <figure className={large ? "w-full max-w-[300px] mx-auto" : ""}>
       <video
         controls
         muted
@@ -116,14 +116,15 @@ function VideoFigure({ v, id, large = false }: { v: ProjectVideo; id: string; la
   );
 }
 
-/** Site-video grid columns (sm and lg) chosen from the clip count, so the last row never holds a lone clip:
+/** Site-video clip widths per row (sm and lg) chosen from the clip count, so the last row never holds a lone clip:
  *  lg: 5 clips in one row of 5, multiples of 3 in rows of 3, otherwise rows of 4 (5 or 3 when 4 would leave one over).
- *  sm: rows of 2 for even counts; odd counts use rows of 3 unless that also leaves one over. */
+ *  sm: rows of 2 for even counts; odd counts use rows of 3 unless that also leaves one over.
+ *  The row is a wrapping flex row with justify-center from sm (gap-x-6 = 1.5rem), so a short last row is centered. */
 function videoCols(n: number) {
   const lone = (c: number) => n > c && n % c === 1;
   const lg = n === 5 ? 5 : n % 3 === 0 ? 3 : !lone(4) ? 4 : !lone(5) ? 5 : 3;
   const sm = n % 2 === 0 || lone(3) ? 2 : 3;
-  return `${sm === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"} ${lg === 5 ? "lg:grid-cols-5" : lg === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"}`;
+  return `${sm === 3 ? "sm:w-[calc((100%-3rem)/3)]" : "sm:w-[calc((100%-1.5rem)/2)]"} ${lg === 5 ? "lg:w-[calc((100%-6rem)/5)]" : lg === 3 ? "lg:w-[calc((100%-3rem)/3)]" : "lg:w-[calc((100%-4.5rem)/4)]"}`;
 }
 
 /** Same-surface join: a hairline on the shared left edge between two neighbouring bands of the same colour. */
@@ -217,23 +218,24 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — text first, with the cover photo (or, on a video-only job, the first clip) under it on the left (7/12);
+      {/* HERO — centered text first, with the cover photo (or, on a video-only job, the first clip) under it on the left (7/12);
           the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg. On phones the form follows
           the hero text, then the photo. */}
       <section className="page-head">
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 lg:row-start-1 min-w-0">
             <Breadcrumbs items={crumbs} />
-            <div className="mt-6 eyebrow flex items-center gap-2">
-              <PinIcon className="w-3.5 h-3.5" />
-              <ul className="dot-list">
-                <li>{town ? cityLabel(town) : p.location}</li>
+            {/* Place and kind, centered (.dot-list-wrap): stacked below sm, one dotted line from sm (the longest pair
+                needs about 350px, more than a 375px phone has). The pin rides with the place. */}
+            <div className="mt-6 eyebrow">
+              <ul className="dot-list-wrap">
+                <li><PinIcon className="inline-block w-3.5 h-3.5 mr-2 align-[-2px]" />{town ? cityLabel(town) : p.location}</li>
                 <li>{p.category}</li>
               </ul>
             </div>
             <h1 className="mt-5 text-h1 text-navy text-balance"><Typeset text={p.title} /></h1>
-            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{p.blurb}</p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <p className="mt-5 mx-auto text-lead text-ink/80 max-w-[34em]">{p.blurb}</p>
+            <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
               <EstimateLink className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</EstimateLink>
               <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
             </div>
@@ -245,7 +247,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               <div className="relative overflow-hidden bg-well aspect-[3/2]">
                 <Image src={heroImg.src} alt={heroImg.alt} fill loading="eager" quality={60} sizes="(min-width: 1200px) 640px, (min-width: 1024px) 54vw, 100vw" className="object-cover" />
               </div>
-              {heroImg.caption && <figcaption className="mt-3 text-[13px] leading-relaxed text-muted">{heroImg.caption}</figcaption>}
+              {heroImg.caption && <figcaption className="mt-3 mx-auto max-w-[40em] text-[13px] leading-relaxed text-muted">{heroImg.caption}</figcaption>}
             </figure>
           )}
           {heroVideo && (
@@ -262,56 +264,57 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <div className="container-x grid gap-14 lg:grid-cols-12 lg:gap-x-8">
           <div className="lg:col-span-5">
             <h2 id="overview-h" className="text-h2-doc text-navy">Project at a glance</h2>
-            <dl className="mt-8 border-t border-line">
-              <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
-                <dt className="eyebrow pt-0.5">Location</dt>
-                <dd className="text-[15.5px] text-ink">{placeText}</dd>
+            {/* .facts (globals.css): label over value, centered, at every width. */}
+            <dl className="facts mt-8">
+              <div>
+                <dt className="eyebrow">Location</dt>
+                <dd>{placeText}</dd>
               </div>
               {facts && !facts.isBase && (
-                <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
-                  <dt className="eyebrow pt-0.5">Distance</dt>
-                  <dd className="text-[15.5px] text-ink">About {facts.miles} miles {facts.dir} of our Northborough, MA base (straight line)</dd>
+                <div>
+                  <dt className="eyebrow">Distance</dt>
+                  <dd>About {facts.miles} miles {facts.dir} of our Northborough, MA base (straight line)</dd>
                 </div>
               )}
-              <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
-                <dt className="eyebrow pt-0.5">{svcs.length > 1 ? "Services" : "Service"}</dt>
-                <dd className="text-[15.5px] text-ink">
+              <div>
+                <dt className="eyebrow">{svcs.length > 1 ? "Services" : "Service"}</dt>
+                <dd>
                   {svcs.map((s, i) => (
                     <span key={s.slug}>{i > 0 && ", "}<Link href={`/services/${s.slug}`} className="link">{s.short}</Link></span>
                   ))}
                 </dd>
               </div>
               {p.completed && (
-                <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
-                  <dt className="eyebrow pt-0.5">Completed</dt>
-                  <dd className="text-[15.5px] text-ink">{p.completed}</dd>
+                <div>
+                  <dt className="eyebrow">Completed</dt>
+                  <dd>{p.completed}</dd>
                 </div>
               )}
               {p.durationWeeks && (
-                <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
-                  <dt className="eyebrow pt-0.5">Duration</dt>
-                  <dd className="text-[15.5px] text-ink">About {p.durationWeeks} weeks</dd>
+                <div>
+                  <dt className="eyebrow">Duration</dt>
+                  <dd>About {p.durationWeeks} weeks</dd>
                 </div>
               )}
               {p.permit && (
-                <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
-                  <dt className="eyebrow pt-0.5">Permit</dt>
-                  <dd className="text-[15.5px] text-ink">{p.permit.authority}{p.permit.number ? `, permit ${p.permit.number}` : ""}{p.permit.finalInspection ? "; final inspection passed" : ""}</dd>
+                <div>
+                  <dt className="eyebrow">Permit</dt>
+                  <dd>{p.permit.authority}{p.permit.number ? `, permit ${p.permit.number}` : ""}{p.permit.finalInspection ? "; final inspection passed" : ""}</dd>
                 </div>
               )}
-              <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
-                <dt className="eyebrow pt-0.5">Documented</dt>
-                <dd className="text-[15.5px] text-ink">{mediaCount(p)}{secs > 0 ? ` (${secondsLabel(secs)} of video, no sound)` : ""}</dd>
+              <div>
+                <dt className="eyebrow">Documented</dt>
+                <dd>{mediaCount(p)}{secs > 0 ? ` (${secondsLabel(secs)} of video, no sound)` : ""}</dd>
               </div>
-              <div className="grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line">
-                <dt className="eyebrow pt-0.5">Published</dt>
-                <dd className="text-[15.5px] text-ink"><time dateTime={published(p)}>{dateLabel(published(p))}</time></dd>
+              <div>
+                <dt className="eyebrow">Published</dt>
+                <dd><time dateTime={published(p)}>{dateLabel(published(p))}</time></dd>
               </div>
             </dl>
           </div>
           <div className="lg:col-span-7">
             <h2 className="text-h2-doc text-navy">{p.scopeHeading}</h2>
-            <ul role="list" className="mt-8 dash-list space-y-3 text-ink max-w-[68ch]">
+            <ul role="list" className="mt-8 mx-auto dash-list space-y-3 text-ink max-w-[38em]">
               {p.scope.map((line) => (
                 <li key={line}>{line}</li>
               ))}
@@ -319,11 +322,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             {p.materials && p.materials.length > 0 && (
               <>
                 <h3 className="mt-12 text-h3s text-navy">Materials</h3>
-                <ul role="list" className="mt-4 dash-list space-y-1.5 text-ink max-w-[68ch]">{p.materials.map((m) => <li key={m}>{m}</li>)}</ul>
+                <ul role="list" className="mt-4 mx-auto dash-list space-y-1.5 text-ink max-w-[38em]">{p.materials.map((m) => <li key={m}>{m}</li>)}</ul>
               </>
             )}
             <h3 className="mt-12 text-h3s text-navy">About {p.photos.length ? "these photos" : videos.length > 1 ? "these videos" : "this video"}</h3>
-            {p.notes.map((t) => <p key={t} className="mt-3 text-ink max-w-[68ch]">{t}</p>)}
+            {p.notes.map((t) => <p key={t} className="mt-3 mx-auto text-ink max-w-[38em]">{t}</p>)}
           </div>
         </div>
         {ctaGlance && (
@@ -340,7 +343,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <h2 id="photos-h" className="text-h2-doc text-navy">
               {p.stages.length > 1 ? "The job, stage by stage" : "Photos"}
             </h2>
-            <p className="mt-5 text-muted max-w-[38rem]">{`${p.photos.length} photo${p.photos.length === 1 ? "" : "s"}${p.stages.length > 1 ? ", in the order the work happened" : ""}. Select a photo to see it larger.`}</p>
+            <p className="mt-5 mx-auto text-muted max-w-[38em]">{`${p.photos.length} photo${p.photos.length === 1 ? "" : "s"}${p.stages.length > 1 ? ", in the order the work happened" : ""}. Select a photo to see it larger.`}</p>
             {p.stages.map((st, i) => {
               const ph = p.photos.filter((x) => x.stage === st.id);
               if (!ph.length) return null;
@@ -351,7 +354,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                       <span aria-hidden="true" className="block eyebrow tnum mb-2">{String(i + 1).padStart(2, "0")}</span> {st.label}
                     </h3>
                   )}
-                  {st.note && <p className="mt-3 text-muted max-w-[68ch]">{st.note}</p>}
+                  {st.note && <p className="mt-3 mx-auto text-muted max-w-[38em]">{st.note}</p>}
                   <div className={p.stages.length > 1 || st.note ? "mt-8" : ""}>
                     <Gallery photos={ph} label={`${p.shortTitle} photos`} />
                   </div>
@@ -371,14 +374,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           {joined("videos") && <Join />}
           <div className={`container-x ${joined("videos") ? "pt-[var(--section-doc-y)]" : ""}`}>
             <h2 id="videos-h" className="text-h2-doc text-navy">{videoFirst ? "More site videos" : "Site videos"}</h2>
-            <p className="mt-5 text-muted max-w-[38rem]">
+            <p className="mt-5 mx-auto text-muted max-w-[38em]">
               {`${restVideos.length} short clip${restVideos.length === 1 ? "" : "s"} filmed on the job. They have no sound, so each one has a written description.`}
             </p>
-            {/* Phones: a swipeable row (keeps the page short); tablet and up: a grid. */}
+            {/* Phones: a swipeable row (keeps the page short); tablet and up: centered rows. */}
             {/* Focusable + named so keyboard users can scroll the phone row (axe scrollable-region-focusable; video controls do not count). */}
-            <ul role="list" tabIndex={0} aria-labelledby="videos-h" className={`mt-10 -mx-5 px-5 scroll-px-5 pb-2 flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:mx-0 sm:px-0 sm:pb-0 sm:grid ${videoCols(restVideos.length)} sm:gap-x-6 sm:gap-y-10 sm:overflow-visible`}>
+            <ul role="list" tabIndex={0} aria-labelledby="videos-h" className="mt-10 -mx-5 px-5 scroll-px-5 pb-2 flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:mx-0 sm:px-0 sm:pb-0 sm:flex-wrap sm:justify-center sm:gap-x-6 sm:gap-y-10 sm:overflow-visible">
               {restVideos.map((v, i) => (
-                <li key={v.src} className="w-[72%] shrink-0 snap-start sm:w-auto">
+                <li key={v.src} className={`w-[72%] shrink-0 snap-start ${videoCols(restVideos.length)}`}>
                   <VideoFigure v={v} id={`video-${i + (videoFirst ? 2 : 1)}`} />
                 </li>
               ))}
@@ -395,7 +398,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           {joined("quote") && <Join />}
           <div className={`container-x ${joined("quote") ? "pt-[var(--section-doc-y)]" : ""}`}>
             <figure>
-              <blockquote className="font-display text-quote text-navy max-w-[40ch] [text-indent:-0.42em]">“{p.quote.text}”</blockquote>
+              <blockquote className="mx-auto font-display text-quote text-navy max-w-[40ch]">“{p.quote.text}”</blockquote>
               <figcaption className="mt-6 text-[15px] text-muted">— {p.quote.author}, shared with permission</figcaption>
             </figure>
           </div>
@@ -406,8 +409,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <section className={`section-doc ${bg("related")} ${joined("related") ? "pt-0" : ""}`} aria-labelledby="related-h">
         {joined("related") && <Join />}
         <div className={`container-x ${joined("related") ? "pt-[var(--section-doc-y)]" : ""}`}>
-          <h2 id="related-h" className="text-h2-doc text-navy max-w-[24em]">Related services{town ? ` and towns near ${town.n}` : ""}</h2>
-          <div className={`mt-10 grid gap-x-12 gap-y-12 md:grid-cols-2 ${relatedCols === 3 ? "lg:grid-cols-3" : ""}`}>
+          <h2 id="related-h" className="mx-auto text-h2-doc text-navy max-w-[24em]">Related services{town ? ` and towns near ${town.n}` : ""}</h2>
+          <div className={`mt-10 grid-center [--gx:3rem] gap-y-12 md:[--cols:2] ${relatedCols === 3 ? "lg:[--cols:3]" : ""}`}>
             <div className="border-t border-line pt-5">
               <h3 className="eyebrow">The {svcs.length > 1 ? "services" : "service"} in this project</h3>
               <ul role="list" className="mt-4 space-y-3">
@@ -448,7 +451,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               <div className="border-t border-line pt-5">
                 <h3 className="eyebrow">Guides for this kind of project</h3>
                 {town && isNH(town) && (
-                  <p className="mt-3 text-sm text-muted">These guides are written for Massachusetts. New Hampshire has no statewide contractor license, and permits come from each town&apos;s building department.</p>
+                  <p className="mt-3 mx-auto max-w-[36em] text-sm text-muted">These guides are written for Massachusetts. New Hampshire has no statewide contractor license, and permits come from each town&apos;s building department.</p>
                 )}
                 <ul role="list" className="mt-4 space-y-3">
                   {guides.map((g) => (
@@ -472,7 +475,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         <section className={`section-doc ${bg("more")} ${joined("more") ? "pt-0" : ""}`} aria-labelledby="more-h">
           {joined("more") && <Join />}
           <div className={`container-x ${joined("more") ? "pt-[var(--section-doc-y)]" : ""}`}>
-            <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+            {/* Stacked, centered head: the H2, then the link to the full index under it. */}
+            <div className="flex flex-col items-center gap-y-2">
               <h2 id="more-h" className="text-h2-doc text-navy">More projects</h2>
               <Link href="/gallery" className="link-arrow"><ArrowLabel text={`See all ${projects.length} projects`} /></Link>
             </div>
@@ -488,7 +492,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                     <span>{mediaCount(o)}</span>
                   </p>
                   <h3 className="text-h3s"><Link href={path(o)}>{o.title}</Link></h3>
-                  <span className="link-arrow text-sm mt-auto pt-3 self-start"><ArrowLabel text="View the case study" /></span>
+                  <span className="link-arrow text-sm mt-auto pt-3 self-center"><ArrowLabel text="View the case study" /></span>
                 </li>
               ))}
             </ul>
@@ -499,9 +503,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {/* CTA — the page's one navy band, last (after More projects) */}
       <section className="section bg-navy text-white on-dark">
         <div className="container-x">
-          <h2 className="text-h2 text-white max-w-[18em]">Planning a similar project?</h2>
-          <p className="mt-5 text-lead text-white/80 max-w-[36em]">Tell us about your house and what you want to change. Estimates are free and there is no obligation.</p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <h2 className="mx-auto text-h2 text-white max-w-[18em]">Planning a similar project?</h2>
+          <p className="mt-5 mx-auto text-lead text-white/80 max-w-[34em]">Tell us about your house and what you want to change. Estimates are free and there is no obligation.</p>
+          <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
             <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>

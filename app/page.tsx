@@ -67,17 +67,14 @@ const ld = pageGraph(
   { business: "full" },
 );
 
-// Facts dl (§4.28): each dt/dd pair on its own hairline row.
-const FACT = "grid sm:grid-cols-[10rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line";
-const FACT_DD = "text-[15.5px] text-ink";
-// Two-column hairline index (§4.14): at lg each column starts on its own top rule (no rule across the gap).
-const TWO_COL_RULES = "lg:border-t-0 lg:[&>li:nth-child(-n+2)]:border-t lg:[&>li:nth-child(-n+2)]:border-line";
-// Split section heads (§4.10): below lg the intro is not an h2 sibling, so it carries its own rhythm and colour.
-const SPLIT_P = "mt-5 max-w-[38rem] text-lead text-muted lg:mt-0 lg:max-w-none";
+// Two-column hairline index (§4.14): at lg each column starts on its own top rule (no rule across the gap). An odd last
+// item spans both columns, so the centered index never ends on a lone item in the left column.
+const TWO_COL_RULES = "lg:border-t-0 lg:[&>li:nth-child(-n+2)]:border-t lg:[&>li:nth-child(-n+2)]:border-line lg:[&>li:last-child:nth-child(odd)]:col-span-2";
 // Decorative card/step index. Drawn with CSS generated content from data-n, so it is seen but adds no text
 // node: the page's visible text stays word-for-word what it was (aria-hidden as well).
-// Painting title plate (no photo): same 4:3 box as the photo cards; name bottom-left in Newsreader 400 navy.
-const PLATE = "absolute inset-3 border border-line flex items-end p-5 sm:p-6 font-display text-[2.125rem] leading-[1.06] tracking-[-0.01em] text-navy text-balance before:content-[attr(data-name)]";
+// Painting title plate (no photo): same 4:3 box as the photo cards; name bottom-centre in Newsreader 400 navy (centered
+// like the card text under it).
+const PLATE = "absolute inset-3 border border-line flex items-end justify-center text-center p-5 sm:p-6 font-display text-[2.125rem] leading-[1.06] tracking-[-0.01em] text-navy text-balance before:content-[attr(data-name)]";
 const Index = ({ n, className = "" }: { n: number; className?: string }) => (
   <span aria-hidden="true" data-n={String(n).padStart(2, "0")} className={`before:content-[attr(data-n)] ${className}`} />
 );
@@ -88,47 +85,41 @@ export default function Home() {
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — split: the job photo under a neutral black scrim carries the keyword + entity H1 and the answer-first
-          paragraph on the left (7/12 from lg, bleeding to the left viewport edge); the right 5/12 is plain paper holding
-          the bare estimate form (never over the photo). Below lg the photo block comes first, then the form on paper. */}
-      <section data-cta-zone className="relative overflow-hidden bg-paper">
-        <div className="container-x grid grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
-          <div className="relative -mx-5 px-5 md:-mx-8 md:px-8 lg:mx-0 lg:px-0 lg:pr-12 lg:col-span-7 bg-scrim">
-            {/* Photo layer: the block's own box below lg; from lg it reaches back to the viewport's left edge
-                (container gutter + side margin), so the photo bleeds left while the text keeps the page's one left edge. */}
-            <div className="absolute inset-0 lg:left-[calc(-1*(max(0px,(100vw_-_1200px)/2)_+_2rem))]">
-              <Image src={HERO} alt="Kitchen remodeled by Waterfront Construction in Mansfield, MA, with white shaker-style cabinets, a dark stone-look island and glass pendant lights"
-                fill loading="eager" fetchPriority="high" quality={60} sizes="(min-width:1024px) 60vw, 100vw" className="object-cover" />
-              {/* Below lg the tuned vertical scrim; from lg the copy fills the whole photo block, so an even .72 black
-                  (no gradient) keeps every line of white text at AA over the brightest pixels. */}
-              <div aria-hidden="true" className="absolute inset-0 scrim-hero lg:hidden" />
-              <div aria-hidden="true" className="absolute inset-0 hidden lg:block bg-scrim/72" />
+      {/* HERO — keyword + entity H1, answer-first paragraph, and the bare GHL estimate form beside it (no card, no
+          background: the owner wants the form exactly as GHL renders it). Neutral black scrim only (§2): below lg the
+          photo band fades to solid scrim, so the form sits on black. */}
+      <section data-cta-zone className="relative overflow-hidden bg-scrim">
+        <div className="absolute inset-x-0 top-0 h-[min(100svh,720px)] lg:inset-0 lg:h-auto">
+          <Image src={HERO} alt="Kitchen remodeled by Waterfront Construction in Mansfield, MA, with white shaker-style cabinets, a dark stone-look island and glass pendant lights"
+            fill loading="eager" fetchPriority="high" quality={60} sizes="100vw" className="object-cover" />
+          <div aria-hidden="true" className="absolute inset-0 scrim-hero" />
+        </div>
+        <div className="relative container-x pt-8 pb-14 md:py-20 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
+          <div className="text-white on-photo">
+            {/* .dot-list-wrap (globals.css): centered; stacked below sm, one dotted line from sm. A registration line
+                (once lib/site.ts holds the numbers) is too long to share the line, so the list then stacks everywhere. */}
+            <ul className={`dot-list-wrap eyebrow${credentials ? " dot-list-wrap--stack" : ""}`}>
+              <li>Free estimates</li>
+              <li>Owner-led since {site.founded}</li>
+              {credentials && <li>{credentials}</li>}
+            </ul>
+            {/* Phones narrower than 375px step the display size down so the nowrap "Northborough, MA" fits its line
+                (40px would overflow the 280px content box at 320); 375px and up use the --text-display clamp. */}
+            <h1 className="mt-4 md:mt-5 text-display max-[359px]:text-[2.125rem] min-[360px]:max-[374px]:text-[2.375rem] text-balance text-white max-w-[12em] mx-auto">
+              Remodeling contractor in <span className="whitespace-nowrap">Northborough, MA</span>
+            </h1>
+            <p className="mt-5 md:mt-6 text-base md:text-lg leading-[1.62] text-white/90 max-w-[34em] mx-auto">{ENTITY}</p>
+            <div className="mt-7 md:mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
+              <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
+              <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
             </div>
-            <div className="relative pt-8 pb-14 md:py-20 text-white on-photo">
-              {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
-              <ul className="dot-list-wrap eyebrow">
-                <li>Free estimates</li>
-                <li>Owner-led since {site.founded}</li>
-                {credentials && <li>{credentials}</li>}
-              </ul>
-              {/* Phones narrower than 375px step the display size down so the nowrap "Northborough, MA" fits its line
-                  (40px would overflow the 280px content box at 320); 375px and up use the --text-display clamp. */}
-              <h1 className="mt-4 md:mt-5 text-display max-[359px]:text-[2.125rem] min-[360px]:max-[374px]:text-[2.375rem] text-balance text-white max-w-[12em]">
-                Remodeling contractor in <span className="whitespace-nowrap">Northborough, MA</span>
-              </h1>
-              <p className="mt-5 md:mt-6 text-base md:text-lg leading-[1.62] text-white/90 max-w-[36em]">{ENTITY}</p>
-              <div className="mt-7 md:mt-8 flex flex-col sm:flex-row gap-3">
-                <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
-                <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
-              </div>
-              <ul className="mt-6 md:mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/85">
-                <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Itemized estimates</li>
-                <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />{site.projectsCompleted}+ projects completed</li>
-                <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Insured</li>
-              </ul>
-            </div>
+            <ul className="mt-6 md:mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-white/85">
+              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Itemized estimates</li>
+              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />{site.projectsCompleted}+ projects completed</li>
+              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Insured</li>
+            </ul>
           </div>
-          <EstimateForm className="lg:col-span-5 self-start min-w-0 pt-10 md:pt-14 lg:pt-20" />
+          <EstimateForm className="self-start lg:self-center min-w-0" />
         </div>
       </section>
 
@@ -151,29 +142,30 @@ export default function Home() {
           <div className="lg:col-span-7">
             <p className="eyebrow">About us</p>
             <h2 id="about-h" className="mt-4 text-h2 text-navy">Owner-led remodeling, based in Northborough since {site.founded}</h2>
-            <p className="mt-5 text-lead text-ink/80 max-w-[38rem]">
+            <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">
               {`${site.owner} founded ${site.name} in Northborough, Massachusetts, in ${site.founded}, and has ${site.experience}+ years of hands-on construction experience. The company has completed ${site.projectsCompleted}+ projects, in ${site.townsWithProjects}+ towns, from kitchens and bathrooms to additions, decks and exteriors.`}
             </p>
-            <dl className="mt-8 border-t border-line">
-              <div className={FACT}><dt className="eyebrow pt-0.5">Business</dt><dd className={FACT_DD}>{site.name}</dd></div>
-              <div className={FACT}>
-                <dt className="eyebrow pt-0.5">Owner</dt>
-                <dd className={FACT_DD}><Link href={OWNER_PAGE} className="link">{site.owner}</Link>, {site.experience}+ years of hands-on construction experience</dd>
+            {/* .facts (globals.css): label over value, centered, one hairline row per pair. */}
+            <dl className="mt-8 facts">
+              <div><dt className="eyebrow">Business</dt><dd>{site.name}</dd></div>
+              <div>
+                <dt className="eyebrow">Owner</dt>
+                <dd><Link href={OWNER_PAGE} className="link">{site.owner}</Link>, {site.experience}+ years of hands-on construction experience</dd>
               </div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Founded</dt><dd className={FACT_DD}>{site.founded}, Northborough, MA</dd></div>
-              {credentials && (<div className={FACT}><dt className="eyebrow pt-0.5">Registration</dt><dd className={FACT_DD}>{credentials}</dd></div>)}
-              <div className={FACT}><dt className="eyebrow pt-0.5">Insurance</dt><dd className={FACT_DD}>Insured; certificate of insurance on request</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Track record</dt><dd className={FACT_DD}>{site.projectsCompleted}+ projects completed, in {site.townsWithProjects}+ towns</dd></div>
-              <div className={FACT}>
-                <dt className="eyebrow pt-0.5">Service area</dt>
-                <dd className={FACT_DD}>{AREA_SENTENCE} (<Link href="/service-areas" className="link">full list</Link>)</dd>
+              <div><dt className="eyebrow">Founded</dt><dd>{site.founded}, Northborough, MA</dd></div>
+              {credentials && (<div><dt className="eyebrow">Registration</dt><dd>{credentials}</dd></div>)}
+              <div><dt className="eyebrow">Insurance</dt><dd>Insured; certificate of insurance on request</dd></div>
+              <div><dt className="eyebrow">Track record</dt><dd>{site.projectsCompleted}+ projects completed, in {site.townsWithProjects}+ towns</dd></div>
+              <div>
+                <dt className="eyebrow">Service area</dt>
+                <dd>{AREA_SENTENCE} (<Link href="/service-areas" className="link">full list</Link>)</dd>
               </div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Address</dt><dd className={FACT_DD}>{displayAddress}</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Phone · Hours</dt><dd className={FACT_DD}><a href={site.phoneHref} className="link tel">{site.phone}</a> · {site.hours}</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Estimates</dt><dd className={FACT_DD}>Free and itemized</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Financing</dt><dd className={FACT_DD}>Not offered</dd></div>
+              <div><dt className="eyebrow">Address</dt><dd>{displayAddress}</dd></div>
+              <div><dt className="eyebrow">Phone · Hours</dt><dd><a href={site.phoneHref} className="link tel">{site.phone}</a> · {site.hours}</dd></div>
+              <div><dt className="eyebrow">Estimates</dt><dd>Free and itemized</dd></div>
+              <div><dt className="eyebrow">Financing</dt><dd>Not offered</dd></div>
             </dl>
-            <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-x-6">
+            <div className="mt-8 flex flex-col sm:flex-row items-center sm:justify-center gap-3 sm:gap-x-6">
               <Link href={OWNER_PAGE} className="btn btn-secondary w-full sm:w-auto">Meet {site.owner}</Link>
               <Link href="/about" className="link-arrow"><ArrowLabel text="About the company" /></Link>
             </div>
@@ -189,7 +181,7 @@ export default function Home() {
               <p className="eyebrow">What we do</p>
               <h2 id="services-h" className="text-h2 text-navy">Our remodeling services</h2>
             </div>
-            <p className={SPLIT_P}>Six services from one owner-led company, inside and outside the house.</p>
+            <p className="text-balance">Six services from one owner-led company, inside and outside the house.</p>
           </div>
           {/* From sm each card is a row subgrid (media, index, title, body, timeline), so titles, bodies and timelines
               line up across a row without a fixed title reserve.
@@ -244,9 +236,9 @@ export default function Home() {
                 <h3 className="text-h3s text-navy">{c.t}</h3>
                 <p className="mt-2 mb-4 text-[15.5px] text-muted">{c.d}</p>
                 {c.href.startsWith("#") ? (
-                  <a href={c.href} className="link-arrow text-sm mt-auto self-start"><ArrowLabel text={c.cta} /></a>
+                  <a href={c.href} className="link-arrow text-sm mt-auto self-center"><ArrowLabel text={c.cta} /></a>
                 ) : (
-                  <Link href={c.href} className="link-arrow text-sm mt-auto self-start"><ArrowLabel text={c.cta} /></Link>
+                  <Link href={c.href} className="link-arrow text-sm mt-auto self-center"><ArrowLabel text={c.cta} /></Link>
                 )}
               </li>
             ))}
@@ -265,7 +257,7 @@ export default function Home() {
               <p className="eyebrow">Our work</p>
               <h2 id="recent-h" className="text-h2 text-navy">Recent projects</h2>
             </div>
-            <p className={SPLIT_P}>Photos from our own jobs. Each one opens its project case study.</p>
+            <p className="text-balance">Photos from our own jobs. Each one opens its project case study.</p>
           </div>
           <ul className="flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar -mx-5 px-5 scroll-px-5 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible">
             {RECENT.map((r) => {
@@ -322,13 +314,13 @@ export default function Home() {
           <div className="section-head">
             <p className="eyebrow">Plan your budget</p>
             <h2 id="guides-h" className="text-h2 text-navy">Massachusetts cost guides</h2>
-            <p>New England cost benchmarks, what moves the price, permits and timing, with sources.</p>
+            <p className="text-balance">New England cost benchmarks, what moves the price, permits and timing, with sources.</p>
           </div>
           <ul role="list" className={`rule-list grid lg:grid-cols-2 gap-x-12 ${TWO_COL_RULES}`}>
             {posts.filter((p) => p.category === "Cost guides").map((p) => (
               <li key={p.slug} className="py-6">
                 <h3 className="font-display text-h3s text-navy"><Link href={`/blog/${p.slug}`} className="hover:underline underline-offset-4"><ArrowLabel text={p.title} /></Link></h3>
-                <p className="mt-2 text-[15px] text-muted max-w-[60ch]">{p.excerpt}</p>
+                <p className="mt-2 mx-auto text-[15px] text-muted max-w-[34em]">{p.excerpt}</p>
               </li>
             ))}
           </ul>
@@ -345,9 +337,9 @@ export default function Home() {
           </div>
           <ul className="grid lg:grid-cols-3 gap-y-12 lg:-mx-8">
             {testimonials.slice(0, 3).map((t) => (
-              <li key={t.name} className="max-w-[34rem] lg:max-w-none lg:px-8 lg:border-l lg:first:border-l-0 border-white/14">
+              <li key={t.name} className="max-w-[34rem] mx-auto lg:max-w-none lg:px-8 lg:border-l lg:first:border-l-0 border-white/14">
                 <figure className="h-full flex flex-col">
-                  <blockquote className="flex-1 font-display text-[1.375rem] md:text-2xl leading-[1.4] text-white [text-indent:-0.42em]">
+                  <blockquote className="flex-1 font-display text-[1.375rem] md:text-2xl leading-[1.4] text-white">
                     <p>&ldquo;{t.text}&rdquo;</p>
                   </blockquote>
                   <figcaption className="mt-6 pt-4 border-t border-white/14">
@@ -358,7 +350,7 @@ export default function Home() {
               </li>
             ))}
           </ul>
-          <div className="mt-12 flex flex-col sm:flex-row gap-3">
+          <div className="mt-12 flex flex-col sm:flex-row sm:justify-center gap-3">
             <Link href="/reviews" className="btn btn-white w-full sm:w-auto">Read all testimonials</Link>
             <a href={site.gbp} target="_blank" rel="noopener" className="btn btn-on-dark w-full sm:w-auto">Our Google reviews<ArrowUpRightIcon /></a>
           </div>
@@ -367,23 +359,23 @@ export default function Home() {
 
       {/* FAQ — answer-first, the same text as /faq (the FAQPage markup lives on /faq only, V4.1) */}
       <section className="section" aria-labelledby="faq-h">
-        <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-10">
-          <div className="lg:col-span-4 lg:sticky lg:top-28 self-start">
+        <div className="container-x">
+          <div className="max-w-[40rem] mx-auto">
             <p className="eyebrow">Good to know</p>
             <h2 id="faq-h" className="mt-4 text-h2 text-navy">Frequently asked questions</h2>
             <p className="mt-5 text-muted">Costs, permits, registration and more on our <Link href="/faq" className="link">full FAQ page</Link>.</p>
-            <div className="mt-8 flex flex-col sm:flex-row lg:flex-col sm:items-center lg:items-start gap-3 sm:gap-x-6">
+            <div className="mt-8 flex flex-col sm:flex-row items-center sm:justify-center gap-3 sm:gap-x-6">
               <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span></a>
               <Link href="/faq" className="link-arrow"><ArrowLabel text="All questions" /></Link>
             </div>
           </div>
-          <div className="lg:col-span-8"><FaqList items={homeFaqs} /></div>
+          <div className="mt-12 max-w-[48rem] mx-auto"><FaqList items={homeFaqs} /></div>
         </div>
       </section>
 
       {/* WHERE WE WORK — county index linking the /service-areas county sections (replaces 39 town chips, 01 H4).
-          County names never wrap (nowrap). In the one-column index (sm to lg) the meta sits right-aligned beside the name;
-          in the narrower two-column index (lg+) and below sm it stacks under the name, so it stays on one line. */}
+          County names never wrap (nowrap). Every row is centered: the name, then its meta line under it, at every width
+          (one column below lg, two from lg). */}
       <section className="section bg-stone" aria-labelledby="area-h">
         <div className="container-x">
           <div className="section-head section-head--split">
@@ -391,18 +383,18 @@ export default function Home() {
               <p className="eyebrow">Where we work</p>
               <h2 id="area-h" className="text-h2 text-navy">{serviceArea.short}</h2>
             </div>
-            <p className={SPLIT_P}>{`From our base in Northborough we take projects in ${AREA_SENTENCE}.`}</p>
+            <p className="text-balance">{`From our base in Northborough we take projects in ${AREA_SENTENCE}.`}</p>
           </div>
           <ul className={`rule-list grid lg:grid-cols-2 gap-x-12 ${TWO_COL_RULES}`}>
             {counties.map((g) => (
               <li key={g.id}>
-                <Link href={`/service-areas#${g.id}`} className="grid sm:grid-cols-[auto_1fr] lg:grid-cols-1 gap-x-6 gap-y-1 items-baseline py-5 group">
-                  <span className="font-display text-[1.25rem] leading-snug text-navy whitespace-nowrap group-hover:underline underline-offset-4 decoration-1"><Typeset text={`${g.county}, ${g.state}`} /></span>
-                  <span className="text-sm text-muted tnum sm:text-right lg:text-left">
+                <Link href={`/service-areas#${g.id}`} className="block py-5 group">
+                  <span className="block font-display text-[1.25rem] leading-snug text-navy whitespace-nowrap group-hover:underline underline-offset-4 decoration-1"><Typeset text={`${g.county}, ${g.state}`} /></span>
+                  <span className="block mt-1 text-sm text-muted tnum">
                     {g.towns.length === 1 ? "1 community" : `${g.towns.length} communities`} · {g.min === 0 ? `up to ${g.max}` : g.min === g.max ? `${g.min}` : `${g.min}–${g.max}`} mi from Northborough
                   </span>
                   {g.projects.length > 0 && (
-                    <span className="sm:col-span-2 lg:col-span-1 mt-1 text-[13px] text-muted">
+                    <span className="block mt-1 mx-auto max-w-[34em] text-[13px] text-muted">
                       Case {g.projects.length > 1 ? "studies" : "study"}: {[...new Set(g.projects.map((p) => p.location))].join(", ")}
                     </span>
                   )}
@@ -418,7 +410,7 @@ export default function Home() {
       <section className="section text-center" data-cta-zone>
         <div className="container-x">
           <h2 className="text-h1 text-navy max-w-[18em] mx-auto">Planning a remodel?</h2>
-          <p className="mt-5 text-lead text-muted max-w-[36em] mx-auto">Get a free, no-obligation estimate from an owner-led contractor based in Northborough.</p>
+          <p className="mt-5 text-lead text-muted max-w-[34em] mx-auto text-balance">Get a free, no-obligation estimate from an owner-led contractor based in Northborough.</p>
           <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
             <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
             <a href={site.phoneHref} className="btn btn-secondary tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>

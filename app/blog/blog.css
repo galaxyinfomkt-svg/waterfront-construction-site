@@ -1,4 +1,6 @@
 /* Blog article typography ("Paper & Ink", design spec §4.25). Scoped to .post so it can't leak into other pages.
+   The running text stays LEFT-aligned (the one exception to the centered site, globals.css "CENTERED SITE"); what is
+   not running text is centered here: table captions, the CTA rows (CtaRow centers itself) and the publisher box.
    Tokens only (app/globals.css @theme): no hex colours in this file. Lists use a 10x1 dash, a check mask
    or an alert mask; warnings and cons are never drawn as "checks". */
 .post { color: var(--color-ink); font-size: 17px; line-height: 1.65; }
@@ -43,7 +45,7 @@
   background: white; border: 1px solid var(--color-line); border-radius: var(--radius-panel); }
 /* Tabular figures only on number cells (§4.25): the global table tnum would widen hyphens in text cells and the caption. */
 .post table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; font-variant-numeric: normal; }
-.post caption { caption-side: top; text-align: left; font-family: var(--font-sans); font-weight: 600; font-size: 15px; line-height: 1.4; color: var(--color-ink); padding: 1rem 1rem .9rem; }
+.post caption { caption-side: top; text-align: center; font-family: var(--font-sans); font-weight: 600; font-size: 15px; line-height: 1.4; color: var(--color-ink); padding: 1rem 1rem .9rem; }
 .post th, .post td { border: 0; border-bottom: 1px solid var(--color-line); padding: .75rem 1rem; text-align: left; vertical-align: top; }
 .post tbody tr:last-child > * { border-bottom: 0; }
 .post thead th { background: var(--color-stone); color: var(--color-muted); vertical-align: bottom; font-weight: 600; font-size: .75rem; line-height: 1.4;
@@ -100,7 +102,8 @@
 .post .toc a:hover { text-decoration: underline 1px; }
 .post .small-note { font-size: 15px; color: var(--color-muted); }
 
-.post .author-box { margin-top: 2.5rem; border-top: 1px solid var(--color-line); padding-top: 1.5rem; }
+/* Publisher box: a centered sign-off under the left-aligned article. */
+.post .author-box { margin-top: 2.5rem; border-top: 1px solid var(--color-line); padding-top: 1.5rem; text-align: center; }
 .post .author-box h2 { margin: 0 0 .75rem; font-family: var(--font-sans); font-weight: 600; font-size: .75rem; line-height: 1.4; letter-spacing: .16em;
   text-transform: uppercase; font-feature-settings: "case"; color: var(--color-muted); }
 .post .author-box p { font-size: 16.5px; margin-bottom: .6rem; }

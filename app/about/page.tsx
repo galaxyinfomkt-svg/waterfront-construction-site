@@ -51,17 +51,15 @@ const ld = pageGraph(
   { business: "full" },
 );
 
-// Facts dl (§4.28): each dt/dd pair on its own hairline row.
-const FACT = "grid sm:grid-cols-[10rem_1fr] lg:grid-cols-[13rem_1fr] gap-x-6 gap-y-1 py-3.5 border-b border-line";
-const FACT_DD = "text-[15.5px] text-ink";
 // Two-column hairline index (§4.14): at lg each column starts on its own top rule (no rule across the gap).
-const TWO_COL_RULES = "lg:border-t-0 lg:[&>li:nth-child(-n+2)]:border-t lg:[&>li:nth-child(-n+2)]:border-line";
+const TWO_COL_RULES = "lg:border-t-0 lg:[&>li:nth-child(-n+2)]:border-t lg:[&>li:nth-child(-n+2)]:border-line lg:[&>li:last-child:nth-child(odd)]:col-span-2";
 // Decorative index, drawn from data-n with CSS generated content: seen, but no text node (visible words unchanged).
 const Index = ({ n, className = "" }: { n: number; className?: string }) => (
   <span aria-hidden="true" data-n={String(n).padStart(2, "0")} className={`before:content-[attr(data-n)] ${className}`} />
 );
-// Projects grid: rows of four, then rows of three (7 case studies = 4 + 3, design spec §6 About).
-const projectSpan = (i: number, n: number) => (i < (n % 3 === 1 ? 4 : n % 3 === 2 ? 8 : 0) ? "lg:col-span-3" : "lg:col-span-4");
+// Projects grid: rows of four, then rows of three (7 case studies = 4 + 3, design spec §6 About). A .grid-center row:
+// each card sets its own --cols at lg, and a short row (2 per row from sm) is centered.
+const projectSpan = (i: number, n: number) => (i < (n % 3 === 1 ? 4 : n % 3 === 2 ? 8 : 0) ? "lg:[--cols:4]" : "lg:[--cols:3]");
 
 export default function AboutPage() {
   const counties = countyGroups();
@@ -76,15 +74,15 @@ export default function AboutPage() {
     <>
       <JsonLd data={ld} />
 
-      {/* HEADER — text-only page head (no stock photo). Text on the left (7/12); the bare estimate form (the page's
-          ONE EstimateForm) in the right 5/12 from lg, after the hero text on phones. */}
+      {/* HEADER — text-only page head (no stock photo). Centered text on the left (7/12); the bare estimate form (the
+          page's ONE EstimateForm) in the right 5/12 from lg, after the hero text on phones. */}
       <section className="page-head" data-cta-zone>
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-balance text-navy">{H1}</h1>
-            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">{LEAD}</p>
+            <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
               <EstimateLink className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</EstimateLink>
               <a href={site.phoneHref} className="btn btn-secondary tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
             </div>
@@ -104,57 +102,57 @@ export default function AboutPage() {
                 <Image src={site.ownerPhoto} alt={`${site.owner}, owner of ${site.name}`} fill quality={60} sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" />
               </figure>
             )}
-            <p className="mt-6 text-lead text-ink/80">
+            <p className="mt-6 text-lead text-ink/80 max-w-[34em] mx-auto">
               {`${site.owner} founded ${site.name} in Northborough in ${site.founded} and leads it today. He has ${site.experience}+ years of hands-on construction experience.`}
             </p>
-            <p className="mt-4 text-muted">
+            <p className="mt-4 text-muted max-w-[38em] mx-auto">
               {`The company has completed ${site.projectsCompleted}+ projects in ${site.townsWithProjects}+ towns, across six services: ${services.map((s) => s.short.toLowerCase()).join(", ")}. Every project starts with a free, itemized estimate.`}
             </p>
             {credentials && <p className="mt-4 font-medium text-ink">{credentials}</p>}
-            <div className="mt-8 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-x-6">
+            <div className="mt-8 flex flex-col items-center sm:flex-row sm:justify-center gap-3 sm:gap-x-6">
               <Link href={OWNER_PAGE} className="btn btn-secondary w-full sm:w-auto">{`${site.owner}'s profile`}</Link>
               <Link href="/services" className="link-arrow"><ArrowLabel text="Our services" /></Link>
             </div>
           </div>
 
-          {/* Facts block: plain HTML, one fact per row, mirrored in the business JSON-LD (06 ST-H1, 09 AEO-H2) */}
+          {/* Facts block (.facts, globals.css: label over value, centered): plain HTML, one fact per row, mirrored in the business JSON-LD (06 ST-H1, 09 AEO-H2) */}
           <div>
             <h2 className="text-h3 text-navy">Company facts</h2>
-            <dl className="mt-6 border-t border-line">
-              <div className={FACT}><dt className="eyebrow pt-0.5">Company</dt><dd className={FACT_DD}>{site.name}</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Founded</dt><dd className={FACT_DD}>{site.founded}, in Northborough, MA</dd></div>
-              <div className={FACT}>
-                <dt className="eyebrow pt-0.5">Owner</dt>
-                <dd className={FACT_DD}><Link href={OWNER_PAGE} className="link">{site.owner}</Link>, {site.experience}+ years of hands-on construction experience</dd>
+            <dl className="facts mt-6">
+              <div><dt className="eyebrow">Company</dt><dd>{site.name}</dd></div>
+              <div><dt className="eyebrow">Founded</dt><dd>{site.founded}, in Northborough, MA</dd></div>
+              <div>
+                <dt className="eyebrow">Owner</dt>
+                <dd><Link href={OWNER_PAGE} className="link">{site.owner}</Link>, {site.experience}+ years of hands-on construction experience</dd>
               </div>
-              {credentials && (<div className={FACT}><dt className="eyebrow pt-0.5">Registration</dt><dd className={FACT_DD}>{credentials}</dd></div>)}
-              <div className={FACT}><dt className="eyebrow pt-0.5">Insurance</dt><dd className={FACT_DD}>Insured; certificate of insurance on request</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Projects completed</dt><dd className={FACT_DD}>{site.projectsCompleted}+</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Towns with completed projects</dt><dd className={FACT_DD}>{site.townsWithProjects}+</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Case studies on this site</dt><dd className={FACT_DD}><Link href="/gallery" className="link -my-1 inline-block py-1 pr-1"><ArrowLabel text={String(projects.length)} /></Link></dd></div>
-              <div className={FACT}>
-                <dt className="eyebrow pt-0.5">Service area</dt>
-                <dd className={FACT_DD}>{AREA_SENTENCE} (<Link href="/service-areas" className="link">every town</Link>)</dd>
+              {credentials && (<div><dt className="eyebrow">Registration</dt><dd>{credentials}</dd></div>)}
+              <div><dt className="eyebrow">Insurance</dt><dd>Insured; certificate of insurance on request</dd></div>
+              <div><dt className="eyebrow">Projects completed</dt><dd>{site.projectsCompleted}+</dd></div>
+              <div><dt className="eyebrow">Towns with completed projects</dt><dd>{site.townsWithProjects}+</dd></div>
+              <div><dt className="eyebrow">Case studies on this site</dt><dd><Link href="/gallery" className="link -my-1 inline-block py-1 pr-1"><ArrowLabel text={String(projects.length)} /></Link></dd></div>
+              <div>
+                <dt className="eyebrow">Service area</dt>
+                <dd>{AREA_SENTENCE} (<Link href="/service-areas" className="link">every town</Link>)</dd>
               </div>
-              <div className={FACT}>
-                <dt className="eyebrow pt-0.5">Services</dt>
-                <dd className={FACT_DD}>
+              <div>
+                <dt className="eyebrow">Services</dt>
+                <dd>
                   {/* Stacked links. The list commas stay in the text (screen readers, copy, visible-text parity) but are not
-                      drawn; inline (not sr-only, which is absolutely positioned) so they do not break the line. */}
+                      drawn; absolute at their static place (no width), so each centered link stays exactly centered. */}
                   {services.map((s, i) => (
-                    <span key={s.slug} className="block">
+                    <span key={s.slug} className="block relative">
                       <Link href={`/services/${s.slug}`} className="link-nav inline-block py-1">{s.short}</Link>
-                      {i < services.length - 1 && <span className="opacity-0">, </span>}
+                      {i < services.length - 1 && <span className="absolute opacity-0">, </span>}
                     </span>
                   ))}
                 </dd>
               </div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Address</dt><dd className={FACT_DD}>{displayAddress}</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Phone</dt><dd className={FACT_DD}><a href={site.phoneHref} className="link tel">{site.phone}</a></dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Email</dt><dd className={`${FACT_DD} [overflow-wrap:anywhere]`}><a href={site.emailHref} className="link">{site.email}</a></dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Hours</dt><dd className={FACT_DD}>{site.hours}</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Estimates</dt><dd className={FACT_DD}>Free and itemized</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Financing</dt><dd className={FACT_DD}>Not offered</dd></div>
+              <div><dt className="eyebrow">Address</dt><dd>{displayAddress}</dd></div>
+              <div><dt className="eyebrow">Phone</dt><dd><a href={site.phoneHref} className="link tel">{site.phone}</a></dd></div>
+              <div><dt className="eyebrow">Email</dt><dd className="[overflow-wrap:anywhere]"><a href={site.emailHref} className="link">{site.email}</a></dd></div>
+              <div><dt className="eyebrow">Hours</dt><dd>{site.hours}</dd></div>
+              <div><dt className="eyebrow">Estimates</dt><dd>Free and itemized</dd></div>
+              <div><dt className="eyebrow">Financing</dt><dd>Not offered</dd></div>
             </dl>
           </div>
         </div>
@@ -179,7 +177,7 @@ export default function AboutPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-12 text-muted max-w-[60ch]">
+          <p className="mt-12 text-muted max-w-[38em] mx-auto">
             Questions about registration, permits, contracts or cost? <Link href="/faq" className="link">Read our pre-hire FAQ</Link>.
           </p>
         </div>
@@ -197,7 +195,7 @@ export default function AboutPage() {
             <h2 id="work-h" className="text-h2 text-navy">Projects documented on this site</h2>
             <p>{`${projects.length} case studies documented with our own photos and site videos.`}</p>
           </div>
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-12 gap-x-8 gap-y-12">
+          <ul className="grid-center sm:[--cols:2] gap-y-12">
             {projects.map((p, i) => {
               const img = projectCardImage(p);
               return (
@@ -225,15 +223,15 @@ export default function AboutPage() {
           </div>
           <ul className="grid lg:grid-cols-3 gap-y-12 lg:-mx-8">
             {shownTestimonials.map((t) => (
-              <li key={t.name} className="max-w-[34rem] lg:max-w-none lg:px-8 lg:border-l lg:first:border-l-0 border-line">
+              <li key={t.name} className="max-w-[34rem] mx-auto lg:max-w-none lg:mx-0 lg:px-8 lg:border-l lg:first:border-l-0 border-line">
                 <figure className="h-full flex flex-col">
-                  <blockquote className="flex-1 font-display text-[1.375rem] md:text-2xl leading-[1.4] text-navy [text-indent:-0.42em]"><p>&ldquo;{t.text}&rdquo;</p></blockquote>
+                  <blockquote className="flex-1 font-display text-[1.375rem] md:text-2xl leading-[1.4] text-navy text-balance"><p>&ldquo;{t.text}&rdquo;</p></blockquote>
                   <figcaption className="mt-6 pt-4 border-t border-line"><span className="block text-sm font-semibold text-ink">{t.name}</span><span className="block text-[13px] text-muted">{t.town}</span></figcaption>
                 </figure>
               </li>
             ))}
           </ul>
-          <div className="mt-12 flex flex-wrap gap-x-8 gap-y-2">
+          <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-2">
             <Link href="/reviews" className="link-arrow"><ArrowLabel text="All testimonials" /></Link>
             <a href={site.gbp} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Our Google reviews" external /></a>
           </div>
@@ -251,9 +249,9 @@ export default function AboutPage() {
           <ul className={`rule-list grid lg:grid-cols-2 gap-x-12 ${TWO_COL_RULES}`}>
             {counties.map((g) => (
               <li key={g.id}>
-                <Link href={`/service-areas#${g.id}`} className="grid grid-cols-[1fr_auto] gap-x-6 items-baseline min-h-11 py-3.5 group">
+                <Link href={`/service-areas#${g.id}`} className="flex flex-wrap justify-center gap-x-2 items-baseline min-h-11 py-3.5 group">
                   <span className="font-medium text-navy group-hover:underline underline-offset-4">{g.county}, {g.state} </span>
-                  <span className="text-sm text-muted tnum text-right">({g.towns.length})</span>
+                  <span className="text-sm text-muted tnum">({g.towns.length})</span>
                 </Link>
               </li>
             ))}
@@ -268,7 +266,7 @@ export default function AboutPage() {
         <div className="container-x">
           <div className="border-t border-line pt-14 md:pt-20">
             <h2 id="online-h" className="text-h2 text-navy">Find us online</h2>
-            <ul className="mt-6 flex flex-wrap gap-x-8 gap-y-1">
+            <ul className="mt-6 flex flex-wrap justify-center gap-x-8 gap-y-1">
               {profiles.map((p) => (
                 <li key={p.href}><a href={p.href} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text={p.label} external /></a></li>
               ))}
@@ -280,9 +278,9 @@ export default function AboutPage() {
       {/* CTA — the page's one navy band */}
       <section className="section bg-navy text-white on-dark" data-cta-zone>
         <div className="container-x">
-          <h2 className="text-h2 text-white max-w-[18em]">Let&apos;s talk about your project</h2>
-          <p className="mt-5 text-lead text-white/80 max-w-[36em]">Free, no-obligation estimates from an owner-led contractor based in Northborough.</p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <h2 className="text-h2 text-white max-w-[18em] mx-auto text-balance">Let&apos;s talk about your project</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[34em] mx-auto">Free, no-obligation estimates from an owner-led contractor based in Northborough.</p>
+          <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
             <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
           </div>

@@ -51,10 +51,11 @@ export default function FilterGallery({ items, categories, linkLabel = "View the
   return (
     <>
       {/* Below md: one scrollable row of chips that fades out at the right edge (pr-12 + mask, as the hub in-page nav),
-          so a cut chip always reads as "more"; py-1.5 keeps the focus ring inside the scroller. md+: wrapped; from md
-          to lg the chips are slightly narrower (px-3.5) so all seven fit on one line at 768 instead of leaving one chip
-          alone on a second line. */}
-      <div role="group" aria-label="Filter photos by project type" className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-px-5 py-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)] md:py-0 md:flex-wrap md:overflow-visible md:mx-0 md:px-0 md:[mask-image:none] mb-8 md:mb-10">
+          so a cut chip always reads as "more"; py-1.5 keeps the focus ring inside the scroller. .scroll-row-center
+          (globals.css) centers the row whenever it fits and starts it at the left edge when it scrolls. md+: wrapped
+          and centered (md:[&>*]:mx-0 drops the auto margins so wrapped lines stay centered); from md to lg the chips are slightly narrower (px-3.5) so all seven fit on one line at 768
+          instead of leaving one chip alone on a second line. */}
+      <div role="group" aria-label="Filter photos by project type" className="scroll-row-center flex gap-2.5 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-px-5 py-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)] md:py-0 md:flex-wrap md:justify-center md:overflow-visible md:mx-0 md:px-0 md:[mask-image:none] md:[&>*]:mx-0 mb-8 md:mb-10">
         {tabs.map((t) => (
           <button
             key={t}
@@ -69,7 +70,7 @@ export default function FilterGallery({ items, categories, linkLabel = "View the
       </div>
       <p aria-live="polite" className="sr-only">{`${n} photo${n === 1 ? "" : "s"}${tab === "All" ? "" : ` in ${tab}`}`}</p>
 
-      <ul role="list" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-10">
+      <ul role="list" className="grid-center [--cols:2] md:[--cols:3] lg:[--cols:4] [--gx:1rem] md:[--gx:1.5rem] gap-y-8 md:gap-y-10">
         {filtered.map((it, i) => (
           <li key={`${it.src}-${it.cat}`}>
             <figure>
@@ -81,7 +82,7 @@ export default function FilterGallery({ items, categories, linkLabel = "View the
                 <Image src={it.src} alt={it.alt ?? it.label} fill quality={60} sizes="(min-width: 1200px) 285px, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw" className="object-cover zoomimg" />
                 <span className="sr-only"> (opens a larger view)</span>
               </button>
-              <figcaption className="mt-3">
+              <figcaption className="mt-3 text-center">
                 {tab === "All" && <span className="eyebrow">{it.cat}</span>}
                 <span className="mt-1 block text-[14px] leading-snug font-medium text-ink">{it.label}</span>
                 {it.href && (

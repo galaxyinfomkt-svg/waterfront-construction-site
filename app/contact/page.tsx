@@ -43,29 +43,33 @@ const ld = pageGraph(
   { business: "full", contactPoint: true },
 );
 
-/** Renders a copy string with the phone number kept on one line (.tel); the text content is unchanged. */
+/** Renders a copy string with the phone number (.tel) and the hours kept on one line each (a centered line must not
+ *  break at the en dash of "7am–6pm"); the text content is unchanged. */
 function WithTel({ text }: { text: string }) {
+  const hours = (s: string) => s.split(site.hours).map((h, j) => (j === 0 ? h : <Fragment key={j}><span className="whitespace-nowrap">{site.hours}</span>{h}</Fragment>));
   const parts = text.split(site.phone);
-  return <>{parts.map((p, i) => (i === 0 ? p : <Fragment key={i}><span className="tel">{site.phone}</span>{p}</Fragment>))}</>;
+  return <>{parts.map((p, i) => (i === 0 ? hours(p) : <Fragment key={i}><span className="tel">{site.phone}</span>{hours(p)}</Fragment>))}</>;
 }
 
-const row = "grid grid-cols-[1.25rem_1fr] gap-x-4 py-4 border-b border-line";
-const rowIcon = "w-5 h-5 text-muted mt-[2px]";
-const rowValue = "block mt-1 text-[17px] font-medium text-ink";
+// Contact rows, centered: the icon sits left of its label (one inline-flex eyebrow line), the value centered below.
+const row = "flex flex-col items-center py-4 border-b border-line";
+const rowLabel = "eyebrow inline-flex items-center gap-2";
+const rowIcon = "w-4 h-4 text-muted";
+const rowValue = "block mt-1 text-[17px] font-medium text-ink text-balance";
 
 export default function ContactPage() {
   return (
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — text on the left (7/12); the bare estimate form in the right 5/12 from lg, right after the hero text
-          on phones (UX-H2). */}
+      {/* HERO — centered text on the left (7/12); the bare estimate form in the right 5/12 from lg, right after the
+          hero text on phones (UX-H2). */}
       <section className="page-head">
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-navy">Contact <span className="md:whitespace-nowrap">{H1_NAME}</span></h1>
-            <p className="mt-5 text-lead text-ink/80 max-w-[36em]"><WithTel text={LEAD} /></p>
+            <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto"><WithTel text={LEAD} /></p>
           </div>
           <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
@@ -75,27 +79,27 @@ export default function ContactPage() {
         <div className="container-x grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-14 items-start">
           <div>
             <h2 className="text-h2-doc text-navy">Talk to us directly</h2>
-            <p className="mt-4 text-muted">{site.name} is owner-led. Call, email, or send the form.</p>
+            <p className="mt-4 text-muted max-w-[38em] mx-auto">{site.name} is owner-led. Call, email, or send the form.</p>
             <address className="not-italic mt-8 border-t border-line">
               <a href={site.phoneHref} className={`${row} group`}>
-                <PhoneIcon className={rowIcon} />
-                <span><span className="eyebrow">Phone</span><span className={`${rowValue} tel group-hover:underline underline-offset-4`}>{site.phone}</span></span>
+                <span className={rowLabel}><PhoneIcon className={rowIcon} />Phone</span>
+                <span className={`${rowValue} tel group-hover:underline underline-offset-4`}>{site.phone}</span>
               </a>
               <a href={site.emailHref} className={`${row} group`}>
-                <MailIcon className={rowIcon} />
-                <span className="min-w-0"><span className="eyebrow">Email</span><span className={`${rowValue} [overflow-wrap:anywhere] group-hover:underline underline-offset-4`}>{site.email}</span></span>
+                <span className={rowLabel}><MailIcon className={rowIcon} />Email</span>
+                <span className={`${rowValue} max-w-full [overflow-wrap:anywhere] group-hover:underline underline-offset-4`}>{site.email}</span>
               </a>
               <div className={row}>
-                <PinIcon className={rowIcon} />
-                <span><span className="eyebrow">Business address</span><span className={rowValue}>{displayAddress}</span></span>
+                <span className={rowLabel}><PinIcon className={rowIcon} />Business address</span>
+                <span className={rowValue}>{displayAddress}</span>
               </div>
               <div className={row}>
-                <ClockIcon className={rowIcon} />
-                <span><span className="eyebrow">Hours</span><span className={rowValue}>{site.hours}</span></span>
+                <span className={rowLabel}><ClockIcon className={rowIcon} />Hours</span>
+                <span className={rowValue}>{site.hours}</span>
               </div>
             </address>
             {credentials && <p className="mt-5 text-[15px] font-medium text-ink">{credentials}</p>}
-            <p className="mt-5 text-muted">
+            <p className="mt-5 text-muted max-w-[38em] mx-auto">
               {`Based in ${serviceArea.base}, we take projects across ${serviceArea.short}.`}{" "}
               <Link href="/service-areas" className="link">See every town we serve</Link>
             </p>
@@ -103,16 +107,17 @@ export default function ContactPage() {
 
           <div>
             <h2 className="text-h2-doc text-navy">What happens next</h2>
-            {/* Numerals read 01 02 03; the leading zero is CSS content, so the step text stays "1 2 3" as before. */}
+            {/* Numerals read 01 02 03; the leading zero is CSS content, so the step text stays "1 2 3" as before.
+                Centered: the numeral over its step. */}
             <ol className="mt-6 border-b border-line">
               {[
                 "We call you back to talk through the project.",
                 "We look at the job and give you a free, itemized estimate.",
                 "Before work starts, the scope, price and schedule are confirmed in a written contract.",
               ].map((t, i) => (
-                <li key={t} className="grid grid-cols-[2.5rem_1fr] border-t border-line py-4">
-                  <span aria-hidden="true" className="eyebrow tnum pt-[3px] before:content-['0']">{i + 1}</span>
-                  <span className="text-ink">{t}</span>
+                <li key={t} className="flex flex-col items-center gap-1.5 border-t border-line py-4">
+                  <span aria-hidden="true" className="eyebrow tnum before:content-['0']">{i + 1}</span>
+                  <span className="text-ink max-w-[34em]">{t}</span>
                 </li>
               ))}
             </ol>
@@ -121,12 +126,12 @@ export default function ContactPage() {
       </section>
 
       <section className="section bg-stone" aria-labelledby="contact-faq-h">
-        <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-10">
-          <div className="lg:col-span-4 lg:sticky lg:top-28 self-start">
+        <div className="container-x">
+          <div className="max-w-[40rem] mx-auto">
             <h2 id="contact-faq-h" className="text-h2 text-navy">Before you call</h2>
-            <p className="mt-5 text-muted max-w-[38rem]">Quick answers to common questions. More on our <Link href="/faq" className="link">FAQ page</Link>.</p>
+            <p className="mt-5 text-muted max-w-[38em] mx-auto">Quick answers to common questions. More on our <Link href="/faq" className="link">FAQ page</Link>.</p>
           </div>
-          <div className="lg:col-span-8"><FaqList items={contactFaqs} /></div>
+          <div className="mt-12 max-w-[48rem] mx-auto"><FaqList items={contactFaqs} /></div>
         </div>
       </section>
 
@@ -137,7 +142,7 @@ export default function ContactPage() {
           </figure>
           <div>
             <h2 id="map-h" className="text-h2 text-navy">Where we work</h2>
-            <p className="mt-5 text-muted max-w-[38rem]">Each dot is a town we serve; rings are 10 miles apart around our Northborough base. Green dots mark towns where our work is documented on this site.</p>
+            <p className="mt-5 text-muted max-w-[38em] mx-auto">Each dot is a town we serve; rings are 10 miles apart around our Northborough base. Green dots mark towns where our work is documented on this site.</p>
             <ul className="mt-6">
               <li><Link href="/service-areas" className="link-arrow"><ArrowLabel text="Every town we serve, by county" /></Link></li>
               <li><a href={site.gbp} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Our Google Business Profile" external /></a></li>

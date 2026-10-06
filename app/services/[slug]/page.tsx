@@ -43,7 +43,8 @@ const fmtDate = (iso: string) => new Intl.DateTimeFormat("en-US", { dateStyle: "
 const DIMS = MEDIA as Record<string, { w: number; h: number }>;
 
 // A real <table> (server HTML, <caption>, scoped headers). Below md each row stacks into a card and every
-// cell shows its column name, so phones never need sideways scrolling.
+// cell shows its column name, so phones never need sideways scrolling. Tables are an exception to the centered site:
+// cells keep their own alignment (left, figures right from md); only the caption is centered.
 const NUMERIC = /^[$\d][\d,.%$–\s-]*$/;
 function DataTable({ t, steps = false }: { t: Table; steps?: boolean }) {
   // Figures get tabular numerals; a column is right-aligned (header included) from md up only when EVERY cell in it
@@ -53,7 +54,7 @@ function DataTable({ t, steps = false }: { t: Table; steps?: boolean }) {
     <div className="mt-10 md:mt-14 bg-white border border-line rounded-panel overflow-x-auto">
       {/* Tabular figures only on numeric cells (tnum below): the base :where(table) rule would also widen hyphens in prose. */}
       <table className="w-full text-left text-[15px] leading-[1.5] [font-variant-numeric:normal]">
-        <caption className="caption-top text-left px-5 pt-5 pb-3 text-[15px] font-semibold text-ink">{t.caption}</caption>
+        <caption className="caption-top text-center px-5 pt-5 pb-3 text-[15px] font-semibold text-ink">{t.caption}</caption>
         <thead className="hidden md:table-header-group bg-stone">
           <tr>
             {t.head.map((h, i) => (
@@ -83,6 +84,7 @@ function DataTable({ t, steps = false }: { t: Table; steps?: boolean }) {
 }
 
 // "At a glance" facts, at the top of the overview on every hub (the hero's right column holds the estimate form).
+// Label over value, centered (inherited from <main>), in 1 / 2 / 4 columns.
 function Glance({ items }: { items: [string, string][] }) {
   return (
     <dl className="mt-10 md:mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8">
@@ -177,30 +179,35 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
   ];
   const surface = (id: string) => (chapters.indexOf(id) % 2 ? "bg-stone" : "bg-paper");
   const h2 = "text-h2-doc text-navy";
-  const head = `mt-4 ${h2} max-w-[48rem]`; // H2 after an eyebrow (16px)
-  const prose = "text-prose text-ink max-w-[68ch]";
+  const head = `mt-4 ${h2} max-w-[48rem] mx-auto`; // H2 after an eyebrow (16px)
+  const h2w = `${h2} max-w-[48rem] mx-auto`; // H2 without an eyebrow
+  // Centered running text: a readable centered measure (38em), not the 68ch of left-aligned prose.
+  const prose = "text-prose text-ink max-w-[38em] mx-auto";
+  const note = "max-w-[40em] mx-auto"; // small print (13-14px) under a block
   const caseLabel = (place?: string) => `See the ${place ? `${place.split(",")[0]} ` : ""}project`;
 
   return (
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — answer-first text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right
+      {/* HERO — answer-first centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right
           5/12 from lg, so the form is above the fold on desktop (V5.3, audit 10 UX-H2), and after the hero text on phones.
           The real job photo that used to sit here leads the "Our work" section below. */}
       <section className="page-head">
         <div className="container-x py-8 md:py-10 grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-12">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
-            <h1 className="mt-5 text-h1-long text-navy lg:pr-12"><Typeset text={c.h1} /></h1>
-            <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{c.summary}</p>
-            {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
-            <ul className="dot-list-wrap mt-4 text-sm text-muted">
+            <h1 className="mt-5 text-h1-long text-navy"><Typeset text={c.h1} /></h1>
+            <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">{c.summary}</p>
+            {/* .dot-list-wrap (globals.css): centered; stacked below sm, one dotted line from sm. A registration line
+                (once lib/site.ts holds the numbers) makes the row too long to share one line (it needs <= ~64 characters
+                at 640px), so the list then stacks at every width. */}
+            <ul className={`dot-list-wrap mt-4 text-sm text-muted${`Owner-led · Founded in ${site.founded} in Northborough, MA · ${credentials}`.length > 64 ? " dot-list-wrap--stack" : ""}`}>
               <li>Owner-led</li>{" "}
               <li>Founded in {site.founded} in Northborough, MA</li>{" "}
               {credentials && <li>{credentials}</li>}
             </ul>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
               {/* On desktop the form is right beside this text, so the jump link is for phones only. */}
               <a href="#estimate" className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</a>
               <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
@@ -218,8 +225,11 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
               fade. py-1.5/-my-1.5 (and md:pl-1.5/-ml-1.5) give the 5px focus ring room inside the scroll box, which clips on
               both axes; scroll-pr-14 makes a tab reached with Tab scroll fully clear of the fade, not just into it.
               Chromium does not scroll a tab that is already partly in view when it takes focus, so while a tab has keyboard
-              focus the fade is dropped (has-[a:focus-visible]) and a tab sitting in the fade reads in full with its ring. */}
-          <ul role="list" className="flex gap-7 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-pl-5 scroll-pr-14 py-1.5 -my-1.5 md:mx-0 md:-ml-1.5 md:pl-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)] has-[a:focus-visible]:[mask-image:none]">
+              focus the fade is dropped (has-[a:focus-visible]) and a tab sitting in the fade reads in full with its ring.
+              .scroll-row-center: centered while the row fits, starts at the left edge once it scrolls. From md the scroll box
+              runs into both 2rem gutters (-mx-8 px-8, a 2rem fade inside the right gutter), so its content box is exactly the
+              container and a row that fits is centered on the page axis (no pr-12 offset). */}
+          <ul role="list" className="scroll-row-center flex gap-7 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-pl-5 scroll-pr-14 py-1.5 -my-1.5 md:-mx-8 md:px-8 md:scroll-px-10 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)] md:[mask-image:linear-gradient(90deg,#000_calc(100%-2rem),transparent)] has-[a:focus-visible]:[mask-image:none]">
             {toc.map((t) => (
               <li key={t.id} className="shrink-0">
                 <a href={`#${t.id}`} className="inline-flex items-center min-h-12 whitespace-nowrap text-sm font-medium text-muted hover:text-navy hover:shadow-[inset_0_-2px_0_var(--color-navy)] focus-visible:text-navy">{t.label}</a>
@@ -239,7 +249,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           <h3 className="mt-12 text-h3 text-navy">What&apos;s included</h3>
           <ul role="list" className="mt-5 check-list grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8">
             {s.features.map((f) => (
-              <li key={f} className="py-3 border-t border-line text-ink before:top-[calc(.75rem+.3em)]">{f}</li>
+              <li key={f} className="py-3 border-t border-line text-ink">{f}</li>
             ))}
           </ul>
         </div>
@@ -251,7 +261,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           <div className="container-x">
             <span className="eyebrow">Real projects</span>
             <h2 id="our-work-h" className={head}>Our {lower} work: case studies and job photos</h2>
-            <p className="mt-5 text-muted max-w-[38rem]">Every photo here is from a Waterfront Construction job, captioned with what it shows and, where the job&apos;s town is recorded, where it was taken.</p>
+            <p className="mt-5 text-muted max-w-[38em] mx-auto">Every photo here is from a Waterfront Construction job, captioned with what it shows and, where the job&apos;s town is recorded, where it was taken.</p>
             {hero && (
               /* sizes follow the rendered box (12-col grid, 32px gaps, 1136px content from 1200px): landscape spans 8
                  (747px; about 60vw from md), portrait spans 5 (455px; about 37vw from md). */
@@ -259,7 +269,9 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
                 <div className={`relative overflow-hidden bg-well ${heroPortrait ? "md:col-span-5 aspect-[4/5]" : "md:col-span-8 aspect-[3/2]"}`}>
                   <Image src={hero.src} alt={hero.alt} fill quality={60} sizes={heroPortrait ? "(max-width: 768px) 100vw, (min-width: 1200px) 455px, 38vw" : "(max-width: 768px) 100vw, (min-width: 1200px) 747px, 62vw"} className="object-cover" />
                 </div>
-                <figcaption className="md:col-span-4 md:self-end mt-4 md:mt-0">
+                {/* The caption takes the rest of the row (4 cols beside a landscape photo, 7 beside a portrait one), so its
+                    centered text sits in the middle of the free space; the measure stays short. */}
+                <figcaption className={`${heroPortrait ? "md:col-span-7" : "md:col-span-4"} md:self-end mt-4 md:mt-0 mx-auto max-w-[28em]`}>
                   <span className="block text-base text-ink">{hero.caption}</span>
                   {hero.place && <span className="block mt-1 text-sm text-muted">{hero.place}</span>}
                   {hero.project && (
@@ -284,7 +296,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
               </div>
             ))}
             {cards.length > 1 && (
-              <ul role="list" className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+              <ul role="list" className="mt-14 grid-center sm:[--cols:2] lg:[--cols:3] gap-y-12">
                 {cards.map(({ p, im }) => (
                   <li key={p.slug} className="card-ed group">
                     <div className="media">
@@ -307,11 +319,11 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       {c.sections.map((x) => (
         <section key={x.id} id={x.id} aria-labelledby={`${x.id}-h`} className={`section-doc ${surface(x.id)}`}>
           <div className="container-x">
-            <h2 id={`${x.id}-h`} className={`${h2} max-w-[48rem]`}>{x.h2}</h2>
+            <h2 id={`${x.id}-h`} className={h2w}>{x.h2}</h2>
             {x.intro?.map((p, k) => <p key={k} className={`mt-5 ${prose}`}>{p}</p>)}
             {x.table && <DataTable t={x.table} />}
             {x.bullets && (
-              <ul className="mt-6 dash-list space-y-3 text-ink max-w-[68ch]">
+              <ul className="mt-6 dash-list space-y-3 text-ink max-w-[38em] mx-auto">
                 {x.bullets.map((b) => <li key={b}>{b}</li>)}
               </ul>
             )}
@@ -336,17 +348,17 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
                   note: "These are published regional averages for a standard scope, not our prices. We give every homeowner an itemized estimate for their own house.",
                 }}
               />
-              <p className="mt-3 text-[13px] text-muted max-w-[68ch]">
+              <p className={`mt-3 text-[13px] text-muted ${note}`}>
                 Source: <a href={SOURCES.cvv.url} className="link">{SOURCES.cvv.label}</a>. {CVV_CREDIT}
               </p>
             </>
           )}
           <h3 className="mt-12 text-h3 text-navy">What moves the price</h3>
-          <ul className="mt-5 dash-list grid sm:grid-cols-2 gap-x-8 gap-y-3 text-ink">
+          <ul className="mt-5 dash-list grid-center sm:[--cols:2] gap-y-3 text-ink">
             {c.cost.drivers.map((d) => <li key={d}>{d}</li>)}
           </ul>
           {costGuides.length > 0 && (
-            <p className="mt-8 text-ink max-w-[68ch]">
+            <p className={`mt-8 text-ink ${note}`}>
               More detail:{" "}
               {costGuides.map((g, i) => (
                 <span key={g.slug}>{i > 0 && " · "}<Link href={`/blog/${g.slug}`} className="link">{g.title}</Link></span>
@@ -364,7 +376,8 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           <h2 id="permits-h" className={head}>Permits, inspections and rules in Massachusetts</h2>
           <p className={`mt-5 ${prose}`}>{c.permits.intro}</p>
           <DataTable t={c.permits.table} />
-          <div className="mt-8 border-l border-navy pl-6 max-w-[68ch]">
+          {/* Centered callout: a navy rule above (a left rule cannot frame centered text). */}
+          <div className="mt-8 mx-auto max-w-[38em] border-t border-navy pt-6">
             <h3 className="text-h3s text-navy">In New Hampshire</h3>
             <p className="mt-2 text-ink">{c.permits.nh}</p>
           </div>
@@ -379,11 +392,11 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       {c.leadSafe && (
         <section id="lead-safe" aria-labelledby="lead-safe-h" className={`section-doc ${surface("lead-safe")}`}>
           <div className="container-x">
-            <h2 id="lead-safe-h" className={`${h2} max-w-[48rem]`}>Homes built before 1978: lead-safe rules</h2>
+            <h2 id="lead-safe-h" className={h2w}>Homes built before 1978: lead-safe rules</h2>
             <p className={`mt-5 ${prose}`}>{c.leadSafe.intro}</p>
             {c.leadSafe.full ? (
               <>
-                <ul className="mt-6 dash-list space-y-3 text-ink max-w-[68ch]">
+                <ul className="mt-6 dash-list space-y-3 text-ink max-w-[38em] mx-auto">
                   {LEAD_SAFE_RULES.map((r) => <li key={r}>{r}</li>)}
                 </ul>
                 <p className={`mt-5 ${prose}`}>{LEAD_SAFE_OUTRO}</p>
@@ -403,7 +416,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
         <div className="container-x">
           <span className="eyebrow">Process &amp; timeline</span>
           <h2 id="process-h" className={head}>How a {c.noun} works, step by step</h2>
-          <p className={`mt-5 ${prose}`}>{s.timeline}</p>
+          <p className={`mt-5 ${prose} text-balance`}>{s.timeline}</p>
           <DataTable
             steps
             t={{
@@ -420,29 +433,31 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       {quotes.length > 0 && (
         <section id="clients" aria-labelledby="clients-h" className={`section-doc ${surface("clients")}`}>
           <div className="container-x">
-            <h2 id="clients-h" className={`${h2} max-w-[48rem]`}>What clients said about this kind of work</h2>
+            <h2 id="clients-h" className={h2w}>What clients said about this kind of work</h2>
             {quotes.length === 1 ? (
               quotes.map((t) => (
                 <figure key={t.name} className="mt-10 md:mt-14">
-                  <blockquote className="font-display text-quote text-navy max-w-[40ch] [text-indent:-0.42em]">&ldquo;{t.text}&rdquo;</blockquote>
+                  <blockquote className="font-display text-quote text-navy max-w-[40ch] mx-auto">&ldquo;{t.text}&rdquo;</blockquote>
                   <figcaption className="mt-6 text-sm text-muted">
-                    <ul className="dot-list"><li><span className="font-semibold text-ink">{t.name}</span>, {t.town}</li>{" "}<li>{t.date}</li></ul>{" "}
+                    <ul className="dot-list-wrap"><li><span className="font-semibold text-ink">{t.name}</span>, {t.town}</li>{" "}<li>{t.date}</li></ul>{" "}
                   </figcaption>
                 </figure>
               ))
             ) : (
-              <div className="mt-10 md:mt-14 grid md:grid-cols-3 gap-y-12">
+              /* One column per quote (2 or 3), so the row stays centered; the attribution stacks until lg, where the columns
+                 are wide enough for "Name, Town · Date" on one line (a wrapped line must never start with the dot). */
+              <div className={`mt-10 md:mt-14 grid gap-y-12 ${quotes.length === 2 ? "md:grid-cols-2 md:max-w-[52rem] md:mx-auto" : "md:grid-cols-3 md:-mx-8"}`}>
                 {quotes.map((t) => (
-                  <figure key={t.name} className="flex flex-col md:px-8 md:first:pl-0 md:last:pr-0 md:border-l md:first:border-l-0 border-line">
-                    <blockquote className="font-display text-[1.375rem] md:text-2xl leading-[1.4] text-navy [text-indent:-0.42em]">&ldquo;{t.text}&rdquo;</blockquote>
+                  <figure key={t.name} className="flex flex-col md:px-8 md:border-l md:first:border-l-0 border-line">
+                    <blockquote className="font-display text-[1.375rem] md:text-2xl leading-[1.4] text-navy">&ldquo;{t.text}&rdquo;</blockquote>
                     <figcaption className="mt-auto pt-6">
-                      <ul className="dot-list pt-4 border-t border-line text-[13px] text-muted"><li><span className="text-sm font-semibold text-ink">{t.name}</span>, {t.town}</li>{" "}<li>{t.date}</li></ul>{" "}
+                      <ul className="dot-list-wrap dot-list-wrap--stack-lg pt-4 border-t border-line text-[13px] text-muted"><li><span className="text-sm font-semibold text-ink">{t.name}</span>, {t.town}</li>{" "}<li>{t.date}</li></ul>{" "}
                     </figcaption>
                   </figure>
                 ))}
               </div>
             )}
-            <p className="mt-10 text-sm text-muted max-w-[68ch]">
+            <p className={`mt-10 text-sm text-muted ${note} text-balance`}>
               Shared with permission by our clients. <a href={site.gbp} className="link">Read our Google reviews</a> or <Link href="/reviews" className="link">see all client feedback</Link>.
             </p>
           </div>
@@ -451,13 +466,13 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
 
       {/* FAQ — service-specific, answer-first; FAQPage markup mirrors this text verbatim */}
       <section id="faq" aria-labelledby="faq-h" className={`section-doc ${surface("faq")}`}>
-        <div className="container-x grid lg:grid-cols-12 gap-x-8 gap-y-8">
-          <div className="lg:col-span-4 lg:sticky lg:top-28 self-start">
+        <div className="container-x">
+          <div className="max-w-[40rem] mx-auto">
             <span className="eyebrow">FAQ</span>
             <h2 id="faq-h" className={`mt-4 ${h2}`}>{s.name} questions, answered</h2>
             <p className="mt-5 text-muted">Have a different question? Call <a href={site.phoneHref} className="link tel">{site.phone}</a> or <a href="#estimate" className="link">send us your project details</a>.</p>
           </div>
-          <div className="faq-list lg:col-span-8">
+          <div className="faq-list mt-10 max-w-[48rem] mx-auto">
             {c.faqs.map((f) => (
               <details key={f.q} className="faq-row group">
                 <summary><span className="faq-q">{f.q}</span>{" "}<PlusIcon className="faq-icon" /></summary>
@@ -483,7 +498,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
                 <li key={g.slug}>
                   <Link href={`/blog/${g.slug}`} className="group block py-6">
                     <span className="block font-display text-h3s text-navy group-hover:underline underline-offset-4 decoration-1"><ArrowLabel text={g.title} /></span>
-                    <span className="block mt-2 text-[15px] text-muted max-w-[60ch]">{g.excerpt}</span>
+                    <span className="block mt-2 mx-auto text-[15px] text-muted max-w-[34em]">{g.excerpt}</span>
                   </Link>
                 </li>
               ))}
@@ -494,12 +509,13 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
             <ul role="list" className="mt-6 rule-list self-start">
               {related.map((o) => (
                 <li key={o.slug}>
-                  <Link href={`/services/${o.slug}`} className="group flex items-start gap-4 py-5">
-                    <ServiceIcon slug={o.slug} className="w-5 h-5 text-navy mt-1" />
-                    <span>
-                      <span className="block font-medium text-ink group-hover:underline underline-offset-4">{o.short}</span>
-                      <span className="block mt-1 text-sm text-muted">{o.blurb}</span>
+                  {/* Centered row: the icon sits right before the service name; the blurb is centered under them. */}
+                  <Link href={`/services/${o.slug}`} className="group block py-5">
+                    <span className="inline-flex items-center gap-2.5 max-w-full">
+                      <ServiceIcon slug={o.slug} className="w-5 h-5 text-navy" />
+                      <span className="font-medium text-ink group-hover:underline underline-offset-4">{o.short}</span>
                     </span>
+                    <span className="block mt-1 mx-auto max-w-[34em] text-sm text-muted">{o.blurb}</span>
                   </Link>
                 </li>
               ))}
@@ -514,7 +530,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           <span className="eyebrow">Service area</span>
           <h2 id="towns-h" className={head}>Where we&apos;ve done {lower}, and every town we serve</h2>
           {proof.length > 0 ? (
-            <ul role="list" className="mt-10 md:mt-14 rule-list grid md:grid-cols-2 gap-x-12 md:border-t-0 md:[&>li:nth-child(-n+2)]:border-t md:[&>li:nth-child(-n+2)]:border-line">
+            <ul role="list" className="mt-10 md:mt-14 rule-list grid md:grid-cols-2 gap-x-12 md:border-t-0 md:[&>li:nth-child(-n+2)]:border-t md:[&>li:nth-child(-n+2)]:border-line md:[&>li:last-child:nth-child(odd)]:col-span-2">
               {proof.map((pl) => (
                 <li key={pl.label} className="py-5 text-[15px] text-ink">
                   <span className="block font-display text-[1.25rem] leading-[1.25] text-navy">{pl.label}</span>
@@ -542,17 +558,18 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       <section id="sources" aria-labelledby="sources-h" className={`section-doc ${surface("sources")}`}>
         <div className="container-x">
           <h2 id="sources-h" className={h2}>Sources and page details</h2>
-          <ol className="mt-6 list-decimal pl-5 text-sm text-muted space-y-1.5 max-w-[68ch]">
+          {/* list-inside: the number sits at the start of each centered line, never stranded in a left gutter. */}
+          <ol className={`mt-6 list-decimal list-inside text-sm text-muted space-y-1.5 ${note}`}>
             {c.sources.map((src) => (
               <li key={src.url}><a href={src.url} className="link">{src.label}</a></li>
             ))}
           </ol>
-          <p className="mt-4 text-[13px] text-muted max-w-[68ch]">Code and permit details are general: your town&apos;s building department has the final word on what applies to your project.</p>
-          <p className="mt-6 text-sm text-muted max-w-[68ch]">
+          <p className={`mt-4 text-[13px] text-muted ${note}`}>Code and permit details are general: your town&apos;s building department has the final word on what applies to your project.</p>
+          <p className={`mt-6 text-sm text-muted ${note}`}>
             Published by Waterfront Construction Inc, an owner-led home remodeling contractor based in Northborough, Massachusetts.{" "}
             <Link href={OWNER_PAGE} className="link">{site.owner}</Link> has {site.experience}+ years of hands-on construction experience and founded the company in {site.founded}.
-            {c.reviewedOn && <> Reviewed by {site.owner} on <time dateTime={c.reviewedOn}>{fmtDate(c.reviewedOn)}</time>.</>}
-            {" "}Updated <time dateTime={s.updated}>{updated}</time>.
+            {c.reviewedOn && <> Reviewed by {site.owner} on <time dateTime={c.reviewedOn} className="whitespace-nowrap">{fmtDate(c.reviewedOn)}</time>.</>}
+            {" "}Updated <time dateTime={s.updated} className="whitespace-nowrap">{updated}</time>.
           </p>
         </div>
       </section>
@@ -560,9 +577,9 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       {/* CTA — the page's one navy band */}
       <section className="section bg-navy text-white on-dark">
         <div className="container-x">
-          <h2 className="text-h2 text-white max-w-[18em]">Planning a {c.noun}?</h2>
-          <p className="mt-5 text-lead text-white/80 max-w-[36em]">Get a free, itemized estimate from Waterfront Construction Inc. Call <span className="tel">{site.phone}</span> or use the estimate form on this page.</p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <h2 className="text-h2 text-white max-w-[18em] mx-auto">Planning a {c.noun}?</h2>
+          <p className="mt-5 text-lead text-white/80 max-w-[34em] mx-auto text-balance">Get a free, itemized estimate from Waterfront Construction Inc. Call <span className="tel">{site.phone}</span> or use the estimate form on this page.</p>
+          <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
             <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
             <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>

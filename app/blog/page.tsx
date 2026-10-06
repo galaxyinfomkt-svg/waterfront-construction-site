@@ -24,9 +24,6 @@ const crumbs: Crumb[] = [
   { name: "Blog", path: "/blog" },
 ];
 
-// Split section heads (§4.10): below lg the intro is not an h2 sibling, so it carries its own rhythm and colour.
-const SPLIT_P = "mt-5 max-w-[38rem] text-lead text-muted lg:mt-0 lg:max-w-none";
-
 export const metadata = pageMeta({
   title: "Remodeling Cost Guides & Advice for MA Homeowners",
   description: DESCRIPTION,
@@ -107,7 +104,7 @@ function PostCard({ p, featured = false, cols = 3, className = "" }: { p: Post; 
           <Link href={`/blog/${p.slug}`}>{p.title}</Link>
         </h3>
         <p className={`body ${featured ? "max-w-[60ch]" : ""}`}>{p.excerpt}</p>
-        <span className="link-arrow text-sm mt-auto pt-4 self-start">
+        <span className="link-arrow text-sm mt-auto pt-4 self-center">
           <ArrowLabel text="Read the guide" />
         </span>
       </div>
@@ -115,7 +112,11 @@ function PostCard({ p, featured = false, cols = 3, className = "" }: { p: Post; 
   );
 }
 
-const COLS = ["", "lg:grid-cols-1", "lg:grid-cols-2", "lg:grid-cols-3"];
+// Card widths per row (gap-x-8 = 2rem): one row of `cols` cards from lg, two from sm, one on phones. The list is a
+// wrapping flex row with justify-center (not a grid), so a short last row is centered like everything else on the page;
+// full rows land exactly where grid columns would.
+const CARD_W = "w-full sm:w-[calc((100%-2rem)/2)]";
+const COLS_W = ["", "lg:w-full", "lg:w-[calc((100%-2rem)/2)]", "lg:w-[calc((100%-4rem)/3)]"];
 
 // Display order only (the data, dates and JSON-LD order are untouched): guides whose covers come from the same project
 // (e.g. two Mansfield kitchen shots) should not sit next to each other in the grid. Every arrangement of the cards after
@@ -163,15 +164,15 @@ export default function BlogPage() {
   return (
     <>
       <JsonLd data={blogGraph()} />
-      {/* HERO — text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg,
-          after the hero text on phones. */}
+      {/* HERO — centered text in the left 7/12; the bare estimate form (the page's ONE EstimateForm) in the right 5/12
+          from lg, after the hero text on phones. */}
       <section className="page-head">
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-navy text-balance"><Typeset text={H1} /></h1>
             {/* Authorship matches the posts, their meta author and the JSON-LD: the company publishes the guides (V3.4). */}
-            <p className="mt-5 text-lead text-ink/80 max-w-[60ch]">
+            <p className="mt-5 mx-auto text-lead text-ink/80 max-w-[34em]">
               Cost guides, permit rules and hiring checklists published by{" "}
               <Link href="/about" className="link">
                 {site.name}
@@ -182,7 +183,9 @@ export default function BlogPage() {
               </Link>
               . Prices cite Remodeling magazine&apos;s Cost vs. Value data for New England, and legal and permit guidance links to state sources.
             </p>
-            <nav aria-label="Guide topics" className="mt-8 -mx-5 px-5 py-1.5 flex gap-2.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:mx-0 sm:px-0 sm:overflow-visible">
+            {/* The three topic chips wrap as a centered row at every width (two lines on phones), so all of them stay in
+                view with nothing cut off at the edge. */}
+            <nav aria-label="Guide topics" className="mt-8 flex flex-wrap justify-center gap-2.5">
               {CATEGORIES.map((c) => (
                 <a key={c.id} href={`#${c.id}`} className="chip">
                   {c.name}
@@ -219,11 +222,11 @@ export default function BlogPage() {
                   <div>
                     <h2 id={`${c.id}-h`} className="text-h2 text-navy">{c.name}</h2>
                   </div>
-                  <p className={SPLIT_P}>{c.intro}</p>
+                  <p>{c.intro}</p>
                 </div>
-                <ul role="list" className={`grid sm:grid-cols-2 ${COLS[cols]} gap-x-8 gap-y-12`}>
+                <ul role="list" className="flex flex-wrap justify-center gap-x-8 gap-y-12">
                   {list.map((p, j) => (
-                    <PostCard key={p.slug} p={p} cols={cols} featured={feature && j === 0} className={feature && j === 0 ? "sm:col-span-2 lg:col-span-3" : ""} />
+                    <PostCard key={p.slug} p={p} cols={cols} featured={feature && j === 0} className={feature && j === 0 ? "w-full" : `${CARD_W} ${COLS_W[cols]}`} />
                   ))}
                 </ul>
                 {cta && <CtaRow className="mt-14" />}
@@ -238,9 +241,9 @@ export default function BlogPage() {
       {/* Estimate CTA after the last guide grid (V5.4 / audit 10 L5): the page's one navy band. */}
       <section aria-labelledby="blog-cta-h" className="section bg-navy text-white on-dark" data-cta-zone>
         <div className="container-x">
-          <h2 id="blog-cta-h" className="text-h2 text-white max-w-[18em]">Planning a project?</h2>
-          <p className="mt-5 text-lead text-white/80 max-w-[36em]">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <h2 id="blog-cta-h" className="mx-auto text-h2 text-white max-w-[18em]">Planning a project?</h2>
+          <p className="mt-5 mx-auto text-lead text-white/80 max-w-[34em]">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
+          <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
             <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>
