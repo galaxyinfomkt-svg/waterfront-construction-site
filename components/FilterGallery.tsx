@@ -85,7 +85,7 @@ export default function FilterGallery({ items, categories, linkLabel = "View the
                 {tab === "All" && <span className="eyebrow">{it.cat}</span>}
                 <span className="mt-1 block text-[14px] leading-snug font-medium text-ink">{it.label}</span>
                 {it.href && (
-                  <Link href={it.href} className="link-arrow mt-0.5 min-h-0 py-1.5 text-[13px] leading-snug">
+                  <Link href={it.href} className="link-arrow mt-0.5 min-h-0 py-1.5 text-[13px] leading-snug [text-wrap:balance]">
                     <ArrowLabel text={it.hrefLabel ?? linkLabel} />
                   </Link>
                 )}

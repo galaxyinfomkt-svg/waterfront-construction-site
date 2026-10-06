@@ -223,8 +223,10 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
         <div className="container-x">
           {/* One scrolling row at every width (§4.23): the right edge fades over 3rem and pr-12 lets the last tab clear the
               fade. py-1.5/-my-1.5 (and md:pl-1.5/-ml-1.5) give the 5px focus ring room inside the scroll box, which clips on
-              both axes; scroll-pr-14 makes a tab reached with Tab scroll fully clear of the fade, not just into it. */}
-          <ul role="list" className="flex gap-7 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-pl-5 scroll-pr-14 py-1.5 -my-1.5 md:mx-0 md:-ml-1.5 md:pl-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)]">
+              both axes; scroll-pr-14 makes a tab reached with Tab scroll fully clear of the fade, not just into it.
+              Chromium does not scroll a tab that is already partly in view when it takes focus, so while a tab has keyboard
+              focus the fade is dropped (has-[a:focus-visible]) and a tab sitting in the fade reads in full with its ring. */}
+          <ul role="list" className="flex gap-7 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-pl-5 scroll-pr-14 py-1.5 -my-1.5 md:mx-0 md:-ml-1.5 md:pl-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)] has-[a:focus-visible]:[mask-image:none]">
             {toc.map((t) => (
               <li key={t.id} className="shrink-0">
                 <a href={`#${t.id}`} className="inline-flex items-center min-h-12 whitespace-nowrap text-sm font-medium text-muted hover:text-navy hover:shadow-[inset_0_-2px_0_var(--color-navy)] focus-visible:text-navy">{t.label}</a>

@@ -125,7 +125,7 @@ export default function AboutPage() {
               <div className={FACT}><dt className="eyebrow pt-0.5">Insurance</dt><dd className={FACT_DD}>Insured; certificate of insurance on request</dd></div>
               <div className={FACT}><dt className="eyebrow pt-0.5">Projects completed</dt><dd className={FACT_DD}>{site.projectsCompleted}+</dd></div>
               <div className={FACT}><dt className="eyebrow pt-0.5">Towns with completed projects</dt><dd className={FACT_DD}>{site.townsWithProjects}+</dd></div>
-              <div className={FACT}><dt className="eyebrow pt-0.5">Case studies on this site</dt><dd className={FACT_DD}><Link href="/gallery" className="link -my-1 inline-block min-w-6 py-1">{projects.length}</Link></dd></div>
+              <div className={FACT}><dt className="eyebrow pt-0.5">Case studies on this site</dt><dd className={FACT_DD}><Link href="/gallery" className="link -my-1 inline-block py-1 pr-1"><ArrowLabel text={String(projects.length)} /></Link></dd></div>
               <div className={FACT}>
                 <dt className="eyebrow pt-0.5">Service area</dt>
                 <dd className={FACT_DD}>{AREA_SENTENCE} (<Link href="/service-areas" className="link">every town</Link>)</dd>
