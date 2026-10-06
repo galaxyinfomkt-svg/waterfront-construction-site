@@ -4,6 +4,10 @@ import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { PhoneIcon, ArrowLabel } from "@/components/chrome-icons";
 import StatsRow from "@/components/StatsRow";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
+import { EstimateLink } from "@/components/chrome-client";
 import Typeset from "@/components/Typeset";
 import { site, services, stats, serviceArea, testimonials } from "@/lib/site";
 import { projects } from "@/lib/projects";
@@ -72,18 +76,20 @@ export default function AboutPage() {
     <>
       <JsonLd data={ld} />
 
-      {/* HEADER — text-only page head (no stock photo) */}
+      {/* HEADER — text-only page head (no stock photo). Text on the left (7/12); the bare estimate form (the page's
+          ONE EstimateForm) in the right 5/12 from lg, after the hero text on phones. */}
       <section className="page-head" data-cta-zone>
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-balance text-navy">{H1}</h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+              <EstimateLink className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</EstimateLink>
               <a href={site.phoneHref} className="btn btn-secondary tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
             </div>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
@@ -179,10 +185,13 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* OUR WORK — the documented case studies, real photos only */}
-      <section className="section pt-0" aria-labelledby="work-h">
-        <div className="container-x"><div className="border-t border-line" /></div>
-        <div className="container-x pt-[var(--section-y)]">
+      {/* MID-PAGE ESTIMATE FORM — stone between the paper values and the paper case studies */}
+      <FormBand tone="stone" />
+
+      {/* OUR WORK — the documented case studies, real photos only (the stone form band above separates it from the
+          values, so it no longer opens on its own hairline) */}
+      <section className="section" aria-labelledby="work-h">
+        <div className="container-x">
           <div className="section-head">
             <p className="eyebrow">Our work</p>
             <h2 id="work-h" className="text-h2 text-navy">Projects documented on this site</h2>
@@ -202,6 +211,7 @@ export default function AboutPage() {
               );
             })}
           </ul>
+          <CtaRow className="mt-14" />
         </div>
       </section>
 
@@ -249,6 +259,7 @@ export default function AboutPage() {
             ))}
           </ul>
           <p className="mt-8"><Link href="/service-areas" className="link-arrow"><ArrowLabel text="See every town we serve and its distance from Northborough" /></Link></p>
+          <CtaRow className="mt-10" />
         </div>
       </section>
 
@@ -272,7 +283,7 @@ export default function AboutPage() {
           <h2 className="text-h2 text-white max-w-[18em]">Let&apos;s talk about your project</h2>
           <p className="mt-5 text-lead text-white/80 max-w-[36em]">Free, no-obligation estimates from an owner-led contractor based in Northborough.</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>

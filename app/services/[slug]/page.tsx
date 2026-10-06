@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import LeadForm from "@/components/LeadForm";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import PhotoGrid from "@/components/PhotoGrid";
@@ -167,6 +169,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
     ...(hero || cards.length || gallery.length ? ["our-work"] : []),
     ...c.sections.map((x) => x.id),
     "cost", "permits",
+    "form", // the mid-page FormBand: it takes its turn in the paper / stone alternation
     ...(c.leadSafe ? ["lead-safe"] : []),
     "process",
     ...(quotes.length ? ["clients"] : []),
@@ -182,14 +185,14 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — answer-first text on the left; the estimate card (the page's ONE LeadForm) in the right column, so
-          the form is above the fold on desktop (V5.3, audit 10 UX-H2) and follows the hero text on phones. The real
-          job photo that used to sit here leads the "Our work" section below. */}
+      {/* HERO — answer-first text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right
+          5/12 from lg, so the form is above the fold on desktop (V5.3, audit 10 UX-H2), and after the hero text on phones.
+          The real job photo that used to sit here leads the "Our work" section below. */}
       <section className="page-head">
-        <div className="container-x py-8 md:py-10 grid gap-8 lg:gap-12 lg:grid-cols-[1.15fr_.85fr] lg:items-start">
-          <div>
+        <div className="container-x py-8 md:py-10 grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-12">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
-            <h1 className="mt-5 text-h1-long text-navy"><Typeset text={c.h1} /></h1>
+            <h1 className="mt-5 text-h1-long text-navy lg:pr-12"><Typeset text={c.h1} /></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{c.summary}</p>
             {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
             <ul className="dot-list-wrap mt-4 text-sm text-muted">
@@ -204,17 +207,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
             </div>
             <p className="mt-5 text-[13px] text-muted">Updated <time dateTime={s.updated}>{updated}</time></p>
           </div>
-          {/* Estimate contract: id="estimate" + data-estimate-form on the section that wraps <LeadForm />; no scroll-mt-*
-              (html scroll-padding-top already clears the sticky header, V5.2); not sticky, it sits in the hero. The card
-              header is compact (one-line note); on viewports too short for the whole card, the "Free estimate" jump
-              (jumpToEstimate in chrome-client.tsx) lines the form's bottom up above the phone's bottom bar instead. */}
-          <section id="estimate" data-estimate-form aria-labelledby="estimate-h" className="bg-white text-ink border border-line rounded-panel p-4 sm:p-5">
-            <h2 id="estimate-h" className="font-display text-2xl leading-[1.15] text-navy">Request a free estimate</h2>
-            <p className="mt-2 text-sm text-muted">
-              Free, no obligation. Or call <a href={site.phoneHref} className="font-medium text-navy underline underline-offset-4 tel">{site.phone}</a>.
-            </p>
-            <div className="mt-4"><LeadForm /></div>
-          </section>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
@@ -305,6 +298,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
               </ul>
             )}
             {gallery.length > 0 && <PhotoGrid photos={gallery} className="mt-14" />}
+            <CtaRow className="mt-12" />
           </div>
         </section>
       )}
@@ -359,6 +353,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
               ))}
             </p>
           )}
+          <CtaRow className="mt-10" />
         </div>
       </section>
 
@@ -375,6 +370,9 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           </div>
         </div>
       </section>
+
+      {/* MID-PAGE ESTIMATE — the bare form again (second, lazy instance), in its turn of the surface alternation */}
+      <FormBand tone={surface("form") === "bg-stone" ? "stone" : "paper"} />
 
       {/* LEAD-SAFE — stated as rules; never a company certification claim. The full rule list lives in ONE canonical
           section (painting hub, LEAD_SAFE_HREF); other hubs give their service-specific rule and link there (V3.10). */}
@@ -414,6 +412,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
               rows: c.process.steps.map((p, i) => [`${i + 1}. ${p.step}`, p.detail]),
             }}
           />
+          <CtaRow className="mt-10" />
         </div>
       </section>
 

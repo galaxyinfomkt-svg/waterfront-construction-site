@@ -12,8 +12,15 @@
 .post h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.875rem; line-height: 1.2; letter-spacing: -.01em; color: var(--color-navy); margin: 3rem 0 .9rem; text-wrap: balance; }
 .post h3 { font-family: var(--font-sans); font-weight: 600; font-size: 1.125rem; line-height: 1.4; color: var(--color-ink); letter-spacing: 0; margin: 1.75rem 0 .4rem; }
 .post p { margin: 0 0 1.15rem; }
-.post a { color: var(--color-blue); font-weight: inherit; text-decoration: underline 1px; text-underline-offset: .22em; }
-.post a:hover { text-decoration-thickness: 2px; }
+/* Text links only: the CTA row buttons (.btn) keep their own button styling. */
+.post a:not(.btn) { color: var(--color-blue); font-weight: inherit; text-decoration: underline 1px; text-underline-offset: .22em; }
+.post a:not(.btn):hover { text-decoration-thickness: 2px; }
+
+/* The article runs in two parts around the full-width form band: the second part's first heading starts at the
+   section's own top padding, not 3rem below it. */
+.post > section:first-child > h2:first-child { margin-top: 0; }
+/* CTA rows inside the article flow (components/CtaRow.tsx): sans-serif buttons at the site's size, clear of the text. */
+.post .post-cta { margin: 2.5rem 0; font-size: 1rem; line-height: 1.5; }
 
 /* Lists: every variant indents 1.75rem */
 .post ul { margin: 0 0 1.3rem; padding-left: 0; list-style: none; }
@@ -80,6 +87,10 @@
 .post .sources a { color: var(--color-ink); font-weight: 400; }
 
 .post .toc { margin: 2rem 0; padding: 1.25rem 0; border-block: 1px solid var(--color-line); counter-reset: toc; }
+/* "In this guide" in its own grid cell (app/blog/[slug]/page.tsx): grid margins do not collapse, so the photo's
+   bottom margin alone sets the gap above it; from lg it is a sticky right rail with no outer margins. */
+.post.toc-rail .toc { margin-top: 0; }
+@media (min-width: 1024px) { .post.toc-rail .toc { margin: 0; } .post.toc-rail { font-size: 17px; } }
 .post .toc .toc-title { margin: 0 0 .5rem; font-weight: 600; font-size: .75rem; line-height: 1.4; letter-spacing: .16em; text-transform: uppercase; font-feature-settings: "case"; color: var(--color-muted); }
 .post .toc ul { margin: 0; }
 .post .toc li { counter-increment: toc; margin: .3rem 0; padding-left: 2.25rem; font-size: 16px; line-height: 1.45; }

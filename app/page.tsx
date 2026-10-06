@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import LeadForm from "@/components/LeadForm";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
 import JsonLd from "@/components/JsonLd";
 import { PhoneIcon, CheckIcon, ArrowUpRightIcon, ArrowLabel } from "@/components/chrome-icons";
 import StatsRow from "@/components/StatsRow";
@@ -86,48 +88,47 @@ export default function Home() {
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — keyword + entity H1, answer-first paragraph, and the estimate form framed in a white card.
-          Neutral black scrim only (§2): below lg the photo band fades to solid scrim, so the form sits on black. */}
-      <section data-cta-zone className="relative overflow-hidden bg-scrim">
-        <div className="absolute inset-x-0 top-0 h-[min(100svh,720px)] lg:inset-0 lg:h-auto">
-          <Image src={HERO} alt="Kitchen remodeled by Waterfront Construction in Mansfield, MA, with white shaker-style cabinets, a dark stone-look island and glass pendant lights"
-            fill loading="eager" fetchPriority="high" quality={60} sizes="100vw" className="object-cover" />
-          <div aria-hidden="true" className="absolute inset-0 scrim-hero" />
-        </div>
-        <div className="relative container-x pt-8 pb-14 md:py-20 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
-          <div className="text-white on-photo">
-            {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
-            <ul className="dot-list-wrap eyebrow">
-              <li>Free estimates</li>
-              <li>Owner-led since {site.founded}</li>
-              {credentials && <li>{credentials}</li>}
-            </ul>
-            {/* Phones narrower than 375px step the display size down so the nowrap "Northborough, MA" fits its line
-                (40px would overflow the 280px content box at 320); 375px and up use the --text-display clamp. */}
-            <h1 className="mt-4 md:mt-5 text-display max-[359px]:text-[2.125rem] min-[360px]:max-[374px]:text-[2.375rem] text-balance text-white max-w-[12em]">
-              Remodeling contractor in <span className="whitespace-nowrap">Northborough, MA</span>
-            </h1>
-            <p className="mt-5 md:mt-6 text-base md:text-lg leading-[1.62] text-white/90 max-w-[36em]">{ENTITY}</p>
-            {/* Below md the hero rhythm is tightened (pt-8, mt-4/5/7/6) so at 390x844 the trust row clears the mobile bottom bar. */}
-            <div className="mt-7 md:mt-8 flex flex-col sm:flex-row gap-3">
-              <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
-              <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
+      {/* HERO — split: the job photo under a neutral black scrim carries the keyword + entity H1 and the answer-first
+          paragraph on the left (7/12 from lg, bleeding to the left viewport edge); the right 5/12 is plain paper holding
+          the bare estimate form (never over the photo). Below lg the photo block comes first, then the form on paper. */}
+      <section data-cta-zone className="relative overflow-hidden bg-paper">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-12 lg:gap-x-12">
+          <div className="relative -mx-5 px-5 md:-mx-8 md:px-8 lg:mx-0 lg:px-0 lg:pr-12 lg:col-span-7 bg-scrim">
+            {/* Photo layer: the block's own box below lg; from lg it reaches back to the viewport's left edge
+                (container gutter + side margin), so the photo bleeds left while the text keeps the page's one left edge. */}
+            <div className="absolute inset-0 lg:left-[calc(-1*(max(0px,(100vw_-_1200px)/2)_+_2rem))]">
+              <Image src={HERO} alt="Kitchen remodeled by Waterfront Construction in Mansfield, MA, with white shaker-style cabinets, a dark stone-look island and glass pendant lights"
+                fill loading="eager" fetchPriority="high" quality={60} sizes="(min-width:1024px) 60vw, 100vw" className="object-cover" />
+              {/* Below lg the tuned vertical scrim; from lg the copy fills the whole photo block, so an even .72 black
+                  (no gradient) keeps every line of white text at AA over the brightest pixels. */}
+              <div aria-hidden="true" className="absolute inset-0 scrim-hero lg:hidden" />
+              <div aria-hidden="true" className="absolute inset-0 hidden lg:block bg-scrim/72" />
             </div>
-            <ul className="mt-6 md:mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/85">
-              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Itemized estimates</li>
-              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />{site.projectsCompleted}+ projects completed</li>
-              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Insured</li>
-            </ul>
+            <div className="relative pt-8 pb-14 md:py-20 text-white on-photo">
+              {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
+              <ul className="dot-list-wrap eyebrow">
+                <li>Free estimates</li>
+                <li>Owner-led since {site.founded}</li>
+                {credentials && <li>{credentials}</li>}
+              </ul>
+              {/* Phones narrower than 375px step the display size down so the nowrap "Northborough, MA" fits its line
+                  (40px would overflow the 280px content box at 320); 375px and up use the --text-display clamp. */}
+              <h1 className="mt-4 md:mt-5 text-display max-[359px]:text-[2.125rem] min-[360px]:max-[374px]:text-[2.375rem] text-balance text-white max-w-[12em]">
+                Remodeling contractor in <span className="whitespace-nowrap">Northborough, MA</span>
+              </h1>
+              <p className="mt-5 md:mt-6 text-base md:text-lg leading-[1.62] text-white/90 max-w-[36em]">{ENTITY}</p>
+              <div className="mt-7 md:mt-8 flex flex-col sm:flex-row gap-3">
+                <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
+                <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
+              </div>
+              <ul className="mt-6 md:mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/85">
+                <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Itemized estimates</li>
+                <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />{site.projectsCompleted}+ projects completed</li>
+                <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Insured</li>
+              </ul>
+            </div>
           </div>
-          <div className="self-start lg:self-center">
-            <section id="estimate" data-estimate-form aria-labelledby="estimate-h" className="bg-white text-ink border border-line rounded-panel p-6 sm:p-7 shadow-panel">
-              <h2 id="estimate-h" className="font-display text-[1.625rem] leading-[1.15] text-navy">Request a free estimate</h2>
-              <p className="mt-2 text-sm text-muted">
-                Free and no-obligation. Prefer to talk? Call <a href={site.phoneHref} className="font-medium text-navy underline underline-offset-4 tel">{site.phone}</a> ({site.hours}).
-              </p>
-              <div className="mt-4"><LeadForm /></div>
-            </section>
-          </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0 pt-10 md:pt-14 lg:pt-20" />
         </div>
       </section>
 
@@ -219,6 +220,7 @@ export default function Home() {
             ))}
           </ul>
           <div className="mt-12"><Link href="/services" className="link-arrow"><ArrowLabel text="Compare all services" /></Link></div>
+          <CtaRow className="mt-10" />
         </div>
       </section>
 
@@ -252,8 +254,11 @@ export default function Home() {
         </div>
       </section>
 
+      {/* MID-PAGE ESTIMATE — the bare form again (second, lazy instance), between two stone bands */}
+      <FormBand tone="paper" />
+
       {/* RECENT PROJECTS — real photos, each linked to its case study; caption below the photo (§4.13) */}
-      <section className="section" aria-labelledby="recent-h">
+      <section className="section bg-stone" aria-labelledby="recent-h">
         <div className="container-x">
           <div className="section-head section-head--split">
             <div>
@@ -282,11 +287,12 @@ export default function Home() {
             })}
           </ul>
           <div className="mt-12"><Link href="/gallery" className="link-arrow"><ArrowLabel text="See all projects" /></Link></div>
+          <CtaRow className="mt-10" />
         </div>
       </section>
 
       {/* HOW IT WORKS (no HowTo markup: deprecated, 01 L2 / 08 S-10) */}
-      <section className="section bg-stone" aria-labelledby="process-h">
+      <section className="section" aria-labelledby="process-h">
         <div className="container-x">
           <div className="section-head">
             <p className="eyebrow">How it works</p>
@@ -306,11 +312,12 @@ export default function Home() {
               </li>
             ))}
           </ol>
+          <CtaRow className="mt-12" />
         </div>
       </section>
 
       {/* COST GUIDES — sourced Massachusetts cost guides (blog B-08: give the guides contextual inlinks) */}
-      <section className="section" aria-labelledby="guides-h">
+      <section className="section bg-stone" aria-labelledby="guides-h">
         <div className="container-x">
           <div className="section-head">
             <p className="eyebrow">Plan your budget</p>

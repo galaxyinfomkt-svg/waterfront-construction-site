@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { posts, CATEGORIES, type Post } from "@/lib/posts";
@@ -8,6 +9,10 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import Typeset from "@/components/Typeset";
 import { pageMeta, SITE_URL } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, pageUrl, BUSINESS_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
+import { EstimateLink } from "@/components/chrome-client";
 import { formatDate, sameDay } from "./_lib/content";
 
 const H1 = "Remodeling cost guides & advice for Massachusetts homeowners";
@@ -150,13 +155,19 @@ function spreadCovers(list: Post[], feature: boolean, cols: number) {
   return featured ? [featured, ...best] : best;
 }
 
+const shown = CATEGORIES.filter((c) => posts.some((p) => p.category === c.name));
+// The mid-page form band follows the first category (the featured cost guides: about half the page).
+const FORM_AFTER = 0;
+
 export default function BlogPage() {
   return (
     <>
       <JsonLd data={blogGraph()} />
+      {/* HERO — text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg,
+          after the hero text on phones. */}
       <section className="page-head">
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-navy text-balance"><Typeset text={H1} /></h1>
             {/* Authorship matches the posts, their meta author and the JSON-LD: the company publishes the guides (V3.4). */}
@@ -171,45 +182,56 @@ export default function BlogPage() {
               </Link>
               . Prices cite Remodeling magazine&apos;s Cost vs. Value data for New England, and legal and permit guidance links to state sources.
             </p>
+            <nav aria-label="Guide topics" className="mt-8 -mx-5 px-5 py-1.5 flex gap-2.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:mx-0 sm:px-0 sm:overflow-visible">
+              {CATEGORIES.map((c) => (
+                <a key={c.id} href={`#${c.id}`} className="chip">
+                  {c.name}
+                </a>
+              ))}
+            </nav>
           </div>
-          <nav aria-label="Guide topics" className="mt-8 -mx-5 px-5 py-1.5 flex gap-2.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:mx-0 sm:px-0 sm:overflow-visible">
-            {CATEGORIES.map((c) => (
-              <a key={c.id} href={`#${c.id}`} className="chip">
-                {c.name}
-              </a>
-            ))}
-          </nav>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
-      {CATEGORIES.filter((c) => posts.some((p) => p.category === c.name)).map((c, i) => {
+      {shown.map((c, i) => {
         const sorted = posts.filter((p) => p.category === c.name).sort(byPublished);
         // The first category features its newest guide across the full row; the rest fill rows of min(count, 3).
         const feature = i === 0 && sorted.length > 1;
         const cols = Math.min(feature ? 3 : sorted.length, 3);
         const list = spreadCovers(sorted, feature, cols);
+        // Same-surface join only between two neighbouring paper categories; the category after the stone form band
+        // starts with its full top padding and no hairline.
+        const joined = i > 0 && i !== FORM_AFTER + 1;
+        // One CTA row at the end of a category that is followed by neither the form band nor the closing navy band.
+        const cta = i !== FORM_AFTER && i < shown.length - 1;
         return (
-          <section key={c.id} id={c.id} aria-labelledby={`${c.id}-h`} className={`section bg-paper ${i ? "pt-0" : ""}`}>
-            {/* Same-surface join: categories share the paper background, so a hairline separates them. */}
-            {i > 0 && (
-              <div className="container-x">
-                <div className="border-t border-line" />
-              </div>
-            )}
-            <div className={`container-x ${i ? "pt-[var(--section-y)]" : ""}`}>
-              <div className="section-head section-head--split">
-                <div>
-                  <h2 id={`${c.id}-h`} className="text-h2 text-navy">{c.name}</h2>
+          <Fragment key={c.id}>
+            <section id={c.id} aria-labelledby={`${c.id}-h`} className={`section bg-paper ${joined ? "pt-0" : ""}`}>
+              {/* Same-surface join: categories share the paper background, so a hairline separates them. */}
+              {joined && (
+                <div className="container-x">
+                  <div className="border-t border-line" />
                 </div>
-                <p className={SPLIT_P}>{c.intro}</p>
+              )}
+              <div className={`container-x ${joined ? "pt-[var(--section-y)]" : ""}`}>
+                <div className="section-head section-head--split">
+                  <div>
+                    <h2 id={`${c.id}-h`} className="text-h2 text-navy">{c.name}</h2>
+                  </div>
+                  <p className={SPLIT_P}>{c.intro}</p>
+                </div>
+                <ul role="list" className={`grid sm:grid-cols-2 ${COLS[cols]} gap-x-8 gap-y-12`}>
+                  {list.map((p, j) => (
+                    <PostCard key={p.slug} p={p} cols={cols} featured={feature && j === 0} className={feature && j === 0 ? "sm:col-span-2 lg:col-span-3" : ""} />
+                  ))}
+                </ul>
+                {cta && <CtaRow className="mt-14" />}
               </div>
-              <ul role="list" className={`grid sm:grid-cols-2 ${COLS[cols]} gap-x-8 gap-y-12`}>
-                {list.map((p, j) => (
-                  <PostCard key={p.slug} p={p} cols={cols} featured={feature && j === 0} className={feature && j === 0 ? "sm:col-span-2 lg:col-span-3" : ""} />
-                ))}
-              </ul>
-            </div>
-          </section>
+            </section>
+            {/* Mid-page estimate band (stone between the paper categories), after the first and longest category. */}
+            {i === FORM_AFTER && <FormBand tone="stone" />}
+          </Fragment>
         );
       })}
 
@@ -219,7 +241,7 @@ export default function BlogPage() {
           <h2 id="blog-cta-h" className="text-h2 text-white max-w-[18em]">Planning a project?</h2>
           <p className="mt-5 text-lead text-white/80 max-w-[36em]">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>
         </div>

@@ -8,6 +8,10 @@ import { pageGraph, webPageNode, breadcrumbNode, serviceId, pageUrl, AREA_FACTS,
 import { credentialLine } from "@/lib/credentials";
 import { getContent, serviceProjects, serviceGuides, SOURCES, PERMITS_HOW } from "@/lib/service-content";
 import { PhoneIcon, ArrowLabel } from "@/components/chrome-icons";
+import { EstimateLink } from "@/components/chrome-client";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
 
 const TITLE = "Home Remodeling Services in Central & Eastern MA";
 const DESCRIPTION = "Kitchens and baths, additions, decks, siding, windows and doors, and painting from one owner-led contractor based in Northborough, MA. Free itemized estimates.";
@@ -45,11 +49,13 @@ export default function ServicesPage() {
     <>
       <JsonLd data={ld} />
 
+      {/* HERO — text on the left; the bare estimate form (the page's ONE EstimateForm) in the right column from lg,
+          after the hero text on phones. The /contact#estimate links are EstimateLinks: they jump to this form. */}
       <section className="page-head">
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
-            <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
+            <h1 className="mt-5 text-h1 text-navy lg:pr-12">{H1}</h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
             {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
             <ul className="dot-list-wrap mt-4 text-sm text-muted">
@@ -58,10 +64,11 @@ export default function ServicesPage() {
               {credentials && <li>{credentials}</li>}
             </ul>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+              <EstimateLink className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</EstimateLink>
               <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
             </div>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
@@ -103,6 +110,7 @@ export default function ServicesPage() {
               </li>
             ))}
           </ul>
+          <CtaRow className="mt-14" />
         </div>
       </section>
 
@@ -134,7 +142,10 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="section bg-paper" aria-labelledby="area-h">
+      {/* MID-PAGE ESTIMATE — paper between the stone "How we work" band and the stone "Where we work" band */}
+      <FormBand tone="paper" />
+
+      <section className="section bg-stone" aria-labelledby="area-h">
         <div className="container-x">
           <h2 id="area-h" className="text-h2 text-navy">Where we work</h2>
           <p className="mt-5 text-lead text-ink/80 max-w-[38rem]">
@@ -142,7 +153,7 @@ export default function ServicesPage() {
           </p>
           <p className="mt-4"><Link href="/service-areas" className="link-arrow"><ArrowLabel text="See every town we serve, by county" /></Link></p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>
         </div>

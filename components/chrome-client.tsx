@@ -1,7 +1,7 @@
 "use client";
-// The only client-side parts of the site chrome (audit 07 T08, 01 M1): the header (menu state), the
-// desktop floating call button (shows/hides by scroll) and the "Free estimate" link that scrolls to the
-// on-page form. Everything else (top bar, footer, mobile bar) is server-rendered in chrome.tsx.
+// The only client-side parts of the site chrome (audit 07 T08, 01 M1): the header (menu state) and the
+// "Free estimate" links that scroll to the on-page form. Everything else (top bar, footer, floating call
+// button) is server-rendered in chrome.tsx.
 // Data arrives as small props, so lib/site.ts (towns, FAQs, testimonials) is never bundled for the browser.
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -24,21 +24,24 @@ function estimateTarget(): HTMLElement | null {
   return el && !/^H[1-6]$/.test(el.tagName) ? el : null;
 }
 
-/** Scrolls so the whole estimate form is on screen. Normally the card top lands under the sticky header
- *  (html scroll-padding-top). When the card is taller than the space left between the header and the bottom
- *  edge or the phone's fixed call/estimate bar (short viewports such as 390x664 or a 1366x768 laptop's 657px),
- *  the form's bottom is lined up just above that bar instead, so the submit button is never covered, while
- *  the form's top still stays below the header. */
+/** Scrolls so the whole estimate form is on screen. Normally the form top lands under the sticky header
+ *  (html scroll-padding-top). When the form is taller than the space left between the header and the bottom
+ *  edge or the floating call button ([data-float-call], short viewports such as 390x664 or a 1366x768 laptop's
+ *  657px), the form's bottom is lined up just above that button instead, so the submit button is never covered,
+ *  while the form's top still stays below the header. */
 function jumpToEstimate(el: HTMLElement, animate = true) {
+  // Stop any smooth scroll still running (e.g. a second tap mid-animation) so the rects below match scrollY.
+  window.scrollTo({ top: window.scrollY, behavior: "instant" });
   const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-  const bar = document.querySelector<HTMLElement>(".mobile-cta-bar");
-  const barTop = bar && getComputedStyle(bar).display !== "none" ? bar.getBoundingClientRect().top : window.innerHeight;
-  const bottom = Math.min(window.innerHeight, barTop) - 8;
+  const float = document.querySelector<HTMLElement>("[data-float-call]");
+  const floatTop = float && getComputedStyle(float).display !== "none" ? float.getBoundingClientRect().top : window.innerHeight;
+  const bottom = Math.min(window.innerHeight, floatTop) - 8;
   const card = el.getBoundingClientRect();
   const form = (el.querySelector("iframe") ?? el).getBoundingClientRect();
   let delta = card.top - pad;
   if (form.bottom - delta > bottom) delta = Math.min(form.bottom - bottom, form.top - pad);
-  const smooth = animate && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Smooth only for short trips: a deep CTA (e.g. 11,000px down on a phone) lands instantly instead of a long blur.
+  const smooth = animate && Math.abs(delta) < 2.5 * window.innerHeight && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   window.scrollTo({ top: window.scrollY + delta, behavior: smooth ? "smooth" : "instant" });
   const hash = `#${el.id || "estimate"}`;
   if (location.hash !== hash) history.replaceState(null, "", hash);
@@ -75,7 +78,7 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
   }, []);
 
   // While the mobile menu is open: Escape closes it, the page behind does not scroll, and the
-  // fixed bottom CTA bar is hidden so it cannot cover the menu's own items (audit 10 UX-M1).
+  // floating call button is hidden so it cannot cover the menu's own items (audit 10 UX-M1).
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -228,40 +231,4 @@ export function EstimateJumps() {
     return () => window.clearTimeout(t);
   }, [pathname]);
   return null;
-}
-
-/** Desktop floating call button. Hidden near the top of the page and whenever an estimate form,
- *  a block marked data-cta-zone or the footer is on screen, so it never covers another CTA or the
- *  footer's last row (audit 10 UX-M8). Re-observes after every client-side navigation. */
-export function FloatingCall({ phone, phoneHref }: { phone: string; phoneHref: string }) {
-  const [show, setShow] = useState(false);
-  const pathname = usePathname();
-
-  useEffect(() => {
-    const form = estimateTarget();
-    const zones = [...document.querySelectorAll("[data-cta-zone], footer"), ...(form ? [form] : [])];
-    const visible = new Set<Element>();
-    const update = () => setShow(window.scrollY > 600 && visible.size === 0);
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) visible.add(e.target);
-        else visible.delete(e.target);
-      }
-      update();
-    });
-    zones.forEach((z) => io.observe(z));
-    window.addEventListener("scroll", update, { passive: true });
-    return () => {
-      io.disconnect();
-      window.removeEventListener("scroll", update);
-    };
-  }, [pathname]);
-
-  return (
-    <div data-float-call className={`hidden min-[1360px]:block fixed bottom-6 right-6 z-50 transition-opacity duration-200 ${show ? "visible opacity-100" : "invisible opacity-0"}`}>
-      <a href={phoneHref} aria-label={`Call ${phone}`} className="grid place-items-center w-14 h-14 rounded-full bg-navy text-white shadow-pop hover:bg-navy-deep">
-        <PhoneIcon className="w-6 h-6" />
-      </a>
-    </div>
-  );
 }

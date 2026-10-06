@@ -3,6 +3,10 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { PhoneIcon, ArrowLabel } from "@/components/chrome-icons";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
+import { EstimateLink } from "@/components/chrome-client";
 import { site, services } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { posts } from "@/lib/posts";
@@ -59,9 +63,11 @@ export default function OwnerPage() {
     <>
       <JsonLd data={ld} />
 
+      {/* HERO — text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg,
+          after the hero text on phones. */}
       <section className="page-head" data-cta-zone>
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <div className="mt-5 grid md:grid-cols-[auto_1fr] gap-8 items-center">
               {site.ownerPhoto && (
@@ -77,6 +83,7 @@ export default function OwnerPage() {
             <p className="mt-6 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
             <p className="mt-5 text-[13px] text-muted">Profile updated <time dateTime={UPDATED}>{updatedLabel}</time></p>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
@@ -123,6 +130,7 @@ export default function OwnerPage() {
                 <li key={s.slug}><Link href={`/services/${s.slug}`} className="link-nav flex items-center min-h-12 py-2">{s.short}</Link></li>
               ))}
             </ul>
+            <CtaRow className="mt-10" />
           </div>
         </div>
       </section>
@@ -150,8 +158,11 @@ export default function OwnerPage() {
         </div>
       </section>
 
+      {/* MID-PAGE ESTIMATE FORM — paper between the stone case studies and the stone guides list */}
+      <FormBand tone="paper" />
+
       {guides.length > 0 && (
-        <section className="section" aria-labelledby="guides-h">
+        <section className="section bg-stone" aria-labelledby="guides-h">
           <div className="container-x">
             <h2 id="guides-h" className="text-h2 text-navy">Homeowner guides on our blog</h2>
             <ul className="mt-10 rule-list max-w-[48rem]">
@@ -168,7 +179,7 @@ export default function OwnerPage() {
           <h2 className="text-h2 text-white max-w-[18em]">Talk to us about your project</h2>
           <p className="mt-5 text-lead text-white/80 max-w-[36em]">Free, no-obligation estimates. {site.hours}.</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>

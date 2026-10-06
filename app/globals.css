@@ -99,10 +99,10 @@
 @layer base {
   * { -webkit-font-smoothing: antialiased; }
   /* scroll-padding-top = sticky header + a small gap: 73px mobile header below md (no top bar) -> 5rem; from md the top bar shows -> 6.5rem */
-  html { scroll-behavior: smooth; overflow-x: clip; scroll-padding-top: 5rem; scroll-padding-bottom: 4.5rem; }
+  /* scroll-padding-bottom 5rem at every width: keeps focused/scrolled-to content clear of the floating call button
+     (bottom-left) and the chat bubble (bottom-right). */
+  html { scroll-behavior: smooth; overflow-x: clip; scroll-padding-top: 5rem; scroll-padding-bottom: 5rem; }
   @media (min-width: 768px) { html { scroll-padding-top: 6.5rem; } }
-  @media (min-width: 1024px) { html { scroll-padding-bottom: 1.5rem; } }
-  @media (min-width: 1360px) { html { scroll-padding-bottom: 6rem; } }
   body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); font-size: 1rem; line-height: 1.65; overflow-x: clip; }
   /* NO colour here: headings on navy/photo inherit white */
   h1, h2, h3 { font-family: var(--font-display); font-weight: 400; font-synthesis-weight: none; letter-spacing: -0.01em; line-height: 1.12; text-wrap: balance; }
@@ -286,8 +286,7 @@
 
 /* ---------- unlayered: must beat everything ---------- */
 html.menu-open { overflow: hidden; }
-html.menu-open .mobile-cta-bar { display: none; }
-html:has(dialog[open]) .mobile-cta-bar, html:has(dialog[open]) [data-float-call] { display: none; }
+html.menu-open [data-float-call], html:has(dialog[open]) [data-float-call] { display: none; }
 
 /* Two-tone focus ring — UNCHANGED */
 :where(a, button, summary, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {

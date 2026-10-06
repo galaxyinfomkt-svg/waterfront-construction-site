@@ -3,8 +3,11 @@ import Image from "next/image";
 import FilterGallery, { type GalleryItem } from "@/components/FilterGallery";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import { EstimateLink } from "@/components/chrome-client";
 import { site } from "@/lib/site";
-import { ArrowLabel } from "@/components/chrome-icons";
+import { ArrowLabel, PhoneIcon } from "@/components/chrome-icons";
 import { pageMeta, ogFor } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, pageUrl, type Crumb } from "@/lib/schema";
 import { projects, featuredImages, imageAlt, mediaCount, type GalleryCategory, type Project } from "@/lib/projects";
@@ -120,14 +123,17 @@ export default function GalleryPage() {
   return (
     <>
       <JsonLd data={ld} />
+      {/* HERO — text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg,
+          after the hero text on phones. */}
       <section className="page-head">
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-navy text-balance">{H1}</h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[60ch]">{INTRO}</p>
             <p className="mt-4 text-muted max-w-[60ch]">Open any project for what we did, the photos in the order the work happened, and the services involved.</p>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
@@ -146,8 +152,11 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      {/* PHOTOS BY PROJECT TYPE */}
-      <section className="section bg-stone" aria-labelledby="browse-h">
+      {/* MID-PAGE ESTIMATE FORM — stone between the paper case studies and the paper photo browser */}
+      <FormBand tone="stone" />
+
+      {/* PHOTOS BY PROJECT TYPE — paper, so the stone form band before it and the stone footer after it stay distinct */}
+      <section className="section bg-paper" aria-labelledby="browse-h">
         <div className="container-x">
           <div className="section-head section-head--split">
             <div>
@@ -156,9 +165,13 @@ export default function GalleryPage() {
             <p className={SPLIT_P}>Every photo is from one of the jobs above and links to its case study.</p>
           </div>
           <FilterGallery items={items} categories={categories} />
-          <div className="mt-14 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8">
-            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
-            <a href={site.instagram} target="_blank" rel="noopener" className="link-arrow self-start sm:self-auto">
+          {/* CTA row: estimate (jumps to the hero form) and call, then Instagram. */}
+          <div className="mt-14 flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
+            <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto">
+              <PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span>
+            </a>
+            <a href={site.instagram} target="_blank" rel="noopener" className="link-arrow self-start sm:self-auto sm:ml-5">
               <ArrowLabel text="Follow us on Instagram" external />
             </a>
           </div>

@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,8 +9,11 @@ import { site, services } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import JsonLd from "@/components/JsonLd";
-import { ArrowLabel, PhoneIcon } from "@/components/chrome-icons";
+import { ArrowLabel } from "@/components/chrome-icons";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
 import { pageMeta, ogFor, SITE_URL } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, imageNode, placeNode, serviceId, pageUrl, OWNER_PAGE, BUSINESS_ID, type Crumb } from "@/lib/schema";
 import { HeadlineSet, PostBlock, PostFigure, Rich, formatDate, plain, readTime, sameDay, wordCount } from "../_lib/content";
@@ -109,6 +113,15 @@ function postGraph(p: Post) {
   );
 }
 
+function PostSection({ s }: { s: Post["sections"][number] }) {
+  return (
+    <section aria-labelledby={s.id}>
+      <h2 id={s.id}>{s.h}</h2>
+      {s.blocks.map((b, i) => <PostBlock key={i} b={b} />)}
+    </section>
+  );
+}
+
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
   const p = getPost(slug);
@@ -119,16 +132,19 @@ export default async function PostPage({ params }: Props) {
   const relProjects = p.related.projects.map((s) => projects.find((x) => x.slug === s)).filter((x): x is (typeof projects)[number] => Boolean(x));
   const relPosts = p.related.posts.map((s) => getPost(s)).filter((x): x is Post => Boolean(x));
   const updated = !sameDay(p.published, p.modified);
+  // The mid-page form band goes between the H2 sections, at their midpoint (rounded up: the first half is the longer).
+  const mid = Math.ceil(p.sections.length / 2);
   const toc = [...p.sections.map((s) => ({ id: s.id, h: s.h })), ...(p.faqs.length ? [{ id: "faq", h: "Frequently asked questions" }] : []), { id: "sources", h: "Sources" }];
 
   return (
     <>
       <JsonLd data={postGraph(p)} />
 
-      {/* HERO — text only (audit B-14: the H1 is the LCP element; no decorative stock photo) */}
+      {/* HERO — text on the left (7/12; audit B-14: the H1 is the LCP element, no decorative stock photo); the bare
+          estimate form (the page's ONE EstimateForm) in the right 5/12 from lg, after the hero text on phones. */}
       <section className="page-head">
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <p className="mt-6">
               <Link href={`/blog#${p.category === "Cost guides" ? "cost-guides" : p.category === "Planning, permits & hiring" ? "planning" : "exteriors"}`} className="eyebrow inline-block py-1 text-navy hover:underline underline-offset-4">
@@ -156,18 +172,24 @@ export default async function PostPage({ params }: Props) {
               </ul>
             </div>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
-      {/* BODY */}
-      <div className="section-doc bg-paper">
-        <div className="container-x grid lg:grid-cols-[minmax(0,41rem)_18rem] lg:justify-between gap-16">
-          <div className="min-w-0 max-w-[41rem]">
-            <article className="post">
+      {/* BODY — one article in two paper parts with the mid-page estimate band (stone, full width) between them, at
+          the midpoint of the H2 sections. It replaces the old end-of-article navy panel and the desktop sidebar card. */}
+      <article>
+        {/* First part: from lg the "In this guide" list moves into a sticky right rail (cols 9-12) beside the article
+            column; below lg it stays inline after the photo. DOM order is unchanged (answer, photo, list, sections). */}
+        <div className="section-doc bg-paper">
+          <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-12">
+            <div className="post max-w-[41rem] min-w-0 lg:col-span-7">
               <p className="answer">{p.answer}</p>
               {/* Lazy like every other figure: the answer paragraph, not this photo, is the LCP (V4.4) — no eager load, no preload. */}
               <PostFigure f={{ src: p.image, ...p.photo }} />
+            </div>
 
+            <div className="post toc-rail min-w-0 lg:col-start-9 lg:col-span-4 lg:row-start-1 lg:row-span-2 lg:self-start lg:sticky lg:top-28">
               <nav aria-label="In this guide" className="toc">
                 <p className="toc-title">In this guide</p>
                 <ul>
@@ -178,13 +200,26 @@ export default async function PostPage({ params }: Props) {
                   ))}
                 </ul>
               </nav>
+            </div>
 
-              {p.sections.map((s) => (
-                <section key={s.id} aria-labelledby={s.id}>
-                  <h2 id={s.id}>{s.h}</h2>
-                  {s.blocks.map((b, i) => <PostBlock key={i} b={b} />)}
-                </section>
+            <div className="post max-w-[41rem] min-w-0 mt-4 lg:mt-6 lg:col-start-1 lg:col-span-7">
+              {p.sections.slice(0, mid).map((s, i) => (
+                <Fragment key={s.id}>
+                  <PostSection s={s} />
+                  {/* CTA row after the first section, unless the form band follows it directly. */}
+                  {i === 0 && mid > 1 && <CtaRow className="post-cta" />}
+                </Fragment>
               ))}
+            </div>
+          </div>
+        </div>
+
+        <FormBand tone="stone" doc />
+
+        <div className="section-doc bg-paper">
+          <div className="container-x">
+            <div className="post max-w-[41rem]">
+              {p.sections.slice(mid).map((s) => <PostSection key={s.id} s={s} />)}
 
               {p.faqs.length > 0 && (
                 <section aria-labelledby="faq" className="faq">
@@ -197,6 +232,9 @@ export default async function PostPage({ params }: Props) {
                   ))}
                 </section>
               )}
+
+              {/* CTA row before the sources. */}
+              <CtaRow className="post-cta" />
 
               <section aria-labelledby="sources">
                 <h2 id="sources">Sources</h2>
@@ -223,30 +261,10 @@ export default async function PostPage({ params }: Props) {
                   <Link href={OWNER_PAGE}><ArrowLabel text="About the owner, Ernando Nunes" /></Link>
                 </p>
               </section>
-            </article>
-
-            {/* The one CTA readers see on phones; the sidebar card below is desktop-only (V5.4). The post's one navy surface. */}
-            <div className="mt-12 on-dark bg-navy text-white rounded-panel p-7 md:p-8" data-cta-zone>
-              <p className="font-display text-h3 text-white">Planning a project?</p>
-              <p className="mt-2 text-white/80">Get a free, itemized estimate from an owner-led team based in Northborough, MA.</p>
-              <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
-                <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
-              </div>
             </div>
           </div>
-
-          {/* SIDEBAR — desktop only: on phones it would stack right under the in-article CTA with the same two actions (V5.4). */}
-          <aside aria-label="Contact Waterfront Construction" className="hidden lg:block">
-            <div className="panel p-7 lg:sticky lg:top-28" data-cta-zone>
-              <p className="font-display text-[1.375rem] leading-[1.25] text-navy text-balance">Talk to an <span className="whitespace-nowrap">owner-led</span> builder</p>
-              <p className="mt-2 text-sm text-muted">{[credentialLine(), "Owner-led", "Based in Northborough, MA"].filter(Boolean).join(" · ")}</p>
-              <Link href="/contact#estimate" className="btn btn-primary mt-6 w-full">Get a free estimate</Link>
-              <a href={site.phoneHref} className="btn btn-secondary mt-3 w-full"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
-            </div>
-          </aside>
         </div>
-      </div>
+      </article>
 
       {/* RELATED: service hubs, real projects, explicit next reads (audit B-08) */}
       <section className="section-doc bg-stone" aria-labelledby="related-heading">

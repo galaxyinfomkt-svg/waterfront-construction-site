@@ -7,6 +7,10 @@ import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, type Crumb } from "@/lib/schema";
 import { allContent } from "@/lib/service-content";
 import { testimonialAnchor } from "../service-areas/areas";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
+import { EstimateLink } from "@/components/chrome-client";
 
 // /reviews — real client testimonials, published with their permission (owner decision 1).
 // Never add Review / AggregateRating markup here or on the business node: self-serving reviews are not
@@ -45,14 +49,56 @@ const isoMonth = (d: string) => {
   return m && i >= 0 ? `${m[2]}-${String(i + 1).padStart(2, "0")}` : undefined;
 };
 
+// One testimonial card: a 3-row subgrid (quote, name + meta, links), so names line up across the two columns.
+function Testimonial({ t }: { t: (typeof testimonials)[number] }) {
+  const city = cityOf(t.town);
+  const svcs = servicesOf(t.name);
+  const iso = isoMonth(t.date);
+  return (
+    <li id={testimonialAnchor(t.name)} className="grid grid-rows-subgrid row-span-3 gap-y-0 border-t border-line pt-8">
+      <figure className="grid grid-rows-subgrid row-span-3 gap-y-0">
+        <blockquote className="font-display text-[1.375rem] leading-[1.45] text-navy [text-indent:-0.42em]"><p>&ldquo;{t.text}&rdquo;</p></blockquote>
+        <figcaption className="grid grid-rows-subgrid row-span-2 gap-y-0">
+          <div className="mt-6">
+            <span className="block text-[15px] font-semibold text-ink">{t.name}</span>
+            <ul className="mt-1 dot-list text-[13px] text-muted">
+              <li>{t.town}</li>
+              <li>{iso ? <time dateTime={iso}>{t.date}</time> : t.date}</li>
+              {/* Below sm this item takes its own line, so a wrapped line never starts with a separator dot. */}
+              <li className="max-sm:basis-full max-sm:before:hidden"><span className="whitespace-nowrap">Shared with permission</span></li>
+            </ul>
+          </div>
+          {city && svcs.length > 0 ? (
+            <span className="mt-3 flex flex-col items-start gap-y-2">
+              {svcs.map((s) => (
+                <Link key={s.slug} href={`/services/${s.slug}/${citySlug(city)}`} className="link-arrow text-sm leading-snug"><ArrowLabel text={`${s.short} in ${cityLabel(city)}`} /></Link>
+              ))}
+            </span>
+          ) : <span />}
+        </figcaption>
+      </figure>
+    </li>
+  );
+}
+
+// The list is read in rows of two (the lg grid). The first two rows come first, with a CTA row between them; the
+// mid-page estimate band follows them, and the rest of the list after it. So the band sits about two screens below
+// the hero form, and neither the CTA row nor the band touches the other or the closing navy band.
+const ROW = 2;
+const LIST = "grid lg:grid-cols-2 gap-x-12 gap-y-14";
+const head = testimonials.slice(0, 2 * ROW);
+const tail = testimonials.slice(2 * ROW);
+
 export default function ReviewsPage() {
   return (
     <>
       <JsonLd data={ld} />
 
+      {/* HERO — text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg,
+          after the hero text on phones. */}
       <section className="page-head" data-cta-zone>
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <p className="mt-6 eyebrow">Client testimonials</p>
             <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
@@ -64,46 +110,40 @@ export default function ReviewsPage() {
               <a href={site.googleReview} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Leave a Google review" external /></a>
             </div>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
       <section className="section" aria-labelledby="list-h">
         <div className="container-x">
           <h2 id="list-h" className="sr-only">Testimonials</h2>
-          {/* Each card is a 3-row subgrid (quote, name + meta, links), so names line up across the two columns. */}
-          <ul className="grid lg:grid-cols-2 gap-x-12 gap-y-14">
-            {testimonials.map((t) => {
-              const city = cityOf(t.town);
-              const svcs = servicesOf(t.name);
-              const iso = isoMonth(t.date);
-              return (
-                <li key={`${t.name}-${t.date}`} id={testimonialAnchor(t.name)} className="grid grid-rows-subgrid row-span-3 gap-y-0 border-t border-line pt-8">
-                  <figure className="grid grid-rows-subgrid row-span-3 gap-y-0">
-                    <blockquote className="font-display text-[1.375rem] leading-[1.45] text-navy [text-indent:-0.42em]"><p>&ldquo;{t.text}&rdquo;</p></blockquote>
-                    <figcaption className="grid grid-rows-subgrid row-span-2 gap-y-0">
-                      <div className="mt-6">
-                        <span className="block text-[15px] font-semibold text-ink">{t.name}</span>
-                        <ul className="mt-1 dot-list text-[13px] text-muted">
-                          <li>{t.town}</li>
-                          <li>{iso ? <time dateTime={iso}>{t.date}</time> : t.date}</li>
-                          {/* Below sm this item takes its own line, so a wrapped line never starts with a separator dot. */}
-                          <li className="max-sm:basis-full max-sm:before:hidden"><span className="whitespace-nowrap">Shared with permission</span></li>
-                        </ul>
-                      </div>
-                      {city && svcs.length > 0 ? (
-                        <span className="mt-3 flex flex-col items-start gap-y-2">
-                          {svcs.map((s) => (
-                            <Link key={s.slug} href={`/services/${s.slug}/${citySlug(city)}`} className="link-arrow text-sm leading-snug"><ArrowLabel text={`${s.short} in ${cityLabel(city)}`} /></Link>
-                          ))}
-                        </span>
-                      ) : <span />}
-                    </figcaption>
-                  </figure>
-                </li>
-              );
-            })}
+          <ul className={LIST}>
+            {head.slice(0, ROW).map((t) => <Testimonial key={`${t.name}-${t.date}`} t={t} />)}
           </ul>
-          <p className="mt-14 text-sm text-muted max-w-[60ch]">
+          {head.length > ROW && (
+            <>
+              <CtaRow className="mt-14" />
+              <ul className={`mt-14 ${LIST}`}>
+                {head.slice(ROW).map((t) => <Testimonial key={`${t.name}-${t.date}`} t={t} />)}
+              </ul>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* MID-PAGE ESTIMATE FORM — stone between the two paper runs of testimonials */}
+      <FormBand tone="stone" />
+
+      {/* The rest of the list. Labelled (no new visible or outline heading), so these cards are not read as part of
+          the form band. */}
+      <section className="section" aria-label="More testimonials">
+        <div className="container-x">
+          {tail.length > 0 && (
+            <ul className={LIST}>
+              {tail.map((t) => <Testimonial key={`${t.name}-${t.date}`} t={t} />)}
+            </ul>
+          )}
+          <p className={`${tail.length > 0 ? "mt-14 " : ""}text-sm text-muted max-w-[60ch]`}>
             These testimonials are reproduced word for word. See our{" "}
             <Link href="/gallery" className="link">project case studies</Link>, documented with our own photos and site videos.
           </p>
@@ -117,7 +157,7 @@ export default function ReviewsPage() {
           <p className="mt-5 text-lead text-white/80 max-w-[36em]">A Google review helps other homeowners decide. Planning a project of your own? Estimates are free.</p>
           <p className="mt-6"><a href={site.googleReview} target="_blank" rel="noopener" className="link-arrow"><ArrowLabel text="Leave a Google review" external /></a></p>
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
-            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
           </div>
         </div>

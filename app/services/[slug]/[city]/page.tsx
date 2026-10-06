@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import LeadForm from "@/components/LeadForm";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { PhoneIcon, PlusIcon, ArrowLabel } from "@/components/chrome-icons";
@@ -62,12 +64,12 @@ export default async function ServiceTownPage({ params }: Props) {
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — answer-first text on the left; the estimate card (the page's ONE LeadForm) in the right column, so the
-          form is above the fold on desktop (V5.3, audit 10 UX-H2). On phones the card follows the summary and the call
-          buttons, before the testimonial and the at-a-glance facts. The case-study photo leads the proof section. */}
+      {/* HERO — answer-first text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right
+          5/12 from lg, so the form is above the fold on desktop (V5.3, audit 10 UX-H2). On phones the form follows the
+          summary and the call buttons, before the testimonial. The case-study photo leads the proof section. */}
       <section className="page-head">
-        <div className="container-x py-8 md:py-10 grid gap-8 lg:gap-12 lg:grid-cols-[1.15fr_.85fr] lg:grid-rows-[auto_1fr] lg:items-start">
-          <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+        <div className="container-x py-8 md:py-10 grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-12 lg:grid-rows-[auto_1fr]">
+          <div className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-1">
             <Breadcrumbs items={k.crumbs} />
             <h1 className="mt-5 text-h1-long text-navy"><Typeset text={k.h1} /></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{k.summary}</p>
@@ -87,20 +89,10 @@ export default async function ServiceTownPage({ params }: Props) {
             </ul>
           </div>
 
-          {/* Estimate contract: id="estimate" + data-estimate-form on the section that wraps <LeadForm />; no scroll-mt-*
-              (html scroll-padding-top already clears the sticky header, V5.2); not sticky, it sits in the hero. Compact
-              card header; on viewports too short for the whole card, the "Free estimate" jump (jumpToEstimate in
-              chrome-client.tsx) lines the form's bottom up above the phone's bottom bar instead. */}
-          <section id="estimate" data-estimate-form aria-labelledby="estimate-h" className="min-w-0 lg:col-start-2 lg:row-start-1 lg:row-span-2 bg-white text-ink border border-line rounded-panel p-4 sm:p-5">
-            <h2 id="estimate-h" className="font-display text-2xl leading-[1.15] text-navy">{k.estimate.heading}</h2>
-            <p className="mt-2 text-sm text-muted">
-              {k.estimate.note} <a href={site.phoneHref} className="font-medium text-navy underline underline-offset-4 tel">{k.cta.phone}</a>.
-            </p>
-            <div className="mt-4"><LeadForm /></div>
-          </section>
+          <EstimateForm className="min-w-0 self-start lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:row-span-2" />
 
           {k.quote && (
-            <figure className="min-w-0 lg:col-start-1 lg:row-start-2 border-t border-line pt-6">
+            <figure className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-2 border-t border-line pt-6">
               <blockquote className="font-display text-[1.375rem] leading-[1.4] text-navy [text-indent:-0.42em] max-w-[36em]">“{k.quote.text}”</blockquote>
               <figcaption className="mt-3 text-[13px] text-muted">
                 — {k.quote.cite}. {k.quote.disclosure}{" "}
@@ -111,7 +103,8 @@ export default async function ServiceTownPage({ params }: Props) {
         </div>
       </section>
 
-      {/* BODY — one column: facts, proof, rules, questions, then the nearby / sibling-service link blocks */}
+      {/* BODY — one column: facts, proof, rules (first half); the mid-page estimate band; then questions and the
+          nearby / sibling-service link blocks (second half) */}
       <section className="section-doc bg-paper">
         <div className="container-x">
           <div className="max-w-[46rem]">
@@ -127,6 +120,7 @@ export default async function ServiceTownPage({ params }: Props) {
                 </div>
               ))}
             </dl>
+            <CtaRow className="mt-6" />
 
             {/* PROOF — real case studies with their true town and distance; on same-town pages the first card carries
                 the page's lead photo (k.heroImage) */}
@@ -184,6 +178,7 @@ export default async function ServiceTownPage({ params }: Props) {
                 ))}
               </ul>
             )}
+            <CtaRow className="mt-10" />
 
             {/* PERMITS AND RULES — state x service rule; the permit authority is this place's */}
             <h2 className={`${block} text-h2-doc text-navy`}>{k.rulesHeading}</h2>
@@ -200,11 +195,21 @@ export default async function ServiceTownPage({ params }: Props) {
             {k.guideLinks.map((g) => (
               <p key={g.href} className="mt-1"><Link href={g.href} className="link-arrow"><ArrowLabel text={g.label} /></Link>{" "}</p>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MID-PAGE ESTIMATE — the bare form again (second, lazy instance), stone between the two paper halves */}
+      <FormBand doc />
+
+      <section className="section-doc bg-paper">
+        <div className="container-x">
+          <div className="max-w-[46rem]">
 
             {/* QUESTIONS — only ones specific to this place; visible text only, no FAQPage markup (V4.1) */}
             {k.faqs.length > 0 && (
               <>
-                <h2 className={`${block} text-h2-doc text-navy`}>{k.faqHeading}</h2>
+                <h2 className="text-h2-doc text-navy">{k.faqHeading}</h2>
                 <div className="mt-6 faq-list">
                   {k.faqs.map((f) => (
                     <details key={f.q} className="faq-row group">
@@ -217,7 +222,7 @@ export default async function ServiceTownPage({ params }: Props) {
             )}
 
             {/* NEARBY — the 8 true nearest places, same service ("Town, ST" anchors + distance from this place) */}
-            <nav aria-labelledby="nearby-h" className={block}>
+            <nav aria-labelledby="nearby-h" className={k.faqs.length > 0 ? block : undefined}>
               <h2 id="nearby-h" className="text-h2-doc text-navy">{k.nearbyHeading}</h2>
               <ul className="mt-6 rule-list grid sm:grid-cols-2 gap-x-8 sm:border-t-0 sm:[&>li:nth-child(-n+2)]:border-t sm:[&>li:nth-child(-n+2)]:border-line">
                 {k.nearby.map((n) => (

@@ -1,7 +1,10 @@
-import Link from "next/link";
 import { displayAddress } from "@/lib/address";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import { EstimateLink } from "@/components/chrome-client";
+import { PhoneIcon } from "@/components/chrome-icons";
 import { site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, type Crumb } from "@/lib/schema";
@@ -36,13 +39,16 @@ export default function PrivacyPage() {
   return (
     <>
       <JsonLd data={ld} />
+      {/* HERO — title on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from
+          lg, after the title on phones. */}
       <section className="page-head">
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-navy">Privacy Policy</h1>
             <p className="mt-5 text-[13px] text-muted">Last updated: <time dateTime={UPDATED}>{updatedLabel}</time></p>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
@@ -74,6 +80,16 @@ export default function PrivacyPage() {
             <h2>Hosting</h2>
             <p>This website is hosted by Vercel, which processes standard request logs (such as IP address and browser type) to deliver and secure the site.</p>
 
+          </div>
+        </div>
+      </section>
+
+      {/* MID-PAGE ESTIMATE — the bare form again (second, lazy instance), stone between the two paper halves of the text */}
+      <FormBand tone="stone" doc />
+
+      <section className="section-doc bg-paper">
+        <div className="container-x">
+          <div className="prose [&>h2:first-child]:mt-0">
             <h2>Sharing your information</h2>
             <p>We do not sell your personal information. We share it only with the service providers named above, and only as needed to run the site and serve you, or when the law requires it.</p>
 
@@ -93,7 +109,13 @@ export default function PrivacyPage() {
             <p>Questions about this policy? Call <a href={site.phoneHref} className="link tel">{site.phone}</a>, email <a href={site.emailHref} className="link">{site.email}</a>, or write to {site.name}, {displayAddress}.</p>
             <p className="text-sm text-muted">This policy is provided for general information and is not legal advice.</p>
           </div>
-          <div className="mt-8"><Link href="/contact#estimate" className="btn btn-primary">Get a free estimate</Link></div>
+          {/* CTA row (as <CtaRow />): the estimate link jumps to the hero form; the call button beside it. */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
+            <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto">
+              <PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span>
+            </a>
+          </div>
         </div>
       </section>
     </>

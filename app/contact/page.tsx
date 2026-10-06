@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Fragment } from "react";
-import LeadForm from "@/components/LeadForm";
+import EstimateForm from "@/components/EstimateForm";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { PhoneIcon, MailIcon, PinIcon, ClockIcon, ArrowLabel } from "@/components/chrome-icons";
@@ -15,9 +15,9 @@ import ServiceAreaMap from "../service-areas/ServiceAreaMap";
 import { documentedTowns } from "../service-areas/areas";
 
 // /contact — ContactPage + contactPoint (audit 06 ST-M1, 08 §5.11, 10 UX-H2).
-// The GHL snippet (components/LeadForm.tsx) is untouched; it is framed by a labelled section with
-// id="estimate" and data-estimate-form (the hook EstimateLink targets, V5.1) so every "Free estimate" link
-// on the site lands on it; no scroll-margin (html scroll-padding-top already clears the header, V5.2).
+// The GHL form sits bare in the hero, beside the H1 (<EstimateForm />: id="estimate" + data-estimate-form, the
+// hook EstimateLink targets, V5.1), so every "Free estimate" link on the site lands on it. No card, heading or
+// note around it, and no mid-page copy on this page: the hero form is the page.
 // The old Google Maps iframe (a town pin, undisclosed third party) is replaced by our own SVG map. The
 // address (displayAddress, honoring site.showStreet) is labelled neutrally: whether clients can visit it is
 // owner input, so the page never says "Visit".
@@ -58,26 +58,22 @@ export default function ContactPage() {
     <>
       <JsonLd data={ld} />
 
+      {/* HERO — text on the left (7/12); the bare estimate form in the right 5/12 from lg, right after the hero text
+          on phones (UX-H2). */}
       <section className="page-head">
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-navy">Contact <span className="md:whitespace-nowrap">{H1_NAME}</span></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]"><WithTel text={LEAD} /></p>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
       <section className="section">
-        <div className="container-x grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-x-12 gap-y-14 items-start">
-          {/* Form first on phones (right after the hero), right column on desktop (UX-H2) */}
-          <section id="estimate" data-estimate-form aria-labelledby="estimate-h" className="order-first lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2 self-start bg-white text-ink border border-line rounded-panel p-6 sm:p-7">
-            <h2 id="estimate-h" className="font-display text-[1.625rem] leading-[1.15] text-navy">Request a free estimate</h2>
-            <p className="mt-2 text-sm text-muted">Tell us the town, the type of project and a good time to call.</p>
-            <div className="mt-4"><LeadForm /></div>
-          </section>
-
-          <div className="lg:col-start-1 lg:row-start-1">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-14 items-start">
+          <div>
             <h2 className="text-h2-doc text-navy">Talk to us directly</h2>
             <p className="mt-4 text-muted">{site.name} is owner-led. Call, email, or send the form.</p>
             <address className="not-italic mt-8 border-t border-line">
@@ -105,7 +101,7 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="lg:col-start-1 lg:row-start-2">
+          <div>
             <h2 className="text-h2-doc text-navy">What happens next</h2>
             {/* Numerals read 01 02 03; the leading zero is CSS content, so the step text stays "1 2 3" as before. */}
             <ol className="mt-6 border-b border-line">

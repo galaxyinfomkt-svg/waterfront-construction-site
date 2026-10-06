@@ -1,6 +1,9 @@
-import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import { EstimateLink } from "@/components/chrome-client";
+import { PhoneIcon } from "@/components/chrome-icons";
 import { site } from "@/lib/site";
 import { hasHic } from "@/lib/credentials";
 import { pageMeta } from "@/lib/seo";
@@ -30,13 +33,16 @@ export default function TermsPage() {
   return (
     <>
       <JsonLd data={ld} />
+      {/* HERO — title on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from
+          lg, after the title on phones. */}
       <section className="page-head">
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-navy">Terms of Use</h1>
             <p className="mt-5 text-[13px] text-muted">Last updated: <time dateTime={UPDATED}>{updatedLabel}</time></p>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
@@ -60,6 +66,16 @@ export default function TermsPage() {
             <h2>No warranty for website content</h2>
             <p>We work to keep the information on this site accurate and current, but it is provided &ldquo;as is,&rdquo; without warranties of any kind. We are not liable for loss arising from reliance on the website&apos;s content. This section is about the website only; it does not change the terms of any agreement for your project.</p>
 
+          </div>
+        </div>
+      </section>
+
+      {/* MID-PAGE ESTIMATE — the bare form again (second, lazy instance), stone between the two paper halves of the text */}
+      <FormBand tone="stone" doc />
+
+      <section className="section-doc bg-paper">
+        <div className="container-x">
+          <div className="prose [&>h2:first-child]:mt-0">
             <h2>Intellectual property</h2>
             <p>Text, branding and project photos on this site belong to {site.name} unless otherwise noted, and may not be copied or reused without permission. Third-party images, logos and trademarks belong to their owners.</p>
 
@@ -76,7 +92,13 @@ export default function TermsPage() {
             <p>Questions? Call <a href={site.phoneHref} className="link tel">{site.phone}</a> or email <a href={site.emailHref} className="link">{site.email}</a>.</p>
             <p className="text-sm text-muted">These terms are provided for general information and are not legal advice.</p>
           </div>
-          <div className="mt-8"><Link href="/contact#estimate" className="btn btn-primary">Get a free estimate</Link></div>
+          {/* CTA row (as <CtaRow />): the estimate link jumps to the hero form; the call button beside it. */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
+            <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto">
+              <PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span>
+            </a>
+          </div>
         </div>
       </section>
     </>

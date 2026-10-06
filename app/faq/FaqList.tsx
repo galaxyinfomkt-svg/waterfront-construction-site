@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { FaqEntry } from "@/lib/faq";
 import { PlusIcon } from "@/components/chrome-icons";
+import { EstimateLink } from "@/components/chrome-client";
 
 // Renders FAQ entries from lib/faq.ts. The answer string is rendered as ONE text node, exactly as it
 // appears in the FAQPage JSON-LD (check-jsonld R09); related links and sources follow it.
@@ -15,6 +16,9 @@ function Extras({ f }: { f: FaqEntry }) {
             <li key={l.href}>
               {l.external ? (
                 <a href={l.href} target="_blank" rel="noopener" className="link inline-block py-1">{l.label}</a>
+              ) : l.href === "/contact#estimate" ? (
+                // Same link and markup as before, but it jumps to this page's own hero form when there is one.
+                <EstimateLink className="link inline-block py-1">{l.label}</EstimateLink>
               ) : (
                 <Link href={l.href} className="link inline-block py-1">{l.label}</Link>
               )}

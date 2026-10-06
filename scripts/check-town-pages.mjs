@@ -5,7 +5,11 @@ import path from "node:path";
 const APP = process.argv[2] || ".next/server/app";
 const SVC = fs.readdirSync(path.join(APP, "services"), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
 const dec = (s) => s.replace(/&amp;/g, "&").replace(/&#x27;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, " ");
-const main = (h) => { let m = h.split("<main")[1] || ""; m = m.slice(m.indexOf(">") + 1).split("</main>")[0]; return dec(m.replace(/<script[\s\S]*?<\/script>/g, " ").replace(/<style[\s\S]*?<\/style>/g, " ").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim(); };
+// Repeated template chrome inside <main> (the mid-page estimate band and the CTA rows, marked data-form-band /
+// data-cta-row) is identical on every page of the site, like the header and footer, so it is left out of the measure.
+// The lazy regexes assume no nested <section> inside the band and no nested <div> inside a CTA row (true today).
+const chrome = (m) => m.replace(/<section[^>]*\sdata-form-band[^>]*>[\s\S]*?<\/section>/g, " ").replace(/<div[^>]*\sdata-cta-row[^>]*>[\s\S]*?<\/div>/g, " ");
+const main = (h) => { let m = h.split("<main")[1] || ""; m = chrome(m.slice(m.indexOf(">") + 1).split("</main>")[0]); return dec(m.replace(/<script[\s\S]*?<\/script>/g, " ").replace(/<style[\s\S]*?<\/style>/g, " ").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim(); };
 const meta = (h, re) => dec((h.match(re) || [])[1] || "");
 const sh = (t) => { const w = t.toLowerCase().replace(/[^a-z0-9$%&' ]+/g, " ").split(/\s+/).filter(Boolean); const s = new Set(); for (let i = 0; i + 5 <= w.length; i++) s.add(w.slice(i, i + 5).join(" ")); return s; };
 const jac = (a, b) => { let i = 0; for (const x of a) if (b.has(x)) i++; return i / (a.size + b.size - i || 1); };

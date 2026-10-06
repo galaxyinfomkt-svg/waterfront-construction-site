@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Newsreader } from "next/font/google";
+import { preconnect } from "react-dom";
 import "./globals.css";
 import { TopBar, SiteHeader, SiteFooter, FloatingCTA } from "@/components/chrome";
 import { SITE_URL, SITE_NAME } from "@/lib/seo";
@@ -36,6 +37,12 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // The GHL form (api.leadconnectorhq.com iframe + link.msgsndr.com/js/form_embed.js) is in every page's hero:
+  // open both connections before the HTML body arrives, so the form is not slow to appear. ReactDOM resource
+  // hints, as the Next docs prescribe (generate-metadata.md, "Resource hints"). No crossOrigin: the iframe and the
+  // script tag are non-CORS requests.
+  preconnect("https://api.leadconnectorhq.com");
+  preconnect("https://link.msgsndr.com");
   return (
     <html lang="en-US" data-scroll-behavior="smooth" className={`${inter.variable} ${newsreader.variable}`}>
       <body>

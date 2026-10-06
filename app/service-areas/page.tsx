@@ -10,6 +10,10 @@ import { pageGraph, webPageNode, breadcrumbNode, type Crumb } from "@/lib/schema
 import { allFaqs, type FaqEntry } from "@/lib/faq";
 import FaqList from "../faq/FaqList";
 import Typeset from "@/components/Typeset";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
+import { EstimateLink } from "@/components/chrome-client";
 import ServiceAreaMap from "./ServiceAreaMap";
 import OpenOnHash from "./OpenOnHash";
 import {
@@ -170,10 +174,11 @@ export default function ServiceAreasPage() {
       <JsonLd data={ld} />
       <OpenOnHash />
 
-      {/* HEADER */}
+      {/* HEADER — text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12
+          from lg, after the hero text on phones. */}
       <section className="page-head" data-cta-zone>
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20">
-          <div className="max-w-[46rem]">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 max-[359px]:text-h1-long text-navy"><Typeset text={H1} /></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{DESCRIPTION}</p>
@@ -181,10 +186,11 @@ export default function ServiceAreasPage() {
               {`The ${PLACES} places on this page range from about ${nearest.miles} miles away (${cityLabel(NEAREST)}) to about ${farthest.miles} miles (${cityLabel(FARTHEST)}), in a straight line. We have completed projects in ${site.townsWithProjects}+ of these towns, and each town has its own page for each of our six services.`}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+              <EstimateLink className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</EstimateLink>
               <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span></a>
             </div>
           </div>
+          <EstimateForm className="lg:col-span-5 self-start min-w-0" />
         </div>
       </section>
 
@@ -227,6 +233,7 @@ export default function ServiceAreasPage() {
                 <li key={b.label} className="grid grid-cols-[3ch_1fr] gap-x-4 py-3"><span className="font-medium text-navy tnum text-right">{b.count}</span> <span className="text-muted whitespace-nowrap">places, {b.label}</span></li>
               ))}
             </ul>
+            <CtaRow className="mt-10" />
           </div>
         </div>
       </section>
@@ -277,8 +284,11 @@ export default function ServiceAreasPage() {
         </div>
       </section>
 
-      {/* DIRECTORY */}
-      <section className="section" aria-labelledby="massachusetts">
+      {/* MID-PAGE ESTIMATE FORM — paper between the stone documented-work band and the stone directory */}
+      <FormBand tone="paper" />
+
+      {/* DIRECTORY — stone, so the paper form band above and the paper FAQ below stay distinct */}
+      <section className="section bg-stone" aria-labelledby="massachusetts">
         <div className="container-x">
           <div className="section-head">
             <h2 id="massachusetts" className="text-h2 text-navy">Massachusetts towns we serve</h2>
@@ -299,11 +309,12 @@ export default function ServiceAreasPage() {
           <div className="grid grid-cols-1 gap-y-8">
             {nh.map((g, i) => <County key={g.id} g={g} open={false} last={i === nh.length - 1} />)}
           </div>
+          <CtaRow className="mt-14" />
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="section bg-stone" aria-labelledby="area-faq-h">
+      {/* FAQ — paper (the directory above is stone) */}
+      <section className="section bg-paper" aria-labelledby="area-faq-h">
         <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-10">
           <div className="lg:col-span-4 lg:sticky lg:top-28 self-start">
             <h2 id="area-faq-h" className="text-h2 text-navy">Questions about our service area</h2>
@@ -319,7 +330,7 @@ export default function ServiceAreasPage() {
           <h2 className="text-h2 text-white max-w-[18em]">Planning a project in one of these towns?</h2>
           <p className="mt-5 text-lead text-white/80 max-w-[36em]">Estimates are free and there is no obligation.</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span></a>
           </div>
         </div>

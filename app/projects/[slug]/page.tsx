@@ -4,6 +4,10 @@ import { notFound } from "next/navigation";
 import Gallery from "@/components/Gallery";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import EstimateForm from "@/components/EstimateForm";
+import FormBand from "@/components/FormBand";
+import CtaRow from "@/components/CtaRow";
+import { EstimateLink } from "@/components/chrome-client";
 import { ArrowLabel, PhoneIcon, PinIcon } from "@/components/chrome-icons";
 import Typeset from "@/components/Typeset";
 import { projects, getProject, imageAlt, imageCaption, mediaCount, type Project, type ProjectVideo } from "@/lib/projects";
@@ -181,16 +185,31 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   // Section surfaces (design spec §6 Project): glance paper, stages stone, videos paper, quote paper, related stone,
   // more projects stone. Two rendered neighbours on the same surface are separated by a hairline join, never a tint.
+  // The mid-page form band ("form") follows the photo stages (the middle of the page), or the overview on a job
+  // without photos. It takes the surface opposite the band before it, and the band after it flips if it would
+  // otherwise match, so the form band never shares a surface with a neighbour.
   const bands: [string, "paper" | "stone"][] = [["glance", "paper"]];
   if (p.photos.length > 0) bands.push(["stages", "stone"]);
+  bands.push(["form", "stone"]);
   if (restVideos.length > 0) bands.push(["videos", "paper"]);
   if (p.quote) bands.push(["quote", "paper"]);
   bands.push(["related", "stone"]);
   if (others.length > 0) bands.push(["more", "stone"]);
+  const fi = bands.findIndex(([k]) => k === "form");
+  bands[fi][1] = bands[fi - 1][1] === "paper" ? "stone" : "paper";
+  if (bands[fi + 1][1] === bands[fi][1]) bands[fi + 1][1] = bands[fi][1] === "paper" ? "stone" : "paper";
+  const tone = (key: string) => bands.find(([k]) => k === key)?.[1] ?? "paper";
+  const bg = (key: string) => (tone(key) === "stone" ? "bg-stone" : "bg-paper");
   const joined = (key: string) => {
     const i = bands.findIndex(([k]) => k === key);
     return i > 0 && bands[i - 1][1] === bands[i][1];
   };
+  // CTA rows (never right before the form band or the closing navy band): after the story (overview) when the
+  // stages sit between it and the form band, after the videos, and after the related links when the page would
+  // otherwise have only one.
+  const ctaGlance = p.photos.length > 0;
+  const ctaVideos = restVideos.length > 0;
+  const ctaRelated = Number(ctaGlance) + Number(ctaVideos) < 2 && others.length > 0;
   const relatedCols = 1 + (town ? 1 : 0) + (guides.length > 0 ? 1 : 0);
   const linkNav = "link-nav font-medium";
 
@@ -198,10 +217,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — text first; the cover photo (or, on a video-only job, the first clip) beside it */}
+      {/* HERO — text first, with the cover photo (or, on a video-only job, the first clip) under it on the left (7/12);
+          the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg. On phones the form follows
+          the hero text, then the photo. */}
       <section className="page-head">
-        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid gap-10 lg:grid-cols-12 lg:gap-16 lg:items-start">
-          <div className="lg:col-span-7">
+        <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+          <div className="lg:col-span-7 lg:row-start-1 min-w-0">
             <Breadcrumbs items={crumbs} />
             <div className="mt-6 eyebrow flex items-center gap-2">
               <PinIcon className="w-3.5 h-3.5" />
@@ -213,21 +234,22 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <h1 className="mt-5 text-h1 text-navy text-balance"><Typeset text={p.title} /></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{p.blurb}</p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+              <EstimateLink className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</EstimateLink>
               <a href={site.phoneHref} className="btn btn-secondary w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
             </div>
             <p className="mt-5 text-[13px] text-muted">Updated <time dateTime={p.updated}>{dateLabel(p.updated)}</time></p>
           </div>
+          <EstimateForm className="lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:row-span-2 self-start min-w-0" />
           {heroImg && (
-            <figure className="lg:col-span-5">
-              <div className="relative overflow-hidden bg-well aspect-[4/3] lg:aspect-[4/5]">
-                <Image src={heroImg.src} alt={heroImg.alt} fill preload quality={60} sizes="(min-width: 1024px) 448px, 100vw" className="object-cover" />
+            <figure className="lg:col-span-7 lg:row-start-2 min-w-0">
+              <div className="relative overflow-hidden bg-well aspect-[3/2]">
+                <Image src={heroImg.src} alt={heroImg.alt} fill loading="eager" quality={60} sizes="(min-width: 1200px) 640px, (min-width: 1024px) 54vw, 100vw" className="object-cover" />
               </div>
               {heroImg.caption && <figcaption className="mt-3 text-[13px] leading-relaxed text-muted">{heroImg.caption}</figcaption>}
             </figure>
           )}
           {heroVideo && (
-            <div className="lg:col-span-5 w-full flex lg:justify-end">
+            <div className="lg:col-span-7 lg:row-start-2 min-w-0">
               <h2 className="sr-only">Site video</h2>
               <VideoFigure v={heroVideo} id="video-1" large />
             </div>
@@ -304,11 +326,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             {p.notes.map((t) => <p key={t} className="mt-3 text-ink max-w-[68ch]">{t}</p>)}
           </div>
         </div>
+        {ctaGlance && (
+          <div className="container-x">
+            <CtaRow className="mt-14" />
+          </div>
+        )}
       </section>
 
       {/* PHOTOS BY STAGE — chronological, with a true caption under every photo */}
       {p.photos.length > 0 && (
-        <section className="section-doc bg-stone" aria-labelledby="photos-h">
+        <section className={`section-doc ${bg("stages")}`} aria-labelledby="photos-h">
           <div className="container-x">
             <h2 id="photos-h" className="text-h2-doc text-navy">
               {p.stages.length > 1 ? "The job, stage by stage" : "Photos"}
@@ -335,9 +362,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         </section>
       )}
 
+      {/* MID-PAGE ESTIMATE FORM — after the photo stages (or the overview), on the surface opposite its neighbours */}
+      <FormBand tone={tone("form")} />
+
       {/* VIDEOS — each with a written description (the clips have no sound) */}
       {restVideos.length > 0 && (
-        <section className={`section-doc bg-paper ${joined("videos") ? "pt-0" : ""}`} aria-labelledby="videos-h">
+        <section className={`section-doc ${bg("videos")} ${joined("videos") ? "pt-0" : ""}`} aria-labelledby="videos-h">
           {joined("videos") && <Join />}
           <div className={`container-x ${joined("videos") ? "pt-[var(--section-doc-y)]" : ""}`}>
             <h2 id="videos-h" className="text-h2-doc text-navy">{videoFirst ? "More site videos" : "Site videos"}</h2>
@@ -354,13 +384,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               ))}
             </ul>
             {restVideos.length > 1 && <p className="mt-3 text-sm text-muted sm:hidden">Swipe to see all {restVideos.length} clips.</p>}
+            {ctaVideos && <CtaRow className="mt-14" />}
           </div>
         </section>
       )}
 
       {/* CLIENT QUOTE — only with written consent; plain text, never Review markup */}
       {p.quote && (
-        <section className={`section-doc bg-paper ${joined("quote") ? "pt-0" : ""}`}>
+        <section className={`section-doc ${bg("quote")} ${joined("quote") ? "pt-0" : ""}`}>
           {joined("quote") && <Join />}
           <div className={`container-x ${joined("quote") ? "pt-[var(--section-doc-y)]" : ""}`}>
             <figure>
@@ -372,7 +403,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       )}
 
       {/* RELATED — service hubs, the service-by-town pages for this town, nearby towns, guides */}
-      <section className={`section-doc bg-stone ${joined("related") ? "pt-0" : ""}`} aria-labelledby="related-h">
+      <section className={`section-doc ${bg("related")} ${joined("related") ? "pt-0" : ""}`} aria-labelledby="related-h">
         {joined("related") && <Join />}
         <div className={`container-x ${joined("related") ? "pt-[var(--section-doc-y)]" : ""}`}>
           <h2 id="related-h" className="text-h2-doc text-navy max-w-[24em]">Related services{town ? ` and towns near ${town.n}` : ""}</h2>
@@ -432,12 +463,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
               This case study does not name a town. See <Link href="/service-areas" className="link">all the towns we serve</Link>.
             </p>
           )}
+          {ctaRelated && <CtaRow className="mt-14" />}
         </div>
       </section>
 
       {/* MORE PROJECTS — same service first, then the nearest towns */}
       {others.length > 0 && (
-        <section className={`section-doc bg-stone ${joined("more") ? "pt-0" : ""}`} aria-labelledby="more-h">
+        <section className={`section-doc ${bg("more")} ${joined("more") ? "pt-0" : ""}`} aria-labelledby="more-h">
           {joined("more") && <Join />}
           <div className={`container-x ${joined("more") ? "pt-[var(--section-doc-y)]" : ""}`}>
             <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
@@ -470,7 +502,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <h2 className="text-h2 text-white max-w-[18em]">Planning a similar project?</h2>
           <p className="mt-5 text-lead text-white/80 max-w-[36em]">Tell us about your house and what you want to change. Estimates are free and there is no obligation.</p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Link href="/contact#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</Link>
+            <EstimateLink className="btn btn-primary w-full sm:w-auto">Get a free estimate</EstimateLink>
             <a href={site.phoneHref} className="btn btn-on-dark w-full sm:w-auto"><PhoneIcon className="w-4 h-4" /> <span className="tel">{site.phone}</span></a>
           </div>
         </div>

@@ -1,20 +1,19 @@
 // Site chrome. Server components (no client JS) except the pieces imported from chrome-client.tsx:
-// the header's menu, the desktop floating call button and the scroll-to-form estimate link
-// (audit 07 T08, 01 M1). Footer year is rendered on the server, so it can never mismatch on hydration.
+// the header's menu and the scroll-to-form estimate links (audit 07 T08, 01 M1). Footer year is rendered on the server, so it can never mismatch on hydration.
 import Link from "next/link";
 import Image from "next/image";
 import { site, nav, services, serviceArea } from "@/lib/site";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import { displayAddress } from "@/lib/address";
-import { HeaderClient, FloatingCall, EstimateLink, EstimateJumps } from "./chrome-client";
-import { PhoneIcon, MailIcon, FileTextIcon, FacebookIcon, InstagramIcon, ArrowLabel } from "./chrome-icons";
+import { HeaderClient, EstimateJumps } from "./chrome-client";
+import { PhoneIcon, MailIcon, FacebookIcon, InstagramIcon, ArrowLabel } from "./chrome-icons";
 
 // Registration/license numbers render only once the owner supplies them — never a placeholder.
 const credentials = hasHic || hasCsl ? credentialLine({ insured: false }) : "";
 
 export function TopBar() {
   return (
-    // Solid navy, md+ only (phones get the fixed call/estimate bar instead). White 13px text at 14.6:1.
+    // Solid navy, md+ only (phones get the floating call button instead). White 13px text at 14.6:1.
     <div role="region" aria-label="Contact details" className="hidden md:block bg-navy text-white text-[13px]">
       <div className="container-x flex h-9 items-center justify-between gap-6">
         <div className="flex items-center gap-5">
@@ -48,13 +47,17 @@ export function SiteHeader() {
 export function FloatingCTA() {
   return (
     <>
-      <FloatingCall phone={site.phone} phoneHref={site.phoneHref} />
-      <EstimateJumps />
-      {/* Mobile bottom bar (hidden while the mobile menu is open, see html.menu-open in globals.css) */}
-      <nav aria-label="Quick contact" className="mobile-cta-bar lg:hidden fixed bottom-0 inset-x-0 z-50 grid grid-cols-2 bg-navy border-t border-white/14 pb-[env(safe-area-inset-bottom)]">
-        <a href={site.phoneHref} className="flex items-center justify-center gap-2 min-h-14 text-[15px] font-semibold text-white bg-navy"><PhoneIcon className="w-5 h-5" /> Call now</a>
-        <EstimateLink className="flex items-center justify-center gap-2 min-h-14 text-[15px] font-semibold text-white bg-green hover:bg-green-hover"><FileTextIcon className="w-5 h-5" />Free estimate</EstimateLink>
+      {/* Floating call button, bottom-LEFT at every width and always visible (hidden only while the mobile menu or a
+          dialog is open, see html.menu-open in globals.css). The bottom-right corner belongs to the LeadConnector chat
+          bubble (ChatWidget), so nothing of ours goes there. data-float-call is read by jumpToEstimate (chrome-client). */}
+      {/* A landmark (nav "Quick contact"), so axe "region" is satisfied; the 2px paper halo keeps the circle reading as a
+          floating layer where it passes over running text (1024-1279, phones). */}
+      <nav aria-label="Quick contact" data-float-call className="fixed z-50 left-4 bottom-[max(1rem,env(safe-area-inset-bottom))] lg:left-6 lg:bottom-6">
+        <a href={site.phoneHref} aria-label={`Call ${site.phone}`} className="grid place-items-center w-14 h-14 rounded-full bg-navy text-white shadow-pop ring-2 ring-paper hover:bg-navy-deep">
+          <PhoneIcon className="w-6 h-6" />
+        </a>
       </nav>
+      <EstimateJumps />
     </>
   );
 }
@@ -77,8 +80,9 @@ export function SiteFooter() {
   const link = "block py-1.5 text-[14.5px] text-ink hover:underline underline-offset-4";
   const social = "w-11 h-11 rounded-full border border-line-strong text-navy grid place-items-center hover:bg-navy hover:text-white hover:border-navy transition-colors";
   return (
-    // Light footer (stone). pb-28 below lg keeps the legal row clear of the fixed mobile call/estimate bar.
-    <footer className="bg-stone text-ink border-t border-line pt-[72px] pb-28 lg:pb-12">
+    // Light footer (stone). pb-28 at every width keeps the legal row clear of the floating call button (bottom-left)
+    // and the chat bubble (bottom-right).
+    <footer className="bg-stone text-ink border-t border-line pt-[72px] pb-28">
       {/* Two columns until xl: at lg (1024) four columns leave the Contact column ~190px, which breaks the email
           and wraps every service name. From xl each column is ≥230px. */}
       <div className="container-x grid gap-12 md:grid-cols-2 xl:grid-cols-[1.3fr_1fr_1fr_1fr]">
