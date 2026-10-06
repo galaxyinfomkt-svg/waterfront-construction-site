@@ -191,7 +191,8 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1-long text-navy"><Typeset text={c.h1} /></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{c.summary}</p>
-            <ul className="dot-list mt-4 text-sm text-muted">
+            {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
+            <ul className="dot-list-wrap mt-4 text-sm text-muted">
               <li>Owner-led</li>{" "}
               <li>Founded in {site.founded} in Northborough, MA</li>{" "}
               {credentials && <li>{credentials}</li>}
@@ -220,9 +221,10 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       {/* ON THIS PAGE */}
       <nav aria-label="On this page" className="flow-root bg-paper border-b border-line">
         <div className="container-x">
-          {/* py-1.5/-my-1.5 (and md:pl-1.5/-ml-1.5) give the 5px focus ring room inside the scroll box, which clips on both axes.
-              From lg the row wraps instead of scrolling, so every tab is reachable with a mouse. */}
-          <ul role="list" className="flex gap-7 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-px-5 py-1.5 -my-1.5 md:mx-0 md:-ml-1.5 md:pl-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)] lg:flex-wrap lg:gap-x-5 lg:gap-y-0 lg:pr-0 lg:overflow-visible lg:[mask-image:none]">
+          {/* One scrolling row at every width (§4.23): the right edge fades over 3rem and pr-12 lets the last tab clear the
+              fade. py-1.5/-my-1.5 (and md:pl-1.5/-ml-1.5) give the 5px focus ring room inside the scroll box, which clips on
+              both axes; scroll-pr-14 makes a tab reached with Tab scroll fully clear of the fade, not just into it. */}
+          <ul role="list" className="flex gap-7 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-pl-5 scroll-pr-14 py-1.5 -my-1.5 md:mx-0 md:-ml-1.5 md:pl-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)]">
             {toc.map((t) => (
               <li key={t.id} className="shrink-0">
                 <a href={`#${t.id}`} className="inline-flex items-center min-h-12 whitespace-nowrap text-sm font-medium text-muted hover:text-navy hover:shadow-[inset_0_-2px_0_var(--color-navy)] focus-visible:text-navy">{t.label}</a>
@@ -256,9 +258,11 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
             <h2 id="our-work-h" className={head}>Our {lower} work: case studies and job photos</h2>
             <p className="mt-5 text-muted max-w-[38rem]">Every photo here is from a Waterfront Construction job, captioned with what it shows and, where the job&apos;s town is recorded, where it was taken.</p>
             {hero && (
+              /* sizes follow the rendered box (12-col grid, 32px gaps, 1136px content from 1200px): landscape spans 8
+                 (747px; about 60vw from md), portrait spans 5 (455px; about 37vw from md). */
               <figure className="mt-10 md:mt-14 md:grid md:grid-cols-12 md:gap-x-8">
                 <div className={`relative overflow-hidden bg-well ${heroPortrait ? "md:col-span-5 aspect-[4/5]" : "md:col-span-8 aspect-[3/2]"}`}>
-                  <Image src={hero.src} alt={hero.alt} fill quality={60} sizes={heroPortrait ? "(max-width: 768px) 100vw, 320px" : "(max-width: 768px) 100vw, 640px"} className="object-cover" />
+                  <Image src={hero.src} alt={hero.alt} fill quality={60} sizes={heroPortrait ? "(max-width: 768px) 100vw, (min-width: 1200px) 455px, 38vw" : "(max-width: 768px) 100vw, (min-width: 1200px) 747px, 62vw"} className="object-cover" />
                 </div>
                 <figcaption className="md:col-span-4 md:self-end mt-4 md:mt-0">
                   <span className="block text-base text-ink">{hero.caption}</span>
@@ -272,9 +276,10 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
               </figure>
             )}
             {cards.length === 1 && cards.map(({ p, im }) => (
+              /* Media spans 7 of 12 columns: 650px from 1200px, about 52-54vw from md, full width below md. */
               <div key={p.slug} className="mt-14 card-ed group md:grid md:grid-cols-12 md:gap-x-8">
                 <div className="media md:col-span-7 [aspect-ratio:3/2]">
-                  <Image src={im.src} alt={im.alt} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
+                  <Image src={im.src} alt={im.alt} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 767px) 94vw, (min-width: 1200px) 650px, 55vw" className="object-cover" />
                 </div>
                 <div className="md:col-span-5 self-center">
                   <h3 className="mt-5 md:mt-0"><Link href={`/projects/${p.slug}`}>{p.title}</Link></h3>{" "}

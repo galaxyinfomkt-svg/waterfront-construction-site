@@ -104,12 +104,22 @@ function VideoFigure({ v, id, large = false }: { v: ProjectVideo; id: string; la
         <source src={v.src} type="video/mp4" />
       </video>
       <figcaption className="mt-3 text-sm leading-relaxed text-muted">
-        <strong id={`${id}-t`} className="block text-base font-semibold text-ink">{v.title}</strong>
+        <strong id={`${id}-t`} className="mb-1 block font-display text-[1.125rem] font-normal leading-snug text-navy">{v.title}</strong>
         {f && <span>{secondsLabel(f.seconds)}, no sound. </span>}
         <span id={`${id}-d`}>{v.description}</span>
       </figcaption>
     </figure>
   );
+}
+
+/** Site-video grid columns (sm and lg) chosen from the clip count, so the last row never holds a lone clip:
+ *  lg: 5 clips in one row of 5, multiples of 3 in rows of 3, otherwise rows of 4 (5 or 3 when 4 would leave one over).
+ *  sm: rows of 2 for even counts; odd counts use rows of 3 unless that also leaves one over. */
+function videoCols(n: number) {
+  const lone = (c: number) => n > c && n % c === 1;
+  const lg = n === 5 ? 5 : n % 3 === 0 ? 3 : !lone(4) ? 4 : !lone(5) ? 5 : 3;
+  const sm = n % 2 === 0 || lone(3) ? 2 : 3;
+  return `${sm === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"} ${lg === 5 ? "lg:grid-cols-5" : lg === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"}`;
 }
 
 /** Same-surface join: a hairline on the shared left edge between two neighbouring bands of the same colour. */
@@ -311,7 +321,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 <div key={st.id} className={p.stages.length > 1 ? "mt-16 border-t border-line pt-8" : "mt-10"}>
                   {p.stages.length > 1 && (
                     <h3 className="text-h3 text-navy">
-                      <span className="block eyebrow tnum mb-2">{i + 1}.</span> {st.label}
+                      <span aria-hidden="true" className="block eyebrow tnum mb-2">{String(i + 1).padStart(2, "0")}</span> {st.label}
                     </h3>
                   )}
                   {st.note && <p className="mt-3 text-muted max-w-[68ch]">{st.note}</p>}
@@ -336,7 +346,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             </p>
             {/* Phones: a swipeable row (keeps the page short); tablet and up: a grid. */}
             {/* Focusable + named so keyboard users can scroll the phone row (axe scrollable-region-focusable; video controls do not count). */}
-            <ul role="list" tabIndex={0} aria-labelledby="videos-h" className="mt-10 -mx-5 px-5 scroll-px-5 pb-2 flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:mx-0 sm:px-0 sm:pb-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-x-6 sm:gap-y-10 sm:overflow-visible">
+            <ul role="list" tabIndex={0} aria-labelledby="videos-h" className={`mt-10 -mx-5 px-5 scroll-px-5 pb-2 flex gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar sm:mx-0 sm:px-0 sm:pb-0 sm:grid ${videoCols(restVideos.length)} sm:gap-x-6 sm:gap-y-10 sm:overflow-visible`}>
               {restVideos.map((v, i) => (
                 <li key={v.src} className="w-[72%] shrink-0 snap-start sm:w-auto">
                   <VideoFigure v={v} id={`video-${i + (videoFirst ? 2 : 1)}`} />

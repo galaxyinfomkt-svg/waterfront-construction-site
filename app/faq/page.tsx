@@ -55,7 +55,9 @@ export default function FaqPage() {
             <p className="mt-5 text-[13px] text-muted">Updated <time dateTime={UPDATED}>{updatedLabel}</time></p>
           </div>
           <nav aria-label="FAQ topics" className="mt-8">
-            <ul className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-5 px-5 scroll-px-5 sm:flex-wrap sm:overflow-visible sm:mx-0 sm:px-0">
+            {/* Below sm the chips scroll in one row that fades out at the right edge (pr-12 + mask, as the hub in-page nav),
+                so a cut chip always reads as "more"; py-1.5/-my-1.5 keep the focus ring inside the scroll box. */}
+            <ul className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-px-5 py-1.5 -my-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)] sm:flex-wrap sm:overflow-visible sm:mx-0 sm:px-0 sm:[mask-image:none]">
               {faqGroups.map((g) => (
                 <li key={g.id} className="shrink-0"><a href={`#topic-${g.id}`} className="chip">{g.title}</a></li>
               ))}

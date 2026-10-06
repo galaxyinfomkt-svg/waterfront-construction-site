@@ -25,7 +25,8 @@ function Extras({ f }: { f: FaqEntry }) {
       {f.sources && f.sources.length > 0 && (
         // The label sits inside the first item and the link is inline (py-1.5 pads the hit area to ~27px without
         // moving lines), so a long source title wraps after its first words instead of stranding "Source:".
-        <ul className="dot-list mt-3 text-xs text-muted">
+        // .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot and no glyph is clipped.
+        <ul className="dot-list-wrap mt-3 text-[13px] text-muted">
           {f.sources.map((s, i) => (
             <li key={s.url}>
               {i === 0 && (f.sources!.length > 1 ? "Sources: " : "Source: ")}

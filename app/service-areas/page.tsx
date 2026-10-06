@@ -163,6 +163,8 @@ const proofLink = "link-arrow text-sm items-start min-h-0 py-3"; // py-3: 44px t
 export default function ServiceAreasPage() {
   const bands = distanceBands();
   const unplaced = unplacedProjects();
+  // Columns left free in the last row of the documented-towns grid (md: 2 columns, lg: 3).
+  const unplacedSpan = `${proof.length % 2 === 0 ? "md:col-span-2" : ""} ${["lg:col-span-3", "lg:col-span-2", ""][proof.length % 3]}`;
   return (
     <>
       <JsonLd data={ld} />
@@ -203,9 +205,9 @@ export default function ServiceAreasPage() {
                 <caption className="sr-only">Counties we serve, with the number of communities and their distance from Northborough</caption>
                 <thead className="bg-stone">
                   <tr>
-                    <th scope="col" className="table-cell pl-3 pr-2 sm:px-5 lg:px-4 xl:px-5 py-3 eyebrow max-sm:tracking-[.08em] max-sm:text-[11px] text-left align-bottom">County</th>
-                    <th scope="col" className="table-cell px-1.5 sm:px-5 lg:px-4 xl:px-5 py-3 eyebrow max-sm:tracking-[.08em] max-sm:text-[11px] text-right align-bottom">Communities</th>
-                    <th scope="col" className="table-cell px-1.5 sm:px-5 lg:px-4 xl:px-5 py-3 eyebrow max-sm:tracking-[.08em] max-sm:text-[11px] text-right align-bottom">Miles</th>
+                    <th scope="col" className="table-cell pl-3 pr-2 sm:px-5 lg:px-4 xl:px-5 py-3 eyebrow max-sm:tracking-[.06em] text-left align-bottom">County</th>
+                    <th scope="col" className="table-cell px-1.5 sm:px-5 lg:px-4 xl:px-5 py-3 eyebrow max-sm:tracking-[.06em] text-right align-bottom">Communities</th>
+                    <th scope="col" className="table-cell px-1.5 sm:px-5 lg:px-4 xl:px-5 py-3 eyebrow max-sm:tracking-[.06em] text-right align-bottom">Miles</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -242,14 +244,11 @@ export default function ServiceAreasPage() {
               return (
                 <li key={citySlug(city)} className="py-5">
                   <p className={proofTitle}>{cityLabel(city)}</p>
-                  {/* The list is shifted left by one separator (3px dot + .75em each side) and clipped, so a dot that
-                      would open a wrapped line falls outside the box; the first item is pushed back in. */}
-                  <div className="mt-1 overflow-hidden">
-                    <ul className="dot-list -ml-[calc(1.5em+3px)] text-sm text-muted [&>li:first-child]:ml-[calc(1.5em+3px)]">
-                      <li>{f.county}</li>
-                      <li>{f.isBase ? "our base" : `about ${f.miles} miles ${f.dir} of Northborough`}</li>
-                    </ul>
-                  </div>
+                  {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot and no glyph is clipped. */}
+                  <ul className="dot-list-wrap mt-1 text-sm text-muted">
+                    <li>{f.county}</li>
+                    <li>{f.isBase ? "our base" : `about ${f.miles} miles ${f.dir} of Northborough`}</li>
+                  </ul>
                   <ul className="mt-2">
                     {projects.map((p) => (
                       <li key={p.slug}><Link href={`/projects/${p.slug}`} className={proofLink}><ArrowLabel text={`Case study: ${p.title}`} /></Link></li>
@@ -261,20 +260,20 @@ export default function ServiceAreasPage() {
                 </li>
               );
             })}
+            {/* Case studies whose town is not recorded share ONE cell (one "Massachusetts" label, all their links),
+                placed in the same grid and spanning whatever the last row has left, so every row is full. */}
+            {unplaced.length > 0 && (
+              <li className={`py-5 ${unplacedSpan}`}>
+                <p className={proofTitle}>Massachusetts</p>
+                <p className="mt-1 text-sm text-muted">Town not recorded</p>
+                <ul className="mt-2">
+                  {unplaced.map((p) => (
+                    <li key={p.slug}><Link href={`/projects/${p.slug}`} className={proofLink}><ArrowLabel text={`Case study: ${p.title}`} /></Link></li>
+                  ))}
+                </ul>
+              </li>
+            )}
           </ul>
-          {unplaced.length > 0 && (
-            <div className="border-t border-line pt-6 mt-6">
-              <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-                {unplaced.map((p) => (
-                  <li key={p.slug}>
-                    <p className={proofTitle}>Massachusetts</p>
-                    <p className="mt-1 text-sm text-muted">Town not recorded</p>
-                    <p className="mt-2"><Link href={`/projects/${p.slug}`} className={proofLink}><ArrowLabel text={`Case study: ${p.title}`} /></Link></p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       </section>
 

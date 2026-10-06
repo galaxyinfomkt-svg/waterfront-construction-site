@@ -126,7 +126,8 @@ export function SiteFooter() {
           <p className="text-[14.5px] text-muted">
             Based in {serviceArea.base}. We take projects across {serviceArea.short}.
           </p>
-          <Link href="/service-areas" className="link-arrow mt-2 [text-wrap:balance]"><ArrowLabel text="Service areas: every town we serve" /></Link>
+          {/* The only break allowed is after the colon: "every town we serve" + arrow stays on one line. */}
+          <Link href="/service-areas" className="link-arrow mt-2"><span>Service areas:{" "}<span className="whitespace-nowrap"><ArrowLabel text="every town we serve" /></span></span></Link>
         </div>
       </div>
 

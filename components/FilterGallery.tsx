@@ -50,15 +50,18 @@ export default function FilterGallery({ items, categories, linkLabel = "View the
 
   return (
     <>
-      {/* Phones: one scrollable row of chips (py-1.5 keeps the focus ring inside the scroller); sm+: wrapped. */}
-      <div role="group" aria-label="Filter photos by project type" className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-5 px-5 scroll-px-5 py-1.5 sm:py-0 sm:flex-wrap sm:overflow-visible sm:mx-0 sm:px-0 mb-8 sm:mb-10">
+      {/* Below md: one scrollable row of chips that fades out at the right edge (pr-12 + mask, as the hub in-page nav),
+          so a cut chip always reads as "more"; py-1.5 keeps the focus ring inside the scroller. md+: wrapped; from md
+          to lg the chips are slightly narrower (px-3.5) so all seven fit on one line at 768 instead of leaving one chip
+          alone on a second line. */}
+      <div role="group" aria-label="Filter photos by project type" className="flex gap-2.5 overflow-x-auto no-scrollbar -mx-5 pl-5 pr-12 scroll-px-5 py-1.5 [mask-image:linear-gradient(90deg,#000_calc(100%-3rem),transparent)] md:py-0 md:flex-wrap md:overflow-visible md:mx-0 md:px-0 md:[mask-image:none] mb-8 md:mb-10">
         {tabs.map((t) => (
           <button
             key={t}
             type="button"
             aria-pressed={tab === t}
             onClick={() => { setTab(t); setActive(null); }}
-            className="chip"
+            className="chip md:max-lg:px-3.5"
           >
             {t}
           </button>
@@ -82,7 +85,7 @@ export default function FilterGallery({ items, categories, linkLabel = "View the
                 {tab === "All" && <span className="eyebrow">{it.cat}</span>}
                 <span className="mt-1 block text-[14px] leading-snug font-medium text-ink">{it.label}</span>
                 {it.href && (
-                  <Link href={it.href} className="mt-1.5 inline-block text-[12px] uppercase tracking-[.12em] font-semibold text-muted hover:text-ink hover:underline underline-offset-4">
+                  <Link href={it.href} className="link-arrow mt-0.5 min-h-0 py-1.5 text-[13px] leading-snug">
                     <ArrowLabel text={it.hrefLabel ?? linkLabel} />
                   </Link>
                 )}

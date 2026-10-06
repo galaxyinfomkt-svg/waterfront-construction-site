@@ -112,6 +112,44 @@ function PostCard({ p, featured = false, cols = 3, className = "" }: { p: Post; 
 
 const COLS = ["", "lg:grid-cols-1", "lg:grid-cols-2", "lg:grid-cols-3"];
 
+// Display order only (the data, dates and JSON-LD order are untouched): guides whose covers come from the same project
+// (e.g. two Mansfield kitchen shots) should not sit next to each other in the grid. Every arrangement of the cards after
+// the featured one is scored by how many same-project covers touch (side by side or one above the other) in each layout
+// the grid takes: 1 column, sm 2 columns, lg `cols` columns, with the featured card as a full row on top. The order with
+// the fewest touching pairs wins; ties keep the newest-first order as closely as possible (so a category whose covers
+// all come from one project, or that has no clash, keeps its order unchanged).
+const coverProject = (p: Post) => p.image.replace(/^.*\//, "").replace(/(-progress|-before)?-\d+\.\w+$/, "");
+
+function clashes(order: Post[], featured: Post | undefined, cols: number) {
+  let n = 0;
+  for (const c of new Set([1, 2, cols])) {
+    order.forEach((p, i) => {
+      const k = coverProject(p);
+      if (featured && i < c && coverProject(featured) === k) n++;
+      if (i % c < c - 1 && order[i + 1] && coverProject(order[i + 1]) === k) n++;
+      if (order[i + c] && coverProject(order[i + c]) === k) n++;
+    });
+  }
+  return n;
+}
+
+function spreadCovers(list: Post[], feature: boolean, cols: number) {
+  const featured = feature ? list[0] : undefined;
+  const rest = feature ? list.slice(1) : list;
+  if (rest.length < 2 || rest.length > 7) return list;
+  let best = rest, bestScore = [clashes(rest, featured, cols), 0];
+  const permute = (done: Post[], left: Post[]) => {
+    if (!left.length) {
+      const score = [clashes(done, featured, cols), done.reduce((d, p, i) => d + Math.abs(i - rest.indexOf(p)), 0)];
+      if (score[0] < bestScore[0] || (score[0] === bestScore[0] && score[1] < bestScore[1])) [best, bestScore] = [done, score];
+      return;
+    }
+    left.forEach((p, i) => permute([...done, p], [...left.slice(0, i), ...left.slice(i + 1)]));
+  };
+  permute([], rest);
+  return featured ? [featured, ...best] : best;
+}
+
 export default function BlogPage() {
   return (
     <>
@@ -145,10 +183,11 @@ export default function BlogPage() {
       </section>
 
       {CATEGORIES.filter((c) => posts.some((p) => p.category === c.name)).map((c, i) => {
-        const list = posts.filter((p) => p.category === c.name).sort(byPublished);
+        const sorted = posts.filter((p) => p.category === c.name).sort(byPublished);
         // The first category features its newest guide across the full row; the rest fill rows of min(count, 3).
-        const feature = i === 0 && list.length > 1;
-        const cols = Math.min(feature ? 3 : list.length, 3);
+        const feature = i === 0 && sorted.length > 1;
+        const cols = Math.min(feature ? 3 : sorted.length, 3);
+        const list = spreadCovers(sorted, feature, cols);
         return (
           <section key={c.id} id={c.id} aria-labelledby={`${c.id}-h`} className={`section bg-paper ${i ? "pt-0" : ""}`}>
             {/* Same-surface join: categories share the paper background, so a hairline separates them. */}

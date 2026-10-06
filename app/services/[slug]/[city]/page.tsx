@@ -169,7 +169,11 @@ export default async function ServiceTownPage({ params }: Props) {
                 ))}
               </ul>
             )}
-            <p className="mt-8 text-sm font-semibold"><Link href="/reviews" className="link">{k.proof.reviewsLabel}</Link></p>{" "}
+            {/* Same label style as "Case studies by distance:" (ink semibold); the /reviews link stays, in ink with a quiet
+                underline, and the trailing colon sits outside the link text (the visible words are unchanged). */}
+            <p className="mt-8 text-sm font-semibold text-ink">
+              <Link href="/reviews" className="underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink">{k.proof.reviewsLabel.replace(/:$/, "")}</Link>{k.proof.reviewsLabel.endsWith(":") ? ":" : ""}
+            </p>{" "}
             {k.proof.reviewTowns.length > 0 && (
               <ul className="mt-3 rule-list text-[15px] text-ink">
                 {k.proof.reviewTowns.map((x) => (

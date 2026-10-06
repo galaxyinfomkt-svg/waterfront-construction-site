@@ -5,7 +5,6 @@ import JsonLd from "@/components/JsonLd";
 import { PhoneIcon, CheckIcon, ArrowUpRightIcon, ArrowLabel } from "@/components/chrome-icons";
 import StatsRow from "@/components/StatsRow";
 import Typeset from "@/components/Typeset";
-import ServiceIcon from "@/app/services/_components/ServiceIcon";
 import { services, testimonials, site, stats, serviceArea } from "@/lib/site";
 import { PHOTO_CAPTIONS } from "@/lib/services";
 import { homeFaqs } from "@/lib/faq";
@@ -75,6 +74,8 @@ const TWO_COL_RULES = "lg:border-t-0 lg:[&>li:nth-child(-n+2)]:border-t lg:[&>li
 const SPLIT_P = "mt-5 max-w-[38rem] text-lead text-muted lg:mt-0 lg:max-w-none";
 // Decorative card/step index. Drawn with CSS generated content from data-n, so it is seen but adds no text
 // node: the page's visible text stays word-for-word what it was (aria-hidden as well).
+// Painting title plate (no photo): same 4:3 box as the photo cards; name bottom-left in Newsreader 400 navy.
+const PLATE = "absolute inset-3 border border-line flex items-end p-5 sm:p-6 font-display text-[2.125rem] leading-[1.06] tracking-[-0.01em] text-navy text-balance before:content-[attr(data-name)]";
 const Index = ({ n, className = "" }: { n: number; className?: string }) => (
   <span aria-hidden="true" data-n={String(n).padStart(2, "0")} className={`before:content-[attr(data-n)] ${className}`} />
 );
@@ -93,22 +94,26 @@ export default function Home() {
             fill loading="eager" fetchPriority="high" quality={60} sizes="100vw" className="object-cover" />
           <div aria-hidden="true" className="absolute inset-0 scrim-hero" />
         </div>
-        <div className="relative container-x py-14 md:py-20 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
+        <div className="relative container-x pt-8 pb-14 md:py-20 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
           <div className="text-white on-photo">
-            <ul className="dot-list eyebrow">
+            {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
+            <ul className="dot-list-wrap eyebrow">
               <li>Free estimates</li>
               <li>Owner-led since {site.founded}</li>
               {credentials && <li>{credentials}</li>}
             </ul>
-            <h1 className="mt-5 text-display text-balance text-white max-w-[12em]">
+            {/* Phones narrower than 375px step the display size down so the nowrap "Northborough, MA" fits its line
+                (40px would overflow the 280px content box at 320); 375px and up use the --text-display clamp. */}
+            <h1 className="mt-4 md:mt-5 text-display max-[359px]:text-[2.125rem] min-[360px]:max-[374px]:text-[2.375rem] text-balance text-white max-w-[12em]">
               Remodeling contractor in <span className="whitespace-nowrap">Northborough, MA</span>
             </h1>
-            <p className="mt-6 text-base md:text-lg leading-[1.62] text-white/90 max-w-[36em]">{ENTITY}</p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <p className="mt-5 md:mt-6 text-base md:text-lg leading-[1.62] text-white/90 max-w-[36em]">{ENTITY}</p>
+            {/* Below md the hero rhythm is tightened (pt-8, mt-4/5/7/6) so at 390x844 the trust row clears the mobile bottom bar. */}
+            <div className="mt-7 md:mt-8 flex flex-col sm:flex-row gap-3">
               <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
               <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
             </div>
-            <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/85">
+            <ul className="mt-6 md:mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/85">
               <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Itemized estimates</li>
               <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />{site.projectsCompleted}+ projects completed</li>
               <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Insured</li>
@@ -133,7 +138,7 @@ export default function Home() {
       <section className="section bg-stone" aria-labelledby="about-h">
         <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-12 items-start">
           <figure className="lg:col-span-5 lg:sticky lg:top-28 self-start">
-            <div className="relative aspect-[4/5] overflow-hidden bg-well">
+            <div className="relative aspect-[4/5] md:max-lg:aspect-[3/2] overflow-hidden bg-well">
               <Image src={OWNER_PHOTO} alt="Waterfront Construction Inc work van parked at a home-addition job in Lynnfield, MA, with the new addition framed and sheathed behind it"
                 fill quality={60} sizes="(min-width:1024px) 40vw, 100vw" className="object-cover object-[50%_60%]" />
             </div>
@@ -185,18 +190,27 @@ export default function Home() {
             </div>
             <p className={SPLIT_P}>Six services from one owner-led company, inside and outside the house.</p>
           </div>
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          {/* From sm each card is a row subgrid (media, index, title, body, timeline), so titles, bodies and timelines
+              line up across a row without a fixed title reserve.
+              The row gap is a margin on each card (sm:mt-12, cancelled by the list's sm:-mt-12), not the list's row-gap:
+              a parent row-gap that differs from the subgrid's 0 gap is spread into the subgrid tracks and opens a hole
+              under one-line titles. */}
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 sm:gap-y-0 sm:-mt-12">
             {services.map((s, i) => (
-              <li key={s.slug} className="card-ed group">
+              <li key={s.slug} className="card-ed group sm:grid sm:grid-rows-subgrid sm:row-span-5 sm:gap-y-0 sm:mt-12">
                 {s.imageIsStock ? (
-                  <div className="media grid place-items-center" aria-hidden="true"><ServiceIcon slug={s.slug} className="w-12 h-12 text-navy" /></div>
+                  // No real photo for this service yet: a typographic title plate (stone well, inset hairline frame, the
+                  // card's own name drawn with CSS generated content from data-name, so it adds no text node), never stock.
+                  <div className="media bg-stone" aria-hidden="true">
+                    <span data-name={s.short} className={PLATE} />
+                  </div>
                 ) : (
                   <div className="media">
                     <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" className="object-cover" />
                   </div>
                 )}
                 <p className="meta"><Index n={i + 1} /></p>
-                <h3 className="lg:min-h-[2.4em]">
+                <h3>
                   <Link href={`/services/${s.slug}`}>{s.short}</Link>
                 </h3>
                 <p className="body">{s.blurb}</p>

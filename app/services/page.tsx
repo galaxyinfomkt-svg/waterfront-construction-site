@@ -8,7 +8,6 @@ import { pageGraph, webPageNode, breadcrumbNode, serviceId, pageUrl, AREA_FACTS,
 import { credentialLine } from "@/lib/credentials";
 import { getContent, serviceProjects, serviceGuides, SOURCES, PERMITS_HOW } from "@/lib/service-content";
 import { PhoneIcon, ArrowLabel } from "@/components/chrome-icons";
-import ServiceIcon from "./_components/ServiceIcon";
 
 const TITLE = "Home Remodeling Services in Central & Eastern MA";
 const DESCRIPTION = "Kitchens and baths, additions, decks, siding, windows and doors, and painting from one owner-led contractor based in Northborough, MA. Free itemized estimates.";
@@ -52,7 +51,8 @@ export default function ServicesPage() {
             <Breadcrumbs items={crumbs} />
             <h1 className="mt-5 text-h1 text-navy">{H1}</h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[36em]">{LEAD}</p>
-            <ul className="dot-list mt-4 text-sm text-muted">
+            {/* .dot-list-wrap (globals.css): a wrapped line never starts with a separator dot. */}
+            <ul className="dot-list-wrap mt-4 text-sm text-muted">
               <li>Owner-led</li>{" "}
               <li>Founded in {site.founded} in Northborough, MA</li>{" "}
               {credentials && <li>{credentials}</li>}
@@ -70,13 +70,20 @@ export default function ServicesPage() {
           <h2 id="services-h" className="sr-only">Our six services</h2>
           {/* The 01–06 index is drawn by a CSS counter on an aria-hidden span: decorative, never page text.
               From sm each card is a row subgrid (media, index, title, body, timeline, then one row per link), so titles,
-              bodies, timelines and link hairlines line up across a row. */}
-          <ul role="list" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 [counter-reset:svc]">
+              bodies, timelines and link hairlines line up across a row.
+              The row gap is a margin on each card (sm:mt-12, cancelled by the list's sm:-mt-12), not the list's row-gap:
+              a parent row-gap that differs from the subgrid's 0 gap is spread into the subgrid tracks and opens a hole
+              under one-line titles. */}
+          <ul role="list" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 sm:gap-y-0 sm:-mt-12 [counter-reset:svc]">
             {cards.map(({ s, c, costGuide, project }) => (
-              <li key={s.slug} className="card-ed group sm:grid sm:grid-rows-subgrid sm:row-span-8 sm:gap-y-0">
+              <li key={s.slug} className="card-ed group sm:grid sm:grid-rows-subgrid sm:row-span-8 sm:gap-y-0 sm:mt-12">
                 {s.imageIsStock ? (
-                  // No real photo for this service yet: an icon tile, never a stock photo (audit 02 C1).
-                  <div className="media grid place-items-center" aria-hidden="true"><ServiceIcon slug={s.slug} className="w-12 h-12 text-navy" /></div>
+                  // No real photo for this service yet: a typographic title plate, never a stock photo (audit 02 C1).
+                  // Stone well, inset hairline frame, the card's own name drawn with CSS generated content from data-name
+                  // (no text node), bottom-left in Newsreader 400 navy; same 4:3 box as the photo cards.
+                  <div className="media bg-stone" aria-hidden="true">
+                    <span data-name={s.short} className="absolute inset-3 border border-line flex items-end p-5 sm:p-6 font-display text-[2.125rem] leading-[1.06] tracking-[-0.01em] text-navy text-balance before:content-[attr(data-name)]" />
+                  </div>
                 ) : (
                   <div className="media">
                     <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
@@ -118,7 +125,7 @@ export default function ServicesPage() {
               <li>The contractor must be registered with the state Home Improvement Contractor program; you can check a registration with the Office of Consumer Affairs and Business Regulation.</li>
               <li>Let the contractor pull the building permit: homeowners who pull their own permit for a contractor&apos;s work generally lose access to the state Guaranty Fund.</li>
             </ul>
-            <ul className="dot-list mt-5 text-xs text-muted">
+            <ul className="dot-list-wrap mt-5 text-[13px] text-muted">
               <li>Sources: <a href={SOURCES.contract.url} className="link py-1.5">{SOURCES.contract.label}</a></li>{" "}
               <li><a href={SOURCES.c142a.url} className="link py-1.5">{SOURCES.c142a.label}</a></li>{" "}
               <li><a href={SOURCES.hic.url} className="link py-1.5">{SOURCES.hic.label}</a></li>

@@ -8,6 +8,19 @@ import { ArrowLabel } from "./chrome-icons";
 // Real job photos with TRUE captions (what the photo shows + where it was taken), each linking to its
 // case study. Server component: captions and links are in the HTML that crawlers and AI engines read.
 // Never pass stock images here (audit 02 C1): only Photo objects from lib/services.ts galleries.
+// `sizes` per item, from the rendered box. Phones (80vw) are unchanged. sm to lg is a 2-column grid (50vw), where
+// the first item of an odd count spans both columns (about 92vw). From lg the grid has 6 columns with 24px gaps on a
+// content box of vw-64px (1136px from 1200px): span 3 = 556px (about 46vw below 1200), span 2 = 363px (about 30vw),
+// and a single photo spans the row at max 48rem (768px).
+const PHONE = "(max-width: 640px) 80vw";
+function sizesFor(i: number, n: number) {
+  const tablet = i === 0 && n % 2 ? "(max-width: 1024px) 92vw" : "(max-width: 1024px) 50vw";
+  if (n === 1) return `${PHONE}, ${tablet}, 768px`;
+  return spanFor(i, n) === "lg:col-span-3"
+    ? `${PHONE}, ${tablet}, (min-width: 1200px) 556px, 46vw`
+    : `${PHONE}, ${tablet}, (min-width: 1200px) 363px, 30vw`;
+}
+
 export default function PhotoGrid({ photos, className = "" }: { photos: Photo[]; className?: string }) {
   if (!photos.length) return null;
   const n = photos.length;
@@ -20,7 +33,7 @@ export default function PhotoGrid({ photos, className = "" }: { photos: Photo[];
           <li key={p.src} className={`w-[80%] shrink-0 snap-start sm:w-auto ${i === 0 && n % 2 ? "sm:col-span-2" : ""} ${n === 1 ? "lg:col-span-6 lg:max-w-[48rem]" : spanFor(i, n)}`}>
             <figure>
               <div className="relative aspect-[4/3] overflow-hidden bg-well">
-                <Image src={p.src} alt={p.alt} fill quality={60} sizes="(max-width: 640px) 80vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
+                <Image src={p.src} alt={p.alt} fill quality={60} sizes={sizesFor(i, n)} className="object-cover" />
               </div>
               <figcaption className="mt-3">
                 {/* {" "} keeps words apart in the HTML text (textContent) that crawlers and AI engines read. */}
