@@ -4,7 +4,8 @@ import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { PhoneIcon, PlusIcon, ArrowLabel } from "@/components/chrome-icons";
 import { site, services, citySlug, cityLabel, type City } from "@/lib/site";
-import { townFacts, VILLAGE_OF } from "@/lib/towns";
+import { servicesCountWord } from "@/lib/services";
+import { townFacts, VILLAGE_OF, cityHubPath } from "@/lib/towns";
 import { pageMeta, SITE_URL } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, type Crumb } from "@/lib/schema";
 import { allFaqs, type FaqEntry } from "@/lib/faq";
@@ -16,14 +17,15 @@ import CtaRow from "@/components/CtaRow";
 import { EstimateLink } from "@/components/chrome-client";
 import ServiceAreaMap from "./ServiceAreaMap";
 import OpenOnHash from "./OpenOnHash";
+import CountyTowns, { type TownRow, type TownRowNote } from "./CountyTowns";
 import {
   countyGroups, documentedTowns, unplacedProjects, distanceBands, isDevensCity, testimonialAnchor,
   MUNICIPALITIES, COUNTIES, NEAREST, FARTHEST, PLACES, type CountyGroup,
 } from "./areas";
 
-// /service-areas — the geographic hub (Home > Service Areas > county > town). Server-rendered: every one of
-// the town x service pages is a plain crawlable link here, grouped by county (audit 06 ST-H3, 09 AEO-H6-d,
-// 07 T01). Replaces the old 39-town teaser and the client-only LocationsExplorer tabs.
+// /service-areas — the geographic hub (Home > Service Areas > county > town). Server-rendered: every served place
+// links once, to its own city hub (/service-areas/{town}, which links that place's ten service pages), grouped by
+// county (spec §5.6, D5; audit 06 ST-H3, 09 AEO-H6-d, 07 T01).
 
 const H1 = "Towns we serve from Northborough, MA";
 const DESCRIPTION = `We take remodeling projects in ${MUNICIPALITIES} cities and towns across ${COUNTIES} counties of Massachusetts and southern New Hampshire, with completed projects in ${site.townsWithProjects}+ of them.`;
@@ -31,13 +33,6 @@ const DESCRIPTION = `We take remodeling projects in ${MUNICIPALITIES} cities and
 export const metadata = pageMeta({ title: "Towns We Serve in MA & Southern NH", description: DESCRIPTION, path: "/service-areas" });
 
 const crumbs: Crumb[] = [{ name: "Home", path: "/" }, { name: "Service Areas", path: "/service-areas" }];
-
-// Short labels for the dense directory; the row header (town) gives each link its context.
-const SHORT: Record<string, string> = {
-  siding: "Siding", "windows-and-doors": "Windows & doors", "kitchen-bathroom-remodeling": "Kitchen & bath",
-  decks: "Decks", "home-additions-remodeling": "Additions", painting: "Painting",
-};
-const SVC = services.map((s) => ({ slug: s.slug, label: SHORT[s.slug] ?? s.name }));
 
 const groups = countyGroups();
 const proof = documentedTowns();
@@ -55,7 +50,7 @@ const areaFaqs: FaqEntry[] = [
   {
     id: "my-town",
     q: "Do you work in my town?",
-    a: "If your town is listed on this page, yes: we take remodeling projects there. Each town has its own page for each of our six services, with its distance from Northborough and who issues building permits there.",
+    a: `If your town is listed on this page, yes: we take remodeling projects there. Each town has its own page with all ${servicesCountWord} of our services, its distance from Northborough and who issues building permits there; each service also has a page for every town.`,
   },
   {
     id: "not-listed",
@@ -67,7 +62,7 @@ const areaFaqs: FaqEntry[] = [
   {
     id: "distances",
     q: "How are the distances on this page measured?",
-    a: "In a straight line, from our base in Northborough to each town's center, using GeoNames postal-code coordinates. Driving distances are longer.",
+    a: "In a straight line, from our base in Northborough to each town's center, using GeoNames coordinates for each town's center. Driving distances are longer.",
   },
 ];
 
@@ -100,23 +95,18 @@ const ld = pageGraph(
   { business: "full" },
 );
 
-function TownNote({ c }: { c: City }) {
+/** One directory row (rendered by CountyTowns): the town, its distance and its note (village, Devens, case studies). */
+function townRow(c: City): TownRow {
+  const f = townFacts(c);
   const parent = VILLAGE_OF[citySlug(c)];
   const doc = proofBySlug.get(citySlug(c));
-  return (
-    <>
-      {parent && <span className="note">(village of {parent})</span>}
-      {isDevensCity(c) && <span className="note">(regional enterprise zone)</span>}
-      {doc && doc.projects.length > 0 && (
-        <span className="note">
-          Case {doc.projects.length > 1 ? "studies" : "study"}:{" "}
-          {doc.projects.map((p, i) => (
-            <Fragment key={p.slug}>{i > 0 ? ", " : ""}<Link prefetch={false} href={`/projects/${p.slug}`} className="link">{p.shortTitle}</Link></Fragment>
-          ))}
-        </span>
-      )}
-    </>
-  );
+  const note: TownRowNote = {
+    ...(parent ? { v: parent } : {}),
+    ...(isDevensCity(c) ? { d: 1 as const } : {}),
+    ...(doc?.projects.length ? { p: doc.projects.map((p): [string, string] => [p.slug, p.shortTitle]) } : {}),
+  };
+  const dist = f.isBase ? "Our base" : `about ${f.miles} mi ${f.dir}`;
+  return Object.keys(note).length ? [cityHubPath(c), cityLabel(c), dist, note] : [cityHubPath(c), cityLabel(c), dist];
 }
 
 function County({ g, open, last = false }: { g: CountyGroup; open: boolean; last?: boolean }) {
@@ -129,30 +119,14 @@ function County({ g, open, last = false }: { g: CountyGroup; open: boolean; last
       </p>
       <details open={open} className={`faq-row svc-dir group mt-6 border-t border-line ${last ? "" : "border-b-0"}`}>
         <summary>
-          <span className="faq-q">Towns and service <span className="whitespace-nowrap">{`pages (${g.towns.length})`}</span></span>
+          <span className="faq-q">{`Towns (${g.towns.length})`}</span>
           <PlusIcon className="faq-icon" />
         </summary>
         <div className="pb-6">
           <table>
-            <caption className="sr-only">{`Towns we serve in ${g.county}, ${g.stateName}, with their distance from Northborough and links to each service page`}</caption>
-            <thead><tr><th scope="col">Town</th><th scope="col">From Northborough</th><th scope="col">Service pages</th></tr></thead>
-            <tbody>
-              {g.towns.map((c) => {
-                const f = townFacts(c);
-                const slug = citySlug(c);
-                return (
-                  <tr key={slug}>
-                    <th scope="row">{cityLabel(c)}<TownNote c={c} /></th>
-                    <td className="dist">{f.isBase ? "Our base" : `about ${f.miles} mi ${f.dir}`}</td>
-                    <td className="links">
-                      {SVC.map((s) => (
-                        <Link key={s.slug} prefetch={false} href={`/services/${s.slug}/${slug}`}>{s.label}</Link>
-                      ))}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
+            <caption className="sr-only">{`Towns we serve in ${g.county}, ${g.stateName}, with their distance from Northborough and a link to each town's page`}</caption>
+            <thead><tr><th scope="col">Town</th><th scope="col">From Northborough</th></tr></thead>
+            <CountyTowns rows={g.towns.map(townRow)} />
           </table>
         </div>
       </details>
@@ -183,7 +157,7 @@ export default function ServiceAreasPage() {
             <h1 className="mt-5 text-h1 max-[359px]:text-h1-long text-navy"><Typeset text={H1} /></h1>
             <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">{DESCRIPTION}</p>
             <p className="mt-4 text-[15px] text-muted max-w-[38em] mx-auto">
-              {`The ${PLACES} places on this page range from about ${nearest.miles} miles away (${cityLabel(NEAREST)}) to about ${farthest.miles} miles (${cityLabel(FARTHEST)}), in a straight line. We have completed projects in ${site.townsWithProjects}+ of these towns, and each town has its own page for each of our six services.`}
+              {`The ${PLACES} places on this page range from about ${nearest.miles} miles away (${cityLabel(NEAREST)}) to about ${farthest.miles} miles (${cityLabel(FARTHEST)}), in a straight line. We have completed projects in ${site.townsWithProjects}+ of these towns, and each town has its own page with all ${servicesCountWord} of our services.`}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
               <EstimateLink className="btn btn-primary w-full sm:w-auto lg:hidden">Get a free estimate</EstimateLink>
@@ -216,12 +190,14 @@ export default function ServiceAreasPage() {
                     <th scope="col" className="table-cell px-1.5 sm:px-5 lg:px-4 xl:px-5 py-3 eyebrow max-sm:tracking-[.06em] text-right align-bottom">Miles</th>
                   </tr>
                 </thead>
-                <tbody>
+                {/* Cell styles on the tbody (child variants), not on each of the ~33 cells: every class string is written
+                    twice, in the HTML and the RSC payload (page weight budget, spec §11). */}
+                <tbody className="*:border-t *:border-line [&_th]:pl-3 [&_th]:pr-2 [&_th]:py-2.5 [&_th]:font-medium [&_th]:text-ink [&_td]:px-1.5 [&_td]:pt-3.5 [&_td]:pb-2.5 [&_td]:text-ink/80 [&_td]:text-right [&_td]:tnum [&_td]:whitespace-nowrap [&_th,&_td]:align-top sm:[&_th,&_td]:px-5 lg:[&_th,&_td]:px-4 xl:[&_th,&_td]:px-5">
                   {groups.map((g) => (
-                    <tr key={g.id} className="border-t border-line">
-                      <th scope="row" className="pl-3 pr-2 sm:px-5 lg:px-4 xl:px-5 py-2.5 font-medium text-ink align-top"><a href={`#${g.id}`} className="link-nav inline-block py-1"><Typeset text={`${g.county}, ${g.state}`} /></a></th>
-                      <td className="px-1.5 sm:px-5 lg:px-4 xl:px-5 pt-3.5 pb-2.5 text-ink/80 align-top text-right tnum">{g.towns.length}</td>
-                      <td className="px-1.5 sm:px-5 lg:px-4 xl:px-5 pt-3.5 pb-2.5 text-ink/80 align-top text-right tnum whitespace-nowrap">{g.min === g.max ? g.min : `${g.min}–${g.max}`}</td>
+                    <tr key={g.id}>
+                      <th scope="row"><a href={`#${g.id}`} className="link-nav inline-block py-1"><Typeset text={`${g.county}, ${g.state}`} /></a></th>
+                      <td>{g.towns.length}</td>
+                      <td>{g.min === g.max ? g.min : `${g.min}–${g.max}`}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -294,7 +270,7 @@ export default function ServiceAreasPage() {
           <div className="section-head">
             <h2 id="massachusetts" className="text-h2 text-navy">Massachusetts towns we serve</h2>
             <p>
-              Pick your town for its page on any of our six services: {services.map((s) => s.short).join(", ")}. Each page lists the town&apos;s distance from Northborough and who issues building permits there.
+              {`Pick your town for its page, with links to each of our ${servicesCountWord} services: ${services.map((s) => s.short).join(", ")}. Each page lists the town's distance from Northborough and who issues building permits there.`}
             </p>
           </div>
           <div className="grid grid-cols-1 gap-y-8">

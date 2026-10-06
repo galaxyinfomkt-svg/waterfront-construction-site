@@ -2,10 +2,11 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { PhoneIcon, ArrowLabel } from "@/components/chrome-icons";
-import { site, testimonials, allCities, citySlug, cityLabel } from "@/lib/site";
+import { site, services, testimonials, allCities, citySlug, cityLabel } from "@/lib/site";
+import { cityHubPath } from "@/lib/towns";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, type Crumb } from "@/lib/schema";
-import { allContent } from "@/lib/service-content";
+import { testimonialServices } from "@/lib/service-content";
 import { testimonialAnchor } from "../service-areas/areas";
 import EstimateForm from "@/components/EstimateForm";
 import FormBand from "@/components/FormBand";
@@ -35,9 +36,9 @@ const crumbs: Crumb[] = [{ name: "Home", path: "/" }, { name: "Reviews", path: "
 
 const ld = pageGraph([webPageNode({ path: "/reviews", name: H1, description: LEAD }), breadcrumbNode(crumbs)]);
 
-// Which services each testimonial is about — the same mapping the service pages use (lib/service-content.ts),
-// taken from what each client wrote.
-const servicesOf = (name: string) => allContent().filter(({ content }) => content.testimonials.includes(name)).map(({ service }) => service);
+// Which services each testimonial is about — the ONE mapping, TESTIMONIAL_SERVICES (lib/services.ts), which the
+// service pages use too; taken from what each client wrote. Listed in the D10 service order.
+const servicesOf = (name: string) => services.filter((s) => testimonialServices(name).includes(s.slug));
 const cityOf = (town: string) => {
   const m = town.match(/^(.+), (MA|NH)$/);
   return m ? allCities.find((c) => c.n === m[1] && (c.s ?? "MA") === m[2]) : undefined;
@@ -68,11 +69,13 @@ function Testimonial({ t }: { t: (typeof testimonials)[number] }) {
               <li className="max-sm:basis-full max-sm:before:hidden"><span className="whitespace-nowrap">Shared with permission</span></li>
             </ul>
           </div>
-          {city && svcs.length > 0 ? (
+          {city ? (
             <span className="mt-3 flex flex-col items-center gap-y-2">
               {svcs.map((s) => (
                 <Link key={s.slug} href={`/services/${s.slug}/${citySlug(city)}`} className="link-arrow text-sm leading-snug"><ArrowLabel text={`${s.short} in ${cityLabel(city)}`} /></Link>
               ))}
+              {/* The town's city hub (all ten services there): one link per testimonial (spec §6.2). */}
+              <Link prefetch={false} href={cityHubPath(city)} className="link-arrow text-sm leading-snug"><ArrowLabel text={`More about remodeling in ${cityLabel(city)}`} /></Link>
             </span>
           ) : <span />}
         </figcaption>

@@ -8,7 +8,7 @@ import { PhoneIcon, CheckIcon, ArrowUpRightIcon, ArrowLabel } from "@/components
 import StatsRow from "@/components/StatsRow";
 import Typeset from "@/components/Typeset";
 import { services, testimonials, site, stats, serviceArea } from "@/lib/site";
-import { PHOTO_CAPTIONS } from "@/lib/services";
+import { PHOTO_CAPTIONS, servicesCountWord } from "@/lib/services";
 import { homeFaqs } from "@/lib/faq";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import { projects, type Project } from "@/lib/projects";
@@ -72,9 +72,11 @@ const ld = pageGraph(
 const TWO_COL_RULES = "lg:border-t-0 lg:[&>li:nth-child(-n+2)]:border-t lg:[&>li:nth-child(-n+2)]:border-line lg:[&>li:last-child:nth-child(odd)]:col-span-2";
 // Decorative card/step index. Drawn with CSS generated content from data-n, so it is seen but adds no text
 // node: the page's visible text stays word-for-word what it was (aria-hidden as well).
-// Painting title plate (no photo): same 4:3 box as the photo cards; name bottom-centre in Newsreader 400 navy (centered
-// like the card text under it).
-const PLATE = "absolute inset-3 border border-line flex items-end justify-center text-center p-5 sm:p-6 font-display text-[2.125rem] leading-[1.06] tracking-[-0.01em] text-navy text-balance before:content-[attr(data-name)]";
+// Title plate for a service with no real photo yet (no stock, ever): same 4:3 box as the photo cards; name bottom-centre
+// in Newsreader 400 navy (centered like the card text under it). 28px; in the five-column row a card is only ~172px wide
+// at 1024 and ~208px from xl, so 18px at lg and 22px from xl ("Whole-Home & Interior Remodeling" fits in three lines).
+const PLATE = "absolute inset-3 border border-line flex items-end justify-center text-center p-5 sm:p-6 lg:p-3 xl:p-4 font-display text-[1.75rem] lg:text-[1.125rem] xl:text-[1.375rem] leading-[1.06] tracking-[-0.01em] text-navy text-balance before:content-[attr(data-name)]";
+const countSentence = `${servicesCountWord[0].toUpperCase()}${servicesCountWord.slice(1)} services from one owner-led company, inside and outside the house.`;
 const Index = ({ n, className = "" }: { n: number; className?: string }) => (
   <span aria-hidden="true" data-n={String(n).padStart(2, "0")} className={`before:content-[attr(data-n)] ${className}`} />
 );
@@ -173,7 +175,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SERVICES — card titles are the links (01 L6); real photos only, the painting monogram where none exists */}
+      {/* SERVICES — card titles are the links (01 L6); real photos only, the title plate where none exists */}
       <section className="section" aria-labelledby="services-h">
         <div className="container-x">
           <div className="section-head section-head--split">
@@ -181,16 +183,18 @@ export default function Home() {
               <p className="eyebrow">What we do</p>
               <h2 id="services-h" className="text-h2 text-navy">Our remodeling services</h2>
             </div>
-            <p className="text-balance">Six services from one owner-led company, inside and outside the house.</p>
+            <p className="text-balance">{countSentence}</p>
           </div>
-          {/* From sm each card is a row subgrid (media, index, title, body, timeline), so titles, bodies and timelines
-              line up across a row without a fixed title reserve.
+          {/* Ten cards, so every breakpoint fills its rows: 1 column, 2 x 5 from sm, 5 x 2 from lg (outside the house on
+              the first row, inside on the second, D10 order). No timeline row here (it lives on /services and each hub).
+              From sm each card is a row subgrid (media, index, title, body), so titles and bodies line up across a row
+              without a fixed title reserve.
               The row gap is a margin on each card (sm:mt-12, cancelled by the list's sm:-mt-12), not the list's row-gap:
               a parent row-gap that differs from the subgrid's 0 gap is spread into the subgrid tracks and opens a hole
               under one-line titles. */}
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 sm:gap-y-0 sm:-mt-12">
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-5 gap-x-6 gap-y-12 sm:gap-y-0 sm:-mt-12">
             {services.map((s, i) => (
-              <li key={s.slug} className="card-ed group sm:grid sm:grid-rows-subgrid sm:row-span-5 sm:gap-y-0 sm:mt-12">
+              <li key={s.slug} className="card-ed group sm:grid sm:grid-rows-subgrid sm:row-span-4 sm:gap-y-0 sm:mt-12">
                 {s.imageIsStock ? (
                   // No real photo for this service yet: a typographic title plate (stone well, inset hairline frame, the
                   // card's own name drawn with CSS generated content from data-name, so it adds no text node), never stock.
@@ -199,15 +203,14 @@ export default function Home() {
                   </div>
                 ) : (
                   <div className="media">
-                    <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw" className="object-cover" />
+                    <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(min-width:1024px) 20vw, (min-width:640px) 50vw, 100vw" className="object-cover" />
                   </div>
                 )}
                 <p className="meta"><Index n={i + 1} /></p>
                 <h3>
-                  <Link href={`/services/${s.slug}`}>{s.short}</Link>
+                  <Link href={`/services/${s.slug}`}>{s.name}</Link>
                 </h3>
                 <p className="body">{s.blurb}</p>
-                <p className="mt-3 text-sm text-muted"><span className="font-semibold text-ink">Typical timeline:</span> {s.timeline}</p>
               </li>
             ))}
           </ul>

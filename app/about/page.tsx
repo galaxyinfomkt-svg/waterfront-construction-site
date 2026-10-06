@@ -10,6 +10,7 @@ import CtaRow from "@/components/CtaRow";
 import { EstimateLink } from "@/components/chrome-client";
 import Typeset from "@/components/Typeset";
 import { site, services, stats, serviceArea, testimonials } from "@/lib/site";
+import { servicesCountWord } from "@/lib/services";
 import { projects } from "@/lib/projects";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import { displayAddress } from "@/lib/address";
@@ -106,7 +107,7 @@ export default function AboutPage() {
               {`${site.owner} founded ${site.name} in Northborough in ${site.founded} and leads it today. He has ${site.experience}+ years of hands-on construction experience.`}
             </p>
             <p className="mt-4 text-muted max-w-[38em] mx-auto">
-              {`The company has completed ${site.projectsCompleted}+ projects in ${site.townsWithProjects}+ towns, across six services: ${services.map((s) => s.short.toLowerCase()).join(", ")}. Every project starts with a free, itemized estimate.`}
+              {`The company has completed ${site.projectsCompleted}+ projects in ${site.townsWithProjects}+ towns, across ${servicesCountWord} services: ${services.map((s) => s.short.toLowerCase()).join(", ")}. Every project starts with a free, itemized estimate.`}
             </p>
             {credentials && <p className="mt-4 font-medium text-ink">{credentials}</p>}
             <div className="mt-8 flex flex-col items-center sm:flex-row sm:justify-center gap-3 sm:gap-x-6">

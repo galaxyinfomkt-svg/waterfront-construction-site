@@ -1,4 +1,4 @@
-// The 6 services: shared data for the service hubs, service×town pages, home cards, schema, sitemap and llms.txt.
+// The 10 services: shared data for the service hubs, service×town pages, home cards, schema, sitemap and llms.txt.
 // Hub-only pillar content (tables, cost benchmarks, permits, FAQs) lives in lib/service-content.ts.
 //
 // Truth rules for this file (audit 02 / IMPLEMENTATION.md §2):
@@ -24,18 +24,30 @@ export type Photo = {
   stage?: "before" | "progress" | "finished";
 };
 
+// ONE ordered list of service slugs (D10: outside the house first, then inside). Every slug-keyed map in the
+// codebase is typed Record<ServiceSlug, …> (or Partial<…>), so a missing or stale slug fails the build (spec §2.6).
+// A slug is never renamed after launch (old slugs live on only as redirects in lib/redirects.ts).
+export const SERVICE_SLUGS = [
+  "siding", "window-replacement", "door-installation", "decks", "exterior-painting",
+  "kitchen-remodeling", "bathroom-remodeling", "home-additions", "home-remodeling", "interior-painting",
+] as const;
+export type ServiceSlug = (typeof SERVICE_SLUGS)[number];
+export const isServiceSlug = (s: string): s is ServiceSlug => (SERVICE_SLUGS as readonly string[]).includes(s);
+export const SERVICE_GROUPS = { outside: "Outside the house", inside: "Inside & additions" } as const;
+export const servicesCountWord = "ten";
+if (SERVICE_SLUGS.length !== 10) throw new Error(`servicesCountWord says "ten" but there are ${SERVICE_SLUGS.length} services`);
+
 export type Service = {
-  slug: string;
+  slug: ServiceSlug;
+  group: keyof typeof SERVICE_GROUPS;
   name: string; // short label: nav, breadcrumbs ("Siding")
   short: string; // descriptive name: schema Service.name, cards ("Siding Installation & Replacement")
-  blurb: string; // one plain sentence: cards, llms.txt
+  blurb: string; // one plain sentence (≤ 120 characters): cards, llms.txt
   image: string; // card/cover image (real photo, except where imageIsStock)
   imageAlt: string; // true description of `image`; "" when decorative
-  imageIsStock?: boolean; // true = NOT Waterfront's work: decorative only (alt=""), never in galleries, og:image, JSON-LD or sitemaps
-  features: string[]; // accurate "What's included"
-  long: string[]; // two plain paragraphs (state-neutral)
+  imageIsStock?: boolean; // true = NOT a Waterfront job photo (typographic plate): decorative only (alt=""), never in galleries, og:image, JSON-LD or sitemaps
+  features: string[]; // accurate "What's included" — the SUPERSET of the town-page scope (lib/local-rules.ts)
   timeline: string; // the ONE typical-duration statement for this service (audit 01 L6) — reuse it, never restate it
-  faqs: Faq[]; // 3 state-neutral Q&As, safe on MA and NH town pages
   gallery: Photo[]; // real photos with true captions; [] = no real photos yet (hide the gallery)
   photos?: string[]; // = gallery srcs (kept for backward compatibility)
   updated: string; // ISO 8601 with offset: last substantive edit of this service's hub content (sitemap lastModified, WebPage dateModified)
@@ -65,18 +77,22 @@ const P = {
   ha11: { src: HA(11), ...LYNN, stage: "progress", alt: "Upper story of a house with new white lap siding and black windows above a new front porch frame, in snow", caption: "New white lap siding on the original house, above the new front porch frame" },
   ha12: { src: HA(12), ...LYNN, stage: "progress", alt: "Main house in white house wrap beside a two-story addition sheathed in green panels with taped seams", caption: "House wrap and new windows on the main house, ZIP System sheathing on the new addition" },
   ha13: { src: HA(13), ...LYNN, stage: "progress", alt: "Three new arched windows with factory labels still on, set into green sheathing with taped seams", caption: "New arched windows set into the addition's taped sheathing" },
-  ha14: { src: HA(14), ...LYNN, stage: "progress", alt: "New wood entry door in protective plastic, with flashing membrane at the sill and a wooden form for a concrete step", caption: "Sill flashing under a new entry door, with the form for its step" },
-  ha16: { src: HA(16), ...LYNN, stage: "progress", alt: "Original house in white house wrap with new second-floor dormers and a new front porch, next to a two-story addition in green sheathing", caption: "New dormers and front porch on the original house, next to the new addition" },
+  ha14: { src: HA(14), ...LYNN, stage: "progress", alt: "New entry door in protective plastic, with flashing membrane at the sill and a wooden form for a concrete step", caption: "Sill flashing under a new entry door, with the form for its step" },
+  ha15: { src: HA(15), ...LYNN, stage: "progress", alt: "Two-story addition in ZIP System sheathing with three arched-top windows, and bundles of white siding on the ground", caption: "Siding delivered and ready to go on the addition" }, // caption from lib/projects.ts (HA15)
+  ha16: { src: HA(16), ...LYNN, stage: "progress", alt: "Original house in white house wrap with dormers and a new front porch, next to a two-story addition in green sheathing", caption: "Dormers and front porch on the original house, next to the new addition" },
+  ha17: { src: HA(17), ...LYNN, stage: "progress", alt: "White vertical siding installed on a two-story addition, with a ladder and three arched-top black windows", caption: "White vertical siding going up on the addition" }, // caption from lib/projects.ts (HA17, featured "Siding")
   ha18: { src: HA(18), ...LYNN, stage: "progress", alt: "Two-story addition with new white vertical siding on the upper story, three arched windows and bundles of siding staged in the yard", caption: "Siding going up on the two-story addition, with bundles of siding staged in the yard" },
-  ha19: { src: HA(19), ...LYNN, stage: "progress", alt: "White vertical siding nearly finished around three arched windows and a wood entry door on a home addition", caption: "Vertical siding nearly finished around the arched windows and the new entry door" },
+  ha19: { src: HA(19), ...LYNN, stage: "progress", alt: "White vertical siding nearly finished around three arched windows and a new entry door on a home addition", caption: "Vertical siding nearly finished around the arched windows and the new entry door" },
   man01: { src: MAN(1), ...MANS, stage: "finished", alt: "Remodeled kitchen with white shaker-style cabinets, a stainless refrigerator, a dark stone-look island and three glass pendant lights", caption: "Finished kitchen with white shaker-style cabinets and glass pendant lights" },
   man02: { src: MAN(2), ...MANS, stage: "finished", alt: "Kitchen island with a dark veined stone-look countertop and waterfall edge, white cabinets and a sliding door", caption: "Island with a waterfall countertop edge" },
   man03: { src: MAN(3), ...MANS, stage: "finished", alt: "Three glass pendant lights over a kitchen island with a dark stone-look countertop, white cabinets and a sliding glass door", caption: "Glass pendant lights over the island" },
+  man04: { src: MAN(4), ...MANS, stage: "finished", alt: "Stainless French-door refrigerator between tall white cabinets, with the end of the island in the foreground", caption: "Tall cabinets frame the refrigerator; the island is in the foreground" },
   man05: { src: MAN(5), ...MANS, stage: "finished", alt: "Waterfall island with a dark stone-look countertop and a white sink below a glass pendant light", caption: "Island sink and waterfall counter, with white cabinets behind" },
   bath01: { src: BATH(1), ...BATHS, stage: "finished", alt: "Walk-in shower with large marble-look wall tile, a frameless glass panel, a built-in niche and a window", caption: "Walk-in shower with marble-look tile and frameless glass" },
   bath02: { src: BATH(2), ...BATHS, stage: "finished", alt: "Bathtub with a fixed glass panel, white subway tile, a mosaic accent band and a tiled niche", caption: "Tub with a glass panel and subway tile with a mosaic accent band" },
   bath03: { src: BATH(3), ...BATHS, stage: "finished", alt: "Walk-in shower with marble-look tile walls, a hexagon mosaic floor and a hinged glass door, next to a toilet", caption: "Shower with marble-look walls and a hexagon mosaic floor" },
   bath04: { src: BATH(4), ...BATHS, stage: "finished", alt: "Corner glass shower with brass fixtures next to a freestanding tub and a brass towel warmer", caption: "Corner glass shower with brass fixtures beside a soaking tub" },
+  bath05: { src: BATH(5), ...BATHS, stage: "finished", alt: "Neo-angle glass shower in beige stone-look tile with a built-in bench, a recessed niche and a mosaic accent band", caption: "Neo-angle shower in beige stone-look tile with a built-in bench" },
   sal01: { src: SAL(1), ...SALEM, stage: "progress", alt: "Corner of a deck with gray decking and a fascia board over the pressure-treated frame, beside an above-ground pool", caption: "Decking and fascia going on over the pressure-treated frame" },
   sal02: { src: SAL(2), ...SALEM, stage: "finished", alt: "Deck with gray decking, a contrasting border and white railings wrapped around an above-ground pool, on a pressure-treated frame", caption: "Gray decking and white railings wrapped around the above-ground pool" },
   sal03: { src: SAL(3), ...SALEM, stage: "progress", alt: "Pressure-treated posts and beams supporting a deck frame beside an above-ground pool", caption: "Posts and beams supporting the deck frame beside the pool" },
@@ -89,129 +105,147 @@ const P = {
 /** Every captioned photo, by src — lets other templates reuse a true caption for a photo they show. */
 export const PHOTO_CAPTIONS: Record<string, Photo> = Object.fromEntries(Object.values(P).map((x) => [x.src, x]));
 
-const TIMELINE = {
+// Typical durations: every value is an existing sentence or a split of one (spec §2.1) — no new durations.
+const TIMELINE: Record<ServiceSlug, string> = {
   siding: "Most single-family re-siding jobs take about 1–2 weeks of work once materials arrive.",
-  windows: "Most window replacements take 1–3 days of installation, depending on the number of openings.",
-  kb: "Bathrooms typically take 2–3 weeks and kitchens about 3–6 weeks once materials are in.",
+  "window-replacement": "Most window replacements take 1–3 days of installation, depending on the number of openings.",
+  "door-installation": "Door installation time depends on the number of doors and the condition of each opening; we give you a schedule with the estimate.",
   decks: "Most decks take about 1–2 weeks to build, depending on size and features.",
-  additions: "Larger additions and whole-home remodels typically take 2–4 months of construction after design and permits.",
-  painting: "Painting time depends on the number of rooms or the size and condition of the house; we give you a schedule with the estimate.",
+  "exterior-painting": "Exterior painting time depends on the size and condition of the house and on the weather; we give you a schedule with the estimate.",
+  "kitchen-remodeling": "Kitchens typically take about 3–6 weeks once materials are in.",
+  "bathroom-remodeling": "Bathrooms typically take about 2–3 weeks once materials are in.",
+  "home-additions": "Larger additions typically take 2–4 months of construction after design and permits.",
+  "home-remodeling": "Whole-home remodels typically take 2–4 months of construction after design and permits.",
+  "interior-painting": "Interior painting time depends on the number of rooms and the prep they need; we give you a schedule with the estimate.",
 };
 
-// Last substantive edit of the hub content (2026-10-05 SEO/content overhaul). Change only on real content edits.
-const UPDATED = "2026-10-05T09:15:42-04:00";
+/** The /faq "how long" answer: the six numeric statements (additions and whole-home remodels share one, the
+ *  original sentence), then one merged sentence for the services without a typical duration. */
+export const TIMELINE_FAQ = [
+  TIMELINE.siding,
+  TIMELINE["window-replacement"],
+  TIMELINE.decks,
+  TIMELINE["kitchen-remodeling"],
+  TIMELINE["bathroom-remodeling"],
+  "Larger additions and whole-home remodels typically take 2–4 months of construction after design and permits.",
+  "Door installation and painting depend on the number of doors or rooms and the condition of the house; we give you a schedule with the estimate.",
+].join(" ");
+
+/** The ONLY testimonial → service mapping (spec §2.1, lead ruling O6 from the verbatim texts in lib/site.ts).
+ *  Keyed by the testimonial's name, so this file never imports lib/site.ts (no circular import).
+ *  Testimonials are shown as quotes only — never Review / AggregateRating markup. */
+export const TESTIMONIAL_SERVICES: Record<string, { services: ServiceSlug[]; work: string }> = {
+  "Karen M.": { services: ["kitchen-remodeling", "bathroom-remodeling"], work: "kitchen and bathroom remodel" },
+  "Dave R.": { services: ["siding", "window-replacement"], work: "new siding and windows" },
+  "Priya S.": { services: ["decks", "home-additions"], work: "deck and small addition" },
+  "Tom & Lisa B.": { services: ["home-remodeling"], work: "first-floor remodel" },
+  "Rafael C.": { services: ["bathroom-remodeling"], work: "bathroom remodel" },
+  "Susan D.": { services: ["kitchen-remodeling"], work: "kitchen remodel" },
+};
+
+/** Release of the 10-service / city-hub migration: the hubs, the service×town pages (TOWN_PAGES_UPDATED) and
+ *  the city hubs (CITY_HUBS_UPDATED) all changed substantively in it. Set to the release commit's timestamp. */
+export const SERVICES_RELEASE = "2026-10-06T13:18:29-04:00";
+const UPDATED = SERVICES_RELEASE;
+
+// No real photo of finished painting or of a whole-home remodel yet (owner items O4, O5, O14): those three
+// services use the typographic monogram plate — never a stock photo, never someone else's work.
+const PLATE = { image: "", imageAlt: "", imageIsStock: true } as const;
 
 const raw: Omit<Service, "photos">[] = [
   {
-    slug: "siding", name: "Siding", short: "Siding Installation & Replacement",
+    slug: "siding", group: "outside", name: "Siding", short: "Siding Installation & Replacement",
     image: P.ha18.src, imageAlt: P.ha18.alt,
     blurb: "Vinyl, fiber-cement and engineered-wood siding with trim, soffit and fascia, installed over a proper weather barrier.",
     features: ["Vinyl, fiber-cement and engineered-wood siding", "Trim, soffit and fascia", "Tear-off and sheathing repairs", "House wrap and flashing at every opening", "Color and profile selection help", "Cleanup and haul-away"],
-    long: [
-      "Siding is the first layer between New England weather and your walls. Installed correctly, over a water-resistive barrier with flashing at every opening, it keeps rain and snowmelt out of the framing and gives the house a clean, finished look.",
-      "We install and replace vinyl, fiber-cement and engineered-wood siding, including removal of the old siding, sheathing repairs, house wrap and flashing, trim, soffit and fascia, and full cleanup.",
-    ],
     timeline: TIMELINE.siding,
-    faqs: [
-      { q: "How long does siding replacement take?", a: `${TIMELINE.siding} The size of the house, the material and any repairs found under the old siding set the exact schedule, which we give you before work starts.` },
-      { q: "What siding material holds up best in New England?", a: "Vinyl and fiber cement both perform well when installed correctly. Vinyl costs less and needs no painting; fiber cement costs more, is heavier and resists fire and impact better. Engineered wood is a lighter, paintable option. We help you compare them for your house and budget." },
-      { q: "Will new siding lower my energy bills?", a: "Siding by itself adds little insulation. Savings come from sealing air leaks and fixing the weather barrier during re-siding, or from choosing insulated siding or adding rigid foam under it. We can tell you whether that is worth it for your house." },
-    ],
-    gallery: [P.ha18, P.ha19, P.ha11, P.ha12, P.ha08],
+    gallery: [P.ha17, P.ha18, P.ha19, P.ha15, P.ha11, P.ha12, P.ha16],
     updated: UPDATED,
   },
   {
-    slug: "windows-and-doors", name: "Windows & Doors", short: "Window & Door Replacement",
+    slug: "window-replacement", group: "outside", name: "Window Replacement", short: "Window Replacement",
     image: P.ha13.src, imageAlt: P.ha13.alt,
-    blurb: "Replacement windows and entry and patio doors, flashed, sealed and trimmed to keep drafts and water out.",
-    features: ["Replacement windows", "Entry and patio doors", "Flashing, insulation and sealing around each unit", "Interior trim and casing", "Help choosing styles, glass and colors", "Cleanup and haul-away of old units"],
-    long: [
-      "Drafty, fogged or hard-to-open windows and worn entry doors let in cold air and water. New units help only when they are installed well: flashed into the wall, insulated around the frame and sealed.",
-      "We replace windows and install entry and patio doors, with flashing, sealing and interior trim and casing, and we help you choose styles, colors and glass options that suit the house.",
-    ],
-    timeline: TIMELINE.windows,
-    faqs: [
-      { q: "How long does window replacement take?", a: `${TIMELINE.windows} Windows are usually made to order, so the install date depends on the manufacturer's delivery time.` },
-      { q: "Do new windows really save energy?", a: "Replacing single-pane or failed double-pane windows reduces heat loss and drafts. How much you save depends on what you are replacing, how well the new units are installed and sealed, and the rest of the house, so we do not quote a savings figure." },
-      { q: "Can you match my home's existing style?", a: "Yes. We help you choose window and door styles, colors, grille patterns and trim that suit the house, whether it is a colonial, a cape or a newer home." },
-    ],
-    gallery: [P.ha13, P.ha19, P.ha14, P.ha07, P.ha08],
+    blurb: "Replacement windows, insert or full-frame, flashed, insulated and sealed, with interior trim and casing.",
+    features: ["Replacement windows", "Insert or full-frame installation", "Flashing, insulation & sealing", "Interior trim & casing", "Cleanup and haul-away"],
+    timeline: TIMELINE["window-replacement"],
+    gallery: [P.ha13, P.ha05, P.ha07, P.ha08, P.ha12, P.ha16],
     updated: UPDATED,
   },
   {
-    slug: "kitchen-bathroom-remodeling", name: "Kitchen & Bath Remodeling", short: "Kitchen & Bathroom Remodeling",
-    image: P.man01.src, imageAlt: P.man01.alt,
-    blurb: "Kitchen and bathroom remodels managed start to finish: cabinets, counters, tile showers, fixtures and lighting.",
-    features: ["Cabinets and islands", "Countertops and backsplashes", "Tile showers and walk-in showers", "Vanities, fixtures and lighting", "Waterproofing behind tile", "Plumbing and electrical trades scheduled and coordinated"],
-    long: [
-      "Kitchens and bathrooms combine the most trades in the smallest space: demolition, framing, plumbing, electrical, ventilation, tile, cabinets and finish carpentry. Planning the order of work, and the details hidden behind the walls, decides how the room holds up.",
-      "We manage the remodel from start to finish: cabinets, countertops, tile, vanities, fixtures and lighting, with waterproofing behind the tile. Plumbing, gas and electrical work is done by trades who hold the required licenses and pull their own permits.",
-    ],
-    timeline: TIMELINE.kb,
-    faqs: [
-      { q: "How long does a kitchen or bathroom remodel take?", a: `${TIMELINE.kb} We give you a schedule before work starts and keep you updated if anything changes.` },
-      { q: "Can I stay in my home during the remodel?", a: "In most cases, yes. We set up dust containment, keep the work area clean and plan the work to limit disruption to your daily routine." },
-      { q: "Who does the plumbing and electrical work?", a: "Plumbing, gas and electrical work is done by trades who hold the required licenses and pull their own permits; we schedule and coordinate them as part of the project." },
-    ],
-    gallery: [P.man01, P.man02, P.man05, P.bath01, P.bath03, P.bath04, P.bath02],
+    slug: "door-installation", group: "outside", name: "Door Installation", short: "Entry & Patio Door Installation",
+    image: P.ha14.src, imageAlt: P.ha14.alt,
+    blurb: "Entry doors and sliding or hinged patio doors, installed with a sill pan, flashing, weatherstripping and trim.",
+    features: ["Entry doors", "Patio doors (sliding or hinged)", "Sill pan & flashing", "Weatherstripping & trim"],
+    timeline: TIMELINE["door-installation"],
+    gallery: [P.ha14, P.ha19, P.ha12],
     updated: UPDATED,
   },
   {
-    slug: "decks", name: "Decks", short: "Deck Design & Construction",
+    slug: "decks", group: "outside", name: "Decks", short: "Deck Design & Construction",
     image: P.sal02.src, imageAlt: P.sal02.alt,
     blurb: "Composite and pressure-treated wood decks, railings, stairs and pool decks, built to code from the footings up.",
     features: ["Composite and pressure-treated wood decks", "Railings, stairs and landings", "Pool decks", "Custom design to fit your yard", "Footings, framing and hardware built to code", "Footing, framing and final inspections planned into the schedule"],
-    long: [
-      "A deck adds outdoor living space, and it is also a structure people stand on, often well above the ground. Footings below the frost line, a flashed and bolted ledger, rated hardware and code-compliant guards matter as much as the decking you see.",
-      "We build decks in composite and pressure-treated wood, with railings, stairs and pool decks, and plan the town's footing, framing and final inspections into the schedule.",
-    ],
     timeline: TIMELINE.decks,
-    faqs: [
-      { q: "Composite or wood: which is better?", a: "Composite costs more up front but needs no staining or sealing, only washing. Pressure-treated wood costs less but needs regular cleaning and sealing. We help you weigh the trade-offs for your yard and budget." },
-      { q: "Do I need a permit for a deck?", a: "Usually, yes. Most towns require a building permit for a deck, especially one attached to the house, and the building department inspects the footings, the framing and the finished deck. The written contract should say who applies for the permit and schedules the inspections." },
-      { q: "How long does it take to build a deck?", a: `${TIMELINE.decks} Permit review, inspections and weather can move the start date, and we keep you updated throughout.` },
-    ],
     gallery: [P.sal02, P.sal05, P.sal06, P.sal01, P.sal03, P.salb04],
     updated: UPDATED,
   },
   {
-    slug: "home-additions-remodeling", name: "Additions & Remodeling", short: "Home Additions & Remodeling",
+    slug: "exterior-painting", group: "outside", name: "Exterior Painting", short: "Exterior House Painting",
+    ...PLATE,
+    blurb: "Siding and trim painting after washing, scraping, sanding, rotted-trim repair, caulking and priming bare wood.",
+    features: ["Siding & trim painting", "Washing, scraping & sanding", "Caulking & priming bare wood", "Rotted trim repair before painting", "Color selection help"],
+    timeline: TIMELINE["exterior-painting"],
+    gallery: [],
+    updated: UPDATED,
+  },
+  {
+    slug: "kitchen-remodeling", group: "inside", name: "Kitchen Remodeling", short: "Kitchen Remodeling",
+    image: P.man01.src, imageAlt: P.man01.alt,
+    blurb: "Cabinets, islands, countertops, backsplash and lighting, with the plumbing and electrical trades coordinated.",
+    features: ["Cabinets & islands", "Countertops & backsplash", "Lighting", "Plumbing & electrical trades coordinated"],
+    timeline: TIMELINE["kitchen-remodeling"],
+    gallery: [P.man01, P.man02, P.man03, P.man04, P.man05],
+    updated: UPDATED,
+  },
+  {
+    slug: "bathroom-remodeling", group: "inside", name: "Bathroom Remodeling", short: "Bathroom Remodeling",
+    image: P.bath03.src, imageAlt: P.bath03.alt,
+    blurb: "Tile and walk-in showers with waterproofing behind the tile, vanities, fixtures and frameless glass enclosures.",
+    features: ["Tile & walk-in showers", "Waterproofing behind tile", "Vanities & fixtures", "Frameless glass enclosures", "Exhaust fan vented outdoors"],
+    timeline: TIMELINE["bathroom-remodeling"],
+    gallery: [P.bath01, P.bath02, P.bath03, P.bath04, P.bath05],
+    updated: UPDATED,
+  },
+  {
+    slug: "home-additions", group: "inside", name: "Home Additions", short: "Home Additions",
     image: P.ha12.src, imageAlt: P.ha12.alt,
-    blurb: "Room and second-story additions, in-law suites and whole-home remodels, from foundation to final finish.",
-    features: ["Room and second-story additions", "In-law suites and sunrooms", "Whole-home renovations", "Basement finishing", "Foundation to final finish", "Designer and structural engineer coordination"],
-    long: [
-      "An addition or whole-home remodel gives you more room without leaving your neighborhood. The work runs from foundation and framing to the roof tie-in, systems and finishes, and the result has to match the house you already have.",
-      "We build room and second-story additions, in-law suites and sunrooms, finish basements and remodel whole homes. We coordinate the designer and a structural engineer when a project needs stamped plans, and manage the work from foundation to final finish.",
-    ],
-    timeline: TIMELINE.additions,
-    faqs: [
-      { q: "How long does a home addition or full remodel take?", a: `${TIMELINE.additions} Size and complexity set the exact schedule; we give you a detailed one and keep you informed at every stage.` },
-      { q: "Who handles design and permits?", a: "We coordinate the designer or architect and a structural engineer when your project needs stamped plans. The written contract should say who applies for the building permit and schedules the inspections; plumbing, gas and electrical permits are pulled by those trades." },
-      { q: "Will the new space match my existing home?", a: "That is the goal: we match rooflines, siding, windows and interior finishes so an addition looks like part of the original house and a remodel feels consistent." },
-    ],
+    blurb: "Room and second-story additions, in-law suites, sunrooms and porches, built from the foundation to the finish.",
+    features: ["Room & second-story additions", "In-law suites (ADUs)", "Sunrooms & porches", "Designer & engineer coordination", "Foundation to finish"],
+    timeline: TIMELINE["home-additions"],
     gallery: [P.ha12, P.ha05, P.ha07, P.ha19, P.ha11, P.nee05],
     updated: UPDATED,
   },
   {
-    slug: "painting", name: "Painting", short: "Interior & Exterior Painting",
-    // No real painting photos yet: this stock image is decorative only (alt="", never in galleries/OG/JSON-LD/sitemap).
-    image: "", imageAlt: "", imageIsStock: true, // no real painting photo yet → icon tile
-    blurb: "Interior and exterior painting, trim and cabinets, with thorough prep: washing, scraping, patching, caulking and priming.",
-    features: ["Interior and exterior painting", "Washing, scraping, sanding and patching", "Caulking and priming bare wood", "Cabinet and trim painting", "Color selection help", "Floors, furniture and landscaping protected"],
-    long: [
-      "Paint protects wood and drywall as well as changing how a room or a house looks. Most paint failures trace back to prep, so the work before the first coat matters most.",
-      "We paint interior rooms, trim, cabinets and full exteriors, with washing, scraping, sanding, patching, caulking and priming before the finish coats.",
-    ],
-    timeline: TIMELINE.painting,
-    faqs: [
-      { q: "Do you do both interior and exterior painting?", a: "Yes: interior rooms, trim, cabinets and full exteriors. We choose paints suited to the surface and to New England weather." },
-      { q: "How long will the paint last?", a: "With proper prep and quality paint, interior walls stay fresh for many years, and a good exterior job typically lasts 7–10 years or more, depending on sun exposure and moisture." },
-      { q: "Can you help me choose colors?", a: "Yes. We help you narrow down colors that suit your home and its light; testing samples on the wall before deciding is the most reliable way to choose." },
-    ],
+    slug: "home-remodeling", group: "inside", name: "Home Remodeling", short: "Whole-Home & Interior Remodeling",
+    ...PLATE,
+    blurb: "First-floor and whole-home remodels, layout and wall changes and basement finishing, with licensed trades coordinated.",
+    features: ["First-floor & whole-home remodels", "Layout & wall changes", "Basement finishing", "Licensed trades coordinated"],
+    timeline: TIMELINE["home-remodeling"],
+    gallery: [],
+    updated: UPDATED,
+  },
+  {
+    slug: "interior-painting", group: "inside", name: "Interior Painting", short: "Interior Painting",
+    ...PLATE,
+    blurb: "Walls, ceilings, trim, doors and cabinets painted after patching, sanding and priming, with help choosing colors.",
+    features: ["Walls & ceilings", "Trim, doors & cabinets", "Patching, sanding & priming", "Low-VOC paints & sheen selection", "Color selection help"],
+    timeline: TIMELINE["interior-painting"],
     gallery: [],
     updated: UPDATED,
   },
 ];
+
+if (raw.map((s) => s.slug).join() !== SERVICE_SLUGS.join()) throw new Error("lib/services.ts: services must follow SERVICE_SLUGS order (D10)");
 
 export const services: Service[] = raw.map((s) => ({ ...s, photos: s.gallery.map((g) => g.src) }));
 

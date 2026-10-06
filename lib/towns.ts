@@ -4,10 +4,15 @@
 import { allCities, citySlug, cityLabel, type City } from "./site";
 import { TOWN_GEO } from "./town-geo";
 import { projects, type Project } from "./projects";
+import { SERVICES_RELEASE, type ServiceSlug } from "./services";
 
 /** Date the service×town template and its data last changed substantively (sitemap lastModified,
  *  WebPage dateModified and the visible "Page updated" line). Bump ONLY on a substantive change. */
-export const TOWN_PAGES_UPDATED = "2026-10-05T12:32:27-04:00";
+export const TOWN_PAGES_UPDATED = SERVICES_RELEASE;
+/** Date the city hubs (/service-areas/{town}) last changed substantively — same rule as TOWN_PAGES_UPDATED. */
+export const CITY_HUBS_UPDATED = SERVICES_RELEASE;
+/** The city hub of a served place. Every package builds the path with this; nobody hand-types it. */
+export const cityHubPath = (c: City) => `/service-areas/${citySlug(c)}`;
 
 const BASE = { lat: 42.3195, lng: -71.6412 }; // Northborough town center (GeoNames populated place = lib/town-geo.ts)
 type LatLng = { lat: number; lng: number };
@@ -41,6 +46,8 @@ export const VILLAGE_OF: Record<string, string> = {
 // Devens is a regional enterprise zone (parts of Ayer, Harvard and Shirley) with its own
 // permitting authority, the Devens Enterprise Commission. [verify R16: devensec.com]
 export const DEVENS = "devens";
+/** The towns Devens was carved from (all three are served places). Names, like VILLAGE_OF. */
+export const DEVENS_TOWNS = ["Ayer", "Harvard", "Shirley"] as const;
 
 // Easily-confused pairs (always disambiguated): the same name in MA and NH, plus Manchester NH ⇄
 // Manchester-by-the-Sea MA.
@@ -57,6 +64,11 @@ const BY_SLUG: Record<string, City> = Object.fromEntries(allCities.map((c) => [c
 export const sameCity = (a: City, b: City) => citySlug(a) === citySlug(b);
 export const isNH = (c: City) => c.s === "NH";
 export const isDevens = (c: City) => citySlug(c) === DEVENS;
+/** Ayer, Harvard and Shirley (the served towns that Devens lies in), in that order; [] for any other place. */
+export const devensTowns = (c: City): City[] =>
+  isDevens(c) ? DEVENS_TOWNS.map((n) => allCities.find((x) => x.n === n && !x.s)).filter((x): x is City => Boolean(x)) : [];
+/** Is this one of the towns Devens was carved from? (Its building permits still come from the town itself.) */
+export const isDevensTown = (c: City) => !c.s && (DEVENS_TOWNS as readonly string[]).includes(c.n);
 /** Parent town of a village (Whitinsville → Northbridge), else undefined. */
 export function villageParent(c: City): City | undefined {
   const name = VILLAGE_OF[citySlug(c)];
@@ -149,7 +161,7 @@ for (const p of projects) {
 }
 
 export type ProjectNear = { project: Project; town: City; miles: number; dir: string; sameTown: boolean };
-export function nearestProjects(c: City, opts: { service?: string; limit?: number } = {}): ProjectNear[] {
+export function nearestProjects(c: City, opts: { service?: ServiceSlug; limit?: number } = {}): ProjectNear[] {
   return projects
     .filter((p) => PROJECT_TOWN[p.slug] && (!opts.service || p.services.includes(opts.service)))
     .map((p) => {
@@ -172,9 +184,9 @@ export function projectTown(p: Project): City | undefined {
  *  Every row must be producible on request (M.G.L. c.142A §17; FTC Act §5). Empty until the owner
  *  supplies the list; every sentence built from it renders only for towns that have a row.
  *  Example row: { town: "grafton", service: "decks", year: 2024 } */
-export type Job = { town: string /* citySlug */; service: string /* service slug */; year: number; caseStudy?: string /* project slug */ };
+export type Job = { town: string /* citySlug */; service: ServiceSlug; year: number; caseStudy?: string /* project slug */ };
 export const JOBS: Job[] = [];
-export const jobsIn = (c: City, service?: string) => JOBS.filter((j) => j.town === citySlug(c) && (!service || j.service === service));
+export const jobsIn = (c: City, service?: ServiceSlug) => JOBS.filter((j) => j.town === citySlug(c) && (!service || j.service === service));
 
 /** Official building-department pages, each opened and checked by a person (never guessed or copied
  *  from a directory), with the month it was checked. Villages use their parent town's entry; Devens

@@ -234,5 +234,37 @@
  "/og/service-windows-and-doors.jpg": {
   "w": 1200,
   "h": 630
+ },
+ "/og/service-window-replacement.jpg": {
+  "w": 1200,
+  "h": 630
+ },
+ "/og/service-door-installation.jpg": {
+  "w": 1200,
+  "h": 630
+ },
+ "/og/service-exterior-painting.jpg": {
+  "w": 1200,
+  "h": 630
+ },
+ "/og/service-kitchen-remodeling.jpg": {
+  "w": 1200,
+  "h": 630
+ },
+ "/og/service-bathroom-remodeling.jpg": {
+  "w": 1200,
+  "h": 630
+ },
+ "/og/service-home-additions.jpg": {
+  "w": 1200,
+  "h": 630
+ },
+ "/og/service-home-remodeling.jpg": {
+  "w": 1200,
+  "h": 630
+ },
+ "/og/service-interior-painting.jpg": {
+  "w": 1200,
+  "h": 630
  }
 }

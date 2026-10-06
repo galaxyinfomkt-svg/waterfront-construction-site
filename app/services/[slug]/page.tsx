@@ -124,7 +124,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
   const costGuides = serviceGuides(c.cost.guides);
   const quotes = serviceTestimonials(c);
   const proof = proofPlaces(c);
-  const related = c.related.map((r) => services.find((x) => x.slug === r)).filter((x): x is (typeof services)[number] => Boolean(x));
+  const related = c.related.map((r) => services.find((x) => x.slug === r)).filter((x): x is (typeof services)[number] => Boolean(x)); // ServiceSlug[] (§3)
   const updated = fmtDate(s.updated);
   const credentials = credentialLine();
   const lower = s.name.toLowerCase();
@@ -165,7 +165,8 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       : "Priced per project after a free site visit; see what drives the cost below."],
     ["Where we work", `${serviceArea.short}, from our base in Northborough, MA.`],
   ];
-  // Chapter surfaces alternate paper / stone by running index over the chapters actually rendered (spec §6 hubs).
+  // Chapter surfaces alternate paper / stone by running index over the chapters actually rendered (spec §6 hubs). The same
+  // template serves all ten hubs; hubs without a photo (exterior/interior painting, whole-home) skip "our-work".
   const chapters = [
     "overview",
     ...(hero || cards.length || gallery.length ? ["our-work"] : []),
@@ -247,7 +248,9 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           <Glance items={glance} />
           {c.intro.map((p, i) => <p key={i} className={`mt-5 ${prose}`}>{p}</p>)}
           <h3 className="mt-12 text-h3 text-navy">What&apos;s included</h3>
-          <ul role="list" className="mt-5 check-list grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8">
+          {/* 4 to 6 features (lib/services.ts): .grid-center centres a short last row, so no hub leaves an empty cell;
+              four features run as one row of four from lg (2 × 2 from sm). */}
+          <ul role="list" className={`mt-5 check-list grid-center sm:[--cols:2] ${s.features.length === 4 ? "lg:[--cols:4]" : "lg:[--cols:3]"}`}>
             {s.features.map((f) => (
               <li key={f} className="py-3 border-t border-line text-ink">{f}</li>
             ))}
@@ -388,7 +391,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       <FormBand tone={surface("form") === "bg-stone" ? "stone" : "paper"} />
 
       {/* LEAD-SAFE — stated as rules; never a company certification claim. The full rule list lives in ONE canonical
-          section (painting hub, LEAD_SAFE_HREF); other hubs give their service-specific rule and link there (V3.10). */}
+          section (exterior-painting hub, LEAD_SAFE_HREF); other hubs give their service-specific rule and link there (V3.10). */}
       {c.leadSafe && (
         <section id="lead-safe" aria-labelledby="lead-safe-h" className={`section-doc ${surface("lead-safe")}`}>
           <div className="container-x">

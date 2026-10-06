@@ -32,10 +32,13 @@ Node.js 20 or newer.
 | `npm start` | Serves the last production build. |
 | `npm run lint` | ESLint. |
 | `npm run og` | `node scripts/build-og.mjs`: rebuilds the 1200×630 social cards in `public/og/` (and `public/og.jpg`) from **real project photos only**. Run it after adding or changing a photo that a card uses. |
-| `npm run check` | Run **after** `npm run build`. Three gates on the built HTML in `.next/server/app`; each exits 1 on failure. |
-| `npm run check:schema` | `scripts/check-jsonld.mjs`: one valid JSON-LD graph per indexable page, none on noindex pages; no Review, AggregateRating or HowTo markup; every `@id` reference resolves; FAQ text matches the visible text; dates carry a time zone; no Massachusetts-only claims on New Hampshire pages. |
-| `npm run check:towns` | `scripts/check-town-pages.mjs`: the 1,188 service×town pages stay unique (5-gram similarity), keep enough internal links, and never bring back the banned per-town claims. |
-| `npm run check:claims` | `scripts/check-claims.mjs`: fails if any page, JSON-LD block, sitemap or `llms.txt` contains a banned or unprovable claim (for example "licensed" before the HIC number is set, "5-star reputation", "200+ towns"). |
+| `npm run check` | Run **after** `npm run build`. Runs the six checks below, in that order, on the built site in `.next/server/app` (and the source, for `check:slugs`); each exits 1 on failure. |
+| `npm run check:schema` | `scripts/check-jsonld.mjs`: one valid JSON-LD graph per indexable page, none on noindex pages; no Review, AggregateRating or HowTo markup; every `@id` reference resolves; FAQ text matches the visible text; dates carry a time zone; no Massachusetts-only claims on New Hampshire pages. City hubs are a `CollectionPage` whose `ItemList` names each built service×town page of that town, with no `Service` or `FAQPage` node (R17); every full `Service` node has a `serviceType` (R18); every `/services/…` or `/service-areas/…` URL in JSON-LD is a built page (R19). |
+| `npm run check:towns` | `scripts/check-town-pages.mjs`: the service×town pages and the city hubs stay unique (5-gram similarity): per service (G1), same town across services (G2, with a 10×10 table), city hubs (G3), each hub vs its own service pages (G4); unique titles and descriptions on every indexable page (G5); at least 8 internal inlinks each (G6); no banned per-town claims (G7). Every service must have a page for every city hub. |
+| `npm run check:claims` | `scripts/check-claims.mjs`: fails if any page, JSON-LD block, sitemap or `llms.txt` contains a banned or unprovable claim (for example "licensed" before the HIC number is set, "5-star reputation", "200+ towns", a "wood entry door" or "new dormers" the photos do not show, a combined six-service name such as "Kitchen & Bath Remodeling in …"). No Cost vs. Value figure (`$x,xxx` or "recoup") on the door, additions, whole-home or painting pages, and no "How much does {service} cost" question on the service×town pages or city hubs. |
+| `npm run check:redirects` | `scripts/check-redirects.mjs`: reads `.next/routes-manifest.json`. No redirect hides a built page, every redirect is one hop and lands on a built page, the legacy service slugs go exactly where `lib/redirects.ts` says (with their `/` twins), and none points back at a slug that was ever a redirect source towards it (cached 308 loops). |
+| `npm run check:slugs` | `scripts/check-slugs.mjs` (source, no build needed): every service has its 1200×630 card `public/og/service-<slug>.jpg` and its `lib/media-manifest.json` entry, and no file in `app/`, `lib/`, `components/` or `scripts/` still uses a retired service slug (except `lib/redirects.ts` and `scripts/check-redirects.mjs`). |
+| `npm run check:layout` | `scripts/check-layout.mjs`: exactly one hero estimate form (`id="estimate"` with `data-estimate-form`) on every page, one mid-page estimate band except on `/contact`, the 404 and `/thank-you`, at most 3 CTA rows (1–3 on hubs, service×town pages and city hubs), no link to a retired slug, and every internal link (and `#fragment`) resolves to a built page, a public file or a one-hop redirect. |
 | `node scripts/indexnow.mjs` | Tells Bing (and, through Bing, ChatGPT search and Copilot) which URLs changed. Run it by hand **after** a production deploy, never during a build. See [IndexNow](#indexnow). |
 
 ## Environment variables
@@ -58,8 +61,9 @@ matching tag or script is simply not rendered.
 |---|---|
 | `lib/site.ts` | **The single source of business facts**: name, phone, address, hours, owner, founding year, confirmed stats, testimonials, the town list and the service-area wording. Owner-supplied fields (HIC and CSL numbers, Maps URL, photos, profiles) render only once they are filled in. |
 | `lib/credentials.ts` | All credential wording (`credentialLine()`, `licensingAnswer()`). Nothing says "licensed" until `site.hic` is set. |
-| `lib/services.ts`, `lib/service-content.ts` | The six services: shared data, then the hub-only content (tables, Cost vs. Value benchmarks, permits, FAQs, sources). |
-| `lib/towns.ts`, `lib/town-geo.ts`, `lib/town-copy.ts`, `lib/local-rules.ts` | Computed town facts (county, straight-line miles, nearest towns), the copy of the 1,188 service×town pages and the state rules they cite. Geodata: GeoNames postal codes (CC BY 4.0). |
+| `lib/services.ts`, `lib/service-content.ts` | The ten services (`SERVICE_SLUGS` drives every list, in one order): shared data, then the hub-only content (tables, Cost vs. Value benchmarks, permits, FAQs, sources). |
+| `lib/towns.ts`, `lib/town-geo.ts`, `lib/town-copy.ts`, `lib/local-rules.ts` | Computed town facts (county, straight-line miles, nearest towns), the copy of the service×town pages (one per service and place) and the state rules they cite. Geodata: GeoNames (CC BY 4.0). |
+| `lib/area-copy.ts`, `app/service-areas/[town]/` | The city hubs: one page per place we serve at `/service-areas/<town>`, linking that town's ten service pages. |
 | `lib/projects.ts`, `lib/media-facts.ts`, `lib/media-manifest.json` | Case studies (town level only), video facts and image sizes. |
 | `lib/posts.ts` | Blog guides, with sourced figures and real publication dates. |
 | `lib/faq.ts` | The pre-hire questions on `/faq` (and the home and contact pages). |
@@ -99,8 +103,11 @@ and structured data must also be visible on the page.
 | URL | Contents |
 |---|---|
 | `/sitemap.xml` | **Sitemap index.** Submit this one URL in Google Search Console and Bing Webmaster Tools. |
-| `/sitemap/pages.xml` | Every indexable page except the town pages: home, services and hubs, service areas, projects, blog, FAQ, about, owner profile, reviews, contact, privacy, terms. |
-| `/sitemap/towns-{service}.xml` | The 198 town pages of one service (six files), so Search Console shows indexed/submitted counts per service. |
+| `/sitemap/pages.xml` | Every indexable page except the city hubs and the town pages: home, services and hubs, service areas, projects, blog, FAQ, about, owner profile, reviews, contact, privacy, terms. |
+| `/sitemap/areas.xml` | The city hubs, one per place we serve (`/service-areas/<town>`). |
+| `/sitemap/towns-{service}.xml` | The town pages of one service, one per place (one file per service), so Search Console shows indexed/submitted counts per service. |
+
+The index has `2 + number of services` children (12 today); every count comes from the data.
 
 The code is in `app/sitemap/entries.ts` (data and XML) with two thin routes, `app/sitemap.xml/route.ts` and
 `app/sitemap/[id]/route.ts`. It does not use Next's `app/sitemap.ts` convention, because Next never writes a
@@ -113,8 +120,8 @@ sitemap index and Turbopack rejects `app/sitemap.ts` next to an `app/sitemap.xml
   `lastmod` only when it is consistently accurate, so never stamp pages with the build date and never bump a
   date for a header or footer tweak. A date in the future is clamped to the build time, with a warning.
 - No `<changefreq>` or `<priority>`: Google ignores both.
-- Image entries list only the company's own photos shown on that page; a town page lists a photo only when it
-  was taken in that town. Case-study videos get `<video:video>` entries from their visible titles and
+- Image entries list only the company's own photos shown on that page; a town page or city hub lists a photo
+  only when it was taken in that town. Case-study videos get `<video:video>` entries from their visible titles and
   descriptions.
 
 **Where each date lives — change it there, and only for a substantive edit:**
@@ -123,9 +130,10 @@ sitemap index and Turbopack rejects `app/sitemap.ts` next to an `app/sitemap.xml
 |---|---|
 | Service hubs, `/services` | `updated` on each service in `lib/services.ts` |
 | Service×town pages | `TOWN_PAGES_UPDATED` in `lib/towns.ts` |
+| City hubs, `/service-areas` | `CITY_HUBS_UPDATED` in `lib/towns.ts` |
 | Case studies, `/gallery` | `updated` on each project in `lib/projects.ts` (`PROJECTS_UPDATED`) |
 | Blog posts, `/blog` | `published` / `modified` on each post in `lib/posts.ts` |
-| Home, about, owner profile, FAQ, reviews, contact, service areas, privacy, terms | `SITE_PAGES_UPDATED` in `app/sitemap/entries.ts`. `/faq`, `/about/ernando-nunes`, `/privacy` and `/terms` also show a visible date from a constant in their own page file: keep the two in step, and give a page its own value in `entries.ts` when only that page changes. |
+| Home, about, owner profile, FAQ, reviews, contact, privacy, terms | `SITE_PAGES_UPDATED` in `app/sitemap/entries.ts`. `/faq`, `/about/ernando-nunes`, `/privacy` and `/terms` also show a visible date from a constant in their own page file: keep the two in step, and give a page its own value in `entries.ts` when only that page changes. |
 
 ### robots.txt
 
@@ -140,7 +148,8 @@ crawlers must fetch it to see the noindex.
 `/llms.txt` is a short, link-first map of the site for AI tools (<https://llmstxt.org>): the entity summary,
 key facts, the service area by county with every town, the services, case studies, guides, FAQ links and a
 "Last updated" date. `/llms-full.txt` is the long form: the text of the hubs, the FAQ, the case studies and
-the guides in one file (about 90 KB). Both are generated from the same data as the pages, so they cannot
+the guides in one file, under 100 KB (about 80 KB today). Each service hub gets one section trimmed to its
+summary, its "At a glance" box and its first five FAQs; the full hubs pushed the file past 100 KB. Both are generated from the same data as the pages, so they cannot
 drift; credentials appear only once their numbers are set. They are a convenience for AI tools, not a ranking
 factor. If you change a business fact in `lib/site.ts`, also bump `LLMS_FACTS_UPDATED` in
 `app/llms.txt/content.ts`.
@@ -178,6 +187,7 @@ and Search Console.
 node scripts/indexnow.mjs --since=2026-10-05      # URLs whose <lastmod> is on or after that date
 node scripts/indexnow.mjs --all                   # every URL (once, after a big rewrite)
 node scripts/indexnow.mjs /faq /services/decks    # specific pages
+node scripts/indexnow.mjs --legacy                # the retired service URLs that now 308 (old hubs + every old town page)
 node scripts/indexnow.mjs --all --dry-run         # list what would be sent, send nothing
 node scripts/indexnow.mjs --all --dry-run --sitemap=http://localhost:3000/sitemap.xml   # test against `npm start`
 ```
@@ -193,11 +203,15 @@ After every production deploy:
 2. Spot-check `https://waterfrontconstructionma.com/sitemap.xml`, `/robots.txt` and `/llms.txt` (200, current dates).
 3. `node scripts/indexnow.mjs --since=<date of the first change in this release>`.
 
-Once, after the 2026 SEO overhaul ships:
+Once, after the ten-service and city-hub release ships:
 
-1. `node scripts/indexnow.mjs --all`.
-2. Search Console: submit `https://waterfrontconstructionma.com/sitemap.xml` (replace any older sitemap
-   submission), then watch Pages → indexed per child sitemap, especially the six `towns-*` files.
+1. `node scripts/indexnow.mjs --all`, then `node scripts/indexnow.mjs --legacy` (the old
+   `windows-and-doors`, `painting`, `kitchen-bathroom-remodeling` and `home-additions-remodeling` URLs, read from
+   the `split` table in `lib/redirects.ts`, so Bing recrawls their 308s).
+2. Search Console: resubmit `https://waterfrontconstructionma.com/sitemap.xml`, URL-inspect the ten service hubs
+   and three city hubs (Northborough, Salem NH, Whitinsville), then watch Pages → indexed per child sitemap,
+   especially the `towns-*` files and `areas`. After about 90 days, review any `towns-*` sitemap that is under
+   40% indexed.
 3. Bing Webmaster Tools: verify the site (import from Search Console, or set `NEXT_PUBLIC_BING_VERIFICATION`),
    submit the same sitemap, check IndexNow → submitted URLs.
 4. Rich Results Test and validator.schema.org on `/`, a blog guide, a case study with video and
@@ -260,8 +274,9 @@ unless noted.
 **Photos**
 
 - [ ] A real headshot of Ernando Nunes → `site.ownerPhoto` (never a stock photo).
-- [ ] Real **painting** photos (there are none yet; the painting pages have no gallery).
-- [ ] More **windows and doors** photos (today only the Lynnfield addition shows new windows).
+- [ ] Real **interior painting**, **exterior painting** and **whole-home remodel** photos (there are none yet; those
+      three hubs use a typographic card and have no gallery), and a photo of a finished door.
+- [ ] More **window** and **door** photos (today only the Lynnfield addition shows new windows and a new entry door).
 - [ ] A landscape (at least 1600 px wide) photo of a finished **siding** job for the siding hero.
 - [ ] Finished photos of the Needham porch addition and the Lynnfield additions.
 - [ ] Original bathroom photos without the logo and contact overlay that was added for social media, and
@@ -284,6 +299,18 @@ unless noted.
 - [ ] Official building-department pages for the towns you work in most (`PERMIT_OFFICE` in `lib/towns.ts`;
       add only pages a person has opened and checked).
 - [ ] After reading a service hub, the date you reviewed it → `reviewedOn` in `lib/service-content.ts`.
+
+**Ten services (October 2026 release)**
+
+- [ ] Doors: confirm the scope (entry, patio, storm? interior?), whether you replace doors in existing openings,
+      a typical timeline, and the Lynnfield door's material.
+- [ ] Interior painting: confirm ceilings and cabinets are in scope, and a typical timeline. Exterior painting:
+      the scope, a timeline, and whether any documented job included painting.
+- [ ] Whole-home remodeling: confirm the scope (first floor, layout, basement) and the label
+      "Whole-Home & Interior Remodeling".
+- [ ] Bathrooms: confirm frameless glass enclosures and exhaust fans are part of your scope.
+- [ ] Confirm which service each testimonial covers (`TESTIMONIAL_SERVICES` in `lib/services.ts`).
+- [ ] Update the Google Business Profile and Bing Places service lists and links to the ten service pages.
 
 **Accounts and settings**
 

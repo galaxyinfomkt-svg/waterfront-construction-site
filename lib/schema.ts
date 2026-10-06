@@ -6,6 +6,7 @@ import { SITE_URL, SITE_NAME } from "./seo";
 import { site, services, allCities, citySlug, type Service, type City, type Faq } from "./site";
 import { townFacts, VILLAGE_OF, DEVENS, projectTown } from "./towns";
 import { projects, projectImages, type Project, type ProjectVideo } from "./projects";
+import type { ServiceSlug } from "./services";
 import { VIDEO_FACTS, PROJECT_PUBLISHED } from "./media-facts";
 import MEDIA from "./media-manifest.json";
 
@@ -172,6 +173,7 @@ export function webPageNode(o: {
   path: string; name: string; description: string; type?: PageType;
   about?: Ref | Ref[]; mainEntity?: Ref | Node; primaryImage?: string; crumbs?: boolean;
   datePublished?: string; dateModified?: string; relatedLink?: string[];
+  spatialCoverage?: Node; // the place a page is about (city hubs); CreativeWork property, emitted only when set
 }): Node {
   const u = pageUrl(o.path);
   return {
@@ -184,6 +186,7 @@ export function webPageNode(o: {
     ...(o.datePublished ? { datePublished: o.datePublished } : {}),
     ...(o.dateModified ? { dateModified: o.dateModified } : {}),
     ...(o.relatedLink?.length ? { relatedLink: o.relatedLink } : {}),
+    ...(o.spatialCoverage ? { spatialCoverage: o.spatialCoverage } : {}),
   };
 }
 
@@ -197,13 +200,17 @@ export function faqNode(path: string, faqs: Faq[]): Node | null {
   };
 }
 
-const SERVICE_TYPE: Record<string, string> = {
+const SERVICE_TYPE: Record<ServiceSlug, string> = {
   siding: "Siding installation and replacement",
-  "windows-and-doors": "Window and door replacement",
-  "kitchen-bathroom-remodeling": "Kitchen and bathroom remodeling",
+  "window-replacement": "Window replacement",
+  "door-installation": "Exterior door installation and replacement",
   decks: "Deck design and construction",
-  "home-additions-remodeling": "Home additions and whole-home remodeling",
-  painting: "Interior and exterior painting",
+  "exterior-painting": "Exterior house painting",
+  "kitchen-remodeling": "Kitchen remodeling",
+  "bathroom-remodeling": "Bathroom remodeling",
+  "home-additions": "Home additions",
+  "home-remodeling": "Whole-home and interior remodeling",
+  "interior-painting": "Interior painting",
 };
 const caseStudyRef = (p: Project) => ({ "@type": "Article", "@id": `${SITE_URL}/projects/${p.slug}#article`, url: `${SITE_URL}/projects/${p.slug}`, headline: p.title });
 

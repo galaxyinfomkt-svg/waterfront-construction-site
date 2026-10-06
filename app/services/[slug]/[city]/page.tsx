@@ -14,9 +14,11 @@ import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, townServiceNode, breadcrumbNode, imageNode, placeNode, pageUrl } from "@/lib/schema";
 import { townCopy } from "@/lib/town-copy";
 
-// Service x town pages: 6 services x 198 places, all prerendered. Every string comes from
+// Service x town pages: 10 services x 201 places (2,010 pages), all prerendered. Every string comes from
 // townCopy() (lib/town-copy.ts), which builds the page only from verifiable data; keep the
 // rendered order in sync with townPageText() there (the similarity check measures that text).
+// Town-level content (distance Q&As, case studies and reviews by distance) lives on the city hub
+// (/service-areas/{town}); this page links up to it once, under "Other services in {place}" (spec §4.3).
 export const dynamicParams = false; // closed set: unknown towns 404 instead of rendering on demand
 
 export function generateStaticParams() {
@@ -46,8 +48,8 @@ export default async function ServiceTownPage({ params }: Props) {
   const k = townCopy(s, c);
   const url = pageUrl(k.path);
 
-  // No FAQPage here (V4.1): most town Q&As are per town, so the same pair would be marked up on all 6 service
-  // pages of that town. The questions stay on the page as visible text.
+  // No FAQPage here (V4.1): the one service×town question stays visible text only (the town-level Q&As are on the
+  // city hub, which carries no FAQPage either, D7).
   const ld = pageGraph([
     webPageNode({
       path: k.path, name: k.h1, description: k.description,
@@ -149,36 +151,24 @@ export default async function ServiceTownPage({ params }: Props) {
             {k.proof.also.length > 0 && (
               <ul className="mt-6">
                 {k.proof.also.map((a) => (
-                  <li key={a.href}><Link href={a.href} className="link-arrow"><ArrowLabel text={a.label} /></Link>{" "}</li>
+                  <li key={a.href}><Link prefetch={false} href={a.href} className="link-arrow"><ArrowLabel text={a.label} /></Link>{" "}</li>
                 ))}
               </ul>
             )}
-            <p className="mt-8 text-sm font-semibold text-ink">{k.proof.caseStudiesLabel}</p>{" "}
-            {/* Label over value rows (centered): the case study, then its town and distance under it. */}
-            {k.proof.caseStudies.length > 0 && (
-              <ul className="mt-3 rule-list text-[15px]">
-                {k.proof.caseStudies.map((x) => (
-                  <li key={x.href} className="py-3">
-                    <span className="block"><Link href={x.href} className="link">{x.label}</Link></span>{" "}
-                    <span className="block mt-0.5 text-sm text-muted tnum">{x.meta}</span>{" "}
-                  </li>
-                ))}
-              </ul>
-            )}
-            {/* Same label style as "Case studies by distance:" (ink semibold); the /reviews link stays, in ink with a quiet
-                underline, and the trailing colon sits outside the link text (the visible words are unchanged). */}
-            <p className="mt-8 text-sm font-semibold text-ink">
-              <Link href="/reviews" className="underline decoration-line decoration-1 underline-offset-4 hover:decoration-ink">{k.proof.reviewsLabel.replace(/:$/, "")}</Link>{k.proof.reviewsLabel.endsWith(":") ? ":" : ""}
-            </p>{" "}
-            {k.proof.reviewTowns.length > 0 && (
-              <ul className="mt-3 rule-list text-[15px] text-ink">
-                {k.proof.reviewTowns.map((x) => (
-                  <li key={x.label} className="py-3">
-                    <span className="block">{x.label}</span>{" "}
-                    <span className="block mt-0.5 text-sm text-muted tnum">{x.meta}</span>{" "}
-                  </li>
-                ))}
-              </ul>
+            {/* This service's (and related services') documented work elsewhere, nearest first: the place and what it
+                documents over its distance from this place (label over value rows, centered). */}
+            {k.proof.byDistance.length > 0 && (
+              <>
+                <p className="mt-8 text-sm font-semibold text-ink">{k.proof.byDistanceLabel}</p>{" "}
+                <ul className="mt-3 rule-list text-[15px]">
+                  {k.proof.byDistance.map((x) => (
+                    <li key={`${x.href} ${x.label}`} className="py-3">
+                      <span className="block"><Link prefetch={false} href={x.href} className="link">{x.label}</Link></span>{" "}
+                      <span className="block mt-0.5 text-sm text-muted tnum">{x.meta}</span>{" "}
+                    </li>
+                  ))}
+                </ul>
+              </>
             )}
             <CtaRow className="mt-10" />
 
@@ -223,14 +213,14 @@ export default async function ServiceTownPage({ params }: Props) {
               </>
             )}
 
-            {/* NEARBY — the 8 true nearest places, same service ("Town, ST" anchors + distance from this place) */}
+            {/* NEARBY — the 8 true nearest places, same service ("{Service} in Town, ST" anchors + distance from this place) */}
             <nav aria-labelledby="nearby-h" className={k.faqs.length > 0 ? block : undefined}>
               <h2 id="nearby-h" className="text-h2-doc text-navy">{k.nearbyHeading}</h2>
               <ul className="mt-6 rule-list grid sm:grid-cols-2 gap-x-8 sm:border-t-0 sm:[&>li:nth-child(-n+2)]:border-t sm:[&>li:nth-child(-n+2)]:border-line">
                 {k.nearby.map((n) => (
                   // Centered row: the town link and its distance side by side (wrapping under it if the cell is narrow).
                   <li key={n.href} className="flex flex-wrap min-h-11 items-center justify-center gap-x-3 py-2">
-                    <Link href={n.href} className="link-nav">{n.label}</Link>{" "}
+                    <Link prefetch={false} href={n.href} className="link-nav">{n.label}</Link>{" "}
                     <span className="text-sm text-muted tnum whitespace-nowrap">{n.meta}</span>{" "}
                   </li>
                 ))}
@@ -242,9 +232,11 @@ export default async function ServiceTownPage({ params }: Props) {
               <h2 id="other-h" className="text-h2-doc text-navy">{k.otherHeading}</h2>{" "}
               <ul className="mt-6 flex flex-wrap justify-center gap-2.5">
                 {k.otherServices.map((o) => (
-                  <li key={o.href}><Link href={o.href} className="chip">{o.label}</Link>{" "}</li>
+                  <li key={o.href}><Link prefetch={false} href={o.href} className="chip">{o.label}</Link>{" "}</li>
                 ))}
               </ul>
+              {/* The ONE link up to this place's city hub (all ten services there); never in the hero (spec §4.3). */}
+              <p className="mt-8"><Link prefetch={false} href={k.cityHub.href} className="link-arrow"><ArrowLabel text={k.cityHub.label} /></Link></p>
             </nav>
 
             <p className="mt-12 mx-auto max-w-[40em] text-[13px] text-muted">

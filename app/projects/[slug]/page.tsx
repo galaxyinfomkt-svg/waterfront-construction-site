@@ -13,7 +13,8 @@ import Typeset from "@/components/Typeset";
 import { projects, getProject, imageAlt, imageCaption, mediaCount, type Project, type ProjectVideo } from "@/lib/projects";
 import { site, services, citySlug, cityLabel } from "@/lib/site";
 import { posts } from "@/lib/posts";
-import { townFacts, projectTown, placeLabel, milesBetween, isNH } from "@/lib/towns";
+import { townFacts, projectTown, placeLabel, milesBetween, isNH, cityHubPath } from "@/lib/towns";
+import type { ServiceSlug } from "@/lib/services";
 import { VIDEO_FACTS, PROJECT_PUBLISHED } from "@/lib/media-facts";
 import { pageMeta, ogFor } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, projectNodes, pageUrl, type Crumb } from "@/lib/schema";
@@ -53,13 +54,16 @@ const uniqueVideos = (p: Project) => p.videos.filter((v) => !VIDEO_FACTS[v.src]?
 const totalSeconds = (p: Project) => uniqueVideos(p).reduce((a, v) => a + (VIDEO_FACTS[v.src]?.seconds ?? 0), 0);
 const svcOf = (slug: string) => services.find((s) => s.slug === slug);
 
-// Guides that exist in lib/posts.ts, per service (audit 05 PG-H3 table).
-const GUIDES: Record<string, string[]> = {
-  "home-additions-remodeling": ["home-addition-cost-massachusetts", "do-you-need-a-permit-to-remodel-massachusetts"],
-  "kitchen-bathroom-remodeling": ["kitchen-remodel-cost-massachusetts", "bathroom-remodel-cost-massachusetts"],
+// Guides that exist in lib/posts.ts, per service (audit 05 PG-H3 table; spec §6.2). Partial: services with no
+// case study yet have no entry, and a stale key fails the build.
+const GUIDES: Partial<Record<ServiceSlug, string[]>> = {
+  "home-additions": ["home-addition-cost-massachusetts", "do-you-need-a-permit-to-remodel-massachusetts"],
+  "kitchen-remodeling": ["kitchen-remodel-cost-massachusetts"],
+  "bathroom-remodeling": ["bathroom-remodel-cost-massachusetts"],
   decks: ["deck-cost-massachusetts", "do-you-need-a-permit-to-remodel-massachusetts"],
   siding: ["siding-replacement-cost-massachusetts", "vinyl-vs-fiber-cement-siding"],
-  "windows-and-doors": ["window-replacement-cost-massachusetts", "signs-you-need-new-windows"],
+  "window-replacement": ["window-replacement-cost-massachusetts", "signs-you-need-new-windows"],
+  "door-installation": ["signs-you-need-new-windows"],
 };
 function guidesFor(p: Project) {
   const slugs = [...new Set(p.services.flatMap((s) => GUIDES[s] ?? []))];
@@ -431,6 +435,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                       <Link href={`/services/${s.slug}/${citySlug(town)}`} className={linkNav}>{s.name} in {cityLabel(town)}</Link>
                     </li>
                   ))}
+                  {/* The town's city hub: every service in this town (spec §6.2). */}
+                  <li><Link prefetch={false} href={cityHubPath(town)} className={linkNav}>All services in {cityLabel(town)}</Link></li>
                 </ul>
                 {nearby.length > 0 && primary && (
                   <>

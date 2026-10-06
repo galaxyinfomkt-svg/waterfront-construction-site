@@ -10,6 +10,7 @@
 // - Dates: `published` = first git commit that added the post (GitHub history of lib/posts.ts);
 //   `modified` = last SUBSTANTIVE edit. Never re-date a post to look fresh.
 import { site, type City } from "./site";
+import type { ServiceSlug } from "./services";
 import { licensingAnswer, hasCsl } from "./credentials";
 
 export type PostCategory = "Cost guides" | "Planning, permits & hiring" | "Exteriors: siding & windows";
@@ -55,7 +56,7 @@ export type Post = {
   modified: string; // ISO 8601 with offset — last substantive edit
   image: string; // real project photo: in-article figure, BlogPosting image, sitemap image
   photo: Omit<Figure, "src">;
-  related: { services: string[]; projects: string[]; posts: string[] };
+  related: { services: ServiceSlug[]; projects: string[]; posts: string[] };
   sections: Section[];
   faqs: Faq[];
   sources: Source[];
@@ -145,7 +146,7 @@ export const posts: Post[] = [
       place: MANSFIELD,
     },
     related: {
-      services: ["kitchen-bathroom-remodeling"],
+      services: ["kitchen-remodeling"],
       projects: ["kitchen-remodel-mansfield-ma", "bathroom-remodels"],
       posts: ["bathroom-remodel-cost-massachusetts", "5-remodels-that-add-the-most-home-value", "do-you-need-a-permit-to-remodel-massachusetts", "how-to-choose-a-contractor-in-massachusetts"],
     },
@@ -220,7 +221,7 @@ export const posts: Post[] = [
             hrefLabel: "See the project",
             place: MANSFIELD,
           } },
-          { p: "We remodel kitchens across our service area, including [kitchen and bathroom remodeling in Mansfield](/services/kitchen-bathroom-remodeling/mansfield) and [in Framingham](/services/kitchen-bathroom-remodeling/framingham), where a client shared this about their new kitchen:" },
+          { p: "We remodel kitchens across our service area, including [kitchen remodeling in Mansfield](/services/kitchen-remodeling/mansfield) and [in Framingham](/services/kitchen-remodeling/framingham), where a client shared this about their new kitchen:" },
           { testimonial: "Susan D." },
         ],
       },
@@ -233,7 +234,7 @@ export const posts: Post[] = [
             `Get it in writing. ${CONTRACT_RULE}`,
             "Check the contractor before you sign: our [pre-hire checklist](/blog/how-to-choose-a-contractor-in-massachusetts) covers the registration, license and insurance to look up.",
           ] },
-          { p: "For the full scope of what we build, see our [kitchen and bathroom remodeling service](/services/kitchen-bathroom-remodeling)." },
+          { p: "For the full scope of what we build, see our [kitchen remodeling service](/services/kitchen-remodeling)." },
         ],
       },
     ],
@@ -266,7 +267,7 @@ export const posts: Post[] = [
       hrefLabel: "See more of our bathroom remodels",
     },
     related: {
-      services: ["kitchen-bathroom-remodeling"],
+      services: ["bathroom-remodeling"],
       projects: ["bathroom-remodels", "kitchen-remodel-mansfield-ma"],
       posts: ["kitchen-remodel-cost-massachusetts", "do-you-need-a-permit-to-remodel-massachusetts", "how-to-choose-a-contractor-in-massachusetts", "5-remodels-that-add-the-most-home-value"],
     },
@@ -325,9 +326,9 @@ export const posts: Post[] = [
       {
         id: "examples", h: "What do our recent bathroom remodels look like?", blocks: [
           { p: "The shower at the top of this guide is from one of our recent bathroom remodels: marble-look tile walls, a hexagon mosaic floor and a hinged glass door. Our [bathroom projects page](/projects/bathroom-remodels) shows more, including walk-in showers with frameless glass, a tub with a glass panel and subway tile, and a corner shower beside a soaking tub." },
-          { p: "We remodel bathrooms across our service area, including [bathroom and kitchen remodeling in Hudson](/services/kitchen-bathroom-remodeling/hudson) and [in Northborough](/services/kitchen-bathroom-remodeling/northborough), where we're based. A client in Hudson shared this:" },
+          { p: "We remodel bathrooms across our service area, including [bathroom remodeling in Hudson](/services/bathroom-remodeling/hudson) and [in Northborough](/services/bathroom-remodeling/northborough), where we're based. A client in Hudson shared this:" },
           { testimonial: "Rafael C." },
-          { p: "See our [kitchen and bathroom remodeling service](/services/kitchen-bathroom-remodeling) for the full scope of what we do." },
+          { p: "See our [bathroom remodeling service](/services/bathroom-remodeling) for the full scope of what we do." },
         ],
       },
     ],
@@ -361,7 +362,7 @@ export const posts: Post[] = [
       place: NEEDHAM,
     },
     related: {
-      services: ["home-additions-remodeling"],
+      services: ["home-additions"],
       projects: ["home-addition-needham-ma", "home-addition-exterior-lynnfield-ma", "home-addition-framing-lynnfield-ma"],
       posts: ["do-you-need-a-permit-to-remodel-massachusetts", "how-to-choose-a-contractor-in-massachusetts", "5-remodels-that-add-the-most-home-value", "bathroom-remodel-cost-massachusetts"],
     },
@@ -424,9 +425,9 @@ export const posts: Post[] = [
             "[Home addition and exterior remodel in Lynnfield, MA](/projects/home-addition-exterior-lynnfield-ma): a two-story addition beside the original house, with new windows and siding and front porch work.",
             "[Home addition framing in Lynnfield, MA](/projects/home-addition-framing-lynnfield-ma): an addition filmed in winter while its walls and roof were framed and sheathed.",
           ] },
-          { p: "We build [home additions in Needham](/services/home-additions-remodeling/needham), [in Lynnfield](/services/home-additions-remodeling/lynnfield) and across our service area. A client in Northborough, where we're based, shared this about their deck and small addition:" },
+          { p: "We build [home additions in Needham](/services/home-additions/needham), [in Lynnfield](/services/home-additions/lynnfield) and across our service area. A client in Northborough, where we're based, shared this about their deck and small addition:" },
           { testimonial: "Priya S." },
-          { p: "See our [home additions and remodeling service](/services/home-additions-remodeling) for how we plan and build additions." },
+          { p: "See our [home additions service](/services/home-additions) for how we plan and build additions." },
         ],
       },
     ],
@@ -552,7 +553,7 @@ export const posts: Post[] = [
       place: MANSFIELD,
     },
     related: {
-      services: ["siding", "kitchen-bathroom-remodeling", "decks", "windows-and-doors"],
+      services: ["siding", "kitchen-remodeling", "decks", "window-replacement", "door-installation"],
       projects: ["home-addition-exterior-lynnfield-ma", "kitchen-remodel-mansfield-ma", "pool-deck-salem-nh"],
       posts: ["siding-replacement-cost-massachusetts", "kitchen-remodel-cost-massachusetts", "deck-cost-massachusetts", "home-addition-cost-massachusetts"],
     },
@@ -565,7 +566,7 @@ export const posts: Post[] = [
             { t: `Minor kitchen remodel, midrange: ${pct("minorKitchen")}.`, d: `New cabinet fronts, counters, sink, appliances and flooring in the existing layout averaged ${$("minorKitchen")}. See our [kitchen remodel cost guide](/blog/kitchen-remodel-cost-massachusetts).` },
             { t: `New deck: composite recouped ${pct("compositeDeck")}, wood ${pct("woodDeck")}.`, d: `A 16 × 20 ft deck averaged ${$("compositeDeck")} with composite decking and ${$("woodDeck")} with wood. See our [deck cost guide](/blog/deck-cost-massachusetts) and [deck service](/services/decks).` },
             { t: `Bathroom remodel, midrange: ${pct("bathMid")}.`, d: `Updating a 5 × 7 ft bathroom averaged ${$("bathMid")}. See our [bathroom remodel cost guide](/blog/bathroom-remodel-cost-massachusetts).` },
-            { t: `Window replacement: vinyl recouped ${pct("vinylWindows")}, wood ${pct("woodWindows")}.`, d: `Replacing ten double-hung windows averaged ${$("vinylWindows")} in vinyl and ${$("woodWindows")} in wood. See our [window replacement cost guide](/blog/window-replacement-cost-massachusetts) and [window and door service](/services/windows-and-doors).` },
+            { t: `Window replacement: vinyl recouped ${pct("vinylWindows")}, wood ${pct("woodWindows")}.`, d: `Replacing ten double-hung windows averaged ${$("vinylWindows")} in vinyl and ${$("woodWindows")} in wood. See our [window replacement cost guide](/blog/window-replacement-cost-massachusetts) and [window replacement service](/services/window-replacement).` },
           ] },
         ],
       },
@@ -597,13 +598,13 @@ export const posts: Post[] = [
       {
         // National ranking of garage/entry doors: study/04 §10 (stable across 2023–2025 editions). verify against jlconline before next update
         id: "doors", h: "What about entry and garage doors?", blocks: [
-          { p: "Nationally, garage-door and steel entry-door replacements have ranked at or near the top of recent Cost vs. Value reports. They aren't in the table above; check the full report for the current New England figures. We replace [entry and patio doors](/services/windows-and-doors) as part of our window and door work." },
+          { p: "Nationally, garage-door and steel entry-door replacements have ranked at or near the top of recent Cost vs. Value reports. They aren't in the table above; check the full report for the current New England figures. We replace [entry and patio doors](/services/door-installation) as part of our window and door work." },
         ],
       },
       {
         id: "live-not-resale", h: "Which remodels are about how you live, not resale?", blocks: [
           { p: "Major kitchen remodels, upscale bathroom remodels and additions recoup a smaller share of their cost than the siding, kitchen and deck projects at the top of the table above. They rarely pay for themselves at sale, but they can still be the right call when you plan to stay: more room for a growing family, a kitchen that works, a second bathroom." },
-          { p: "If that's your situation, our [home addition cost guide](/blog/home-addition-cost-massachusetts) and [home additions service](/services/home-additions-remodeling) are the place to start." },
+          { p: "If that's your situation, our [home addition cost guide](/blog/home-addition-cost-massachusetts) and [home additions service](/services/home-additions) are the place to start." },
         ],
       },
       {
@@ -614,7 +615,7 @@ export const posts: Post[] = [
             "Don't over-improve for the street. A project far above the neighborhood's level is less likely to come back at sale.",
             "Compare itemized estimates. The averages describe standard projects; your own quotes are what matter.",
           ] },
-          { p: "See real examples on our [projects page](/gallery), including the [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma) with new siding, windows and an entry door, and the [Mansfield kitchen](/projects/kitchen-remodel-mansfield-ma). We do this work across our service area, from [kitchen remodeling in Mansfield](/services/kitchen-bathroom-remodeling/mansfield) to [siding in Lynnfield](/services/siding/lynnfield)." },
+          { p: "See real examples on our [projects page](/gallery), including the [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma) with new siding, windows and an entry door, and the [Mansfield kitchen](/projects/kitchen-remodel-mansfield-ma). We do this work across our service area, from [kitchen remodeling in Mansfield](/services/kitchen-remodeling/mansfield) to [siding in Lynnfield](/services/siding/lynnfield)." },
         ],
       },
     ],
@@ -745,7 +746,7 @@ export const posts: Post[] = [
       place: LYNNFIELD,
     },
     related: {
-      services: ["home-additions-remodeling", "kitchen-bathroom-remodeling"],
+      services: ["home-remodeling", "home-additions", "kitchen-remodeling", "bathroom-remodeling"],
       projects: ["home-addition-needham-ma", "home-addition-exterior-lynnfield-ma"],
       posts: ["do-you-need-a-permit-to-remodel-massachusetts", "kitchen-remodel-cost-massachusetts", "home-addition-cost-massachusetts"],
     },
@@ -792,7 +793,7 @@ export const posts: Post[] = [
         // that its own checklist says we would fail (verification V3.3). licensingAnswer() adds the numbers once set.
         id: "about-publisher", h: "Who publishes this checklist?", blocks: [
           { p: `This checklist is published by ${site.name}, an owner-led home remodeling contractor based in Northborough, Massachusetts. ${licensingAnswer("MA")}` },
-          { p: `${OWNER_LINE} You can read more [about Ernando](/about/ernando-nunes), see [our projects](/gallery), such as the [Needham addition](/projects/home-addition-needham-ma) and the [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), and read [what our clients say](/reviews). Our [kitchen and bathroom remodeling](/services/kitchen-bathroom-remodeling) and [home additions](/services/home-additions-remodeling) pages explain how we run each kind of job, and our [Northborough page](/services/kitchen-bathroom-remodeling/northborough) covers the town where we're based.` },
+          { p: `${OWNER_LINE} You can read more [about Ernando](/about/ernando-nunes), see [our projects](/gallery), such as the [Needham addition](/projects/home-addition-needham-ma) and the [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), and read [what our clients say](/reviews). Our [kitchen](/services/kitchen-remodeling), [bathroom remodeling](/services/bathroom-remodeling) and [home additions](/services/home-additions) pages explain how we run each kind of job, and our [Northborough page](/service-areas/northborough) covers the town where we're based.` },
         ],
       },
       {
@@ -831,7 +832,7 @@ export const posts: Post[] = [
       place: LYNNFIELD,
     },
     related: {
-      services: ["windows-and-doors"],
+      services: ["window-replacement", "door-installation"],
       projects: ["home-addition-exterior-lynnfield-ma"],
       posts: ["window-replacement-cost-massachusetts", "do-you-need-a-permit-to-remodel-massachusetts", "how-to-choose-a-contractor-in-massachusetts", "signs-its-time-to-replace-your-siding"],
     },
@@ -882,7 +883,7 @@ export const posts: Post[] = [
           ] },
           { figure: {
             src: `${PR}/home-addition-exterior-lynnfield-ma-14.webp`,
-            alt: "New wood entry door in protective plastic, with flashing membrane at the sill and a wooden form for a concrete step, Lynnfield, MA",
+            alt: "New entry door in protective plastic, with flashing membrane at the sill and a wood form for the step, Lynnfield, MA",
             caption: "Flashing membrane at the sill of a new entry door on our Lynnfield project. Openings for new windows get the same kind of sill flashing.",
             href: "/projects/home-addition-exterior-lynnfield-ma",
             hrefLabel: "See the project",
@@ -902,7 +903,7 @@ export const posts: Post[] = [
       },
       {
         id: "example", h: "What does a window installation look like on a real project?", blocks: [
-          { p: "On our [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), three arched windows went into the taped sheathing of the new addition before trim and siding (photo at the top). We do [window and door work in Lynnfield](/services/windows-and-doors/lynnfield) and across our service area; see our [window and door replacement service](/services/windows-and-doors)." },
+          { p: "On our [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), three arched windows went into the taped sheathing of the new addition before trim and siding (photo at the top). We do [window work in Lynnfield](/services/window-replacement/lynnfield) and across our service area; see our [window replacement service](/services/window-replacement)." },
         ],
       },
     ],
@@ -929,7 +930,7 @@ export const posts: Post[] = [
     modified: REWRITE,
     image: `${PR}/home-addition-exterior-lynnfield-ma-19.webp`,
     photo: {
-      alt: "White vertical siding nearly finished around three arched windows and a wood entry door on a home addition in Lynnfield, MA",
+      alt: "White vertical siding nearly finished around three arched windows and a new entry door on a home addition in Lynnfield, MA",
       caption: "New siding on the addition in our Lynnfield project.",
       href: "/projects/home-addition-exterior-lynnfield-ma",
       hrefLabel: "See the Lynnfield project",
@@ -1030,7 +1031,7 @@ export const posts: Post[] = [
       place: NEEDHAM,
     },
     related: {
-      services: ["home-additions-remodeling", "decks", "siding", "windows-and-doors", "kitchen-bathroom-remodeling"],
+      services: ["home-additions", "home-remodeling", "decks", "siding", "window-replacement", "kitchen-remodeling", "bathroom-remodeling"],
       projects: ["home-addition-needham-ma", "pool-deck-salem-nh"],
       posts: ["how-to-choose-a-contractor-in-massachusetts", "home-addition-cost-massachusetts", "deck-cost-massachusetts"],
     },
@@ -1059,7 +1060,7 @@ export const posts: Post[] = [
       },
       {
         id: "additions", h: "Do you need a permit for a home addition?", blocks: [
-          { p: "Yes. An addition needs a building permit with construction drawings, and often structural engineering. Before the building permit, check zoning (setbacks, lot coverage, height and any special permit for a nonconforming house), septic capacity under Title 5 if you're adding bedrooms on a septic system, and Conservation Commission approval for work near wetlands. Many towns have also adopted the stretch or specialized energy code, which adds energy requirements. Our [Needham addition project](/projects/home-addition-needham-ma) shows the excavation and foundation stage of an addition. Our [home addition cost guide](/blog/home-addition-cost-massachusetts) covers what these add to the budget, and we build [home additions in Needham](/services/home-additions-remodeling/needham) and across our service area." },
+          { p: "Yes. An addition needs a building permit with construction drawings, and often structural engineering. Before the building permit, check zoning (setbacks, lot coverage, height and any special permit for a nonconforming house), septic capacity under Title 5 if you're adding bedrooms on a septic system, and Conservation Commission approval for work near wetlands. Many towns have also adopted the stretch or specialized energy code, which adds energy requirements. Our [Needham addition project](/projects/home-addition-needham-ma) shows the excavation and foundation stage of an addition. Our [home addition cost guide](/blog/home-addition-cost-massachusetts) covers what these add to the budget, and we build [home additions in Needham](/services/home-additions/needham) and across our service area." },
         ],
       },
       {
@@ -1082,12 +1083,12 @@ export const posts: Post[] = [
       },
       {
         id: "windows", h: "Do you need a permit to replace windows or doors?", blocks: [
-          { p: "Usually, yes, even when the new windows go in the same openings. Most towns require a building permit, often a short-form permit. New units must meet the energy code, a replacement in a bedroom's emergency escape opening must not make that opening smaller, and glass near doors, tubs and stairs must be safety glass. Any window replacement in a pre-1978 home falls under the lead-safe rules. See our [window replacement cost guide](/blog/window-replacement-cost-massachusetts) and [window and door service](/services/windows-and-doors)." },
+          { p: "Usually, yes, even when the new windows go in the same openings. Most towns require a building permit, often a short-form permit. New units must meet the energy code, a replacement in a bedroom's emergency escape opening must not make that opening smaller, and glass near doors, tubs and stairs must be safety glass. Any window replacement in a pre-1978 home falls under the lead-safe rules. See our [window replacement cost guide](/blog/window-replacement-cost-massachusetts) and [window replacement service](/services/window-replacement)." },
         ],
       },
       {
         id: "kitchens-baths", h: "Do kitchen and bathroom remodels need permits?", blocks: [
-          { p: "A remodel that moves walls or changes the structure needs a building permit. Moving plumbing, gas or wiring needs separate permits: plumbing and gas permits pulled by a licensed plumber or gas fitter, and an electrical permit pulled by a licensed electrician. Replacing cabinets, counters, tile or fixtures in place is usually treated as finish work, though any plumbing in a contractor's remodel is still done by a licensed plumber. See our [kitchen remodel cost guide](/blog/kitchen-remodel-cost-massachusetts), [bathroom remodel cost guide](/blog/bathroom-remodel-cost-massachusetts) and [kitchen and bathroom remodeling service](/services/kitchen-bathroom-remodeling)." },
+          { p: "A remodel that moves walls or changes the structure needs a building permit. Moving plumbing, gas or wiring needs separate permits: plumbing and gas permits pulled by a licensed plumber or gas fitter, and an electrical permit pulled by a licensed electrician. Replacing cabinets, counters, tile or fixtures in place is usually treated as finish work, though any plumbing in a contractor's remodel is still done by a licensed plumber. See our [kitchen remodel cost guide](/blog/kitchen-remodel-cost-massachusetts), [bathroom remodel cost guide](/blog/bathroom-remodel-cost-massachusetts), [kitchen remodeling service](/services/kitchen-remodeling) and [bathroom remodeling service](/services/bathroom-remodeling)." },
         ],
       },
       {
@@ -1162,7 +1163,7 @@ export const posts: Post[] = [
       place: LYNNFIELD,
     },
     related: {
-      services: ["windows-and-doors"],
+      services: ["window-replacement"],
       projects: ["home-addition-exterior-lynnfield-ma"],
       posts: ["signs-you-need-new-windows", "do-you-need-a-permit-to-remodel-massachusetts", "5-remodels-that-add-the-most-home-value", "how-to-choose-a-contractor-in-massachusetts"],
     },
@@ -1219,9 +1220,9 @@ export const posts: Post[] = [
       },
       {
         id: "example", h: "Where have we installed new windows?", blocks: [
-          { p: "On our [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), three arched windows and a new entry door went into the new addition before the siding (photo at the top). We do [window and door work in Lynnfield](/services/windows-and-doors/lynnfield) and [in Westborough](/services/windows-and-doors/westborough), where a client shared this after new siding and windows:" },
+          { p: "On our [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), three arched windows and a new entry door went into the new addition before the siding (photo at the top). We do [window work in Lynnfield](/services/window-replacement/lynnfield) and [in Westborough](/services/window-replacement/westborough), where a client shared this after new siding and windows:" },
           { testimonial: "Dave R." },
-          { p: "See our [window and door replacement service](/services/windows-and-doors) for what's included." },
+          { p: "See our [window replacement service](/services/window-replacement) for what's included." },
         ],
       },
     ],

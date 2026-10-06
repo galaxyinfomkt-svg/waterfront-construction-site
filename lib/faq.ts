@@ -15,6 +15,7 @@ import { townFacts, VILLAGE_OF, DEVENS } from "./towns";
 import { projects } from "./projects";
 import { posts } from "./posts";
 import { SOURCES, type Source } from "./service-content";
+import { servicesCountWord, TIMELINE_FAQ, type ServiceSlug } from "./services";
 
 export type Faq = { q: string; a: string };
 export type FaqLink = { href: string; label: string; external?: boolean };
@@ -39,7 +40,7 @@ const guide = (slug: string): FaqLink[] => {
   const p = posts.find((x) => x.slug === slug);
   return p ? [{ href: `/blog/${p.slug}`, label: p.title }] : [];
 };
-const hub = (slug: string, label?: string): FaqLink[] => {
+const hub = (slug: ServiceSlug, label?: string): FaqLink[] => {
   const s = services.find((x) => x.slug === slug);
   return s ? [{ href: `/services/${s.slug}`, label: label ?? s.short }] : [];
 };
@@ -51,7 +52,7 @@ const E = {
     id: "what-we-do",
     q: "What does Waterfront Construction do?",
     a: `${site.name} is an owner-led home remodeling contractor based in Northborough, Massachusetts. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners in Massachusetts and southern New Hampshire.`,
-    links: [{ href: "/services", label: "All six services" }],
+    links: [{ href: "/services", label: `All ${servicesCountWord} services` }],
   },
   owner: {
     id: "owner",
@@ -101,13 +102,13 @@ const E = {
   whichPermits: {
     id: "which-permits",
     q: "Which projects need a building permit?",
-    a: "In Massachusetts, additions, decks, re-siding, replacement windows and exterior doors, and remodels that move walls or change the structure generally need a building permit from the town's building department. Moving plumbing, gas or wiring needs separate permits taken out by Massachusetts-licensed trades. Painting does not need a building permit. In New Hampshire, each town's building department decides which work needs a permit.",
+    a: "In Massachusetts, additions, decks, re-siding, replacement windows, and remodels that move walls or change the structure generally need a building permit from the town's building department; replacing an exterior door may need one too. Moving plumbing, gas or wiring needs separate permits taken out by Massachusetts-licensed trades. Painting does not need a building permit. In New Hampshire, each town's building department decides which work needs a permit.",
     links: guide("do-you-need-a-permit-to-remodel-massachusetts"),
   },
   lead: {
     id: "pre-1978-homes",
     q: "My house was built before 1978. Does that change anything?",
-    a: "Yes. Paint in a pre-1978 home is treated as if it contains lead unless a test shows otherwise. In Massachusetts, work that disturbs more than 6 square feet of painted surface per room inside, more than 20 square feet outside, or replaces any window falls under the state's lead-safe renovation rules (454 CMR 22.00). In New Hampshire, the federal EPA Renovation, Repair and Painting rule applies.",
+    a: "Yes. Paint in a pre-1978 home is treated as if it contains lead unless a test shows otherwise. In Massachusetts, work that disturbs more than 6 square feet of painted surface per room inside, more than 20 square feet in total outside, or replaces any window falls under the state's lead-safe renovation rules (454 CMR 22.00). In New Hampshire, the federal EPA Renovation, Repair and Painting rule applies.",
     sources: [SOURCES.lead],
   },
   contract: {
@@ -128,7 +129,7 @@ const E = {
     id: "cost-kitchen-bathroom",
     q: "How much does a kitchen or bathroom remodel cost in Massachusetts?",
     a: "We price every project with an itemized estimate for your house. As a regional benchmark, Remodeling magazine's 2025 Cost vs. Value report puts the New England average at $28,936 for a midrange minor kitchen remodel and $27,559 for a midrange bathroom remodel. These are published averages, not our prices.",
-    links: [...hub("kitchen-bathroom-remodeling", "Kitchen & bathroom costs, permits and FAQ"), ...guide("kitchen-remodel-cost-massachusetts"), ...guide("bathroom-remodel-cost-massachusetts")],
+    links: [...hub("kitchen-remodeling", "Kitchen remodeling costs, permits and FAQ"), ...hub("bathroom-remodeling", "Bathroom remodeling costs, permits and FAQ"), ...guide("kitchen-remodel-cost-massachusetts"), ...guide("bathroom-remodel-cost-massachusetts")],
     sources: [SOURCES.cvv],
   },
   // verify against jlconline before next update (same report as above)
@@ -136,7 +137,7 @@ const E = {
     id: "cost-siding-windows-decks",
     q: "What do siding, window and deck projects cost in New England?",
     a: "The same 2025 Cost vs. Value report lists New England averages of $17,590 for vinyl siding and $20,678 for fiber-cement siding on about 1,250 square feet, $21,922 to replace ten vinyl windows, and $25,817 for a 16-by-20-foot composite deck ($20,603 with pressure-treated wood). Size, materials and the condition of your house move the price.",
-    links: [...hub("siding", "Siding costs and options"), ...hub("windows-and-doors", "Window and door costs"), ...hub("decks", "Deck costs and materials"), ...guide("siding-replacement-cost-massachusetts")],
+    links: [...hub("siding", "Siding costs and options"), ...hub("window-replacement", "Window replacement costs"), ...hub("decks", "Deck costs and materials"), ...guide("siding-replacement-cost-massachusetts")],
     sources: [SOURCES.cvv],
   },
   financing: {
@@ -147,7 +148,7 @@ const E = {
   timeline: {
     id: "timeline",
     q: "How long does a remodeling project take?",
-    a: services.map((s) => s.timeline).join(" "),
+    a: TIMELINE_FAQ,
     links: [{ href: "/services", label: "Typical timelines by service" }],
   },
   contact: {

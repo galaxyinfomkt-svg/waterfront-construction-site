@@ -6,10 +6,11 @@
 // numbers are set in lib/site.ts (never a placeholder, never the word "licensed" before that); no ratings;
 // counts are computed. llms.txt is a convenience for AI tools, not a ranking factor — do not market it as one.
 import { SITE_URL } from "@/lib/seo";
-import { site, services, allCities, citySlug, testimonials, serviceArea, type City } from "@/lib/site";
+import { site, services, allCities, citySlug, cityLabel, testimonials, serviceArea, type City } from "@/lib/site";
+import { servicesCountWord } from "@/lib/services";
 import { hasHic, hasCsl } from "@/lib/credentials";
 import { AREA_FACTS } from "@/lib/schema";
-import { townFacts, VILLAGE_OF, DEVENS, TOWN_PAGES_UPDATED } from "@/lib/towns";
+import { townFacts, VILLAGE_OF, DEVENS, TOWN_PAGES_UPDATED, CITY_HUBS_UPDATED, cityHubPath } from "@/lib/towns";
 import { projects } from "@/lib/projects";
 import { posts } from "@/lib/posts";
 
@@ -35,7 +36,7 @@ export const day = (iso: string) => isoDay.format(new Date(iso));
 
 /** Newest content date behind these files, as an ISO calendar date. */
 export function lastUpdated(): string {
-  const dates = [LLMS_FACTS_UPDATED, TOWN_PAGES_UPDATED, ...services.map((s) => s.updated), ...posts.map((p) => p.modified), ...projects.map((p) => p.updated)];
+  const dates = [LLMS_FACTS_UPDATED, TOWN_PAGES_UPDATED, CITY_HUBS_UPDATED, ...services.map((s) => s.updated), ...posts.map((p) => p.modified), ...projects.map((p) => p.updated)];
   return day(dates.reduce((a, b) => (Date.parse(b) > Date.parse(a) ? b : a)));
 }
 
@@ -52,7 +53,7 @@ export const NAME_NOTE = `About the name: "waterfront construction" is also a ge
 
 const VILLAGES = allCities.filter((c) => VILLAGE_OF[citySlug(c)]).length;
 const HAS_DEVENS = allCities.some((c) => citySlug(c) === DEVENS);
-/** Same sentence as /service-areas and /faq: "190 cities and towns, plus 7 villages and Devens, across 11 counties…". */
+/** Same sentence as /service-areas and /faq: "{n} cities and towns, plus {v} villages and Devens, across {k} counties…" (all computed). */
 export const AREA_SENTENCE = `We take projects in ${AREA_FACTS.municipalities} cities and towns, plus ${VILLAGES} villages${HAS_DEVENS ? " and Devens" : ""}, across ${AREA_FACTS.counties} counties in Massachusetts and southern New Hampshire.`;
 
 export function keyFacts(): string[] {
@@ -98,6 +99,9 @@ export function countyGroups(): CountyGroup[] {
 }
 const townName = (c: City) => (VILLAGE_OF[citySlug(c)] ? `${c.n} (village of ${VILLAGE_OF[citySlug(c)]})` : c.n);
 
+/** The example city hub named in the URL pattern line (a real, built page). */
+const EXAMPLE_HUB: City = allCities.find((c) => citySlug(c) === "shrewsbury") ?? allCities[0];
+
 export function serviceAreaLines(): string[] {
   return [
     `${AREA_SENTENCE} Distances are straight-line miles from Northborough, town center to town center.`,
@@ -108,7 +112,8 @@ export function serviceAreaLines(): string[] {
       return `- ${link(`${g.county}, ${g.state}`, `/service-areas#${g.id}`)}: ${places}, ${range} from Northborough: ${g.towns.map(townName).join(", ")}`;
     }),
     `- ${link("Every town we serve, by county, with distances", "/service-areas")}`,
-    // A relative pattern in code formatting, never a bare absolute URL: crawlers auto-link and fetch it (404; V2.4).
+    // Relative patterns in code formatting, never a bare absolute URL: crawlers auto-link and fetch it (404; V2.4).
+    `- Each town also has a page listing all ${servicesCountWord} services: \`/service-areas/<town>\` (for example ${link(cityLabel(EXAMPLE_HUB), cityHubPath(EXAMPLE_HUB))}).`,
     `- Each service has a page per town at \`/services/<service>/<town>\` (for example ${link("decks in Salem, NH", "/services/decks/salem-nh")}). New Hampshire town addresses end in "-nh".`,
   ];
 }

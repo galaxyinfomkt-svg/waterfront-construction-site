@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { site, nav, services, serviceArea } from "@/lib/site";
+import { SERVICE_GROUPS } from "@/lib/services";
 import { credentialLine, hasHic, hasCsl } from "@/lib/credentials";
 import { displayAddress } from "@/lib/address";
 import { HeaderClient, EstimateJumps } from "./chrome-client";
@@ -41,7 +42,10 @@ export function SiteHeader() {
   return (
     <HeaderClient
       nav={nav}
-      services={services.map((s) => ({ slug: s.slug, name: s.name, short: s.short }))}
+      groups={(Object.keys(SERVICE_GROUPS) as (keyof typeof SERVICE_GROUPS)[]).map((g) => ({
+        label: SERVICE_GROUPS[g],
+        items: services.filter((s) => s.group === g).map((s) => ({ slug: s.slug, name: s.name })),
+      }))}
       phone={site.phone}
       phoneHref={site.phoneHref}
       brand={site.name}
@@ -113,7 +117,7 @@ export function SiteFooter() {
           <p className="eyebrow mb-4">Services</p>
           <ul className="-mt-1.5">
             {services.map((s) => (
-              <li key={s.slug}><Link href={`/services/${s.slug}`} className={link}>{s.short}</Link></li>
+              <li key={s.slug}><Link href={`/services/${s.slug}`} className={link}>{s.name}</Link></li>
             ))}
             <li><Link href="/services" className="link-arrow"><ArrowLabel text="All services" /></Link></li>
           </ul>

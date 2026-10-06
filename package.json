@@ -10,7 +10,10 @@
     "check:schema": "node scripts/check-jsonld.mjs .next/server/app",
     "check:towns": "node scripts/check-town-pages.mjs .next/server/app",
     "check:claims": "node scripts/check-claims.mjs .next/server/app",
-    "check": "npm run check:schema && npm run check:towns && npm run check:claims",
+    "check:redirects": "node scripts/check-redirects.mjs .next/server/app",
+    "check:slugs": "node scripts/check-slugs.mjs",
+    "check:layout": "node scripts/check-layout.mjs .next/server/app",
+    "check": "npm run check:schema && npm run check:towns && npm run check:claims && npm run check:redirects && npm run check:slugs && npm run check:layout",
     "og": "node scripts/build-og.mjs",
     "indexnow": "node scripts/indexnow.mjs"
   },

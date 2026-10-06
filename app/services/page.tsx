@@ -3,6 +3,7 @@ import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { services, site, serviceArea } from "@/lib/site";
+import { servicesCountWord } from "@/lib/services";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, serviceId, pageUrl, AREA_FACTS, type Crumb } from "@/lib/schema";
 import { credentialLine } from "@/lib/credentials";
@@ -16,7 +17,7 @@ import CtaRow from "@/components/CtaRow";
 const TITLE = "Home Remodeling Services in Central & Eastern MA";
 const DESCRIPTION = "Kitchens and baths, additions, decks, siding, windows and doors, and painting from one owner-led contractor based in Northborough, MA. Free itemized estimates.";
 const H1 = "Home Remodeling Services in Central & Eastern Massachusetts";
-const LEAD = `Waterfront Construction Inc is an owner-led home remodeling contractor based in Northborough, Massachusetts, founded in ${site.founded} by ${site.owner}, who has ${site.experience}+ years of hands-on construction experience. We offer the six services below to homeowners across ${serviceArea.short}. Every project starts with a free, itemized estimate.`;
+const LEAD = `Waterfront Construction Inc is an owner-led home remodeling contractor based in Northborough, Massachusetts, founded in ${site.founded} by ${site.owner}, who has ${site.experience}+ years of hands-on construction experience. We offer the ${servicesCountWord} services below to homeowners across ${serviceArea.short}. Every project starts with a free, itemized estimate.`;
 
 export const metadata = pageMeta({ title: TITLE, description: DESCRIPTION, path: "/services" });
 
@@ -76,14 +77,15 @@ export default function ServicesPage() {
 
       <section className="section bg-paper" aria-labelledby="services-h">
         <div className="container-x">
-          <h2 id="services-h" className="sr-only">Our six services</h2>
-          {/* The 01–06 index is drawn by a CSS counter on an aria-hidden span: decorative, never page text.
+          <h2 id="services-h" className="sr-only">{`Our ${servicesCountWord} services`}</h2>
+          {/* The 01–10 index is drawn by a CSS counter on an aria-hidden span: decorative, never page text.
+              Two columns from sm (5 full rows of 2 for the ten services; no empty cell at any width).
               From sm each card is a row subgrid (media, index, title, body, timeline, then one row per link), so titles,
               bodies, timelines and link hairlines line up across a row.
               The row gap is a margin on each card (sm:mt-12, cancelled by the list's sm:-mt-12), not the list's row-gap:
               a parent row-gap that differs from the subgrid's 0 gap is spread into the subgrid tracks and opens a hole
               under one-line titles. */}
-          <ul role="list" className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 sm:gap-y-0 sm:-mt-12 [counter-reset:svc]">
+          <ul role="list" className="grid sm:grid-cols-2 gap-x-8 gap-y-12 sm:gap-y-0 sm:-mt-12 [counter-reset:svc]">
             {cards.map(({ s, c, costGuide, project }) => (
               <li key={s.slug} className="card-ed group sm:grid sm:grid-rows-subgrid sm:row-span-8 sm:gap-y-0 sm:mt-12">
                 {s.imageIsStock ? (
@@ -95,7 +97,7 @@ export default function ServicesPage() {
                   </div>
                 ) : (
                   <div className="media">
-                    <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px" className="object-cover" />
+                    <Image src={s.image} alt={s.imageAlt} fill quality={60} sizes="(min-width:1024px) 552px, (min-width:640px) 50vw, 100vw" className="object-cover" />
                   </div>
                 )}
                 <p className="meta" aria-hidden="true"><span className="[counter-increment:svc] before:content-[counter(svc,decimal-leading-zero)]" /></p>

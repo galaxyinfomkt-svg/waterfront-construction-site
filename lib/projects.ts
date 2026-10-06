@@ -11,6 +11,8 @@
 // Consumers: app/projects/[slug], app/gallery, lib/schema.ts (projectNodes), lib/towns.ts, lib/town-copy.ts,
 // lib/service-content.ts, app/sitemap.ts, the home, about and blog pages.
 
+import type { ServiceSlug } from "./services";
+
 /** Last substantive rewrite of the case-study content (WebPage/Article dateModified, og:modified_time,
  *  sitemap lastModified). Bump ONLY when a project's copy, photos or videos change substantively. */
 export const PROJECTS_UPDATED = "2026-10-05T10:32:56-04:00";
@@ -49,7 +51,7 @@ export type Project = {
   location: string; // "Mansfield, MA" | "Salem, NH" | "Massachusetts" (town not listed)
   category: string; // plain noun phrase, e.g. "Kitchen remodel"
   galleryCategory: GalleryCategory;
-  services: string[]; // service slugs this job documents, primary first (hub + service×town links)
+  services: ServiceSlug[]; // service slugs this job documents, primary first (hub + service×town links)
   blurb: string; // answer-first summary: visible lead under the H1, Article/WebPage description
   scopeHeading: string; // "What we did" when the photos show our crew's work in progress
   scope: string[]; // each line visible in the photos or videos
@@ -94,7 +96,7 @@ export const projects: Project[] = [
     location: "Mansfield, MA",
     category: "Kitchen remodel",
     galleryCategory: "Kitchens",
-    services: ["kitchen-bathroom-remodeling"],
+    services: ["kitchen-remodeling"],
     blurb: "A finished kitchen remodel in Mansfield, MA, with white shaker-style cabinets, a dark veined island with a waterfall edge, three glass pendant lights and a gray tile backsplash.",
     scopeHeading: "What the finished kitchen includes",
     scope: [
@@ -132,7 +134,7 @@ export const projects: Project[] = [
     location: "Massachusetts",
     category: "Bathroom remodels",
     galleryCategory: "Bathrooms",
-    services: ["kitchen-bathroom-remodeling"],
+    services: ["bathroom-remodeling"],
     blurb: "Photos from several bathroom remodels by Waterfront Construction: tiled walk-in showers, two neo-angle glass showers, a tub-shower with a hinged glass panel, and frameless glass throughout.",
     scopeHeading: "What the photos show",
     scope: [
@@ -218,7 +220,7 @@ export const projects: Project[] = [
     location: "Needham, MA",
     category: "Home addition",
     galleryCategory: "Additions",
-    services: ["home-additions-remodeling"],
+    services: ["home-additions"],
     blurb: "A covered front porch added across the front of a two-story colonial in Needham, MA: excavation along the house, a new concrete foundation, and framing for the porch posts and roof, with Tyvek house wrap on the wall behind it.",
     scopeHeading: "What we did",
     scope: [
@@ -257,7 +259,7 @@ export const projects: Project[] = [
     location: "Lynnfield, MA",
     category: "Home addition",
     galleryCategory: "Additions",
-    services: ["home-additions-remodeling", "siding", "windows-and-doors"],
+    services: ["home-additions", "siding", "window-replacement", "door-installation"],
     blurb: "A two-story addition and exterior remodel in Lynnfield, MA: the addition framed and sheathed in ZIP System panels, black windows including three arched-top units, the main house's second floor wrapped and fitted with new windows, a front porch, and white siding.",
     scopeHeading: "What we did",
     scope: [
@@ -274,7 +276,7 @@ export const projects: Project[] = [
     stages: [
       { id: "addition", label: "Framing and sheathing the addition", note: "The two-story addition framed, sheathed in ZIP System panels and fitted with windows." },
       { id: "main-house", label: "Main house and front porch", note: "House wrap and new windows on the main house, and the porch across the front." },
-      { id: "siding", label: "Siding", note: "White siding going on the addition and the main house." },
+      { id: "siding", label: "Siding", note: "White siding going on the addition." },
     ],
     photos: [
       { src: HA(1), stage: "addition", alt: "Waterfront Construction van beside a framed two-story addition with green ZIP System sheathing, in Lynnfield, MA", caption: "The framed addition in green ZIP System sheathing, next to the company van." },
@@ -288,7 +290,7 @@ export const projects: Project[] = [
       { src: HA(15), stage: "siding", alt: "Two-story addition in ZIP System sheathing with three arched-top windows, and bundles of white siding on the ground, in Lynnfield, MA", caption: "Siding delivered and ready to go on the addition." },
       { src: HA(17), stage: "siding", featured: "Siding", alt: "White vertical siding installed on a two-story addition, with a ladder and three arched-top black windows, in Lynnfield, MA", caption: "White vertical siding going up on the addition." },
       { src: HA(18), stage: "siding", featured: "Siding", alt: "Gable end of a two-story addition in white vertical siding, with two windows above three arched-top black windows, in Lynnfield, MA", caption: "The addition's gable end in white siding, with the three arched windows below." },
-      { src: HA(16), stage: "siding", alt: "Front of the main house with white siding on the second floor, black windows and a front porch on wood posts, with the addition at the right, in Lynnfield, MA", caption: "The main house with its second floor sided, beside the addition." },
+      { src: HA(16), stage: "main-house", alt: "Front of the main house with the second floor in white house wrap, black windows and a front porch on wood posts, with the addition at the right, in Lynnfield, MA", caption: "The main house with its second floor in white house wrap, beside the addition." },
     ],
     videos: [],
     cover: HA(12),
@@ -306,7 +308,7 @@ export const projects: Project[] = [
     location: "Lynnfield, MA",
     category: "Home addition",
     galleryCategory: "Additions",
-    services: ["home-additions-remodeling"],
+    services: ["home-additions"],
     blurb: "A home addition in Lynnfield, MA, filmed in winter while it was being framed: new walls sheathed in green ZIP System panels rise above the gray-sided first floor, with the roof framing and red roof sheathing in progress.",
     scopeHeading: "What we did",
     scope: [

@@ -58,7 +58,7 @@ const byDistance = [...allCities].sort((a, b) => townFacts(a).exactMiles - townF
 export const NEAREST = byDistance.find((c) => !townFacts(c).isBase)!;
 export const FARTHEST = byDistance[byDistance.length - 1];
 
-/** "190 cities and towns, plus 7 villages and Devens, across 11 counties in Massachusetts and southern New Hampshire" */
+/** e.g. "193 cities and towns, plus 7 villages and Devens, across 11 counties in Massachusetts and southern New Hampshire" */
 export const AREA_SENTENCE = `${MUNICIPALITIES} cities and towns, plus ${VILLAGE_COUNT} villages${HAS_DEVENS ? " and Devens" : ""}, across ${COUNTIES} counties in Massachusetts and southern New Hampshire`;
 
 /** Straight-line distance bands from Northborough, for the /service-areas table. */

@@ -12,7 +12,9 @@ import Typeset from "./Typeset";
 import ServiceIcon from "@/app/services/_components/ServiceIcon";
 
 export type HeaderNavItem = { label: string; href: string };
-export type HeaderService = { slug: string; name: string; short: string };
+export type HeaderService = { slug: string; name: string };
+/** Services split into the two SERVICE_GROUPS columns (lib/services.ts), in D10 order: outside, then inside. */
+export type HeaderServiceGroup = { label: string; items: HeaderService[] };
 
 /** The on-page estimate form: the section that wraps <LeadForm /> carries data-estimate-form (and
  *  id="estimate"). A bare #estimate is only a fallback, and never a heading, so an article heading can
@@ -51,9 +53,10 @@ const bottomOf = (el: HTMLElement | null) => (el ? Math.round(el.getBoundingClie
 
 const isCurrent = (pathname: string, href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
 
-export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
-  nav: HeaderNavItem[]; services: HeaderService[]; phone: string; phoneHref: string; brand: string;
+export function HeaderClient({ nav, groups, phone, phoneHref, brand }: {
+  nav: HeaderNavItem[]; groups: HeaderServiceGroup[]; phone: string; phoneHref: string; brand: string;
 }) {
+  const services = groups.flatMap((g) => g.items);
   const [open, setOpen] = useState(false);
   const [menuTop, setMenuTop] = useState(0);
   const headerRef = useRef<HTMLElement>(null);
@@ -129,17 +132,28 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
                   {n.label}<ChevronDownIcon className={`w-3 h-3 text-muted transition-transform duration-150 ${svcDismissed ? "" : "group-hover/svc:rotate-180 group-focus-within/svc:rotate-180"}`} />
                 </Link>
                 <div className={`absolute -left-5 top-full pt-4 opacity-0 invisible transition-[opacity,visibility] duration-150 ${svcDismissed ? "" : "group-hover/svc:opacity-100 group-hover/svc:visible group-focus-within/svc:opacity-100 group-focus-within/svc:visible"}`}>
-                  <ul className="w-[22rem] bg-white border border-line rounded-panel shadow-pop p-2">
-                    {services.map((s) => (
-                      <li key={s.slug}>
-                        <Link href={`/services/${s.slug}`} aria-current={isCurrent(pathname, `/services/${s.slug}`) ? "page" : undefined}
-                          className="flex items-center gap-3 min-h-11 px-3 rounded-control text-[14.5px] text-ink/80 hover:bg-stone hover:text-navy aria-[current=page]:text-navy">
-                          <ServiceIcon slug={s.slug} className="w-5 h-5 shrink-0 text-muted" /><span><Typeset text={s.short} /></span>
-                        </Link>
-                      </li>
-                    ))}
-                    <li className="mt-2 pt-1 border-t border-line"><Link href="/services" className="link-arrow px-3 text-sm"><ArrowLabel text="All services" /></Link></li>
-                  </ul>
+                  {/* 2 x 5: one column per group (eyebrow + 5 links). Each column is its own list, so Tab runs down the
+                      outside column, then the inside one. "All services" spans both columns below. */}
+                  <div className="w-[36rem] bg-white border border-line rounded-panel shadow-pop p-2">
+                    <div className="grid grid-cols-2 gap-x-2">
+                      {groups.map((g) => (
+                        <div key={g.label}>
+                          <p aria-hidden="true" className="eyebrow px-3 pt-2 pb-1 text-start">{g.label}</p>
+                          <ul>
+                            {g.items.map((s) => (
+                              <li key={s.slug}>
+                                <Link href={`/services/${s.slug}`} aria-current={isCurrent(pathname, `/services/${s.slug}`) ? "page" : undefined}
+                                  className="flex items-center gap-3 min-h-11 px-3 rounded-control text-[14.5px] text-start text-ink/80 hover:bg-stone hover:text-navy aria-[current=page]:text-navy">
+                                  <ServiceIcon slug={s.slug} className="w-5 h-5 shrink-0 text-muted" /><span><Typeset text={s.name} /></span>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-2 pt-1 border-t border-line"><Link href="/services" className="link-arrow px-3 text-sm"><ArrowLabel text="All services" /></Link></div>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -171,7 +185,9 @@ export function HeaderClient({ nav, services, phone, phoneHref, brand }: {
               n.href === "/services" ? (
                 <div key={n.href} className="border-b border-line">
                   <Link href={n.href} onClick={close} aria-current={isCurrent(pathname, n.href) ? "page" : undefined} className="flex items-center min-h-12 text-[17px] font-medium text-ink aria-[current=page]:text-navy aria-[current=page]:underline aria-[current=page]:decoration-1 aria-[current=page]:underline-offset-[.55em]">Services</Link>
-                  <ul className="grid grid-cols-1 pb-3">
+                  {/* One column on phones; from sm two columns filled top to bottom (outside, then inside), so the
+                      groups stay together and the Tab order runs column by column. */}
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 sm:grid-rows-5 sm:grid-flow-col sm:gap-x-8 pb-3">
                     {services.map((s) => (
                       <li key={s.slug}>
                         <Link href={`/services/${s.slug}`} onClick={close} aria-current={isCurrent(pathname, `/services/${s.slug}`) ? "page" : undefined}

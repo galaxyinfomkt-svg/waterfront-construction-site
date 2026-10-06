@@ -7,6 +7,11 @@
 //   node scripts/indexnow.mjs --since=2026-10-05   URLs whose sitemap <lastmod> is on or after that date
 //   node scripts/indexnow.mjs --all                every URL in the sitemaps (once, after a big rewrite)
 //   node scripts/indexnow.mjs /faq /services/decks specific pages (paths or full URLs)
+//   node scripts/indexnow.mjs --legacy             the retired service URLs that now answer with a 308, so Bing
+//                                                  recrawls them and moves them to their new pages: every old hub
+//                                                  and every old service×town page of the `split` slugs in
+//                                                  lib/redirects.ts, with the town slugs read from the city-hub
+//                                                  sitemap (/sitemap/areas.xml). Can be combined with --all.
 // Options:
 //   --dry-run            list what would be sent; send nothing
 //   --sitemap=<url>      read the sitemaps from somewhere else, e.g. http://localhost:3000/sitemap.xml after
@@ -84,19 +89,40 @@ async function sitemapEntries(sitemapUrl) {
   return [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => ({ loc: decode(tag(m[1], "loc") ?? ""), lastmod: decode(tag(m[1], "lastmod") ?? "") })).filter((e) => e.loc);
 }
 
+/** The old slugs of the `split` table in lib/redirects.ts (read as data; the file is TypeScript). */
+function legacySlugs() {
+  const src = fs.readFileSync(path.join(ROOT, "lib/redirects.ts"), "utf8");
+  const block = src.match(/const split[^=]*=\s*\[([\s\S]*?)\n\];/)?.[1];
+  const slugs = block ? [...block.matchAll(/^\s*\[\s*"([a-z0-9-]+)"\s*,/gm)].map((m) => m[1]) : [];
+  if (!slugs.length) fail("could not read the `split` table from lib/redirects.ts.");
+  return slugs;
+}
+/** The retired service URLs: /services/<old> and /services/<old>/<town> for every town with a city hub. */
+async function legacyUrls() {
+  const index = option("sitemap") ?? `${SITE}/sitemap.xml`;
+  const areas = index.replace(/\/sitemap\.xml$/, "/sitemap/areas.xml");
+  const towns = (await sitemapEntries(areas)).map((e) => e.loc.match(/\/service-areas\/([a-z0-9-]+)$/)?.[1]).filter(Boolean);
+  if (!towns.length) fail(`no city hubs found in ${areas}.`);
+  return legacySlugs().flatMap((slug) => [`${SITE}/services/${slug}`, ...towns.map((t) => `${SITE}/services/${slug}/${t}`)]);
+}
+
 async function selectUrls() {
   const explicit = args.filter((a) => !a.startsWith("--") && !args[args.indexOf(a) - 1]?.match(/^--(since|sitemap)$/));
   if (explicit.length) return explicit.map((a) => (a.startsWith("http") ? a : `${SITE}${a.startsWith("/") ? "" : "/"}${a}`));
   const all = flag("all");
   const since = option("since");
-  if (!all && !since) fail("say which URLs to send: --since=YYYY-MM-DD, --all, or a list of paths. See --help.");
+  const legacy = flag("legacy") ? await legacyUrls() : [];
+  if (!all && !since) {
+    if (legacy.length) return legacy;
+    fail("say which URLs to send: --since=YYYY-MM-DD, --all, --legacy, or a list of paths. See --help.");
+  }
   if (since && !/^\d{4}-\d{2}-\d{2}$/.test(since)) fail(`--since must be a date like 2026-10-05, got "${since}".`);
   const entries = await sitemapEntries(option("sitemap") ?? `${SITE}/sitemap.xml`);
   if (!entries.length) fail("the sitemap has no URLs.");
   const chosen = all ? entries : entries.filter((e) => e.lastmod && e.lastmod.slice(0, 10) >= since);
   const undated = since ? entries.filter((e) => !e.lastmod).length : 0;
   if (undated) console.warn(`indexnow: ${undated} sitemap URL(s) have no <lastmod> and were skipped (use --all to include them).`);
-  return chosen.map((e) => e.loc);
+  return [...chosen.map((e) => e.loc), ...legacy];
 }
 
 // ---------- submit ----------

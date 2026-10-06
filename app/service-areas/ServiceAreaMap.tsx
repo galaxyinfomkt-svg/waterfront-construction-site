@@ -1,8 +1,9 @@
 import { allCities, citySlug, cityLabel } from "@/lib/site";
-import { townFacts } from "@/lib/towns";
+import { townFacts, type TownFacts } from "@/lib/towns";
+import MapDots, { type Dot } from "./MapDots";
 
-// Server-rendered SVG map of every served place, plotted from its coordinates (GeoNames postal-code
-// centroids, lib/town-geo.ts) with rings every 10 miles, straight line, from Northborough. No map API,
+// Server-rendered SVG map of every served place, plotted from its coordinates (GeoNames populated-place
+// points, lib/town-geo.ts) with rings every 10 miles, straight line, from Northborough. No map API,
 // no third-party request, nothing invented. The county directory on /service-areas is its text
 // alternative (audit 06 ST-H3, ST-M1). No state or county boundaries are drawn: no boundary data is
 // available offline, and a hand-drawn line would be inaccurate.
@@ -41,6 +42,9 @@ const LABELS: Record<string, readonly ["start" | "middle" | "end", number, numbe
 // layout). A white halo keeps text readable over markers and rings.
 const HALO = { stroke: "#fff", strokeLinejoin: "round", paintOrder: "stroke" } as const;
 
+const dot = ({ c, f }: { c: (typeof allCities)[number]; f: TownFacts }): Dot =>
+  [X(f.lng).toFixed(1), Y(f.lat).toFixed(1), `${cityLabel(c)} · ${f.isBase ? "our base" : `about ${f.miles} miles ${f.dir}`}`];
+
 export default function ServiceAreaMap({ documented, className = "" }: { documented: Set<string>; className?: string }) {
   return (
     <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="sam-t sam-d" className={`w-full h-auto text-navy ${className}`}>
@@ -48,18 +52,16 @@ export default function ServiceAreaMap({ documented, className = "" }: { documen
       <desc id="sam-d">
         {`Each dot is one of the ${allCities.length} cities, towns and villages we serve, placed by its coordinates. Rings mark every 10 miles, straight line, from our Northborough base. Larger green dots mark towns where our work is documented on this site.`}
       </desc>
-      {RINGS.map((m) => (
-        <circle key={m} cx={X(BASE.lng)} cy={Y(BASE.lat)} r={R(m)} fill="none" stroke="currentColor" strokeOpacity=".14" strokeWidth={0.75} vectorEffect="non-scaling-stroke" />
-      ))}
-      {P.map(({ c, f }) => {
-        const doc = documented.has(citySlug(c));
-        return (
-          <circle key={citySlug(c)} cx={X(f.lng).toFixed(1)} cy={Y(f.lat).toFixed(1)} r={doc ? 4.5 : 2.2}
-            fill={doc ? "#1F7A3A" : "#24215A"} fillOpacity={doc ? 1 : 0.45} className={doc ? undefined : "max-sm:[r:3.2px]"}>
-            <title>{`${cityLabel(c)} · ${f.isBase ? "our base" : `about ${f.miles} miles ${f.dir}`}`}</title>
-          </circle>
-        );
-      })}
+      <g fill="none" stroke="currentColor" strokeOpacity=".14" strokeWidth={0.75}>
+        {RINGS.map((m) => (
+          <circle key={m} cx={X(BASE.lng).toFixed(1)} cy={Y(BASE.lat).toFixed(1)} r={R(m).toFixed(1)} vectorEffect="non-scaling-stroke" />
+        ))}
+      </g>
+      {/* Markers (client component: compact data in the RSC payload, same server HTML). Documented ones on top. */}
+      <MapDots
+        plain={P.filter(({ c }) => !documented.has(citySlug(c))).map(dot)}
+        documented={P.filter(({ c }) => documented.has(citySlug(c))).map(dot)}
+      />
       {/* Ring labels are drawn after the town markers so none of them covers a label. */}
       <g fill="#5C5B63">
         {RINGS.map((m) => (

@@ -1,5 +1,6 @@
 import { SITE_URL } from "@/lib/seo";
 import { site, services } from "@/lib/site";
+import { servicesCountWord } from "@/lib/services";
 import { posts, CATEGORIES } from "@/lib/posts";
 import { projects, mediaCount } from "@/lib/projects";
 import { faqGroups } from "@/lib/faq";
@@ -29,7 +30,7 @@ export function GET() {
     "",
     "## Services",
     ...services.map((s) => `- ${link(s.short, `/services/${s.slug}`)}: ${s.blurb} ${s.timeline}`),
-    `- ${link("All six services", "/services")}`,
+    `- ${link(`All ${servicesCountWord} services`, "/services")}`,
     "",
     "## Project case studies",
     ...projects.map((p) => `- ${link(p.title, `/projects/${p.slug}`)}: ${p.location}; ${mediaCount(p)}. ${p.blurb}`),

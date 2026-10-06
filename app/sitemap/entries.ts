@@ -3,16 +3,20 @@ import { site, services, allCities, citySlug, type Service } from "@/lib/site";
 import { posts } from "@/lib/posts";
 import { projects, projectImages, type Project } from "@/lib/projects";
 import { PROJECT_PUBLISHED, VIDEO_FACTS } from "@/lib/media-facts";
-import { projectTown } from "@/lib/towns";
+import { projectTown, cityHubPath, CITY_HUBS_UPDATED } from "@/lib/towns";
 import { townCopy } from "@/lib/town-copy";
+import { areaCopy } from "@/lib/area-copy";
 import { getContent, serviceProjects, projectCardImage } from "@/lib/service-content";
 
 // Sitemaps (audit 07 T02, 09 AEO-H5, 03 M3, 02 L3, 04 §4.4, 05 PG-L1; study 01 §4).
 //
 // Layout:
 //   /sitemap.xml               sitemap INDEX (app/sitemap.xml/route.ts): the one URL to submit to Google and Bing
-//   /sitemap/pages.xml         every indexable page except the service×town pages (app/sitemap/[id]/route.ts)
-//   /sitemap/towns-{slug}.xml  the 198 town pages of one service, so Search Console reports indexing per service
+//   /sitemap/pages.xml         every indexable page except the city hubs and the service×town pages (app/sitemap/[id]/route.ts)
+//   /sitemap/areas.xml         one city hub per place we serve (/service-areas/<town>)
+//   /sitemap/towns-{slug}.xml  the service×town pages of one service (one per place), so Search Console reports
+//                              indexing per service
+// Every count follows the data (lib/services.ts, lib/site.ts allCities): nothing here hard-codes a number.
 // robots.txt lists the index and every child (app/robots.ts).
 //
 // Why route handlers and not app/sitemap.ts: Next.js never writes a sitemap index, and Turbopack refuses an
@@ -27,14 +31,15 @@ import { getContent, serviceProjects, projectCardImage } from "@/lib/service-con
 //   identical, always-new dates are not "consistently and verifiably accurate" and get ignored.
 // - No <changefreq> or <priority>: Google ignores both.
 // - Images: only photos actually shown on that page, and only the company's own job photos (never the stock
-//   files in /images/*.jpg). A town page lists a photo only when it was taken in that same town.
+//   files in /images/*.jpg). A town page or city hub lists a photo only when it was taken in that same town.
 
 export type Video = { title: string; description: string; thumbnail: string; content: string; seconds: number; published: string };
 export type Entry = { url: string; lastmod: string; images?: string[]; videos?: Video[] };
 
 // ---------- dates ----------
 /** Last substantive change of the site pages rewritten together in the 2026-10-05 SEO/content overhaul
- *  (home, /about, /about/ernando-nunes, /faq, /reviews, /contact, /service-areas, /privacy, /terms).
+ *  (home, /about, /about/ernando-nunes, /faq, /reviews, /contact, /privacy, /terms). /service-areas was rebuilt
+ *  with the city hubs and uses CITY_HUBS_UPDATED (lib/towns.ts).
  *  Equals the dateModified / visible "Last updated" constant in app/faq, app/about/ernando-nunes,
  *  app/privacy and app/terms (git: those pages were rewritten in the working tree on 2026-10-05).
  *  Bump ONLY for a substantive change to one of these pages — and then give that page its own value. */
@@ -115,10 +120,14 @@ function townImages(townSlug: string, k: ReturnType<typeof townCopy>): string[] 
   return ownImages(srcs);
 }
 
+/** City hub (app/service-areas/[town]/page.tsx): only the photo cards, which show photos taken in that same place. */
+const areaImages = (k: ReturnType<typeof areaCopy>) => ownImages(k.photoCards.map((card) => card.img));
+
 // ---------- the sitemaps ----------
 const TOWNS = "towns-";
+const AREAS = "areas";
 /** Child sitemap ids, in index order: /sitemap/{id}.xml */
-export const sitemapIds = () => ["pages", ...services.map((s) => `${TOWNS}${s.slug}`)];
+export const sitemapIds = () => ["pages", AREAS, ...services.map((s) => `${TOWNS}${s.slug}`)];
 
 function pageEntries(): Entry[] {
   const hubs: Entry[] = services.map((s) => ({ url: url(`/services/${s.slug}`), lastmod: lastmod(s.updated), ...withImages(hubImages(s)) }));
@@ -134,7 +143,7 @@ function pageEntries(): Entry[] {
     { url: url("/"), lastmod: lastmod(SITE_PAGES_UPDATED) },
     { url: url("/services"), lastmod: lastmod(...services.map((s) => s.updated)) },
     ...hubs,
-    { url: url("/service-areas"), lastmod: lastmod(SITE_PAGES_UPDATED) },
+    { url: url("/service-areas"), lastmod: lastmod(CITY_HUBS_UPDATED) },
     { url: url("/gallery"), lastmod: lastmod(...projects.map((p) => p.updated)) },
     ...cases,
     { url: url("/blog"), lastmod: lastmod(...posts.map((p) => p.modified)) },
@@ -157,9 +166,18 @@ function townEntries(s: Service): Entry[] {
   });
 }
 
+/** The city hubs: one per place, dated by the hub template's own "Updated" constant. */
+function areaEntries(): Entry[] {
+  return allCities.map((c) => {
+    const k = areaCopy(c); // the page's own data: its visible "Updated" date and the photos it shows
+    return { url: url(cityHubPath(c)), lastmod: lastmod(k.updated.iso), ...withImages(areaImages(k)) };
+  });
+}
+
 /** The entries of one child sitemap, or undefined for an unknown id. */
 export function sitemapEntries(id: string): Entry[] | undefined {
   if (id === "pages") return pageEntries();
+  if (id === AREAS) return areaEntries();
   const s = services.find((x) => `${TOWNS}${x.slug}` === id);
   return s ? townEntries(s) : undefined;
 }

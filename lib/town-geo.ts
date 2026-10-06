@@ -2,7 +2,8 @@
 // Coordinates: GeoNames populated-place point for the town center (CC BY 4.0, via the "all-the-cities"
 // npm package). Counties: GeoNames US postal-code data (majority county of the town's ZIP codes).
 // ZIP-centroid averages were NOT used for coordinates: PO-box ZIPs carry placeholder centroids that
-// pulled several towns miles off (audit verification, Oct 2026).
+// pulled several towns miles off (audit verification, Oct 2026). Ayer, Shirley and Groton (added Oct 2026) were
+// computed the same way (GeoNames PPL point, all-the-cities); all three are in Middlesex County.
 // Fallback to the ZIP centroid for: Littleton, MA; Brookfield, MA; Cherry Valley, MA; Jefferson, MA; Rochdale, MA; Still River, MA; Hamilton, MA; Georgetown, MA; North Attleborough, MA; Amherst, NH.
 export const TOWN_GEO: Record<string, [county: string, lat: number, lng: number]> = {
   "northborough": ["Worcester", 42.3195, -71.6412],
@@ -52,6 +53,9 @@ export const TOWN_GEO: Record<string, [county: string, lat: number, lng: number]
   "princeton": ["Worcester", 42.4487, -71.8773],
   "lancaster": ["Worcester", 42.4556, -71.6731],
   "harvard": ["Worcester", 42.5001, -71.5828],
+  "ayer": ["Middlesex", 42.5612, -71.5898],
+  "shirley": ["Middlesex", 42.5437, -71.6495],
+  "groton": ["Middlesex", 42.6112, -71.5745],
   "littleton": ["Middlesex", 42.5401, -71.4877],
   "boxborough": ["Middlesex", 42.4908, -71.5285],
   "lunenburg": ["Worcester", 42.5945, -71.7245],

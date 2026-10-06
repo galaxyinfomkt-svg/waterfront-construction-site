@@ -7,11 +7,17 @@ import path from "node:path";
 type Rule = { source: string; destination: string; permanent: true };
 const r = (source: string, destination: string): Rule => ({ source, destination, permanent: true });
 
-const merged: [string, string][] = [
-  ["kitchen-remodeling", "kitchen-bathroom-remodeling"],
-  ["bathroom-remodeling", "kitchen-bathroom-remodeling"],
-  ["home-additions", "home-additions-remodeling"],
-  ["home-remodeling", "home-additions-remodeling"],
+// Combined service slugs split into ten services (owner decision Oct 2026).
+// kitchen-bathroom-remodeling and home-additions-remodeling were redirect TARGETS for 3.5 months
+// (kitchen-remodeling, bathroom-remodeling, home-additions, home-remodeling → them). Browsers may have cached
+// those 308s, so these two must never point back at any of the four: they go to the services index / city hub.
+// The four former sources are live service pages again and must never become redirect sources (that would hide
+// them and loop with the cached 308s).
+const split: [string, string, string][] = [ // [old slug, hub destination, town destination prefix]
+  ["windows-and-doors", "/services/window-replacement", "/services/window-replacement"],
+  ["painting", "/services/exterior-painting", "/services/exterior-painting"],
+  ["kitchen-bathroom-remodeling", "/services", "/service-areas"],
+  ["home-additions-remodeling", "/services", "/service-areas"],
 ];
 const removed = ["trim-and-carpentry", "repairs"];
 
@@ -29,9 +35,9 @@ const projectRenames: [string, string, string | null, string | null][] = [
 
 export function redirectRules(): Rule[] {
   const rules: Rule[] = [];
-  for (const [from, to] of merged) {
-    rules.push(r(`/services/${from}`, `/services/${to}`));
-    rules.push(r(`/services/${from}/:city`, `/services/${to}/:city`));
+  for (const [from, hub, town] of split) {
+    rules.push(r(`/services/${from}`, hub));
+    rules.push(r(`/services/${from}/:city`, `${town}/:city`));
   }
   for (const from of removed) {
     rules.push(r(`/services/${from}`, "/services"));
