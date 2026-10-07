@@ -107,7 +107,7 @@ export const PERMITS_HOW = weOr(
 const LEAD_ROW = (when: string) => ["Lead-safe renovation rules", when, "A contractor holding a Massachusetts Lead-Safe Renovation Contractor license, with a certified renovator directing the work."];
 const CONTRACT_WHO = "The contractor, who must be registered with the state Home Improvement Contractor program.";
 const CONTRACT_ROW = ["Written contract", "Home improvement work over $1,000 on an owner-occupied home in Massachusetts needs a written contract, and the deposit is limited.", CONTRACT_WHO];
-// The same rule without a dollar figure, for the hubs that must carry none (door, additions, whole-home, painting:
+// The same rule without a dollar figure, for the hubs that must carry none (door, additions, whole-home and painting hubs;
 // check-claims NO_CVV bans any "$1,000"-style figure in their <main>). The threshold is on the linked mass.gov page.
 const CONTRACT_ROW_PLAIN = ["Written contract", "Home improvement work on an owner-occupied home in Massachusetts needs a written contract above a set dollar amount, and the deposit is limited.", CONTRACT_WHO];
 // R7b is PARTLY verified (Massachusetts names specific triggers, such as adding a bedroom): a pointer, not a rule.

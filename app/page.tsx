@@ -6,6 +6,7 @@ import CtaRow from "@/components/CtaRow";
 import JsonLd from "@/components/JsonLd";
 import { PhoneIcon, CheckIcon, ArrowUpRightIcon, ArrowLabel } from "@/components/chrome-icons";
 import StatsRow from "@/components/StatsRow";
+import WaveDivider from "@/components/WaveDivider";
 import Typeset from "@/components/Typeset";
 import { services, testimonials, site, stats, serviceArea } from "@/lib/site";
 import { PHOTO_CAPTIONS, servicesCountWord } from "@/lib/services";
@@ -15,7 +16,7 @@ import { projects, type Project } from "@/lib/projects";
 import { displayAddress } from "@/lib/address";
 import { posts } from "@/lib/posts";
 import { pageMeta } from "@/lib/seo";
-import { pageGraph, webPageNode, BUSINESS_ID, OWNER_PAGE } from "@/lib/schema";
+import { pageGraph, webPageNode, imageNode, BUSINESS_ID, OWNER_PAGE } from "@/lib/schema";
 import FaqList from "./faq/FaqList";
 import { countyGroups, AREA_SENTENCE } from "./service-areas/areas";
 
@@ -31,7 +32,10 @@ const ENTITY = `${site.name} is an owner-led home remodeling contractor based in
 
 export const metadata = pageMeta({ title: TITLE, description: DESCRIPTION, path: "/", absoluteTitle: true });
 
-const HERO = "/images/projects/kitchen-remodel-mansfield-ma-01.webp";
+// Pool deck in Salem, NH: blue water for a company named Waterfront (owner brief, Oct 2026: a KT Waterfront-style hero).
+// deck-salem-nh-02 cropped to x 0-1420 so the drill at its right edge is out of frame.
+const HERO = "/images/projects/deck-salem-nh-hero.webp";
+const HERO_ALT = "Composite deck with white railings built around an above-ground pool by Waterfront Construction in Salem, NH";
 const OWNER_PHOTO = "/images/projects/home-addition-exterior-lynnfield-ma-01.webp";
 
 const project = (slug: string) => projects.find((p) => p.slug === slug);
@@ -62,6 +66,9 @@ const credentials = hasHic || hasCsl ? credentialLine({ insured: false }) : "";
 const ld = pageGraph(
   [
     webPageNode({ path: "/", name: H1, description: DESCRIPTION, mainEntity: { "@id": BUSINESS_ID }, primaryImage: HERO, crumbs: false }),
+    // The hero photo is not one of the business images (lib/schema.ts BIZ_IMAGES), so its ImageObject is emitted here
+    // for primaryImageOfPage to resolve in-page.
+    imageNode(HERO, { own: true, caption: HERO_ALT }),
     // No FAQPage here: the same Q&A is marked up once, on /faq (V4.1). The home FAQ below is visible text only.
   ],
   { business: "full" },
@@ -87,17 +94,36 @@ export default function Home() {
     <>
       <JsonLd data={ld} />
 
-      {/* HERO — keyword + entity H1, answer-first paragraph, and the bare GHL estimate form beside it (no card, no
-          background: the owner wants the form exactly as GHL renders it). Neutral black scrim only (§2): below lg the
-          photo band fades to solid scrim, so the form sits on black. */}
-      <section data-cta-zone className="relative overflow-hidden bg-scrim">
-        <div className="absolute inset-x-0 top-0 h-[min(100svh,720px)] lg:inset-0 lg:h-auto">
-          <Image src={HERO} alt="Kitchen remodeled by Waterfront Construction in Mansfield, MA, with white shaker-style cabinets, a dark stone-look island and glass pendant lights"
-            fill loading="eager" fetchPriority="high" quality={60} sizes="100vw" className="object-cover" />
-          <div aria-hidden="true" className="absolute inset-0 scrim-hero" />
+      {/* HERO — KT Waterfront-style (owner brief, Oct 2026): a bright full-bleed job photo, the keyword H1 and the service
+          area centered on it, two actions, and the logo's blue wave closing the band. No form here: the estimate form is
+          the next section, right under the wave. The scrim is darkest only behind the centered copy (.scrim-photo-center),
+          so the photo keeps its colour at the edges. */}
+      <section data-cta-zone className="relative isolate overflow-hidden bg-scrim">
+        <Image src={HERO} alt={HERO_ALT} fill loading="eager" fetchPriority="high" quality={60} sizes="100vw"
+          className="object-cover object-[78%_60%] md:object-[60%_48%] lg:object-[50%_36%]" />
+        <div aria-hidden="true" className="absolute inset-0 scrim-photo-center" />
+        <div className="relative container-x min-h-[min(74svh,600px)] lg:min-h-[min(80svh,720px)] flex flex-col items-center justify-center pt-14 pb-24 md:pt-20 md:pb-36 lg:pb-44 text-white on-photo hero-glow">
+          {/* Phones narrower than 375px step the display size down so the nowrap "Northborough, MA" fits its line
+              (40px would overflow the 280px content box at 320); 375px and up use the --text-display clamp. */}
+          <h1 className="text-display max-[359px]:text-[2.125rem] min-[360px]:max-[374px]:text-[2.375rem] text-balance text-white max-w-[12em] mx-auto">
+            Remodeling contractor in <span className="whitespace-nowrap">Northborough, MA</span>
+          </h1>
+          <p className="mt-4 md:mt-5 text-lg md:text-[1.375rem] leading-snug text-white max-w-[30em] mx-auto text-balance">
+            Owner-led since {site.founded}, across {serviceArea.short}
+          </p>
+          <div className="mt-8 md:mt-9 w-full flex flex-col sm:flex-row sm:justify-center gap-3">
+            <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
+            <Link href="/services" className="btn btn-on-dark w-full sm:w-auto">Our services</Link>
+          </div>
         </div>
-        <div className="relative container-x pt-8 pb-14 md:py-20 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-12 items-center">
-          <div className="text-white on-photo">
+        <WaveDivider className="absolute inset-x-0 -bottom-px h-14 md:h-20 lg:h-28" />
+      </section>
+
+      {/* ESTIMATE — right under the wave: the answer-first entity paragraph (09 AEO-H1) beside the page's ONE estimate
+          form (bare GHL embed, id="estimate"). Lazy, so its third-party load never competes with the hero photo. */}
+      <section className="pt-6 md:pt-8 pb-14 md:pb-20" aria-labelledby="estimate-h">
+        <div className="container-x grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10 items-center">
+          <div className="lg:col-span-6">
             {/* .dot-list-wrap (globals.css): centered; stacked below sm, one dotted line from sm. A registration line
                 (once lib/site.ts holds the numbers) is too long to share the line, so the list then stacks everywhere. */}
             <ul className={`dot-list-wrap eyebrow${credentials ? " dot-list-wrap--stack" : ""}`}>
@@ -105,23 +131,16 @@ export default function Home() {
               <li>Owner-led since {site.founded}</li>
               {credentials && <li>{credentials}</li>}
             </ul>
-            {/* Phones narrower than 375px step the display size down so the nowrap "Northborough, MA" fits its line
-                (40px would overflow the 280px content box at 320); 375px and up use the --text-display clamp. */}
-            <h1 className="mt-4 md:mt-5 text-display max-[359px]:text-[2.125rem] min-[360px]:max-[374px]:text-[2.375rem] text-balance text-white max-w-[12em] mx-auto">
-              Remodeling contractor in <span className="whitespace-nowrap">Northborough, MA</span>
-            </h1>
-            <p className="mt-5 md:mt-6 text-base md:text-lg leading-[1.62] text-white/90 max-w-[34em] mx-auto">{ENTITY}</p>
-            <div className="mt-7 md:mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
-              <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>
-              <a href={site.phoneHref} className="btn btn-on-dark tel w-full sm:w-auto"><PhoneIcon /> {site.phone}</a>
-            </div>
-            <ul className="mt-6 md:mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-white/85">
-              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Itemized estimates</li>
-              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />{site.projectsCompleted}+ projects completed</li>
-              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-white/80" />Insured</li>
+            <h2 id="estimate-h" className="mt-4 text-h2 text-navy max-w-[16em] mx-auto">Get a free, itemized estimate</h2>
+            <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">{ENTITY}</p>
+            <ul className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[15px] text-ink">
+              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-navy" />Itemized estimates</li>
+              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-navy" />{site.projectsCompleted}+ projects completed</li>
+              <li className="inline-flex items-center gap-1.5"><CheckIcon className="w-4 h-4 text-navy" />Insured</li>
             </ul>
+            <a href={site.phoneHref} className="btn btn-secondary mt-8"><PhoneIcon /><span>Call <span className="tel">{site.phone}</span></span></a>
           </div>
-          <EstimateForm className="self-start lg:self-center min-w-0" />
+          <EstimateForm lazy className="lg:col-span-6 min-w-0" />
         </div>
       </section>
 
