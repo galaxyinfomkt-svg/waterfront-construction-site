@@ -12,7 +12,11 @@ import { allCities, citySlug, testimonials, type City } from "./site";
 import { projects } from "./projects";
 import { townFacts, projectTown, JOBS } from "./towns";
 
-/** Straight-line miles from Northborough within which every service×town page is indexed. */
+/** Owner decision (2026-10-08): every service×town page is indexable. Set to false to apply the radius/proof
+ *  rules below again (e.g. if Search Console reports most town pages as "Crawled - currently not indexed"). */
+export const INDEX_ALL_TOWN_PAGES = true;
+
+/** Straight-line miles from Northborough within which every service×town page is indexed (when INDEX_ALL_TOWN_PAGES is false). */
 export const CORE_RADIUS_MI = 30;
 
 /** Service×town paths that earned Search Console impressions outside the rules above, e.g. "/services/decks/acton".
@@ -32,7 +36,8 @@ export const PROOF_TOWNS: ReadonlySet<string> = new Set([
 ]);
 
 /** True when every service page of this town is indexed (core radius or documented proof). */
-export const townIndexed = (c: City) => townFacts(c).exactMiles <= CORE_RADIUS_MI || PROOF_TOWNS.has(citySlug(c));
+export const townIndexed = (c: City) =>
+  INDEX_ALL_TOWN_PAGES || townFacts(c).exactMiles <= CORE_RADIUS_MI || PROOF_TOWNS.has(citySlug(c));
 
 /** True when /services/<serviceSlug>/<town> is offered to search engines. */
 export const townPageIndexed = (serviceSlug: string, c: City) =>
