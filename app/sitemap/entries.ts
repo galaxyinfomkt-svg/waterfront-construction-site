@@ -45,6 +45,9 @@ export type Entry = { url: string; lastmod: string; images?: string[]; videos?: 
  *  app/privacy and app/terms (git: those pages were rewritten in the working tree on 2026-10-05).
  *  Bump ONLY for a substantive change to one of these pages — and then give that page its own value. */
 const SITE_PAGES_UPDATED = "2026-10-05T10:00:09-04:00";
+/** Home, /about, /faq and /about/ernando-nunes: repositioned as a general contractor (2026-10-08). Equals the
+ *  dateModified constants in app/faq and app/about/ernando-nunes. */
+const POSITIONING_PAGES_UPDATED = "2026-10-08T16:20:00-04:00";
 
 const BUILD_TIME = Date.now();
 const instant = (iso: string) => {
@@ -141,7 +144,7 @@ function pageEntries(): Entry[] {
   const ownerPhoto = site.ownerPhoto ? [url(site.ownerPhoto)] : [];
 
   return [
-    { url: url("/"), lastmod: lastmod(SITE_PAGES_UPDATED) },
+    { url: url("/"), lastmod: lastmod(POSITIONING_PAGES_UPDATED) },
     { url: url("/services"), lastmod: lastmod(...services.map((s) => s.updated)) },
     ...hubs,
     { url: url("/service-areas"), lastmod: lastmod(CITY_HUBS_UPDATED) },
@@ -149,9 +152,9 @@ function pageEntries(): Entry[] {
     ...cases,
     { url: url("/blog"), lastmod: lastmod(...posts.map((p) => p.modified)) },
     ...guides,
-    { url: url("/faq"), lastmod: lastmod(SITE_PAGES_UPDATED) },
-    { url: url("/about"), lastmod: lastmod(SITE_PAGES_UPDATED) },
-    { url: url("/about/ernando-nunes"), lastmod: lastmod(SITE_PAGES_UPDATED), ...withImages(ownerPhoto) },
+    { url: url("/faq"), lastmod: lastmod(POSITIONING_PAGES_UPDATED) },
+    { url: url("/about"), lastmod: lastmod(POSITIONING_PAGES_UPDATED) },
+    { url: url("/about/ernando-nunes"), lastmod: lastmod(POSITIONING_PAGES_UPDATED), ...withImages(ownerPhoto) },
     { url: url("/reviews"), lastmod: lastmod(SITE_PAGES_UPDATED) },
     { url: url("/contact"), lastmod: lastmod(SITE_PAGES_UPDATED) },
     { url: url("/privacy"), lastmod: lastmod(SITE_PAGES_UPDATED) },

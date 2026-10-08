@@ -22,7 +22,7 @@ import { projectCardImage } from "@/lib/service-content";
 // site.ownerProfiles) — never a stock photo or a placeholder.
 
 const PUBLISHED = "2026-10-05T10:00:09-04:00"; // page created
-const UPDATED = PUBLISHED; // bump only on a substantive edit of this profile
+const UPDATED = "2026-10-08T16:20:00-04:00"; // lead: general contractor (bump only on a substantive edit of this profile)
 const updatedLabel = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "America/New_York" }).format(new Date(UPDATED));
 
 const NAME = site.owner;

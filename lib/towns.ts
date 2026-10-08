@@ -4,13 +4,13 @@
 import { allCities, citySlug, cityLabel, type City } from "./site";
 import { TOWN_GEO } from "./town-geo";
 import { projects, type Project } from "./projects";
-import { SERVICES_RELEASE, type ServiceSlug } from "./services";
+import { POSITIONING_UPDATE, type ServiceSlug } from "./services";
 
 /** Date the service×town template and its data last changed substantively (sitemap lastModified,
  *  WebPage dateModified and the visible "Page updated" line). Bump ONLY on a substantive change. */
-export const TOWN_PAGES_UPDATED = SERVICES_RELEASE;
+export const TOWN_PAGES_UPDATED = POSITIONING_UPDATE;
 /** Date the city hubs (/service-areas/{town}) last changed substantively — same rule as TOWN_PAGES_UPDATED. */
-export const CITY_HUBS_UPDATED = SERVICES_RELEASE;
+export const CITY_HUBS_UPDATED = POSITIONING_UPDATE;
 /** The city hub of a served place. Every package builds the path with this; nobody hand-types it. */
 export const cityHubPath = (c: City) => `/service-areas/${citySlug(c)}`;
 

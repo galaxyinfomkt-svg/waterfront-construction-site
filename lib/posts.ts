@@ -67,6 +67,7 @@ export type Post = {
 const FIRST_COMMIT = "2026-06-04T15:31:54-04:00"; // 4c5dd0b "Waterfront Construction marketing site" (5-remodels, signs-siding, contractor)
 const KITCHEN_COMMIT = "2026-06-25T14:47:56-04:00"; // da28d22 "… kitchen cost blog post"
 const SIX_POSTS_COMMIT = "2026-06-29T21:53:31-04:00"; // 6ff97c3 "Add 6 new SEO/AEO blog posts …"
+const POSITIONING = "2026-10-08T16:20:00-04:00"; // publisher line: "an owner-led general contractor" (checklist post)
 const REWRITE = "2026-10-05T09:41:19-04:00"; // full fact-checked rewrite (audit 04 §3) — also the first publication of the 2 new cost guides
 
 // ---------- sources (URLs taken from the audit/study notes only) ----------
@@ -736,7 +737,7 @@ export const posts: Post[] = [
     answer: "Before you hire a remodeler in Massachusetts, look up their Home Improvement Contractor (HIC) registration and the Construction Supervisor License of whoever will pull your building permit, get a certificate of insurance, and insist on a written contract that lists the scope, start and completion dates, payment schedule and a deposit of no more than one-third of the price.",
     category: "Planning, permits & hiring",
     published: FIRST_COMMIT,
-    modified: REWRITE,
+    modified: POSITIONING,
     image: `${PR}/home-addition-exterior-lynnfield-ma-03.webp`,
     photo: {
       alt: "Two-story addition framed beside a house with a tarp-covered roof in Lynnfield, MA, its upper story sheathed in green panels and its lower level still open framing",

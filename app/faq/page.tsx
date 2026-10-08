@@ -18,7 +18,7 @@ import { EstimateLink } from "@/components/chrome-client";
 // input not yet supplied (warranty, deposit policy, payment methods, languages) are left out.
 
 const PUBLISHED = "2026-10-05T10:00:09-04:00"; // page created
-const UPDATED = PUBLISHED; // bump only on a substantive edit of the answers
+const UPDATED = "2026-10-08T16:20:00-04:00"; // "What we do" answer: general contractor (bump only on a substantive edit of the answers)
 const updatedLabel = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "America/New_York" }).format(new Date(UPDATED));
 
 const H1 = "Questions to ask before you hire a remodeling contractor";

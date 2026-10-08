@@ -146,7 +146,10 @@ export const TESTIMONIAL_SERVICES: Record<string, { services: ServiceSlug[]; wor
 /** Release of the 10-service / city-hub migration: the hubs, the service×town pages (TOWN_PAGES_UPDATED) and
  *  the city hubs (CITY_HUBS_UPDATED) all changed substantively in it. Set to the release commit's timestamp. */
 export const SERVICES_RELEASE = "2026-10-06T13:18:29-04:00";
-const UPDATED = SERVICES_RELEASE;
+/** Repositioning from "remodeling contractor" to "general contractor" across the site, the indexing policy
+ *  (lib/index-policy.ts) and the city-hub titles. Drives the service hubs, the service×town pages and the city hubs. */
+export const POSITIONING_UPDATE = "2026-10-08T16:20:00-04:00";
+const UPDATED = POSITIONING_UPDATE;
 
 // No real photo of finished painting or of a whole-home remodel yet (owner items O4, O5, O14): those three
 // services use the typographic monogram plate — never a stock photo, never someone else's work.

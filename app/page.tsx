@@ -30,6 +30,9 @@ const H1 = "General contractor in Northborough, MA";
 // Answer-first entity paragraph: who, what, where (09 AEO-H1 canonical sentences).
 const ENTITY = `${site.name} is an owner-led general contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners across ${serviceArea.short}.`;
 
+// = POSITIONING_PAGES_UPDATED in app/sitemap/entries.ts (the home page's sitemap lastmod).
+const HOME_UPDATED = "2026-10-08T16:20:00-04:00";
+
 export const metadata = pageMeta({ title: TITLE, description: DESCRIPTION, path: "/", absoluteTitle: true });
 
 // Pool deck in Salem, NH: blue water for a company named Waterfront (owner brief, Oct 2026: a KT Waterfront-style hero).
@@ -65,7 +68,7 @@ const credentials = hasHic || hasCsl ? credentialLine({ insured: false }) : "";
 
 const ld = pageGraph(
   [
-    webPageNode({ path: "/", name: H1, description: DESCRIPTION, mainEntity: { "@id": BUSINESS_ID }, primaryImage: HERO, crumbs: false }),
+    webPageNode({ path: "/", name: H1, description: DESCRIPTION, mainEntity: { "@id": BUSINESS_ID }, primaryImage: HERO, crumbs: false, dateModified: HOME_UPDATED }),
     // The hero photo is not one of the business images (lib/schema.ts BIZ_IMAGES), so its ImageObject is emitted here
     // for primaryImageOfPage to resolve in-page.
     imageNode(HERO, { own: true, caption: HERO_ALT }),
