@@ -7,6 +7,9 @@
 //   node scripts/indexnow.mjs --since=2026-10-05   URLs whose sitemap <lastmod> is on or after that date
 //   node scripts/indexnow.mjs --all                every URL in the sitemaps (once, after a big rewrite)
 //   node scripts/indexnow.mjs /faq /services/decks specific pages (paths or full URLs)
+//   node scripts/indexnow.mjs --town-pages        every current service×town page, indexed or not, so Bing recrawls
+//                                                  the ones lib/index-policy.ts set to noindex and drops them (run once
+//                                                  after the policy changes). Can be combined with --all.
 //   node scripts/indexnow.mjs --legacy             the retired service URLs that now answer with a 308, so Bing
 //                                                  recrawls them and moves them to their new pages: every old hub
 //                                                  and every old service×town page of the `split` slugs in
@@ -106,15 +109,26 @@ async function legacyUrls() {
   return legacySlugs().flatMap((slug) => [`${SITE}/services/${slug}`, ...towns.map((t) => `${SITE}/services/${slug}/${t}`)]);
 }
 
+/** Every current service×town URL (indexed or noindex): the services come from the towns-<slug> child sitemaps
+ *  listed in the index, the towns from the city-hub sitemap (all 201 hubs stay indexed). */
+async function townPageUrls() {
+  const index = option("sitemap") ?? `${SITE}/sitemap.xml`;
+  const xml = await get(index);
+  const slugs = [...xml.matchAll(/\/sitemap\/towns-([a-z0-9-]+)\.xml/g)].map((m) => m[1]);
+  const towns = (await sitemapEntries(index.replace(/\/sitemap\.xml$/, "/sitemap/areas.xml"))).map((e) => e.loc.match(/\/service-areas\/([a-z0-9-]+)$/)?.[1]).filter(Boolean);
+  if (!slugs.length || !towns.length) fail(`could not read the services or the city hubs from ${index}.`);
+  return slugs.flatMap((slug) => towns.map((t) => `${SITE}/services/${slug}/${t}`));
+}
+
 async function selectUrls() {
   const explicit = args.filter((a) => !a.startsWith("--") && !args[args.indexOf(a) - 1]?.match(/^--(since|sitemap)$/));
   if (explicit.length) return explicit.map((a) => (a.startsWith("http") ? a : `${SITE}${a.startsWith("/") ? "" : "/"}${a}`));
   const all = flag("all");
   const since = option("since");
-  const legacy = flag("legacy") ? await legacyUrls() : [];
+  const legacy = [...(flag("legacy") ? await legacyUrls() : []), ...(flag("town-pages") ? await townPageUrls() : [])];
   if (!all && !since) {
     if (legacy.length) return legacy;
-    fail("say which URLs to send: --since=YYYY-MM-DD, --all, --legacy, or a list of paths. See --help.");
+    fail("say which URLs to send: --since=YYYY-MM-DD, --all, --legacy, --town-pages, or a list of paths. See --help.");
   }
   if (since && !/^\d{4}-\d{2}-\d{2}$/.test(since)) fail(`--since must be a date like 2026-10-05, got "${since}".`);
   const entries = await sitemapEntries(option("sitemap") ?? `${SITE}/sitemap.xml`);

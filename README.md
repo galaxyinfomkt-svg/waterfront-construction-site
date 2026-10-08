@@ -1,6 +1,6 @@
 # Waterfront Construction website
 
-The marketing site of **Waterfront Construction Inc**, an owner-led home remodeling contractor based in
+The marketing site of **Waterfront Construction Inc**, an owner-led general contractor based in
 Northborough, Massachusetts: <https://waterfrontconstructionma.com>.
 
 - **Stack:** Next.js 16.2.7 (App Router, Turbopack), React 19, Tailwind CSS 4, TypeScript.
@@ -62,6 +62,7 @@ matching tag or script is simply not rendered.
 | `lib/site.ts` | **The single source of business facts**: name, phone, address, hours, owner, founding year, confirmed stats, testimonials, the town list and the service-area wording. Owner-supplied fields (HIC and CSL numbers, Maps URL, photos, profiles) render only once they are filled in. |
 | `lib/credentials.ts` | All credential wording (`credentialLine()`, `licensingAnswer()`). Nothing says "licensed" until `site.hic` is set. |
 | `lib/services.ts`, `lib/service-content.ts` | The ten services (`SERVICE_SLUGS` drives every list, in one order): shared data, then the hub-only content (tables, Cost vs. Value benchmarks, permits, FAQs, sources). |
+| `lib/index-policy.ts` | Which service×town pages are indexed. All 2,010 are built and linked, but only towns within `CORE_RADIUS_MI` (15) of Northborough, towns with documented proof (a case study, a testimonial or a row in `JOBS` in `lib/towns.ts`) and paths listed in `SEARCH_CONSOLE_KEEP` are indexable; the rest are `noindex, follow`, carry no JSON-LD and are left out of the sitemaps. To bring a town back: add the owner's completed jobs to `JOBS`, or add a page with Search Console impressions to `SEARCH_CONSOLE_KEEP`. The 201 city hubs are always indexed. After changing it, deploy and run IndexNow with `--town-pages`. |
 | `lib/towns.ts`, `lib/town-geo.ts`, `lib/town-copy.ts`, `lib/local-rules.ts` | Computed town facts (county, straight-line miles, nearest towns), the copy of the service×town pages (one per service and place) and the state rules they cite. Geodata: GeoNames (CC BY 4.0). |
 | `lib/area-copy.ts`, `app/service-areas/[town]/` | The city hubs: one page per place we serve at `/service-areas/<town>`, linking that town's ten service pages. |
 | `lib/projects.ts`, `lib/media-facts.ts`, `lib/media-manifest.json` | Case studies (town level only), video facts and image sizes. |
@@ -188,9 +189,14 @@ node scripts/indexnow.mjs --since=2026-10-05      # URLs whose <lastmod> is on o
 node scripts/indexnow.mjs --all                   # every URL (once, after a big rewrite)
 node scripts/indexnow.mjs /faq /services/decks    # specific pages
 node scripts/indexnow.mjs --legacy                # the retired service URLs that now 308 (old hubs + every old town page)
+node scripts/indexnow.mjs --town-pages            # every service×town page, indexed or noindex (after the index policy changes)
 node scripts/indexnow.mjs --all --dry-run         # list what would be sent, send nothing
 node scripts/indexnow.mjs --all --dry-run --sitemap=http://localhost:3000/sitemap.xml   # test against `npm start`
 ```
+
+**Automatic:** `.github/workflows/indexnow.yml` runs `--since=<3 days ago>` every time Vercel reports a successful
+Production deployment to GitHub. Run it by hand from GitHub → Actions → "IndexNow after production deploy" → Run
+workflow (default arguments `--all --town-pages`).
 
 A `200` or `202` response means the URLs were accepted. `403` means the key file was not found or does not
 match; `422` means a URL is not on this host. Submitted URLs show in Bing Webmaster Tools → IndexNow.

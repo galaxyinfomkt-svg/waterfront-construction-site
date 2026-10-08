@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       args:
-        description: "Arguments for scripts/indexnow.mjs (e.g. --all, or /faq /services/decks)"
+        description: "Arguments for scripts/indexnow.mjs (e.g. --all --town-pages, or /faq /services/decks)"
         required: false
-        default: "--all"
+        default: "--all --town-pages"
 
 permissions:
   contents: read

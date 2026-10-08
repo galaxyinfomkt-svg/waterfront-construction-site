@@ -7,6 +7,7 @@ import { projectTown, cityHubPath, CITY_HUBS_UPDATED } from "@/lib/towns";
 import { townCopy } from "@/lib/town-copy";
 import { areaCopy } from "@/lib/area-copy";
 import { getContent, serviceProjects, projectCardImage } from "@/lib/service-content";
+import { townPageIndexed } from "@/lib/index-policy";
 
 // Sitemaps (audit 07 T02, 09 AEO-H5, 03 M3, 02 L3, 04 §4.4, 05 PG-L1; study 01 §4).
 //
@@ -158,8 +159,9 @@ function pageEntries(): Entry[] {
   ];
 }
 
+// Only the service×town pages offered to search engines (lib/index-policy.ts); the noindex ones stay out.
 function townEntries(s: Service): Entry[] {
-  return allCities.map((c) => {
+  return allCities.filter((c) => townPageIndexed(s.slug, c)).map((c) => {
     const slug = citySlug(c);
     const k = townCopy(s, c); // the page's own data: its visible "Updated" date and the photos it shows
     return { url: url(`/services/${s.slug}/${slug}`), lastmod: lastmod(k.updated.iso), ...withImages(townImages(slug, k)) };

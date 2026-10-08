@@ -13,6 +13,7 @@ import { services, allCities, citySlug, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, townServiceNode, breadcrumbNode, imageNode, placeNode, pageUrl } from "@/lib/schema";
 import { townCopy } from "@/lib/town-copy";
+import { townPageIndexed } from "@/lib/index-policy";
 
 // Service x town pages: 10 services x 201 places (2,010 pages), all prerendered. Every string comes from
 // townCopy() (lib/town-copy.ts), which builds the page only from verifiable data; keep the
@@ -36,7 +37,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { s, c } = resolve(slug, city);
   if (!s || !c) return {};
   const k = townCopy(s, c);
-  return pageMeta({ title: k.title, absoluteTitle: k.titleIsAbsolute, description: k.description, path: k.path, image: k.og });
+  // Outside the indexing policy (lib/index-policy.ts): noindex,follow, still canonical to itself.
+  return pageMeta({ title: k.title, absoluteTitle: k.titleIsAbsolute, description: k.description, path: k.path, image: k.og, noindex: !townPageIndexed(s.slug, c) });
 }
 
 const block = "mt-12 border-t border-line pt-12"; // body blocks are separated by a hairline
@@ -64,7 +66,8 @@ export default async function ServiceTownPage({ params }: Props) {
 
   return (
     <>
-      <JsonLd data={ld} />
+      {/* noindex pages carry no JSON-LD (check:schema R00) */}
+      {townPageIndexed(s.slug, c) && <JsonLd data={ld} />}
 
       {/* HERO — answer-first centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the
           right 5/12 from lg, so the form is above the fold on desktop (V5.3, audit 10 UX-H2). On phones the form follows the
