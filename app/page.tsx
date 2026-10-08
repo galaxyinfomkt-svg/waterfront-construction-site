@@ -24,8 +24,8 @@ import { countyGroups, AREA_SENTENCE } from "./service-areas/areas";
 // Truth rules: real job photos only (stock never), numbers only from lib/site.ts, credentials only via
 // lib/credentials.ts, testimonials verbatim without stars, no HowTo markup (01 C1–C3, H1, L2).
 
-const TITLE = "General Contractor in Northborough, MA: Remodeling, Siding, Decks & Painting";
-const DESCRIPTION = `Owner-led general contractor in Northborough, MA, since ${site.founded}: kitchen & bath remodeling, additions, siding, windows, doors, decks, painting. Free estimates: ${site.phone}.`;
+const TITLE = "General Contractor in Northborough, MA | Waterfront Construction";
+const DESCRIPTION = `Owner-led general contractor in Northborough, MA, since ${site.founded}: kitchens, baths, additions, siding, windows, doors, decks, painting. Free estimates.`;
 const H1 = "General contractor in Northborough, MA";
 // Answer-first entity paragraph: who, what, where (09 AEO-H1 canonical sentences).
 const ENTITY = `${site.name} is an owner-led general contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners across ${serviceArea.short}.`;

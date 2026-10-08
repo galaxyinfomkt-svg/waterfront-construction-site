@@ -1,0 +1,40 @@
+# Tell IndexNow (Bing, and through Bing ChatGPT search and Copilot) which URLs changed, right after each
+# production deploy goes live. Vercel reports its deployments to GitHub; this runs on the successful
+# Production one and submits every sitemap URL whose <lastmod> is from the last 3 days (scripts/indexnow.mjs).
+name: IndexNow after production deploy
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      args:
+        description: "Arguments for scripts/indexnow.mjs (e.g. --all, or /faq /services/decks)"
+        required: false
+        default: "--all"
+
+permissions:
+  contents: read
+
+jobs:
+  indexnow:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Submit changed URLs
+        env:
+          EVENT: ${{ github.event_name }}
+          ARGS: ${{ github.event.inputs.args }}
+        run: |
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            # word-split on purpose: ARGS is a list of flags or paths
+            node scripts/indexnow.mjs $ARGS
+          else
+            node scripts/indexnow.mjs --since=$(date -u -d '3 days ago' +%F)
+          fi

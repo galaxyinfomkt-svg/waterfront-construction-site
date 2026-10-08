@@ -28,7 +28,7 @@ const H1 = "About Waterfront Construction Inc";
 const LEAD = `${site.name} is an owner-led general contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We have completed ${site.projectsCompleted}+ projects in ${site.townsWithProjects}+ towns: kitchens and bathrooms, additions, decks, siding, windows and doors, and painting, across ${serviceArea.short}.`;
 
 export const metadata = pageMeta({
-  title: "About Us: Owner-Led Remodeling Since 2017",
+  title: "About Us: Owner-Led General Contractor Since 2017",
   description: `Founded in Northborough, MA, in ${site.founded} by ${site.owner}, who has ${site.experience}+ years of hands-on construction experience. ${site.projectsCompleted}+ projects completed in ${site.townsWithProjects}+ towns.`,
   path: "/about",
 });

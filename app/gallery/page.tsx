@@ -40,7 +40,7 @@ const INTRO = `${site.name}, an owner-led general contractor founded in ${site.f
 
 
 export const metadata = pageMeta({
-  title: "Remodeling Project Photos & Videos: Real Jobs in MA & NH",
+  title: "Project Photos & Videos: Real Jobs in MA & Southern NH",
   description: `Real job photos and site videos from ${projects.length} case studies, including jobs in ${TOWNS}: remodels, additions and decks.`,
   path: PATH,
   image: ogFor("project-kitchen-remodel-mansfield-ma", imageAlt(projects[0], projects[0].ogSource) || projects[0].title),

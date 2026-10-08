@@ -127,7 +127,7 @@ export function businessFull(o: { contactPoint?: boolean; images?: boolean } = {
     slogan: "From the foundation to the final finish.",
     ...(site.geo ? { geo: { "@type": "GeoCoordinates", latitude: site.geo.lat, longitude: site.geo.lng } } : {}),
     ...(site.mapsUrl ? { hasMap: site.mapsUrl } : {}),
-    sameAs: compact([site.mapsUrl, site.facebook, site.instagram, ...site.profiles]),
+    sameAs: compact([site.mapsUrl || site.gbp, site.facebook, site.instagram, ...site.profiles]),
     openingHoursSpecification: [{ "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "07:00", closes: "18:00" }], // = GBP hours
     areaServed: AREA_SERVED,
     knowsAbout: services.map((s) => s.short),
