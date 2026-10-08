@@ -13,6 +13,8 @@ import { EstimateLink } from "@/components/chrome-client";
 import EstimateForm from "@/components/EstimateForm";
 import FormBand from "@/components/FormBand";
 import CtaRow from "@/components/CtaRow";
+import HeroPhoto from "@/components/HeroPhoto";
+import { PAGE_HERO } from "@/lib/hero-photos";
 
 const TITLE = "Home Improvement & Remodeling Services in Central & Eastern MA";
 const DESCRIPTION = "Kitchens and baths, additions, decks, siding, windows and doors, and painting from one owner-led contractor based in Northborough, MA. Free itemized estimates.";
@@ -52,7 +54,8 @@ export default function ServicesPage() {
 
       {/* HERO — centered text on the left; the bare estimate form (the page's ONE EstimateForm) in the right column from lg,
           after the hero text on phones. The /contact#estimate links are EstimateLinks: they jump to this form. */}
-      <section className="page-head">
+      <section className="page-head page-head--photo">
+        <HeroPhoto img={PAGE_HERO.services} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

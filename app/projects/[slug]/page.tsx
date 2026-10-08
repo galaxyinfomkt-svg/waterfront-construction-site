@@ -18,6 +18,8 @@ import type { ServiceSlug } from "@/lib/services";
 import { VIDEO_FACTS, PROJECT_PUBLISHED } from "@/lib/media-facts";
 import { pageMeta, ogFor } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, projectNodes, pageUrl, type Crumb } from "@/lib/schema";
+import HeroPhoto from "@/components/HeroPhoto";
+import { projectHero, PAGE_HERO } from "@/lib/hero-photos";
 
 // /projects/[slug] — a truthful case study (audit 05 PG-H1…PG-M6, 08 §5.7, 10 H1/L3/L4/M3):
 // answer-first summary, facts computed from data (town, county, distance, media counts), what we did,
@@ -225,7 +227,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       {/* HERO — centered text first, with the cover photo (or, on a video-only job, the first clip) under it on the left (7/12);
           the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg. On phones the form follows
           the hero text, then the photo. */}
-      <section className="page-head">
+      <section className="page-head page-head--photo">
+        <HeroPhoto img={projectHero(p.slug) ?? PAGE_HERO.gallery} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 lg:row-start-1 min-w-0">
             <Breadcrumbs items={crumbs} />

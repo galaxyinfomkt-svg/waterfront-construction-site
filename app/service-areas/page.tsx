@@ -22,13 +22,15 @@ import {
   countyGroups, documentedTowns, unplacedProjects, distanceBands, isDevensCity, testimonialAnchor,
   MUNICIPALITIES, COUNTIES, NEAREST, FARTHEST, PLACES, type CountyGroup,
 } from "./areas";
+import HeroPhoto from "@/components/HeroPhoto";
+import { PAGE_HERO } from "@/lib/hero-photos";
 
 // /service-areas — the geographic hub (Home > Service Areas > county > town). Server-rendered: every served place
 // links once, to its own city hub (/service-areas/{town}, which links that place's ten service pages), grouped by
 // county (spec §5.6, D5; audit 06 ST-H3, 09 AEO-H6-d, 07 T01).
 
 const H1 = "Towns we serve from Northborough, MA";
-const DESCRIPTION = `We take remodeling projects in ${MUNICIPALITIES} cities and towns across ${COUNTIES} counties of Massachusetts and southern New Hampshire, with completed projects in ${site.townsWithProjects}+ of them.`;
+const DESCRIPTION = `We take home improvement and remodeling projects in ${MUNICIPALITIES} cities and towns across ${COUNTIES} counties of Massachusetts and southern New Hampshire, with completed projects in ${site.townsWithProjects}+ of them.`;
 
 export const metadata = pageMeta({ title: "Towns We Serve in MA & Southern NH", description: DESCRIPTION, path: "/service-areas" });
 
@@ -50,7 +52,7 @@ const areaFaqs: FaqEntry[] = [
   {
     id: "my-town",
     q: "Do you work in my town?",
-    a: `If your town is listed on this page, yes: we take remodeling projects there. Each town has its own page with all ${servicesCountWord} of our services, its distance from Northborough and who issues building permits there; each service also has a page for every town.`,
+    a: `If your town is listed on this page, yes: we take home improvement and remodeling projects there. Each town has its own page with all ${servicesCountWord} of our services, its distance from Northborough and who issues building permits there; each service also has a page for every town.`,
   },
   {
     id: "not-listed",
@@ -150,7 +152,8 @@ export default function ServiceAreasPage() {
 
       {/* HEADER — centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right
           5/12 from lg, after the hero text on phones. */}
-      <section className="page-head" data-cta-zone>
+      <section className="page-head page-head--photo" data-cta-zone>
+        <HeroPhoto img={PAGE_HERO.serviceAreas} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

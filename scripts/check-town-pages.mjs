@@ -23,8 +23,9 @@ const MIN_PLACES = 201;
 const dec = (s) => s.replace(/&amp;/g, "&").replace(/&#x27;|&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 // Repeated template chrome inside <main> (the mid-page estimate band and the CTA rows, marked data-form-band /
 // data-cta-row) is identical on every page of the site, like the header and footer, so it is left out of the measure.
+// So is the header photo credit (data-photo-credit, components/HeroPhoto.tsx): one line per service, the same on its 201 pages.
 // The lazy regexes assume no nested <section> inside the band and no nested <div> inside a CTA row (true today).
-const chrome = (m) => m.replace(/<section[^>]*\sdata-form-band[^>]*>[\s\S]*?<\/section>/g, " ").replace(/<div[^>]*\sdata-cta-row[^>]*>[\s\S]*?<\/div>/g, " ");
+const chrome = (m) => m.replace(/<section[^>]*\sdata-form-band[^>]*>[\s\S]*?<\/section>/g, " ").replace(/<div[^>]*\sdata-cta-row[^>]*>[\s\S]*?<\/div>/g, " ").replace(/<p[^>]*\sdata-photo-credit[^>]*>[\s\S]*?<\/p>/g, " ");
 const main = (h) => { let m = h.split("<main")[1] || ""; m = chrome(m.slice(m.indexOf(">") + 1).split("</main>")[0]); return dec(m.replace(/<script[\s\S]*?<\/script>/g, " ").replace(/<style[\s\S]*?<\/style>/g, " ").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim(); };
 const meta = (h, re) => dec((h.match(re) || [])[1] || "");
 const sh = (t) => { const w = t.toLowerCase().replace(/[^a-z0-9$%&' ]+/g, " ").split(/\s+/).filter(Boolean); const s = new Set(); for (let i = 0; i + 5 <= w.length; i++) s.add(w.slice(i, i + 5).join(" ")); return s; };

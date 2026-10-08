@@ -18,6 +18,8 @@ import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, BUSINESS_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
 import { projectCardImage } from "@/lib/service-content";
 import { countyGroups, AREA_SENTENCE } from "../service-areas/areas";
+import HeroPhoto from "@/components/HeroPhoto";
+import { PAGE_HERO } from "@/lib/hero-photos";
 
 // /about — the company entity page (audit 06 ST-H1/ST-C2, 09 AEO-H1/H2, 08 §5.9).
 // Only facts from lib/site.ts, lib/credentials.ts and the documented projects. No stock photo anywhere
@@ -77,7 +79,8 @@ export default function AboutPage() {
 
       {/* HEADER — text-only page head (no stock photo). Centered text on the left (7/12); the bare estimate form (the
           page's ONE EstimateForm) in the right 5/12 from lg, after the hero text on phones. */}
-      <section className="page-head" data-cta-zone>
+      <section className="page-head page-head--photo" data-cta-zone>
+        <HeroPhoto img={PAGE_HERO.about} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

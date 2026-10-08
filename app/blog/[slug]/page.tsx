@@ -17,6 +17,8 @@ import CtaRow from "@/components/CtaRow";
 import { pageMeta, ogFor, SITE_URL } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, imageNode, placeNode, serviceId, pageUrl, OWNER_PAGE, BUSINESS_ID, type Crumb } from "@/lib/schema";
 import { HeadlineSet, PostBlock, PostFigure, Rich, formatDate, plain, readTime, sameDay, wordCount } from "../_lib/content";
+import HeroPhoto from "@/components/HeroPhoto";
+import { SERVICE_HERO } from "@/lib/hero-photos";
 
 export const dynamicParams = false;
 
@@ -136,7 +138,8 @@ export default async function PostPage({ params }: Props) {
 
       {/* HERO — centered text in the left 7/12 (audit B-14: the H1 is the LCP element, no decorative stock photo); the
           bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg, after the hero text on phones. */}
-      <section className="page-head">
+      <section className="page-head page-head--photo">
+        <HeroPhoto img={SERVICE_HERO[p.related.services[0] ?? "home-additions"]} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

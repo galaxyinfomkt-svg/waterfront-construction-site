@@ -13,6 +13,8 @@ import { pageGraph, webPageNode, breadcrumbNode, BUSINESS_ID, type Crumb } from 
 import FaqList from "../faq/FaqList";
 import ServiceAreaMap from "../service-areas/ServiceAreaMap";
 import { documentedTowns } from "../service-areas/areas";
+import HeroPhoto from "@/components/HeroPhoto";
+import { PAGE_HERO } from "@/lib/hero-photos";
 
 // /contact — ContactPage + contactPoint (audit 06 ST-M1, 08 §5.11, 10 UX-H2).
 // The GHL form sits bare in the hero, beside the H1 (<EstimateForm />: id="estimate" + data-estimate-form, the
@@ -64,7 +66,8 @@ export default function ContactPage() {
 
       {/* HERO — centered text on the left (7/12); the bare estimate form in the right 5/12 from lg, right after the
           hero text on phones (UX-H2). */}
-      <section className="page-head">
+      <section className="page-head page-head--photo">
+        <HeroPhoto img={PAGE_HERO.contact} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

@@ -123,7 +123,7 @@ export function areaCopy(c: City): AreaCopy {
   const jobs: Job[] = jobsIn(c); // owner's completed-job records here (phase 2; empty today)
 
   // ----- answer-first summary (spec §5.3-1) -----
-  const offer = `We take remodeling projects in ${TL}: ${servicesCountWord} services, from siding and windows to kitchens, bathrooms and additions.`;
+  const offer = `We take home improvement and remodeling projects in ${TL}: ${servicesCountWord} services, from siding and windows to kitchens, bathrooms and additions.`;
   const where = base ? `Northborough is our home base${site.showStreet ? `, at ${site.street}` : ""}, in ${county}.`
     : devens ? `Devens, a regional enterprise zone on the former Fort Devens across parts of Ayer, Harvard and Shirley, is about ${mi} miles ${dir} of our Northborough base; building permits there come from the Devens Enterprise Commission.`
     : parent ? `${T} is a village in the town of ${parent.n}, ${county}, about ${mi} miles ${dir} of our Northborough base.`

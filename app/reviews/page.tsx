@@ -12,6 +12,8 @@ import EstimateForm from "@/components/EstimateForm";
 import FormBand from "@/components/FormBand";
 import CtaRow from "@/components/CtaRow";
 import { EstimateLink } from "@/components/chrome-client";
+import HeroPhoto from "@/components/HeroPhoto";
+import { PAGE_HERO } from "@/lib/hero-photos";
 
 // /reviews — real client testimonials, published with their permission (owner decision 1).
 // Never add Review / AggregateRating markup here or on the business node: self-serving reviews are not
@@ -99,7 +101,8 @@ export default function ReviewsPage() {
 
       {/* HERO — centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right 5/12
           from lg, after the hero text on phones. */}
-      <section className="page-head" data-cta-zone>
+      <section className="page-head page-head--photo" data-cta-zone>
+        <HeroPhoto img={PAGE_HERO.reviews} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

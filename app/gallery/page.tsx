@@ -12,6 +12,8 @@ import { pageMeta, ogFor } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, pageUrl, type Crumb } from "@/lib/schema";
 import { projects, featuredImages, imageAlt, mediaCount, type GalleryCategory, type Project } from "@/lib/projects";
 import { projectTown, townFacts } from "@/lib/towns";
+import HeroPhoto from "@/components/HeroPhoto";
+import { PAGE_HERO } from "@/lib/hero-photos";
 
 // /gallery ("Projects" in the nav) — the index of the documented case studies. Real job photos only: every
 // tile comes from lib/projects.ts and links to its case study; no stock images (audit 05 PG-C1). Title,
@@ -35,7 +37,7 @@ const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "e
 const word = (n: number) => WORDS[n] ?? String(n);
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-const H1 = "Our Remodeling Projects: Real Photos and Site Videos";
+const H1 = "Our Projects: Real Photos and Site Videos";
 const INTRO = `${site.name}, an owner-led general contractor founded in ${site.founded} and based in Northborough, MA, has completed ${site.projectsCompleted}+ projects. ${cap(word(projects.length))} of them are documented here as case studies with our own photos and site videos. ${cap(word(located.length))} are from jobs in ${TOWNS}, between ${MIN} and ${MAX} miles from our base${UNLOCATED ? `; for the other ${word(UNLOCATED)}, the town is not listed` : ""}.`;
 
 
@@ -117,7 +119,8 @@ export default function GalleryPage() {
       <JsonLd data={ld} />
       {/* HERO — centered text in the left 7/12; the bare estimate form (the page's ONE EstimateForm) in the right 5/12 from lg,
           after the hero text on phones. */}
-      <section className="page-head">
+      <section className="page-head page-head--photo">
+        <HeroPhoto img={PAGE_HERO.gallery} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

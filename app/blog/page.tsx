@@ -14,6 +14,8 @@ import FormBand from "@/components/FormBand";
 import CtaRow from "@/components/CtaRow";
 import { EstimateLink } from "@/components/chrome-client";
 import { formatDate, sameDay } from "./_lib/content";
+import HeroPhoto from "@/components/HeroPhoto";
+import { PAGE_HERO } from "@/lib/hero-photos";
 
 const H1 = "Remodeling cost guides & advice for Massachusetts homeowners";
 const DESCRIPTION =
@@ -166,7 +168,8 @@ export default function BlogPage() {
       <JsonLd data={blogGraph()} />
       {/* HERO — centered text in the left 7/12; the bare estimate form (the page's ONE EstimateForm) in the right 5/12
           from lg, after the hero text on phones. */}
-      <section className="page-head">
+      <section className="page-head page-head--photo">
+        <HeroPhoto img={PAGE_HERO.blog} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

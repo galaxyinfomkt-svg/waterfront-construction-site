@@ -13,6 +13,8 @@ import { allCities, citySlug, cityLabel, site } from "@/lib/site";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, imageNode, placeNode, pageUrl } from "@/lib/schema";
 import { areaCopy } from "@/lib/area-copy";
+import HeroPhoto from "@/components/HeroPhoto";
+import { townHero } from "@/lib/hero-photos";
 
 // City hubs: one page per served place (201: cities and towns, villages and Devens), all prerendered (spec §5).
 // Every string comes from areaCopy() (lib/area-copy.ts), built only from verifiable data; keep the rendered order in
@@ -74,7 +76,8 @@ export default async function CityHubPage({ params }: Props) {
 
       {/* HERO — answer-first centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the
           right 5/12 from lg. On phones the form follows the summary and the call buttons, before the testimonial. */}
-      <section className="page-head">
+      <section className="page-head page-head--photo">
+        <HeroPhoto img={townHero(c)} />
         <div className="container-x py-8 md:py-10 grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-12 lg:grid-rows-[auto_1fr]">
           <div className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-1">
             <Breadcrumbs items={k.crumbs} />

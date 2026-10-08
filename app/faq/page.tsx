@@ -11,6 +11,8 @@ import EstimateForm from "@/components/EstimateForm";
 import FormBand from "@/components/FormBand";
 import CtaRow from "@/components/CtaRow";
 import { EstimateLink } from "@/components/chrome-client";
+import HeroPhoto from "@/components/HeroPhoto";
+import { PAGE_HERO } from "@/lib/hero-photos";
 
 // /faq — the pre-hire answer hub (audit 09 AEO-H6-a, AEO-M3). Since GBP Q&A was retired, engines answer
 // "is this contractor registered / how much / do they work in my town" from website text. Every answer is
@@ -60,7 +62,8 @@ export default function FaqPage() {
 
       {/* HERO — centered text and topic chips on the left (7/12); the bare estimate form (the page's ONE EstimateForm)
           in the right 5/12 from lg, after the hero text on phones. */}
-      <section className="page-head" data-cta-zone>
+      <section className="page-head page-head--photo" data-cta-zone>
+        <HeroPhoto img={PAGE_HERO.faq} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

@@ -14,6 +14,8 @@ import { hasCsl } from "@/lib/credentials";
 import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, breadcrumbNode, ownerNode, OWNER_ID, OWNER_PAGE, type Crumb } from "@/lib/schema";
 import { projectCardImage } from "@/lib/service-content";
+import HeroPhoto from "@/components/HeroPhoto";
+import { PAGE_HERO } from "@/lib/hero-photos";
 
 // /about/ernando-nunes — the ONE owner entity page (ProfilePage, Person @id = OWNER_ID). It is the author /
 // reviewer URL used by the blog and the founder of the business node (audit 08 §5.10, 09 AEO-H2, 04 B-03).
@@ -64,7 +66,8 @@ export default function OwnerPage() {
 
       {/* HERO — centered text on the left (7/12), the portrait centered above the H1; the bare estimate form (the page's
           ONE EstimateForm) in the right 5/12 from lg, after the hero text on phones. */}
-      <section className="page-head" data-cta-zone>
+      <section className="page-head page-head--photo" data-cta-zone>
+        <HeroPhoto img={PAGE_HERO.owner} />
         <div className="container-x pt-10 pb-14 md:pt-14 md:pb-20 grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

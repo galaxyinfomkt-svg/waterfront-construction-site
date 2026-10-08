@@ -20,6 +20,8 @@ import {
   LEAD_SAFE_RULES, LEAD_SAFE_OUTRO, LEAD_SAFE_HREF, CVV_CREDIT, CVV_LABEL, SOURCES, usd, benchmarkGlance, type Table,
 } from "@/lib/service-content";
 import MEDIA from "@/lib/media-manifest.json";
+import HeroPhoto from "@/components/HeroPhoto";
+import { SERVICE_HERO } from "@/lib/hero-photos";
 
 export const dynamicParams = false;
 
@@ -113,7 +115,8 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
   const caseStudies = serviceProjects(s.slug);
   // Never show the same photo twice on a page: lead photo ("Our work") then case-study cards then the rest of the gallery.
   // (app/sitemap/entries.ts mirrors this order for the image sitemap.)
-  const shown = new Set<string>(hero ? [hero.src] : []);
+  // The header photo (SERVICE_HERO) counts as shown too, so the gallery never repeats it.
+  const shown = new Set<string>([SERVICE_HERO[s.slug].src, ...(hero ? [hero.src] : [])]);
   const cards = caseStudies.map((p) => {
     const im = projectCardImage(p, shown);
     shown.add(im.src);
@@ -194,7 +197,8 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
       {/* HERO — answer-first centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the right
           5/12 from lg, so the form is above the fold on desktop (V5.3, audit 10 UX-H2), and after the hero text on phones.
           The real job photo that used to sit here leads the "Our work" section below. */}
-      <section className="page-head">
+      <section className="page-head page-head--photo">
+        <HeroPhoto img={SERVICE_HERO[s.slug]} />
         <div className="container-x py-8 md:py-10 grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-12">
           <div className="lg:col-span-7 min-w-0">
             <Breadcrumbs items={crumbs} />

@@ -14,6 +14,8 @@ import { pageMeta } from "@/lib/seo";
 import { pageGraph, webPageNode, townServiceNode, breadcrumbNode, imageNode, placeNode, pageUrl } from "@/lib/schema";
 import { townCopy } from "@/lib/town-copy";
 import { townPageIndexed } from "@/lib/index-policy";
+import HeroPhoto from "@/components/HeroPhoto";
+import { SERVICE_HERO } from "@/lib/hero-photos";
 
 // Service x town pages: 10 services x 201 places (2,010 pages), all prerendered. Every string comes from
 // townCopy() (lib/town-copy.ts), which builds the page only from verifiable data; keep the
@@ -72,7 +74,8 @@ export default async function ServiceTownPage({ params }: Props) {
       {/* HERO — answer-first centered text on the left (7/12); the bare estimate form (the page's ONE EstimateForm) in the
           right 5/12 from lg, so the form is above the fold on desktop (V5.3, audit 10 UX-H2). On phones the form follows the
           summary and the call buttons, before the testimonial. The case-study photo leads the proof section. */}
-      <section className="page-head">
+      <section className="page-head page-head--photo">
+        <HeroPhoto img={SERVICE_HERO[s.slug]} />
         <div className="container-x py-8 md:py-10 grid grid-cols-1 gap-y-8 lg:grid-cols-12 lg:gap-x-12 lg:grid-rows-[auto_1fr]">
           <div className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-1">
             <Breadcrumbs items={k.crumbs} />
