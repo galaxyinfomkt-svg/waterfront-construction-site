@@ -177,7 +177,7 @@ export default function BlogPage() {
               <Link href="/about" className="link">
                 {site.name}
               </Link>
-              , an owner-led remodeling contractor based in Northborough, Massachusetts, founded in {site.founded} by{" "}
+              , an owner-led general contractor based in Northborough, Massachusetts, founded in {site.founded} by{" "}
               <Link href={OWNER_PAGE} className="link">
                 {site.owner}
               </Link>

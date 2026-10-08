@@ -269,8 +269,8 @@ export function townCopy(s: { slug: string; name: string }, c: City): TownCopy {
 
   // ----- answer-first summary (§3.5-A): service + place, where it is, the strongest true proof -----
   const offer = base
-    ? `Waterfront Construction Inc, an owner-led home remodeling contractor, is based in Northborough${site.showStreet ? `, at ${site.street}` : ""} (${county}), and offers ${L.noun} here in its home town.`
-    : `Waterfront Construction Inc, an owner-led home remodeling contractor, offers ${L.noun} in ${TL}.`;
+    ? `Waterfront Construction Inc, an owner-led general contractor, is based in Northborough${site.showStreet ? `, at ${site.street}` : ""} (${county}), and offers ${L.noun} here in its home town.`
+    : `Waterfront Construction Inc, an owner-led general contractor, offers ${L.noun} in ${TL}.`;
   const where = base ? ""
     : devens ? `Devens, a regional enterprise zone on the former Fort Devens, is about ${mi} miles ${dir} of our Northborough base; building permits there come from the Devens Enterprise Commission.`
     : parent ? `${T} is a village in the town of ${parent.n}, ${county}, about ${mi} miles ${dir} of our Northborough base.`

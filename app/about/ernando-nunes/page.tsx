@@ -29,7 +29,7 @@ const NAME = site.owner;
 // ONE role string everywhere (V2.3): <title>, og/twitter title, the visible role line, ProfilePage.name and the
 // Person.jobTitle all come from lib/schema.ts ownerNode().jobTitle ("Owner & Lead Builder").
 const ROLE = String(ownerNode().jobTitle);
-const LEAD = `${NAME} is the owner of ${site.name}, a home remodeling contractor based in Northborough, Massachusetts. He founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience.`;
+const LEAD = `${NAME} is the owner of ${site.name}, a general contractor based in Northborough, Massachusetts. He founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience.`;
 
 export const metadata = pageMeta({
   title: `${NAME}, ${ROLE} | Waterfront Construction`, // keeps the company in the title (61 chars)

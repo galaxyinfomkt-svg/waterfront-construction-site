@@ -100,7 +100,7 @@ export function SiteFooter() {
             <Image src="/logo-header.png" alt={site.name} width={497} height={349} sizes="92px" className="h-14 w-auto" />
           </Link>
           <p className="mt-5 mx-auto text-sm text-muted max-w-[34ch]">
-            Owner-led home remodeling contractor based in Northborough, MA, since {site.founded}. From the foundation to the final finish.
+            Owner-led general contractor based in Northborough, MA, since {site.founded}. From the foundation to the final finish.
           </p>
           <div className="mt-5 flex justify-center gap-3">
             <a href={site.facebook} target="_blank" rel="noopener" aria-label="Waterfront Construction on Facebook" className={social}>

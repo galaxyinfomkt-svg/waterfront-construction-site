@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: site.shortName,
     short_name: "Waterfront",
-    description: `Owner-led home remodeling contractor in Northborough, MA, serving ${serviceArea.short}.`,
+    description: `Owner-led general contractor in Northborough, MA, serving ${serviceArea.short}.`,
     id: "/",
     start_url: "/",
     lang: "en-US",

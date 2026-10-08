@@ -253,7 +253,7 @@ export default async function PostPage({ params }: Props) {
               <section aria-labelledby="author" className="author-box">
                 <h2 id="author">About the publisher</h2>
                 <p>
-                  <Link href="/about">{site.name}</Link> is an owner-led home remodeling contractor based in Northborough, Massachusetts, founded in {site.founded} by <Link href={OWNER_PAGE}>{site.owner}</Link>, who has {site.experience}+ years of hands-on construction experience. Figures in this guide come from the sources listed above.
+                  <Link href="/about">{site.name}</Link> is an owner-led general contractor based in Northborough, Massachusetts, founded in {site.founded} by <Link href={OWNER_PAGE}>{site.owner}</Link>, who has {site.experience}+ years of hands-on construction experience. Figures in this guide come from the sources listed above.
                 </p>
                 {(hasHic || hasCsl) && <p>{credentialLine({ insured: false })}</p>}
                 <p>

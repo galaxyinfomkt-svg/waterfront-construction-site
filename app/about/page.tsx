@@ -25,7 +25,7 @@ import { countyGroups, AREA_SENTENCE } from "../service-areas/areas";
 // languages, crew, warranty, deposit and payment policies — are omitted until supplied, never placeholders.
 
 const H1 = "About Waterfront Construction Inc";
-const LEAD = `${site.name} is an owner-led home remodeling contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We have completed ${site.projectsCompleted}+ projects in ${site.townsWithProjects}+ towns: kitchens and bathrooms, additions, decks, siding, windows and doors, and painting, across ${serviceArea.short}.`;
+const LEAD = `${site.name} is an owner-led general contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We have completed ${site.projectsCompleted}+ projects in ${site.townsWithProjects}+ towns: kitchens and bathrooms, additions, decks, siding, windows and doors, and painting, across ${serviceArea.short}.`;
 
 export const metadata = pageMeta({
   title: "About Us: Owner-Led Remodeling Since 2017",

@@ -569,7 +569,7 @@ export default async function ServiceHub({ params }: { params: Promise<{ slug: s
           </ol>
           <p className={`mt-4 text-[13px] text-muted ${note}`}>Code and permit details are general: your town&apos;s building department has the final word on what applies to your project.</p>
           <p className={`mt-6 text-sm text-muted ${note}`}>
-            Published by Waterfront Construction Inc, an owner-led home remodeling contractor based in Northborough, Massachusetts.{" "}
+            Published by Waterfront Construction Inc, an owner-led general contractor based in Northborough, Massachusetts.{" "}
             <Link href={OWNER_PAGE} className="link">{site.owner}</Link> has {site.experience}+ years of hands-on construction experience and founded the company in {site.founded}.
             {c.reviewedOn && <> Reviewed by {site.owner} on <time dateTime={c.reviewedOn} className="whitespace-nowrap">{fmtDate(c.reviewedOn)}</time>.</>}
             {" "}Updated <time dateTime={s.updated} className="whitespace-nowrap">{updated}</time>.

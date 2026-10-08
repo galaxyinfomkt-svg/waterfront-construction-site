@@ -152,7 +152,7 @@ if (wanted("og-default")) {
   <rect y="${H - 12}" width="${W}" height="12" fill="#1f7a3a"/>
   <g font-family="Liberation Sans, DejaVu Sans, Arial, sans-serif" fill="#ffffff">
     <text x="420" y="232" font-size="60" font-weight="700">Waterfront Construction</text>
-    <text x="420" y="282" font-size="31" fill="#d6e6f5">Remodeling Contractor · Northborough, MA</text>
+    <text x="420" y="282" font-size="31" fill="#d6e6f5">General Contractor · Northborough, MA</text>
     <rect x="420" y="306" width="250" height="50" rx="25" fill="#1f7a3a"/>
     <text x="545" y="339" font-size="23" font-weight="700" text-anchor="middle">Free Estimates</text>
     <text x="420" y="402" font-size="27">Kitchens · Baths · Additions · Decks · Siding · Windows</text>

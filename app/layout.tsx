@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
   description:
-    "Owner-led home remodeling contractor in Northborough, MA, founded in 2017: kitchens and bathrooms, additions, decks, siding, windows and doors, and painting. Free estimates: (508) 816-2726.",
+    "Owner-led general contractor in Northborough, MA, founded in 2017: kitchens and bathrooms, additions, decks, siding, windows and doors, and painting. Free estimates: (508) 816-2726.",
   applicationName: SITE_NAME,
   // Indexing is the default, so no site-wide "index, follow" (it leaked next to Next's own noindex on the
   // 404 page). Only the Googlebot preview limits are set here; noindex pages override robots entirely.

@@ -14,10 +14,10 @@ import EstimateForm from "@/components/EstimateForm";
 import FormBand from "@/components/FormBand";
 import CtaRow from "@/components/CtaRow";
 
-const TITLE = "Home Remodeling Services in Central & Eastern MA";
+const TITLE = "Home Improvement & Remodeling Services in Central & Eastern MA";
 const DESCRIPTION = "Kitchens and baths, additions, decks, siding, windows and doors, and painting from one owner-led contractor based in Northborough, MA. Free itemized estimates.";
-const H1 = "Home Remodeling Services in Central & Eastern Massachusetts";
-const LEAD = `Waterfront Construction Inc is an owner-led home remodeling contractor based in Northborough, Massachusetts, founded in ${site.founded} by ${site.owner}, who has ${site.experience}+ years of hands-on construction experience. We offer the ${servicesCountWord} services below to homeowners across ${serviceArea.short}. Every project starts with a free, itemized estimate.`;
+const H1 = "Home Improvement & Remodeling Services in Central & Eastern Massachusetts";
+const LEAD = `Waterfront Construction Inc is an owner-led general contractor based in Northborough, Massachusetts, founded in ${site.founded} by ${site.owner}, who has ${site.experience}+ years of hands-on construction experience. We offer the ${servicesCountWord} services below to homeowners across ${serviceArea.short}. Every project starts with a free, itemized estimate.`;
 
 export const metadata = pageMeta({ title: TITLE, description: DESCRIPTION, path: "/services" });
 
@@ -34,7 +34,7 @@ const ld = pageGraph([
   webPageNode({
     path: "/services", type: "CollectionPage", name: H1, description: DESCRIPTION,
     mainEntity: {
-      "@type": "ItemList", name: "Home remodeling services", numberOfItems: services.length,
+      "@type": "ItemList", name: "Home improvement and remodeling services", numberOfItems: services.length,
       itemListElement: services.map((s, i) => ({
         "@type": "ListItem", position: i + 1,
         item: { "@type": "Service", "@id": serviceId(s.slug), name: s.short, url: pageUrl(`/services/${s.slug}`) },

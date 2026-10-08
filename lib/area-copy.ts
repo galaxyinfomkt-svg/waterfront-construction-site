@@ -200,12 +200,12 @@ export function areaCopy(c: City): AreaCopy {
   const nearby: LinkItem[] = f.nearest.map((n) => ({ href: cityHubPath(n.city), label: cityLabel(n.city), meta: `${n.miles} mi ${n.dir}` }));
 
   // ----- metadata (spec §5.2): never equal to a service×town description (those start with "{L.title} in") -----
-  const core = `Remodeling Contractor in ${TL}`;
+  const core = `General Contractor in ${TL}`;
   const titleIsAbsolute = core.length + " | Waterfront Construction".length > 60;
   const [n1, n2] = f.nearest;
   const firstSame = same[0];
   const parts = [
-    base ? `Remodeling contractor in ${CL}, our home base.` : `Remodeling contractor for ${CL} (${county}), about ${mi} mi ${dir} of our Northborough base.`,
+    base ? `General contractor in ${CL}, our home base.` : `General contractor for ${CL} (${county}), about ${mi} mi ${dir} of our Northborough base.`,
     firstSame ? `See our ${firstSame.project.category.toLowerCase()} case study from ${T}.`
       : quoteT ? `Read what a ${T} client said.`
       : nearestElsewhere ? `Nearest case study: ${cityLabel(nearestElsewhere.town)}, ${nearestElsewhere.miles} mi.` : "",

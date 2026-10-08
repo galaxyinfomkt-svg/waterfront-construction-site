@@ -51,7 +51,7 @@ const E = {
   whatWeDo: {
     id: "what-we-do",
     q: "What does Waterfront Construction do?",
-    a: `${site.name} is an owner-led home remodeling contractor based in Northborough, Massachusetts. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners in Massachusetts and southern New Hampshire.`,
+    a: `${site.name} is an owner-led general contractor based in Northborough, Massachusetts. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners in Massachusetts and southern New Hampshire.`,
     links: [{ href: "/services", label: `All ${servicesCountWord} services` }],
   },
   owner: {

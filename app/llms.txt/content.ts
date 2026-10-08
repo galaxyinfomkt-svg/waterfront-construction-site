@@ -46,10 +46,10 @@ export function textResponse(body: string) {
 
 // ---------- entity ----------
 /** The entity paragraph: the same sentences as the home page lead (app/page.tsx). */
-export const ENTITY = `${site.name} is an owner-led home remodeling contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners across ${serviceArea.short}.`;
+export const ENTITY = `${site.name} is an owner-led general contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners across ${serviceArea.short}.`;
 
 /** The brand name is also a generic industry term; say which entity this is. */
-export const NAME_NOTE = `About the name: "waterfront construction" is also a general term for marine work such as docks, piers and seawalls. This file is about ${site.name}, the home remodeling contractor in Northborough, Massachusetts, whose website is ${SITE_URL}.`;
+export const NAME_NOTE = `About the name: "waterfront construction" is also a general term for marine work such as docks, piers and seawalls. This file is about ${site.name}, the general contractor in Northborough, Massachusetts, whose website is ${SITE_URL}.`;
 
 const VILLAGES = allCities.filter((c) => VILLAGE_OF[citySlug(c)]).length;
 const HAS_DEVENS = allCities.some((c) => citySlug(c) === DEVENS);
@@ -60,7 +60,7 @@ export function keyFacts(): string[] {
   const address = site.showStreet ? site.address : `${site.locality}, ${site.region} ${site.postalCode}`;
   return [
     `- Business name: ${site.name}`,
-    "- What it is: an owner-led home remodeling contractor (kitchens and bathrooms, home additions, decks, siding, windows and doors, interior and exterior painting)",
+    "- What it is: an owner-led general contractor (kitchens and bathrooms, home additions, decks, siding, windows and doors, interior and exterior painting)",
     `- Owner: ${link(site.owner, "/about/ernando-nunes")}, who founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience`,
     `- Based in: ${serviceArea.base}`,
     `- Address: ${address}`,

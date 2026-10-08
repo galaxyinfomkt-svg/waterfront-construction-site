@@ -119,7 +119,7 @@ export function businessFull(o: { contactPoint?: boolean; images?: boolean } = {
     ...businessStub(),
     ...(site.legalName ? { legalName: site.legalName } : {}),
     alternateName: site.shortName,
-    description: `Owner-led home remodeling contractor based in Northborough, Massachusetts, founded in ${site.founded} by Ernando Nunes. Kitchens and bathrooms, home additions, decks, siding, windows and doors, and painting for homeowners in ${AREA_FACTS.municipalities} cities and towns across ${AREA_FACTS.counties} counties of Massachusetts and southern New Hampshire.`,
+    description: `Owner-led general contractor based in Northborough, Massachusetts, founded in ${site.founded} by Ernando Nunes. Kitchens and bathrooms, home additions, decks, siding, windows and doors, and painting for homeowners in ${AREA_FACTS.municipalities} cities and towns across ${AREA_FACTS.counties} counties of Massachusetts and southern New Hampshire.`,
     ...(o.images ? { image: BIZ_IMAGES.map((src) => ref(abs(src))) } : {}),
     email: site.email,
     foundingDate: String(site.founded),
@@ -134,7 +134,7 @@ export function businessFull(o: { contactPoint?: boolean; images?: boolean } = {
     knowsLanguage: site.languages,
     ...(site.paymentAccepted ? { paymentAccepted: site.paymentAccepted } : {}),
     hasOfferCatalog: {
-      "@type": "OfferCatalog", name: "Home remodeling services",
+      "@type": "OfferCatalog", name: "Home improvement and remodeling services",
       itemListElement: services.map((s) => ({ "@type": "Offer", itemOffered: { "@type": "Service", "@id": serviceId(s.slug), name: s.short, url: `${SITE_URL}/services/${s.slug}` } })),
     },
     ...(o.contactPoint ? { contactPoint: { "@type": "ContactPoint", contactType: "customer service", telephone: "+1-508-816-2726", email: site.email, areaServed: ["US-MA", "US-NH"], availableLanguage: site.languages, hoursAvailable: { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], opens: "07:00", closes: "18:00" } } } : {}),

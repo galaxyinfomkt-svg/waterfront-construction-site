@@ -20,15 +20,15 @@ import { pageGraph, webPageNode, imageNode, BUSINESS_ID, OWNER_PAGE } from "@/li
 import FaqList from "./faq/FaqList";
 import { countyGroups, AREA_SENTENCE } from "./service-areas/areas";
 
-// Home (/). Owns "remodeling contractor Northborough MA" + the brand entity (audit 01 H3/H6, 09 AEO-H2).
+// Home (/). Owns "general contractor Northborough MA" (every service, inside and outside the house, not remodeling alone) + the brand entity (audit 01 H3/H6, 09 AEO-H2).
 // Truth rules: real job photos only (stock never), numbers only from lib/site.ts, credentials only via
 // lib/credentials.ts, testimonials verbatim without stars, no HowTo markup (01 C1–C3, H1, L2).
 
-const TITLE = "Remodeling Contractor in Northborough, MA | Waterfront Construction";
-const DESCRIPTION = `Owner-led remodeling contractor in Northborough, MA, since ${site.founded}: kitchens, baths, additions, decks, siding, windows, painting. Free estimates: ${site.phone}.`;
-const H1 = "Remodeling contractor in Northborough, MA";
+const TITLE = "General Contractor in Northborough, MA: Remodeling, Siding, Decks & Painting";
+const DESCRIPTION = `Owner-led general contractor in Northborough, MA, since ${site.founded}: kitchen & bath remodeling, additions, siding, windows, doors, decks, painting. Free estimates: ${site.phone}.`;
+const H1 = "General contractor in Northborough, MA";
 // Answer-first entity paragraph: who, what, where (09 AEO-H1 canonical sentences).
-const ENTITY = `${site.name} is an owner-led home remodeling contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners across ${serviceArea.short}.`;
+const ENTITY = `${site.name} is an owner-led general contractor based in Northborough, Massachusetts. ${site.owner} founded the company in ${site.founded} and has ${site.experience}+ years of hands-on construction experience. We remodel kitchens and bathrooms, build home additions and decks, replace siding, windows and doors, and paint interiors and exteriors for homeowners across ${serviceArea.short}.`;
 
 export const metadata = pageMeta({ title: TITLE, description: DESCRIPTION, path: "/", absoluteTitle: true });
 
@@ -106,9 +106,12 @@ export default function Home() {
           {/* Phones narrower than 375px step the display size down so the nowrap "Northborough, MA" fits its line
               (40px would overflow the 280px content box at 320); 375px and up use the --text-display clamp. */}
           <h1 className="text-display max-[359px]:text-[2.125rem] min-[360px]:max-[374px]:text-[2.375rem] text-balance text-white max-w-[12em] mx-auto">
-            Remodeling contractor in <span className="whitespace-nowrap">Northborough, MA</span>
+            General contractor in <span className="whitespace-nowrap">Northborough, MA</span>
           </h1>
           <p className="mt-4 md:mt-5 text-lg md:text-[1.375rem] leading-snug text-white max-w-[30em] mx-auto text-balance">
+            Kitchens, baths, additions, siding, windows, doors, decks and painting, inside and outside the house
+          </p>
+          <p className="mt-3 text-[15px] md:text-base leading-snug text-white/90 max-w-[34em] mx-auto text-balance">
             Owner-led since {site.founded}, across {serviceArea.short}
           </p>
           <div className="mt-8 md:mt-9 w-full flex flex-col sm:flex-row sm:justify-center gap-3">
@@ -162,7 +165,7 @@ export default function Home() {
           </figure>
           <div className="lg:col-span-7">
             <p className="eyebrow">About us</p>
-            <h2 id="about-h" className="mt-4 text-h2 text-navy">Owner-led remodeling, based in Northborough since {site.founded}</h2>
+            <h2 id="about-h" className="mt-4 text-h2 text-navy">Owner-led contractor, based in Northborough since {site.founded}</h2>
             <p className="mt-5 text-lead text-ink/80 max-w-[34em] mx-auto">
               {`${site.owner} founded ${site.name} in Northborough, Massachusetts, in ${site.founded}, and has ${site.experience}+ years of hands-on construction experience. The company has completed ${site.projectsCompleted}+ projects, in ${site.townsWithProjects}+ towns, from kitchens and bathrooms to additions, decks and exteriors.`}
             </p>
@@ -200,7 +203,7 @@ export default function Home() {
           <div className="section-head section-head--split">
             <div>
               <p className="eyebrow">What we do</p>
-              <h2 id="services-h" className="text-h2 text-navy">Our remodeling services</h2>
+              <h2 id="services-h" className="text-h2 text-navy">Our services, inside and out</h2>
             </div>
             <p className="text-balance">{countSentence}</p>
           </div>
@@ -431,7 +434,7 @@ export default function Home() {
       {/* FINAL CTA — paper, centred (no stock background) */}
       <section className="section text-center" data-cta-zone>
         <div className="container-x">
-          <h2 className="text-h1 text-navy max-w-[18em] mx-auto">Planning a remodel?</h2>
+          <h2 className="text-h1 text-navy max-w-[18em] mx-auto">Planning a home project?</h2>
           <p className="mt-5 text-lead text-muted max-w-[34em] mx-auto text-balance">Get a free, no-obligation estimate from an owner-led contractor based in Northborough.</p>
           <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
             <a href="#estimate" className="btn btn-primary w-full sm:w-auto">Get a free estimate</a>

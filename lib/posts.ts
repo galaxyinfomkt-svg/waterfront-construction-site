@@ -792,7 +792,7 @@ export const posts: Post[] = [
         // Not "How can you check Waterfront Construction?": until site.hic is set, the page must not invite a check
         // that its own checklist says we would fail (verification V3.3). licensingAnswer() adds the numbers once set.
         id: "about-publisher", h: "Who publishes this checklist?", blocks: [
-          { p: `This checklist is published by ${site.name}, an owner-led home remodeling contractor based in Northborough, Massachusetts. ${licensingAnswer("MA")}` },
+          { p: `This checklist is published by ${site.name}, an owner-led general contractor based in Northborough, Massachusetts. ${licensingAnswer("MA")}` },
           { p: `${OWNER_LINE} You can read more [about Ernando](/about/ernando-nunes), see [our projects](/gallery), such as the [Needham addition](/projects/home-addition-needham-ma) and the [Lynnfield addition and exterior project](/projects/home-addition-exterior-lynnfield-ma), and read [what our clients say](/reviews). Our [kitchen](/services/kitchen-remodeling), [bathroom remodeling](/services/bathroom-remodeling) and [home additions](/services/home-additions) pages explain how we run each kind of job, and our [Northborough page](/service-areas/northborough) covers the town where we're based.` },
         ],
       },
