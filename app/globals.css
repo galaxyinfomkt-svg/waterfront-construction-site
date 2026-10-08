@@ -21,10 +21,6 @@
   --color-green: #1F7A3A;        /* estimate action ONLY; white on it 5.38 */
   --color-green-hover: #196A31;  /* white on it 6.67 */
   --color-scrim: #0C0C0E;        /* photo scrims, hero base, lightbox, video wells */
-  /* The logo's wave (public/logo-solid.png). Decorative fills of the home hero wave ONLY (components/WaveDivider.tsx),
-     never text or controls. */
-  --color-wave: #2A78B5;
-  --color-wave-soft: #9CC3E4;
 
   /* Fonts (variables set on <html> by next/font) */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;

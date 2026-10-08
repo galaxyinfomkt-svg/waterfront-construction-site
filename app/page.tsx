@@ -95,7 +95,7 @@ export default function Home() {
       <JsonLd data={ld} />
 
       {/* HERO — KT Waterfront-style (owner brief, Oct 2026): a bright full-bleed job photo, the keyword H1 and the service
-          area centered on it, two actions, and the logo's blue wave closing the band. No form here: the estimate form is
+          area centered on it, two actions, and a frosted-glass wave cut from the photo itself closing the band. No form here: the estimate form is
           the next section, right under the wave. The scrim is darkest only behind the centered copy (.scrim-photo-center),
           so the photo keeps its colour at the edges. */}
       <section data-cta-zone className="relative isolate overflow-hidden bg-scrim">
