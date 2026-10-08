@@ -13,7 +13,7 @@ import { projects } from "./projects";
 import { townFacts, projectTown, JOBS } from "./towns";
 
 /** Straight-line miles from Northborough within which every service×town page is indexed. */
-export const CORE_RADIUS_MI = 15;
+export const CORE_RADIUS_MI = 30;
 
 /** Service×town paths that earned Search Console impressions outside the rules above, e.g. "/services/decks/acton".
  *  Fill from a Search Console Performance export (last 3 months, pages under /services/). */
